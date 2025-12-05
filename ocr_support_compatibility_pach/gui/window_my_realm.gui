@@ -1,0 +1,2850 @@
+######################################################
+##################### MY REALM #######################
+######################################################
+window = {
+	name = "my_realm_window"
+	widgetid = "my_realm_window"
+	datacontext = "[GetVariableSystem]"
+	datacontext = "[GetPlayer]"
+	allow_outside = yes
+	movable = no
+	layer = windows_layer
+
+	using = Window_Size_MainTab
+	size = { 100% 100% }
+	alwaystransparent = yes
+
+	oncreate = "[BindTabsContext]"
+	oncreate = "[PdxGuiTabs.SetResetOnShown( '(bool)no')]"
+	oncreate = "[PdxGuiTabs.AddTab( 'domain' )]"
+
+	# Code can send an event which we can listen for to switch tabs
+	oncreate = "[PdxGuiTabs.ListenFor( 'focused_changed' )]"
+
+	state = {
+		name = _show
+		on_start = "[PdxGuiTriggerAllAnimations('refresh_holdings')]"
+		on_start = "[PdxGuiTriggerAllAnimations('refresh_rulers')]"
+		on_start = "[PdxGuiTriggerAllAnimations('refresh_macrobuilder')]"
+		on_finish = "[CloseGameView('character')]"
+
+		# Reset to the domain tab if you have the admin tab open but no longer have access to it
+		on_start = "[PdxGuiTabs.SetResetOnShown( And( PdxGuiTabs.IsTabSet( 'admin_laws' ), Not( IsAdministrativeRuler( GetPlayer ) ) ) )]"
+
+		on_start = "[PdxGuiTabs.RemoveTab( 'succession' )]"
+		on_start = "[PdxGuiTabs.AddTabIf( 'vassals', Not( IsLandlessAdventurer( GetPlayer ) ) )]"
+		on_start = "[PdxGuiTabs.RemoveTabIf( 'vassals', IsLandlessAdventurer( GetPlayer ) )]"
+		on_start = "[PdxGuiTabs.AddTab( 'succession' )]"
+		on_start = "[PdxGuiTabs.RemoveTabIf( 'admin_laws', Not( IsAdministrativeRuler( GetPlayer ) ) )]"
+		on_start = "[PdxGuiTabs.AddTabIf( 'admin_laws', IsAdministrativeRuler( GetPlayer ) )]"
+
+		# start_sound = {
+		# 	soundeffect = "event:/SFX/UI/Character/Lifestyle/sfx_ui_character_lifestyle_stewardship_lifestyle"
+		# }
+		# start_sound = {
+		# 	soundeffect = "event:/SFX/UI/Generic/rightTab/sfx_ui_window_rightTab_Realm"
+		# }
+	}
+
+	state = {
+		name = _hide
+		on_finish = "[Set('seen_vassals', 'yes')]"
+	}
+
+	state = {
+		on_finish = "[GetScriptedGui('reset_vassal_page').Execute( GuiScope.SetRoot( Character.MakeScope ).End )]"
+		trigger_when = "[LessThan_int32( GetDataModelSize( MyRealmWindow.GetVassals ), FixedPointToInt(GetPlayer.MakeScope.Var('vassal_page').GetValue ))]"
+	}
+
+
+	# state = {
+	# 	name = dismiss
+	# 	next = _hide
+	#
+	# 	trigger_when = "[GetVariableSystem.Exists( 'hide_right_windows' )]"
+	# }
+
+	state = {
+		trigger_when = "[GetVariableSystem.Exists( 'hide_right_windows' )]"
+		on_finish = "[MyRealmWindow.Close]"
+		on_finish = "[GetVariableSystem.Clear('hide_right_windows')]"
+	}
+
+	widget = {
+		visible = "[And(GetVariableSystem.HasValue('realm_tabs', 'holdings'), IsDataModelEmpty(GetPlayer.MakeScope.GetList('special_buildings')))]"
+
+		state = {
+			name = refresh_holdings
+			on_start = "[GetScriptedGui('special_buildings_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+		}
+	}
+
+	widget = {
+		visible = "[GetVariableSystem.HasValue('realm_tabs', 'rulers')]"
+
+		state = {
+			name = refresh_rulers
+			on_start = "[GetScriptedGui('all_rulers').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+		}
+	}
+
+	widget = {
+		visible = "[GetVariableSystem.HasValue('realm_tabs', 'macrobuilder')]"
+
+		state = {
+			name = refresh_macrobuilder
+			on_start = "[GetScriptedGui('integrate_titles').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+		}
+	}
+
+	margin_widget = {
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+
+		# state = {
+		# 	name = holding
+		# 	# trigger_when = "[IsGameViewOpen('holding_view')]"
+		# 	trigger_when = "[IsBottomLeftWindowOpen]"
+		# 	on_finish = "[MyRealmWindow.Close]"
+		# }
+		# state = {
+		# 	name = closebottom
+		# 	trigger_when = "[IsBottomWindowOpen]"
+		# 	on_finish = "[MyRealmWindow.Close]"
+		# }
+		# size = { 100% 100% }
+		using = Window_Size_CharacterList
+		background = { using = Background_Area_Border_Solid }
+		# margin = { 0 26 }
+
+		widget = {
+			alwaystransparent = no
+			size = { 100% 100% }
+
+			button = {
+				onclick = "[ToggleGameView('outliner')]"
+				onclick = "[CloseGameView('my_realm')]"
+				visible = "[Hasnt('realms_tabs', 'rulers')]"
+				shortcut = "mapmode_empires_secondary"
+			}
+
+			### WINDOW CONTENT
+			vbox = {
+				using = ocr_margins
+				spacing = 5
+
+
+				button_close = {
+					onclick = "[MyRealmWindow.Close]"
+					using = close_window_ocr
+					onclick = "[Clear('toasted')]"
+					# shortcut = character_window
+				}
+
+				error_button = {
+					layoutpolicy_horizontal = expanding
+				}
+
+				# header
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					#margin_bottom = 5
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						blockoverride "text" {
+							raw_text = "[GetDataModelSize(GetPlayer.MakeScope.GetList('special_buildings'))] special [Select_CString(GetPlayer.MakeScope.Var('empty_sp_slots').IsSet, 'slots', 'buildings')] in the world, refresh list, Shift E."
+						}
+						shortcut = map_mode_11
+						onclick = "[GetScriptedGui('special_buildings_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						visible = "[GetVariableSystem.HasValue('realm_tabs', 'holdings')]"
+					}
+
+					hbox = {
+						visible = "[Not(GetVariableSystem.Exists('realm_tabs'))]"
+						layoutpolicy_horizontal = expanding
+						# spacing = 20
+
+						hbox = {
+
+							visible = "[Not( IsLandlessAdventurer( GetPlayer ) )]"
+							spacing = 3
+
+							text_single = {
+								raw_text = "Realm: [GetPlayer.GetPrimaryTitle.GetNameNoTooltip|U],"
+								tooltip = "[Character.GetDefaultRealmFlagTooltip]"
+							}
+
+							text_single = {
+								name = "realm_type"
+								raw_text = "[Character.GetGovernment.GetAdjective],"
+							}
+
+
+							text_single = {
+								raw_text = "[GetPlayer.RealmSize] counties."
+								tooltip = "REALM_WINDOW_SIZE_TT"
+							}
+
+							text_single = {
+								visible = "[GreaterThan_CFixedPoint(Character.MakeScope.ScriptValue('num_of_tributaries'), '(CFixedPoint)0')]"
+								raw_text = "[GetPlayer.MakeScope.ScriptValue('sub_realm_with_tributaries_size')] with tributaries."
+							}
+						}
+
+						text_single = {
+							visible = "[IsLandlessAdventurer( GetPlayer )]"
+							name = "realm_type_adv"
+							text = "you_are_an_adventurer_tt"
+						}
+
+						expand = { }
+					}
+				}
+
+				# default summary
+				vbox = {
+					visible = "[And(Not(GetVariableSystem.Exists('realm_tabs')), Not( IsLandlessAdventurer( GetPlayer ) ))]"
+					layoutpolicy_horizontal = expanding
+					spacing = 5
+					# margin_bottom = 15
+
+					button = {
+						name = "open_future_diarchy_tutorial_uses_this"
+						widgetid = "open_future_diarchy_tutorial_uses_this"
+						layoutpolicy_horizontal = expanding
+						size = { 0 50 }
+						datacontext = "[GetPlayer]"
+						shortcut = zoom_out
+						visible = "[Not( IsLandlessAdventurer( GetPlayer ) )]"
+
+						onclick = "[ToggleGameViewData( 'diarchy', Character.GetID )]"
+						onclick = "[MyRealmWindow.SendButtonClickedTelemetry( PdxGuiTabs.GetActiveTab.GetKey, 'diarchy' )]"
+						onclick = "[CloseGameView('my_realm')]"
+
+						# tooltip = "DIARCHY_WINDOW_OPEN_TOOLTIP"
+
+						hbox = {
+							datacontext = "[Character.GetDiarchy]"
+							layoutpolicy_horizontal = expanding
+
+							margin_left = 5
+
+							vbox = {
+
+								text_single = {
+									visible = "[Diarchy.IsValid]"
+									layoutpolicy_horizontal = expanding
+									alwaystransparent = yes
+
+									raw_text = "MY_REALM_WINDOW_ACTIVE_DIARCHY"
+									max_width = 480
+								}
+
+								text_single = {
+									visible = "[Not( Diarchy.IsValid )]"
+									layoutpolicy_horizontal = expanding
+									alwaystransparent = yes
+
+									raw_text = "[Localize('MY_REALM_WINDOW_STATUS_INACTIVE_DIARCHY')]."
+									max_width = 480
+								}
+
+								hbox = {
+							    layoutpolicy_horizontal = expanding
+									spacing = 3
+
+									text_single = {
+										alwaystransparent = yes
+										raw_text = "[MyRealmWindow.GetDiarchLabel]."
+										max_width = 480
+									}
+
+									text_single = {
+										raw_text = "Page Up."
+									}
+
+								    expand = { }
+								}
+							}
+
+							expand = { }
+
+						}
+					}
+
+					button_text = {
+						tooltip = "[GetPlayer.GetDomainLimitTooltip]"
+						layoutpolicy_horizontal = expanding
+						blockoverride "pre" {
+							text_single = {
+								raw_text = "MY_REALM_WINDOW_DOMAIN_LIMIT"
+							}
+
+							text_single = {
+								raw_text = "MY_REALM_WINDOW_DOMAIN_LIMIT_VALUE"
+							}
+							comma = {}
+						}
+						blockoverride "text" {
+							raw_text = "Income [Collapse('realm_income')] Shift D."
+						}
+						onclick = "[GetVariableSystem.Toggle('realm_income')]"
+						shortcut = mapmode_house_secondary
+					}
+
+					vbox = {
+						visible = "[Not(GetVariableSystem.Exists('realm_income'))]"
+						layoutpolicy_horizontal = expanding
+						margin = { 10 0 }
+
+						hbox = {
+							name = "domain_income_row"
+							layoutpolicy_horizontal = expanding
+
+							# background = {
+							# 	visible = "[Not(GetVariableSystem.Exists('realm_tabs'))]"
+							# 	using = Status_Highlight
+							# }
+							spacing = 5
+
+
+							flowcontainer = {
+								ignoreinvisible = yes
+
+								text_single = {
+									# layoutpolicy_horizontal = expanding
+									text = "MY_REALM_WINDOW_FROM_HOLDINGS"
+								}
+
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetDomainIncome]"
+								raw_text = "[ValueBreakdown.GetValue] gold,"
+								# min_width = 100
+								# max_width = 100
+								# align = right
+
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetDomainLevy]"
+								raw_text = "[ValueBreakdown.GetValue] levies."
+								# minimumsize = { 100 0 }
+								# align = right
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							text_single = {
+								visible = "[IsNomad( Character )]"
+								datacontext = "[MyRealmWindow.GetDomainHerd]"
+								raw_text = "[ValueBreakdown.GetValue] herd."
+
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							text_single = {
+								raw_text = "reduced for being over the limit!"
+								visible = "[MyRealmWindow.IsOverDomainLimit]"
+								tooltip = "[Character.GetDomainLimitTooltip]"
+							}
+
+							expand = { }
+						}
+
+						hbox = {
+							name = "vassals_income_row"
+							layoutpolicy_horizontal = expanding
+
+							spacing = 3
+
+							flowcontainer = {
+								ignoreinvisible = yes
+
+								text_single = {
+									text = "MY_REALM_WINDOW_FROM_VASSALS"
+								}
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetVassalsIncome]"
+								raw_text = "[ValueBreakdown.GetValue] gold,"
+
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetVassalsLevy]"
+								raw_text = "[ValueBreakdown.GetValue] levies."
+
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							text_single = {
+								visible = "[IsNomad( Character )]"
+								datacontext = "[MyRealmWindow.GetVassalsHerd]"
+								raw_text = "[ValueBreakdown.GetValue] herd."
+
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							text_single = {
+								raw_text = "reduced for being over the limit!"
+								visible = "[GreaterThan_int32( Character.GetNumVassalsTowardsLimit, Character.GetVassalLimit )]"
+								tooltip = "[Character.GetVassalLimitTooltip]"
+							}
+
+							expand = { }
+						}
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							spacing = 3
+
+							visible = "[GreaterThan_CFixedPoint(Character.MakeScope.ScriptValue('num_of_tributaries'), '(CFixedPoint)0')]"
+
+							text_single = {
+								text = "MY_REALM_WINDOW_FROM_TRIBUTARIES"
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetTributariesIncome]"
+								raw_text = "[ValueBreakdown.GetValue] gold,"
+
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetTributariesLevy]"
+								raw_text = "[ValueBreakdown.GetValue] levies."
+
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							text_single = {
+								visible = "[IsNomad( Character )]"
+								datacontext = "[MyRealmWindow.GetTributariesHerd]"
+								raw_text = "[ValueBreakdown.GetValue] herd."
+
+								tooltipwidget = {
+									widget_gold_breakdown_tooltip = {
+										blockoverride "income"
+										{
+											visible = no
+										}
+									}
+								}
+							}
+
+							expand = { }
+						}
+
+						button_text = {
+							layoutpolicy_horizontal = expanding
+							onclick = "[ToggleGameViewData('manage_tax_slots', Character.GetID)]"
+							visible = "[Character.HasTaxSlots]"
+							blockoverride "extra" {
+								text_single = {
+									margin_left = -5
+									text = "GO_TO_TAX_SLOTS_BUTTON_HEADER"
+								}
+
+								text_single = {
+									text = "GO_TO_TAX_SLOTS_BUTTON_VALUE"
+								}
+
+								dot_l = { }
+							}
+						}
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							visible = "[Character.HasOverlord]"
+							spacing = 5
+
+							text_single = {
+								# layoutpolicy_horizontal = expanding
+								raw_text = "You pay [SelectLocalization(Character.HasSuzerain, 'MY_REALM_WINDOW_FROM_TO_SUZERAIN', 'MY_REALM_WINDOW_FROM_TO_LIEGE')]"
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetIncomeTax]"
+								raw_text = "[ValueBreakdown.GetValue] gold,"
+
+								tooltipwidget = {
+									my_realm_window_contribution_tooltip = {
+										datacontext = "[MyRealmWindow.GetCharacter]"
+										blockoverride "contribution_tooltip_header"
+										{
+											text = "MRW_TT_TAXES_TO_MY_LIEGE"
+										}
+										blockoverride "contribution_tooltip_content_suffix" { }
+									}
+								}
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetLevyTax]"
+								raw_text = "[ValueBreakdown.GetValue] levies."
+
+
+								tooltipwidget = {
+									my_realm_window_contribution_tooltip = {
+										datacontext = "[MyRealmWindow.GetCharacter]"
+										blockoverride "contribution_tooltip_header"
+										{
+											text = "MRW_TT_LEVIES_TO_MY_LIEGE"
+										}
+										blockoverride "contribution_tooltip_content_suffix" { }
+									}
+								}
+							}
+
+							text_single = {
+								datacontext = "[MyRealmWindow.GetHerdTax]"
+								raw_text = "[ValueBreakdown.GetValue] herd."
+
+
+								tooltipwidget = {
+									my_realm_window_contribution_tooltip = {
+										datacontext = "[MyRealmWindow.GetCharacter]"
+										blockoverride "contribution_tooltip_header"
+										{
+											text = "MRW_TT_HERD_TO_MY_LIEGE"
+										}
+										blockoverride "contribution_tooltip_content_suffix" { }
+									}
+								}
+							}
+
+							expand = { }
+						}
+
+						vbox = {
+							name = "vassal_contract"
+							datacontext = "[MyRealmWindow.GetCharacter.GetLiege]"
+							datacontext = "[MyRealmWindow.GetCharacter.GetSubjectContract]"
+							visible = "[Character.IsPlayerInteractionShown('vassal_modify_vassal_contract_interaction')]"
+							margin_left = 3
+							layoutpolicy_horizontal = expanding
+
+							button_text = {
+								layoutpolicy_horizontal = expanding
+						    blockoverride "text" {
+						        raw_text = "Change contract."
+						    }
+								onclick = "[Character.OpenPlayerInteraction('vassal_modify_vassal_contract_interaction')]"
+								tooltip = "[Character.GetPlayerInteractionTooltip('vassal_modify_vassal_contract_interaction')]"
+							}
+
+							text_single = {
+								visible = "[SubjectContract.UsesObligationLevels]"
+								layoutpolicy_horizontal = expanding
+								text = "MY_REALM_WINDOW_MY_OBLIGATIONS"
+							}
+							text_single = {
+								layoutpolicy_horizontal = expanding
+								raw_text = "[Localize('VASSAL_CONTRACT_NOT_DEFAULT')]."
+								visible = "[Not( SubjectContract.IsContractDefault )]"
+							}
+						}
+
+						button_text = {
+							layoutpolicy_horizontal = expanding
+							datacontext = "[MyRealmWindow.GetCharacter.GetSuzerain]"
+							visible = "[GetPlayer.HasSuzerain]"
+							blockoverride "text" {
+								raw_text = "cease_paying_tribute_interaction"
+							}
+							blockoverride "dot" {}
+
+							onclick = "[Character.OpenPlayerInteraction('cease_paying_tribute_interaction')]"
+							enabled = "[Character.IsPlayerInteractionValid('cease_paying_tribute_interaction')]"
+							blockoverride "disabled" {
+								visible = "[Not(Character.IsPlayerInteractionValid('cease_paying_tribute_interaction'))]"
+							}
+
+							tooltip = "[Character.GetPlayerInteractionTooltip('cease_paying_tribute_interaction')]"
+
+						}
+					}
+
+					button_text = {
+						onclick = "[GetVariableSystem.Set('realm_tabs', 'vassals')]"
+						onclick = "[MyRealmWindow.SendTabClickedTelemetry( 'vassals' )]"
+						layoutpolicy_horizontal = expanding
+						blockoverride "extra" {
+							text_single = {
+								raw_text = "[GetDataModelSize(GetPlayer.GetVassals)] vassals,"
+							}
+							text_single = {
+								visible = "[GetPlayer.UsesObedience]"
+								raw_text = "[GetPlayer.MakeScope.ScriptValue('disobedient_vassals')|0] disobedient,"
+							}
+							text_single = {
+								raw_text = "[GetPlayer.MakeScope.ScriptValue('num_of_tributaries')] tributaries,"
+							}
+							text_single = {
+								visible = "[GreaterThan_CFixedPoint(GetPlayer.MakeScope.ScriptValue('num_of_tributaries'), '(CFixedPoint)0')]"
+								raw_text = "[GetPlayer.MakeScope.ScriptValue('disloyal_tributaries')|0] likely to cease payment."
+							}
+						}
+					}
+
+					hbox = {
+				    layoutpolicy_horizontal = expanding
+
+						hbox_vassal_stats = { }
+
+				    expand = { }
+					}
+
+					vbox = {
+						visible = "[GetPlayer.HasVassals]"
+						layoutpolicy_horizontal = expanding
+
+						button_text = {
+							layoutpolicy_horizontal = expanding
+						    blockoverride "text" {
+								text = MY_REALM_WINDOW_VASSAL_STANCES
+						    }
+							blockoverride "extra" {
+								text_single = {
+									raw_text = "V to [Select_CString( GetVariableSystem.Exists('stances'), 'hide', 'show')]."
+								}
+							}
+							onclick = "[GetVariableSystem.Toggle('stances')]"
+							shortcut = find_title_shortcut
+						}
+
+						vbox = {
+							datamodel = "[GetAllVassalStances]"
+							layoutpolicy_horizontal = expanding
+							visible = "[GetVariableSystem.Exists('stances')]"
+
+							item = {
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[NotEqualTo_int32( MyRealmWindow.GetNumVassalsWithStance( VassalStance.Self ), '(int32)0' )]"
+
+									text_single = {
+										raw_text = "[VassalStance.GetName], [MyRealmWindow.GetNumVassalsWithStance( VassalStance.Self )]."
+										tooltip = "MY_REALM_WINDOW_VASSAL_STANCE_COUNT_TT"
+									}
+
+									expand = { }
+								}
+							}
+						}
+
+						expand = {}
+					}
+				}
+
+				vbox = {
+					visible = "[Not(GetVariableSystem.Exists('realm_tabs'))]"
+					layoutpolicy_horizontal = expanding
+
+					hbox = {
+						name = "crown_authority"
+						datamodel = "[MyRealmWindow.GetRealmLaws]"
+						ignoreinvisible = yes
+						margin_top = 5
+
+						layoutpolicy_horizontal = expanding
+
+						item = {
+							vbox = {
+								layoutpolicy_vertical = expanding
+								layoutpolicy_horizontal = expanding
+								datacontext = "[GuiLawGroup.GetLawGroup]"
+								visible = "[And( GuiLawGroup.GetLawGroup.HasFlag( 'realm_law' ), GuiLawGroup.IsAvailable )]"
+								ignoreinvisible = yes
+								spacing = 3
+
+								button_text = {
+									layoutpolicy_horizontal = expanding
+									blockoverride "pre" {
+										text_single = {
+											alwaystransparent = yes
+											raw_text = "[GetPlayer.GetActiveLawInGroupWithFlag( 'realm_law' ).GetNameNoTooltip]"
+										}
+									}
+									blockoverride "text" {
+										raw_text = "[LawGroup.GetName],"
+										alwaystransparent = yes
+									}
+									blockoverride "extra" {
+										text_single = {
+											visible = "[Not( IsLandlessAdventurer( GetPlayer ) )]"
+											raw_text = "[CollapseIf(Isnt('crown_law'))] hotkey C."
+										}
+									}
+									shortcut = character_finder
+									onclick = "[GetVariableSystem.Toggle('crown_law')]"
+								}
+
+								flowcontainer = {
+									visible = "[Or(Is('crown_law'),IsLandlessAdventurer( GetPlayer ))]"
+									layoutpolicy_horizontal = expanding
+									direction = vertical
+									datamodel = "[GuiLawGroup.GetLaws]"
+
+									item = {
+										button_text = {
+											datacontext = "[GuiLaw.GetLaw]"
+											blockoverride "pre" {
+												spacing = 3
+												text_single = {
+													raw_text = "[Select_CString(GetPlayer.GetGovernment.IsType('landless_adventurer_government'), 'become', 'pass')]"
+													visible = "[Not(GuiLaw.IsEnacted)]"
+												}
+												text_single = {
+													raw_text = "Current:"
+													visible = "[GuiLaw.IsEnacted]"
+												}
+											}
+											blockoverride "text" {
+												raw_text = "[GuiLaw.GetLaw.GetNameNoTooltip]"
+											}
+
+											blockoverride "dot" {
+											}
+											enabled = "[GuiLaw.CanEnact]"
+											onclick = "[GuiLaw.Enact]"
+											#text disable
+											blockoverride "disabled" {
+												visible = "[And(Not(GuiLaw.CanEnact), Not(GuiLaw.IsEnacted))]"
+												align = left
+											}
+											tooltipwidget = {
+												pass_law_tooltip = {
+													#TODO localization
+													blockoverride "concept_link" {
+														text = "[Select_CString(GetPlayer.GetGovernment.IsType('landless_adventurer_government'), 'camp_purpose', 'law')|E]"
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						datacontext = "[MyRealmWindow.GetCharacter.GetLiege]"
+						visible = "[GetPlayer.HasLiege]"
+						datacontext = "[Character.GetActiveLawInGroupWithFlag( 'realm_law' )]"
+						raw_text = "Liege's authority: [Law.GetName]."
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						datacontext = "[GetPlayer.GetOverlord]"
+						visible = "[GetPlayer.HasOverlord]"
+						datacontext = "[Character.GetActiveLawInGroupWithFlag( 'realm_law' )]"
+						raw_text = "Suzerain's authority: [Law.GetName]."
+					}
+				}
+
+				button = {
+					using = close_window_ocr
+					visible = "[GetVariableSystem.Exists('realm_tabs')]"
+					onclick = "[GetVariableSystem.Clear('realm_tabs')]"
+				}
+
+				flowcontainer = {
+					direction = vertical
+					visible = "[Not(GetVariableSystem.Exists('realm_tabs'))]"
+					name = "vassals_succession_tabs"
+					layoutpolicy_horizontal = expanding
+					spacing = 2
+
+					text_single = {
+						raw_text = "Tabs:"
+						margin_top = 2
+					}
+
+					button_text = {
+						# onclick = "[MyRealmWindow.ShowDomain]"
+						onclick = "[GetVariableSystem.Set('realm_tabs', 'domain')]"
+						onclick = "[MyRealmWindow.SendTabClickedTelemetry( 'domain' )]"
+						visible = "[Not( IsLandlessAdventurer( GetPlayer ) )]"
+						blockoverride "pre" {
+							text_single = {
+								raw_text = "1,"
+							}
+							text_single = {
+								raw_text = " showing"
+								visible = no#"[Not(GetVariableSystem.Exists('realm_tabs'))]"
+							}
+						}
+				    blockoverride "text" {
+			        text = "MY_REALM_WINDOW_HEADER"
+				    }
+						blockoverride "dot" {}
+						shortcut = speed_1
+					}
+
+					button_text = {
+						visible = "[Not( IsLandlessAdventurer( GetPlayer ) )]"
+						# onclick = "[MyRealmWindow.ShowVassals]"
+						onclick = "[GetVariableSystem.Set('realm_tabs', 'vassals')]"
+						onclick = "[MyRealmWindow.SendTabClickedTelemetry( 'vassals' )]"
+						blockoverride "pre" {
+							text_single = {
+								raw_text = "2, "
+							}
+							text_single = {
+								raw_text = " showing"
+								visible = no#"[GetVariableSystem.HasValue('realm_tabs', 'vassals')]"
+							}
+						}
+				    blockoverride "text" {
+			        text = "MY_REALM_WINDOW_BODY_TITLE_SUBJECTS"
+				    }
+						blockoverride "dot" {
+						}
+						shortcut = speed_2
+					}
+
+					button_text = {
+						# onclick = "[MyRealmWindow.ShowSuccession]"
+						onclick = "[GetVariableSystem.Set('realm_tabs', 'succession')]"
+						onclick = "[MyRealmWindow.SendTabClickedTelemetry( 'succession' )]"
+						blockoverride "pre" {
+							text_single = {
+								raw_text = "3,"
+							}
+							text_single = {
+								raw_text = " showing"
+								visible = no#"[GetVariableSystem.HasValue('realm_tabs', 'succession')]"
+							}
+						}
+				    blockoverride "text" {
+			        text = "MY_REALM_WINDOW_BODY_TITLE_SUCCESSION"
+				    }
+						blockoverride "dot" {
+
+						}
+						shortcut = speed_3
+					}
+
+					button_text = {
+						# onclick = "[MyRealmWindow.ShowSuccession]"
+						onclick = "[GetVariableSystem.Set('realm_tabs', 'holdings')]"
+						onclick = "[GetScriptedGui('special_buildings_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						blockoverride "pre" {
+							text_single = {
+								raw_text = "4,"
+							}
+							text_single = {
+								raw_text = " showing"
+								visible = no#"[GetVariableSystem.HasValue('realm_tabs', 'holdings')]"
+							}
+						}
+					    blockoverride "text" {
+					        raw_text = "Special buildings"
+							align = left
+					    }
+						blockoverride "dot" {
+
+						}
+						shortcut = speed_4
+					}
+
+					button_text = {
+						onclick = "[GetVariableSystem.Set('realm_tabs', 'macrobuilder')]"
+						onclick = "[GetScriptedGui('integrate_titles').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						blockoverride "pre" {
+							text_single = {
+								raw_text = "5,"
+							}
+							text_single = {
+								raw_text = " showing"
+								visible = no#"[GetVariableSystem.HasValue('realm_tabs', 'macrobuilder')]"
+							}
+						}
+						blockoverride "text" {
+							raw_text = "Macro builder"
+						}
+						blockoverride "dot" {
+
+						}
+						shortcut = speed_5
+					}
+
+					button_tab_rulers = { } # AGOT
+
+					button_text = {
+						onclick = "[GetVariableSystem.Set('realm_tabs', 'admin_laws')]"
+						blockoverride "pre" {
+							text_single = {
+								raw_text = "i,"
+							}
+						}
+						blockoverride "text" {
+							raw_text = "realm_tab_admin_laws"
+						}
+						blockoverride "dot" {
+						}
+						shortcut = mapmode_kingdoms_secondary
+
+						visible = "[IsAdministrativeRuler( GetPlayer )]"
+					}
+				}
+
+				button_agot_laws = {}
+
+				### DOMAIN TAB
+				vbox = {
+					name = "tab_domain"
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[GetVariableSystem.HasValue('realm_tabs', 'domain')]"
+
+					using = Animation_Tab_Switch
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+					    blockoverride "text" {
+					        raw_text = "Domain."
+					    }
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+					    blockoverride "text" {
+					        raw_text = "[Select_CString(GetVariableSystem.Exists('county_focus'), 'Show all', 'Show only counties')]."
+					    }
+						onclick = "[GetVariableSystem.Toggle('county_focus')]"
+					}
+
+					scrollbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						blockoverride "scrollbox_content" {
+							vbox = {
+								datamodel = "[MyRealmWindow.GetDomainItems]"
+								layoutpolicy_horizontal = expanding
+
+								item = {
+									vbox = {
+										layoutpolicy_horizontal = expanding
+										name = "duchy_group"
+
+										button_text = {
+											layoutpolicy_horizontal = expanding
+										    blockoverride "text" {
+										        raw_text = "[DuchyGroup.GetDuchy.GetNameNoTooltip],"
+										    }
+											blockoverride "extra" {
+												text_single = {
+													raw_text = "[GetDataModelSize(DuchyGroup.GetCounties)] counties."
+												}
+											}
+											datacontext = "[DuchyGroup.GetDuchy]"
+											using = title_click
+											onclick = "[MyRealmWindow.Close]"
+										}
+
+										vbox = {
+											name = "county_group"
+											datamodel = "[DuchyGroup.GetCounties]"
+											layoutpolicy_horizontal = expanding
+
+											item = {
+												vbox = {
+													layoutpolicy_horizontal = expanding
+													datacontext = "[CountyGroup.GetCounty]"
+													datacontext = "[CountyGroup.GetCapitalProvince.GetCounty]"
+
+													hbox = {
+														layoutpolicy_horizontal = expanding
+														spacing = 5
+
+														button_text = {
+														    blockoverride "text" {
+														        raw_text = "[Title.GetNameNoTooltip]."
+																align = left
+														    }
+															using = title_click
+															onclick = "[MyRealmWindow.Close]"
+														}
+
+														flowcontainer = {
+															datacontext = "[CountyGroup.AccessBreakdowns]"
+															space = 3
+															text_single = {
+																raw_text = "game_concept_development"
+															}
+															text_single = {
+																name = "development"
+																raw_text = "[County.GetDevelopmentLevel],"
+															}
+
+															tooltipwidget = {
+																county_development_tooltip_container = {}
+															}
+														}
+
+														text_single = {
+															raw_text = "Opinion [GuiScope.SetRoot( County.GetTitle.MakeScope ).ScriptValue('county_opinion_val')|0+],"
+															# tooltip = "COUNTY_OPINION_TOOLTIP_REALM" #TODO
+														}
+
+														text_single = {
+															name = "tutorial_highlight_control"
+															raw_text = "[CountyGroup.GetCountyControlColored]."
+
+															tooltipwidget = {
+																county_control_tooltip_container = {}
+															}
+														}
+
+														expand = { }
+													}
+
+													hbox = {
+													    layoutpolicy_horizontal = expanding
+														margin_left = 5
+													    spacing = 5
+
+														text_single = {
+															raw_text = "[County.GetFaith.GetAdjective], "
+														}
+
+														text_single = {
+															raw_text = "[County.GetCulture.GetNameNoTooltip]."
+														}
+
+													    expand = { }
+													}
+
+													vbox = {
+														visible = "[Not(GetVariableSystem.Exists('county_focus'))]"
+														datamodel = "[CountyGroup.GetHoldings]"
+														layoutpolicy_horizontal = expanding
+
+
+														item = {
+															vbox = {
+																layoutpolicy_horizontal = expanding
+																datacontext = "[HoldingItem.GetHolding]"
+
+																hbox = {
+																    layoutpolicy_horizontal = expanding
+																	spacing = 3
+																	button_text = {
+																		blockoverride "text" {
+																			text = "MY_REALM_WINDOW_HOLDING_NAME"
+																			align = left
+																		}
+																		blockoverride "extra" {
+																			text_single = {
+																				raw_text = ", Realm capital"
+																				visible = "[HoldingItem.IsRealmCapital]"
+																				tooltip = "REALM_CAPITAL_TOOLTIP"
+																			}
+																			dot = { }
+																		}
+																		onclick = "[HoldingItem.OnClick]"
+																		onclick = "[MyRealmWindow.SendButtonClickedTelemetry( PdxGuiTabs.GetActiveTab.GetKey, 'holding' )]"
+																		onclick = "[MyRealmWindow.Close]"
+																		# onclick = "[MyRealmWindow.Close]" #TODO
+																	}
+
+																	hbox = {
+																		layoutpolicy_horizontal = expanding
+																		spacing = 3
+																		text_single = {
+																			raw_text = "Tax [Holding.GetIncome|1V], "
+																			tooltip = "[Holding.GetTaxTooltip]"
+																		}
+
+																		text_single = {
+																			raw_text = "Levies [Holding.GetMaxLevySize|0]."
+																			tooltip = "[Holding.GetLeviesTooltip]"
+																		}
+
+																		text_single = {
+																			visible = "[LessThan_float(Holding.GetUnraisedLevyRatioPercent, '(float)1')]"
+																			raw_text = "[Holding.GetUnraisedLevyRatioPercent|0]% of total"
+																		}
+
+																		expand = { }
+																	}
+
+																    expand = { }
+																}
+
+																hbox = {
+																    layoutpolicy_horizontal = expanding
+																	spacing = 5
+																	text_single = {
+																		raw_text = "Can construct,"
+																		visible = "[HoldingItem.GetHolding.CanConstructAnyBuilding(GetPlayer)]"
+																	}
+																	text_single = {
+																		raw_text = "Empty slots [GuiScope.SetRoot(HoldingItem.GetHolding.GetProvince.MakeScope).ScriptValue('free_building_slots_sval')],"
+																	}
+
+																	text_single = {
+																		raw_text = "Buildings [GuiScope.SetRoot(HoldingItem.GetHolding.GetProvince.MakeScope).ScriptValue('num_buildings_sval')]."
+																	}
+
+																	hbox = {
+																		spacing = 3
+																		tooltip = "MY_REALM_WINDOW_BUILDING_CONSTRUCTION_TT"
+
+																		text_single = {
+																			raw_text = "[HoldingItem.GetStatusText]."
+																		}
+
+																		text_single = {
+																			raw_text = "[HoldingItem.GetHolding.GetConstructionProgress|%0]."
+																		}
+																		visible = "[HoldingItem.GetHolding.IsConstructionInProgress]"
+																	}
+
+																    expand = { }
+																}
+															}
+														}
+													}
+
+													vbox = {
+														layoutpolicy_horizontal = expanding
+														visible = "[Not(GetVariableSystem.Exists('county_focus'))]"
+
+														flowcontainer = {
+															visible = "[DataModelHasItems(CountyGroup.GetEmptyHoldings)]"
+															datamodel = "[CountyGroup.GetEmptyHoldings]"
+															layoutpolicy_horizontal = expanding
+															spacing = 3
+
+															text_single = {
+																raw_text = "[GetDataModelSize(CountyGroup.GetEmptyHoldings)] empty holdings"
+															}
+
+															item = {
+																button_text = {
+																	blockoverride "text" {
+																		margin_left = -3
+																		raw_text = "[HoldingItem.GetBarony.GetNameNoTierNoTooltip],"
+																		visible = "[Not(Or(HoldingItem.GetHolding.CanConstructAnyBuilding(GetPlayer), HoldingItem.GetHolding.IsConstructionInProgress))]"
+																		align = left
+																	}
+																	blockoverride "extra" {
+																		text_single = {
+																			raw_text = "Build new."
+																			visible = "[HoldingItem.GetHolding.CanConstructAnyBuilding(GetPlayer)]"
+																		}
+																		text_single = {
+																			visible = "[HoldingItem.GetHolding.IsConstructionInProgress]"
+																			raw_text = "Building, [HoldingItem.GetHolding.GetConstructionProgress|%0]."
+																		}
+																	}
+																	datacontext = "[HoldingItem.GetHolding]"
+																	onclick = "[HoldingItem.OnClick]"
+																	onclick = "[MyRealmWindow.Close]"
+																}
+															}
+														}
+													}
+
+													expand = { }
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				### VASSALS TAB
+				vbox = {
+					name = "tab_vassals"
+					widgetid = "tab_vassals"
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[GetVariableSystem.HasValue('realm_tabs', 'vassals')]"
+
+					state = {
+						name = _show
+						using = Animation_FadeIn_Quick
+					}
+
+					state = {
+						name = _hide
+						alpha = 0
+						on_finish = "[Set('seen_vassals', 'yes')]"
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						onclick = "[Toggle('realm_tributaries')]"
+						shortcut = map_mode_2
+						datacontext = "[MyRealmWindow.GetTributaries]"
+						blockoverride "pre" {
+							text_single = {
+								raw_text = "Showing"
+							}
+							text_single = {
+								visible = "[Is('realm_tributaries')]"
+								raw_text = "[GetDataModelSize(CharacterSelectionList.GetList)] tributaries."
+							}
+
+							text_single = {
+								visible = "[Isnt('realm_tributaries')]"
+								raw_text = "[GetDataModelSize(MyRealmWindow.GetVassals)] vassals."
+							}
+						}
+						blockoverride "extra" {
+							text_single = {
+								visible = "[Or(GreaterThan_CFixedPoint(Character.MakeScope.ScriptValue('num_of_tributaries'), '(CFixedPoint)0'), Is('realm_tributaries'))]"
+								raw_text = "Click or T to show"
+							}
+
+							text_single = {
+								raw_text = "only [GetDataModelSize(CharacterSelectionList.GetList)] tributaries."
+								visible = "[And(Isnt('realm_tributaries'), GreaterThan_CFixedPoint(Character.MakeScope.ScriptValue('num_of_tributaries'), '(CFixedPoint)0'))]"
+							}
+
+							text_single = {
+								visible = "[Is('realm_tributaries')]"
+								raw_text = "all [GetDataModelSize(MyRealmWindow.GetVassals)] vassals."
+							}
+
+							text_single = {
+								raw_text = "Filtered."
+								visible = "[MyRealmWindow.HasActiveGovernmentTypeFilter]"
+							}
+						}
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[Isnt('realm_tributaries')]"
+
+						hbox_vassal_stats = { }
+
+						expand = { }
+					}
+
+					vbox = {
+						name = "vassal_filters_container"
+						layoutpolicy_horizontal = expanding
+
+						dropdown_menu_standard = {
+							layoutpolicy_horizontal = expanding
+
+							name = "government_filters_dropdown"
+
+							blockoverride "dropdown_properties"
+							{
+								datamodel = "[MyRealmWindow.GetGovernmentTypeFilters]"
+
+								onselectionchanged = "[MyRealmWindow.SelectActiveGovernmentTypeFilter]"
+								onselectionchanged = "[GetScriptedGui('reset_vassal_page').Execute( GuiScope.SetRoot( Character.MakeScope ).End )]"
+								selectedindex = "[MyRealmWindow.GetActiveGovernmentTypeFilterIndex]"
+							}
+
+							blockoverride "dropdown_active_item_properties"
+							{
+								raw_text = "[SelectLocalization( GovernmentTypeFilter.IsAllFilter, 'MRW_GOVERNMENT_FILTER_ALL', 'MRW_GOVERNMENT_FILTER_ENTRY' )] filter."
+								# tooltip = "MRW_GOVERNMENT_FILTER_DROPDOWN_TT"
+							}
+
+							blockoverride "dropdown_item_properties"
+							{
+								text = "MRW_GOVERNMENT_FILTER"
+								# tooltip = "MRW_GOVERNMENT_FILTER_TT"
+							}
+						}
+
+						dropdown_menu_standard = {
+							visible = "[Isnt('realm_tributaries')]"
+							layoutpolicy_horizontal = expanding
+							name = "vassal_stance_filters_dropdown"
+
+							blockoverride "dropdown_properties"
+							{
+								datamodel = "[MyRealmWindow.GetVassalStanceFilters]"
+
+								onselectionchanged = "[MyRealmWindow.SelectActiveVassalStanceFilter]"
+								onselectionchanged = "[GetScriptedGui('reset_vassal_page').Execute( GuiScope.SetRoot( Character.MakeScope ).End )]"
+								selectedindex = "[MyRealmWindow.GetActiveVassalStanceFilterIndex]"
+							}
+
+							blockoverride "dropdown_active_item_properties"
+							{
+								raw_text = "[SelectLocalization( VassalStanceFilter.IsAllFilter, 'vassal_stance_filter', 'MRW_VASSAL_STANCE_FILTER_ENTRY' )] filter."
+								# tooltip = "MRW_VASSAL_STANCE_FILTER_DROPDOWN_TT"
+							}
+
+							blockoverride "dropdown_item_properties"
+							{
+								text = "MRW_VASSAL_STANCE_FILTER"
+								# tooltip = "MRW_VASSAL_STANCE_FILTER_TT"
+							}
+						}
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						name = "government_filter_label"
+
+						visible = "[MyRealmWindow.HasActiveGovernmentTypeFilter]"
+						raw_text = "[MyRealmWindow.GetActiveGovernmentTypeFilter.GetVassalsLabel]."
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[Isnt('seen_vassals')]"
+
+						text_multi_wide = {
+							raw_text = "Tip: [AddTextIf(GetPlayer.GetGovernment.IsType('clan_government'), 'click the tax decree name to change jurisdiction, ')]click the taxes to change contract."
+						}
+
+						expand = { }
+					}
+
+					scrollbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						blockoverride "scrollbox_content" {
+							# vassals list
+							vbox = {
+								# visible = "[GreaterThan_int32( MyRealmWindow.GetVassalCount, '(int32)0' )]"
+								visible = "[Isnt('realm_tributaries')]"
+								layoutpolicy_horizontal = expanding
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+
+									text_single = {
+										raw_text = "Showing items from [Add_CFixedPoint(GetPlayer.MakeScope.Var('vassal_page').GetValue, '(CFixedPoint)1')] to [Min_CFixedPoint(Add_CFixedPoint(GetPlayer.MakeScope.Var('vassal_page').GetValue, vassals_per_page), IntToFixedPoint(GetDataModelSize( MyRealmWindow.GetVassals )))]."
+										margin_left = 5
+									}
+
+									text_single = {
+										raw_text = "Number keys select vassals, 1 selects 6, 11, etc."
+									}
+
+									expand = { }
+								}
+
+								fixedgridbox = {
+									layoutpolicy_horizontal = expanding
+									# datacontext = "[MyRealmWindow.GetVassals]"
+									# datamodel = "[MyRealmWindow.GetVassals]"
+									# datamodel = "[MyRealmWindow.GetVassals]"
+									datamodel = "[DataModelSubSpan( MyRealmWindow.GetVassals, FixedPointToInt( GetPlayer.MakeScope.Var('vassal_page').GetValue ), Min_int32(Subtract_int32( GetDataModelSize( MyRealmWindow.GetVassals ), FixedPointToInt(GetPlayer.MakeScope.Var('vassal_page').GetValue )), '(int32)5')) ]"
+
+									# visible = "[Not(CharacterSelectionList.IsBuildingList)]"
+									addcolumn = 580
+									addrow = 95
+									setitemsizefromcell = yes
+
+
+									item = {
+										widget_vassal_list_item_ocr = {
+											name = tutorial_highlight_vassal
+											onclick = "[MyRealmWindow.Close]"
+											shortcuts_list = {
+												blockoverride "click" {
+													onclick = "[DefaultOnCharacterClick( Character.GetID )]"
+													onclick = "[GetVariableSystem.Clear('expand_view')]"
+													onclick = "[MyRealmWindow.Close]"
+												}
+											}
+											datacontext = "[MyRealmWindowVassalItem.GetCharacter]"
+											datacontext = "[MyRealmWindow.GetVassalInfo( Character.Self )]"
+											datacontext = "[MyRealmWindowVassalItem.GetContract]"
+
+											blockoverride "pre_name" {
+												text_single = {
+													raw_text = "[Add_int32(PdxGuiWidget.GetIndexInDataModel, Add_int32(FixedPointToInt( GetPlayer.MakeScope.Var('vassal_page').GetValue ), '(int32)1'))]."
+												}
+											}
+											blockoverride "cease" {
+												hbox = {
+													visible = "[Character.HasSuzerain]"
+													datacontext = "[Character.GetSubjectContract]"
+
+													tooltip = "MY_REALM_WINDOW_CEASE_PAYING_TRIBUTE_CHANCE_TT"
+
+													text_single = {
+														layoutpolicy_horizontal = expanding
+														text = "MY_REALM_WINDOW_CEASE_PAYING_TRIBUTE_CHANCE"
+														max_width = 300
+													}
+												}
+											}
+										}
+									}
+								}
+
+								vbox = {
+									layoutpolicy_horizontal = expanding
+
+									button_text = {
+										layoutpolicy_horizontal = expanding
+										blockoverride "text" {
+											raw_text = "Previous 5, Z."
+										}
+										visible = "[GreaterThan_CFixedPoint( GetPlayer.MakeScope.Var('vassal_page').GetValue, '(CFixedPoint)0' )]"
+										onclick = "[GetScriptedGui('prev_vassal_page').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+										using = paper_flip_back_ocr
+										shortcut = decrease_speed_2
+									}
+
+									button_text = {
+										layoutpolicy_horizontal = expanding
+										blockoverride "text" {
+											raw_text = "Next 5, X."
+										}
+										shortcut = increase_speed_2
+										using = paper_flip_forward_ocr
+										onclick = "[GetScriptedGui('next_vassal_page').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+										visible = "[GreaterThan_int32( Subtract_int32( GetDataModelSize( MyRealmWindow.GetVassals ), FixedPointToInt(GetPlayer.MakeScope.Var('vassal_page').GetValue )), '(int32)5' )]"
+									}
+								}
+							}
+
+							# trib list
+							vbox_paged_list_five = {
+								visible = "[Is('realm_tributaries')]"
+								datacontext = "[MyRealmWindow.GetTributaries]"
+							  blockoverride "page_index" {
+							    datacontext = "[GetPlayer.MakeScope.Var('realm_tribs_page')]"
+							  }
+							  datacontext = "[GetScriptedGui('realm_tribs_page')]"
+
+							  blockoverride "full_datamodel" {
+							    datamodel = "[CharacterSelectionList.GetList]"
+							  }
+							  blockoverride "vbox_contents" {
+									fixedgridbox = {
+										datamodel = "[PageModelFive(CharacterSelectionList.GetList)]"
+										layoutpolicy_horizontal = expanding
+										addrow = 95
+										addcolumn = 580
+										item = {
+											widget_vassal_list_item_ocr = {
+												onclick = "[MyRealmWindow.Close]"
+												shortcuts_list = {
+													blockoverride "click" {
+														onclick = "[DefaultOnCharacterClick( Character.GetID )]"
+														onclick = "[GetVariableSystem.Clear('expand_view')]"
+														onclick = "[MyRealmWindow.Close]"
+													}
+												}
+												datacontext = "[MyRealmWindowVassalItem.GetCharacter]"
+												datacontext = "[MyRealmWindow.GetVassalInfo( Character.Self )]"
+												datacontext = "[MyRealmWindowVassalItem.GetContract]"
+												blockoverride "cease" {
+													hbox = {
+														visible = "[Character.HasSuzerain]"
+														datacontext = "[Character.GetSubjectContract]"
+
+														tooltip = "MY_REALM_WINDOW_CEASE_PAYING_TRIBUTE_CHANCE_TT"
+
+														text_single = {
+															layoutpolicy_horizontal = expanding
+															text = "MY_REALM_WINDOW_CEASE_PAYING_TRIBUTE_CHANCE"
+															max_width = 300
+														}
+													}
+												}
+
+
+											}
+										}
+									}
+							  }
+							}
+						}
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						visible = "[EqualTo_int32( MyRealmWindow.GetVassalCount, '(int32)0' )]"
+						text = "NO_VASSALS_TO_DISPLAY"
+					}
+					expand = {}
+				}
+
+				### SUCCESSION TAB
+				vbox = {
+					name = "tab_succession"
+					widgetid = "tab_succession"
+					visible = "[GetVariableSystem.HasValue('realm_tabs', 'succession')]"
+
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					state = {
+						name = _show
+						using = Animation_FadeIn_Quick
+					}
+
+					state = {
+						name = _hide
+						alpha = 0
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+
+						text_single = {
+							layoutpolicy_horizontal = expanding
+							raw_text = "Succession."
+						}
+
+						vbox = {
+							datamodel = "[MyRealmWindow.GetRealmLaws]"
+							ignoreinvisible = yes
+							layoutpolicy_horizontal = expanding
+
+							item = {
+								vbox = {
+									using = agot_show_law
+									layoutpolicy_horizontal = growing
+
+									hbox = {
+										layoutpolicy_horizontal = expanding
+										spacing = 3
+
+										button_text = {
+											onclick = "[OpenSuccessionLawChangeWindow(GuiLawGroup.Self)]"
+											onclick = "[MyRealmWindow.SendButtonClickedTelemetry( PdxGuiTabs.GetActiveTab.GetKey, GuiLawGroup.GetLawGroup.GetKey )]"
+											blockoverride "text" {
+												text = "MRW_CHANGE_LAW"
+											}
+											# tooltip = "MRW_CHANGE_LAW_TT"
+											datacontext = "[GuiLawGroup]"
+
+											blockoverride "extra" {
+												spacing = 4
+												text_single = {
+													raw_text = "[GuiLawGroup.GetLawGroup.GetNameSingular]:"
+												}
+
+												text_single = {
+													raw_text = "[GuiLawGroup.GetCurrentLevel.GetLaw.GetName]."
+												}
+
+											}
+										}
+
+										expand = { }
+									}
+
+									text_single = {
+										layoutpolicy_horizontal = expanding
+										visible = "[GuiLawGroup.GetCurrentLevel.GetLaw.HasSubName]"
+										raw_text = "[GuiLawGroup.GetCurrentLevel.GetLaw.GetSubName]."
+									}
+								}
+							}
+						}
+
+						hbox = {
+							layoutpolicy_horizontal = growing
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								spacing = 3
+
+								button_text = {
+									blockoverride "text" {
+										margin_right = 3
+										text = "MY_REALM_WINDOW_DESIGNATE_HEIR"
+									}
+									blockoverride "disabled" {
+										visible = "[Not(MyRealmWindow.CanDesignateHeir)]"
+									}
+									tooltip = "MRW_DESIGNATE_HEIR_TT"
+									enabled = "[MyRealmWindow.CanDesignateHeir]"
+									onclick = "[OpenDesignateHeirWindow]"
+									blockoverride "extra" {
+										flowcontainer = {
+										    ignoreinvisible = yes
+
+											spacing = 3
+											text_single = {
+												max_width = 350
+												text = "MRW_DESIGNATED_HEIR_LABEL"
+											}
+
+											text_single = {
+												visible = "[MyRealmWindow.GetCharacter.GetDesignatedHeir.IsValid]"
+												text = "MRW_DESIGNATED_HEIR"
+												max_width = 350
+											}
+											text_single = {
+												visible = "[Not(MyRealmWindow.GetCharacter.GetDesignatedHeir.IsValid)]"
+												text = "MRW_NO_DESIGNATED_HEIR"
+												max_width = 350
+											}
+										}
+									}
+								}
+								expand = { }
+							}
+						}
+					}
+
+					scrollbox = {
+						name = "succession_scrollbox"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						minimumsize = { 0 350 }
+						blockoverride "scrollbox_margins" {
+							margin_top = 20
+							margin_left = 5
+						}
+
+						blockoverride "scrollbox_content"
+						{
+							hbox = {
+								name = "current_heir"
+								layoutpolicy_horizontal = expanding
+
+								vbox = {
+									layoutpolicy_vertical = expanding
+									layoutpolicy_horizontal = expanding
+
+									vbox = {
+										layoutpolicy_horizontal = expanding
+
+										text_single = {
+											visible = "[MyRealmWindow.HasHeir]"
+											layoutpolicy_horizontal = expanding
+
+											raw_text = "Your heir: [MyRealmWindow.GetCharacter.GetPlayerHeir.GetUINameNoTooltip]."
+										}
+
+										text_single = {
+											name = "vassal_stances_that_prefer"
+											datacontext = "[MyRealmWindow.GetCharacter.GetPlayerHeir]"
+
+											visible = "[And( Not( IsLandlessAdventurer( GetPlayer ) ), And( MyRealmWindow.HasHeir, Not( StringIsEmpty( MyRealmWindow.GetCharacter.GetVassalStancesThatPrefer( Character.Self ) ) ) ) )]"
+
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											autoresize = no
+
+											text = "MRW_HEIR_PREFERRED"
+											using = Font_Size_Medium
+										}
+
+										hbox = {
+										    layoutpolicy_horizontal = expanding
+
+											text_single = {
+												visible = "[MyRealmWindow.HasHeir]"
+
+												text = "MRW_YOUR_PLAYER_HEIR"
+											}
+
+											dot = { }
+
+										    expand = { }
+										}
+
+
+									}
+
+									vbox = {
+										layoutpolicy_horizontal = expanding
+
+										text_single = {
+											name = "no_heir_warning"
+											visible = "[Not( MyRealmWindow.HasHeir )]"
+											layoutpolicy_horizontal = expanding
+											text = "MY_REALM_WINDOW_NO_HEIR_FLAVOR"
+										}
+
+										text_single = {
+											name = "not_primary_heir"
+											visible = "[And( MyRealmWindow.HasHeir, Not( ObjectsEqual( MyRealmWindow.GetCharacter.GetPlayerHeir, MyRealmWindow.GetCharacter.GetPrimaryTitle.GetHeir.Self ) ) )]"
+											layoutpolicy_horizontal = expanding
+											text = "MY_REALM_WINDOW_NOT_PRIMARY_HEIR"
+										}
+									}
+
+									expand = { }
+								}
+							}
+
+							##### FROM REALM'S PARTITION #####
+							vbox = {
+								layoutpolicy_horizontal = expanding
+
+								vbox = {
+									name = "their_partition_share"
+									visible = "[And(MyRealmWindow.HasPartition, DataModelHasItems(MyRealmWindow.GetMyPartitionShare))]"
+									layoutpolicy_horizontal = expanding
+									margin_left = 5
+
+									hbox = {
+										layoutpolicy_horizontal = expanding
+
+										text_single = {
+											raw_text = "You will inherit,  "
+										}
+
+										text_single = {
+											# layoutpolicy_horizontal = expanding
+											text = "MY_REALM_WINDOW_PARTITION_SHARE"
+										}
+
+										dot = { }
+
+										expand = { }
+									}
+
+									vbox = {
+										name = "partition_share_box"
+										datamodel = "[MyRealmWindow.GetMyPartitionShare]"
+										layoutpolicy_horizontal = expanding
+										# size = { 460 55 }
+										# spacing = 10
+
+										item = {
+											button = {
+												onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
+												onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
+												onclick = "[MyRealmWindow.Close]"
+												button_ignore = none
+												layoutpolicy_horizontal = expanding
+
+												text_single = {
+													layoutpolicy_horizontal = expanding
+													raw_text = "[TitleItem.GetTitle.GetNameNoTooltip]."
+													resizeparent = yes
+													margin_left = 5
+												}
+											}
+										}
+									}
+								}
+
+								spacer = {
+									size = { 5 5 }
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[DataModelHasItems(MyRealmWindow.GetTitleSuccession)]"
+									margin = { 5 0 }
+
+									button_group = {
+										onclick = "[GetVariableSystem.Toggle( 'expand_partition' )]"
+
+										flowcontainer = {
+											ignoreinvisible = yes
+
+											text_single = {
+												text = "MY_REALM_WINDOW_TITLES_LOST_ON_SUCCESSION"
+												align = left
+											}
+
+											dot = { }
+										}
+									}
+
+									expand = { }
+								}
+
+								spacer = {
+									# visible = "[GetVariableSystem.Exists( 'expand_partition' )]"
+									size = { 5 5 }
+								}
+
+								vbox = {
+									name = "title_succession"
+									datamodel = "[MyRealmWindow.GetTitleSuccession]"
+									# visible = "[GetVariableSystem.Exists( 'expand_partition' )]"
+									layoutpolicy_horizontal = expanding
+
+									item = {
+										hbox = {
+											# maximumsize = { -1 100 }
+											layoutpolicy_horizontal = expanding
+											margin_left = 10
+											margin_bottom = 5
+											datacontext = "[TitleSuccessionItem.GetHeir]"
+
+											background = {
+												using = Background_Area_With_Header
+											}
+
+											vbox = {
+												layoutpolicy_horizontal = expanding
+												layoutpolicy_vertical = growing
+												# margin_bottom = 5
+
+												button = {
+													onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+													onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+													onclick = "[MyRealmWindow.Close]"
+													# onclick = "[DefaultOnCoatOfArmsRightClick(Character.CapitalLocation.GetCoATitle.GetID)]"
+													onrightclick = "[DefaultOnCharacterRightClick(Character.GetID)]"
+													button_ignore = none
+													layoutpolicy_horizontal = expanding
+
+													text_single = {
+														name = "heir_name"
+														raw_text = "To [Character.GetUINameNoTooltip],"
+														layoutpolicy_horizontal = expanding
+														margin_left = 5
+														resizeparent = yes
+														# using = Font_Size_Medium
+														# max_width = 400
+														# fontsize_min = 14
+													}
+												}
+
+												text_single = {
+													name = "heir_not_your_dynasty"
+													layoutpolicy_horizontal = expanding
+
+													text = "MY_REALM_WINDOW_HEIR_NOT_MY_DYNASTY"
+													visible = "[Not(ObjectsEqual(Character.GetHouse.GetDynasty.Self, GetPlayer.GetHouse.GetDynasty.Self))]"
+													using = Font_Size_Small
+												}
+
+												text_single = {
+													name = "vassal_stances_that_prefer"
+													visible = "[And( Not( IsLandlessAdventurer( GetPlayer ) ), Not( StringIsEmpty( MyRealmWindow.GetCharacter.GetVassalStancesThatPrefer( Character.Self ) ) ) )]"
+
+													layoutpolicy_horizontal = expanding
+													layoutpolicy_vertical = expanding
+													autoresize = no
+
+													text = "MRW_HEIR_PREFERRED"
+													using = Font_Size_Medium
+												}
+
+												vbox = {
+													name = "titles_box"
+													layoutpolicy_horizontal = expanding
+													datamodel = "[TitleSuccessionItem.GetPartitionTitles]"
+													visible = "[DataModelHasItems(TitleSuccessionItem.GetPartitionTitles)]"
+													# minimumsize = { 350 50 }
+													spacing = 0
+
+													item = {
+														hbox = {
+															layoutpolicy_horizontal = expanding
+
+															button = {
+																onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
+																onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
+																onclick = "[MyRealmWindow.Close]"
+																button_ignore = none
+																layoutpolicy_horizontal = expanding
+																text_single = {
+																	layoutpolicy_horizontal = expanding
+																	raw_text = "[TitleItem.GetTitle.GetNameNoTooltip]."
+																	resizeparent = yes
+																	margin_left = 5
+																}
+															}
+
+															# coa_title_tiny_crown = {
+															# 	datacontext = "[TitleItem.GetTitle]"
+															# 	using = tooltip_ne
+															# }
+
+															# icon = {
+															# 	name = "has_laws"
+															# 	visible = "[TitleItem.GetTitle.HasLaws]"
+															# 	parentanchor = bottom|right
+															# 	size = { 25 25 }
+															# 	position = { 5 0 }
+															# 	texture = "gfx/interface/icons/title_status/icon_title_law.dds"
+															# }
+														}
+													}
+												}
+
+												text_single = {
+													name = "exception_label"
+													visible = "[DataModelHasItems(TitleSuccessionItem.GetExceptionTitles)]"
+													layoutpolicy_horizontal = expanding
+
+													text = "MY_REALM_WINDOW_EXCEPTIONS"
+												}
+
+												vbox = {
+													layoutpolicy_horizontal = expanding
+													name = "exception_box"
+													datamodel = "[TitleSuccessionItem.GetExceptionTitles]"
+													visible = "[DataModelHasItems(TitleSuccessionItem.GetExceptionTitles)]"
+													# minimumsize = { 350 50 }
+													# spacing = 10
+
+													item = {
+														button = {
+															onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
+															onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
+															onclick = "[MyRealmWindow.Close]"
+															button_ignore = none
+															layoutpolicy_horizontal = expanding
+
+															text_single = {
+																layoutpolicy_horizontal = expanding
+																raw_text = "[TitleItem.GetTitle.GetNameNoTooltip]."
+																resizeparent = yes
+																margin_left = 5
+															}
+														}
+													}
+												}
+											}
+
+											# vbox = {
+											# 	portrait_head = {
+											# 		name = "primary_spouse_portrait"
+											# 		blockoverride "portrait_button" {
+											# 			using = tooltip_ws
+											# 		}
+											# 	}
+											#
+											# 	expand = { }
+											# }
+										}
+									}
+								}
+							}
+
+							vbox = {
+								name = "exceptions"
+								layoutpolicy_horizontal = expanding
+								margin_left = 5
+
+								visible = "[DataModelHasItems(MyRealmWindow.GetSuccessionExceptions)]"
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+
+									text_label_left = {
+										layoutpolicy_horizontal = expanding
+										text = "MY_REALM_WINDOW_EXCEPTIONS"
+									}
+
+									expand = { }
+								}
+
+								vbox = {
+									name = "exceptions_box"
+									layoutpolicy_horizontal = expanding
+									# size = { 460 55 }
+									# spacing = 10
+
+									datamodel = "[MyRealmWindow.GetSuccessionExceptions]"
+
+									item = {
+										button = {
+											onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
+											onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
+											onclick = "[MyRealmWindow.Close]"
+											button_ignore = none
+											layoutpolicy_horizontal = expanding
+
+											text_single = {
+												layoutpolicy_horizontal = expanding
+												raw_text = "[TitleItem.GetTitle.GetNameNoTooltip]."
+												resizeparent = yes
+												margin_left = 5
+											}
+										}
+									}
+								}
+							}
+
+							vbox = {
+								name = "line_of_succession"
+								visible = "[MyRealmWindow.HasSingleHeir]"
+								layoutpolicy_horizontal = expanding
+								spacing = 10
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+
+									text_label_left = {
+										name = "line_of_succession_label"
+										layoutpolicy_horizontal = expanding
+										text = "MY_REALM_WINDOW_LINE_OF_SUCCESSION"
+									}
+
+									expand = { }
+								}
+
+								flowcontainer = {
+									name = "line_of_succession_box"
+									layoutpolicy_horizontal = expanding
+									spacing = 0
+									direction = vertical
+									margin_right = 10
+
+									datamodel = "[MyRealmWindow.GetLineOfSuccession]"
+
+									item = {
+										flowcontainer = {
+											direction = vertical
+											ignoreinvisible = yes
+											datacontext = "[LineOfSuccessionItem.GetCharacter]"
+
+
+											char_name = {
+												blockoverride "pre" {
+													text_single = {
+														raw_text = "[IndexNumber],"
+													}
+												}
+												blockoverride "extra" {
+													text_single = {
+														raw_text = "[Character.GetAge]."
+													}
+												}
+												onclick = "[MyRealmWindow.Close]"
+											}
+
+											text_single = {
+												name = "character_relation_to_you"
+												text = "[Character.GetRelationToString( GetPlayer )]"
+												tooltip = "EXTENDED_RELATIONS_TOOLTIP"
+
+												fontsize_min = 13
+												max_width = 600
+											}
+
+											text_single = {
+												name = "vassal_stances_that_prefer"
+												visible = "[Not( StringIsEmpty( MyRealmWindow.GetCharacter.GetVassalStancesThatPrefer( Character.Self ) ) )]"
+												text = "MRW_HEIR_PREFERRED"
+												max_width = 600
+											}
+										}
+									}
+								}
+							}
+
+							#### ELECTIONS ####
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								visible = "[MyRealmWindow.CanVote]"
+								margin_left = 5
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+
+									text_label_left = {
+										layoutpolicy_horizontal = expanding
+										text = "MY_REALM_WINDOW_ELECTIONS"
+									}
+
+									expand = { }
+								}
+
+								flowcontainer = {
+									name = "elections"
+									direction = vertical
+
+									fixedgridbox = {
+										name = "exceptions_box"
+										addcolumn = 600
+										addrow = 42
+										datamodel = "[MyRealmWindow.GetTitlesCanVote]"
+
+										item = {
+											widget = {
+												name = "election_title"
+												size = { 510 40 }
+												datacontext = "[TitleItem.GetTitle]"
+
+												hbox = {
+
+													vbox = {
+														layoutpolicy_horizontal = expanding
+														button_text = {
+															layoutpolicy_horizontal = expanding
+															using = title_click
+															onclick = "[MyRealmWindow.Close]"
+														    blockoverride "text" {
+														       text = "[Title.GetNameNoTooltip]"
+														    }
+															}
+														hbox = {
+															layoutpolicy_horizontal = expanding
+
+															button_text = {
+																layoutpolicy_horizontal = expanding
+														    blockoverride "text" {
+																	text = "MY_REALM_WINDOW_VOTE"
+														    }
+																onclick = "[OpenSuccessionElectionWindowForTitle(Title.Self)]"
+																onclick = "[MyRealmWindow.SendButtonClickedTelemetry( PdxGuiTabs.GetActiveTab.GetKey, 'election' )]"
+															}
+
+															expand = { }
+														}
+													}
+
+													expand = { }
+												}
+											}
+										}
+									}
+								}
+							}
+
+							expand = {}
+						}
+					}
+				}
+
+				#TODO
+				### ADMIN LAW TAB
+				scrollbox = {
+					name = "tab_admin_laws"
+					widgetid = "tab_admin_laws"
+					visible = "[GetVariableSystem.HasValue('realm_tabs', 'admin_laws')]"
+
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					blockoverride "scrollbox_content"
+					{
+						vbox = {
+							name = "administrative_laws"
+							datamodel = "[MyRealmWindow.GetRealmLaws]"
+							ignoreinvisible = yes
+							layoutpolicy_horizontal = expanding
+
+							text_single = {
+								layoutpolicy_horizontal = expanding
+								text = "MY_REALM_ADMIN_LAWS_HEADER"
+							}
+
+							item = {
+								vbox = {
+									layoutpolicy_vertical = expanding
+									datacontext = "[GuiLawGroup.GetLawGroup]"
+									visible = "[And(And( GuiLawGroup.GetLawGroup.HasFlag( 'admin_law' ), GuiLawGroup.IsAvailable ), Not(GetPlayer.GetGovernment.IsType('landless_adventurer_government')))]"
+									ignoreinvisible = yes
+									layoutpolicy_horizontal = expanding
+
+									text_single = {
+										layoutpolicy_horizontal = expanding
+										text = "[LawGroup.GetName]"
+									}
+
+									vbox = {
+										datamodel = "[GuiLawGroup.GetLaws]"
+										layoutpolicy_horizontal = expanding
+										item = {
+											button_text = {
+												layoutpolicy_horizontal = expanding
+												datacontext = "[GuiLaw.GetLaw]"
+												blockoverride "pre" {
+													spacing = 3
+													text_single = {
+														raw_text = "Pass"
+														visible = "[Not(GuiLaw.IsEnacted)]"
+													}
+													text_single = {
+														raw_text = "Current:"
+														visible = "[GuiLaw.IsEnacted]"
+													}
+												}
+												blockoverride "text" {
+													raw_text = "[GuiLaw.GetLaw.GetNameNoTooltip]"
+												}
+
+												blockoverride "dot" {
+												}
+												enabled = "[GuiLaw.CanEnact]"
+												onclick = "[GuiLaw.Enact]"
+												#text disable
+												blockoverride "disabled" {
+													visible = "[And(Not(GuiLaw.CanEnact), Not(GuiLaw.IsEnacted))]"
+													align = left
+												}
+												tooltipwidget = {
+													pass_law_tooltip = {
+														#TODO localization
+														blockoverride "concept_link" {
+															text = "[law|E]"
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				# special
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					visible = "[GetVariableSystem.HasValue('realm_tabs', 'holdings')]"
+
+					# button_text = {
+					# 	layoutpolicy_horizontal = expanding
+					# 	blockoverride "text" {
+					# 		raw_text = "Sorted by [GetPlayer.MakeScope.Var('sort_sp_buildings').GetFlagName]. Change, hotkey T."
+					# 	}
+					# 	shortcut = map_mode_2
+					# 	onclick = "[GetVariableSystem.Set('sp_sorting', 'yes')]"
+					# }
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+
+						button_text = {
+							blockoverride "text" {
+							}
+							blockoverride "extra" {
+								text_single = {
+									raw_text = "[Select_CString(ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'Sorted by tax, sort by distance', 'Sorted by distance, sort by tax')], hotkey T."
+								}
+							}
+							onclick = "[GetScriptedGui('sort_sp_tax').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('special_buildings_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							# onclick = "[GetVariableSystem.Clear('sp_sorting')]"
+							datacontext = "[GetScriptedGui('sort_sp_tax')]"
+							shortcut = map_mode_2
+						}
+
+						button_text = {
+						    blockoverride "text" {
+						        raw_text = "[Select_CString(GetPlayer.MakeScope.Var('empty_sp_slots').IsSet, 'Show special buildings', 'Show empty special slots')] , hotkey E."
+								align = left
+						    }
+							shortcut = map_mode_1
+							onclick = "[GetScriptedGui('filter_sp_slots').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('special_buildings_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						}
+
+						expand = { }
+					}
+
+					widget = {
+						size = { 0 5 }
+					}
+
+					scrollbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						blockoverride "scrollbox_background_fade" {
+
+						}
+						blockoverride "scrollbox_margins" {
+							margin_top = 20
+						}
+
+						blockoverride "scrollbox_content" {
+							fixedgridbox = {
+								datamodel = "[GetPlayer.MakeScope.GetList('special_buildings')]"
+
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+
+								addrow = 25
+								addcolumn = 600
+
+								item = {
+									button_text = {
+										datacontext = "[Scope.GetProvince]"
+										onclick = "[OpenGameViewData('holding_view', Scope.Province.Self)]"
+										onclick = "[DefaultOnCoatOfArmsRightClick(Scope.GetProvince.GetTitle.GetID)]"
+										onclick = "[MyRealmWindow.Close]"
+
+										blockoverride "text" {
+										}
+
+										blockoverride "extra" {
+											text_single = {
+												max_width = 300
+												alwaystransparent = yes
+												raw_text = "[Localize(AddTextIf(Province.MakeScope.Var('special_building').IsSet, Concatenate( 'building_', Province.MakeScope.Var('special_building').GetFlagName)))],"
+												raw_tooltip = "[Localize(AddTextIf(Province.MakeScope.Var('special_building').IsSet, Concatenate( Concatenate( 'building_', Province.MakeScope.Var('special_building').GetFlagName), '_desc')))]"
+												tooltip_visible = "[Not(IsGameViewOpen('holding_view'))]"
+											}
+
+											text_single = {
+												raw_text = "[AddTextIf(Not(Province.MakeScope.Var('special_building').IsSet), 'Empty slot,')]"
+											}
+
+											text_single = {
+												raw_text = "in [Province.GetNameNoTooltip]."
+											}
+
+											text_single = {
+												raw_text = "Tax [Province.GetHolding.GetIncome|1=],"
+												tooltip = "[Province.GetHolding.GetTaxTooltip]"
+
+											}
+											text_single = {
+												raw_text = "levies [Province.GetHolding.GetMaxLevySize|0]."
+												tooltip = "[Province.GetHolding.GetLeviesTooltip]"
+												# [GuiScope.SetRoot(Province.MakeScope).ScriptValue('building_levies')]
+											}
+
+											text_distance_capital = {}
+
+											# text_single = {
+											# 	raw_text = "[Province.GetTitle.GetDeFactoTopLiege.GetNameNoTierNoTooltip]."
+											# }
+
+											# char_name = {
+											# 	datacontext = "[Province.GetTitle.GetDeFactoTopLiege.GetHolder]"
+											# 	blockoverride "pre" {
+											# 		text_single = {
+											# 			raw_text = "Owner: "
+											# 		}
+											# 	}
+											#
+											# }
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					#TODO show your own region
+
+					visible = "[GetVariableSystem.HasValue('realm_tabs', 'rulers')]"
+
+					# close
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						blockoverride "text" {
+							raw_text = "Ruler browser."
+						}
+						onclick = "[GetVariableSystem.Clear('realm_tabs')]"
+						# shortcut = army_merge
+					}
+
+					scrollbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						blockoverride "scrollbox_margins" {
+							margin_top = 20
+						}
+						blockoverride "scrollbox_content" {
+
+							vbox_ruler_browser = {
+								blockoverride "exit" {
+								}
+								blockoverride "count" {
+									raw_text = "There are [EmptyScope.ScriptValue('all_landed_rulers')] landed rulers."
+								}
+							}
+						}
+					}
+
+					expand = { }
+				}
+
+				# macrobuilder
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[GetVariableSystem.HasValue('realm_tabs', 'macrobuilder')]"
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						raw_text = "Macro builder. Work in progress."
+						# visible = "[Not(GetVariableSystem.Exists('macrobuilder'))]"
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[Not(GetVariableSystem.Exists('macrobuilder'))]"
+
+						button_text = {
+							layoutpolicy_horizontal = expanding
+							onclick = "[GetVariableSystem.Set('macrobuilder', 'farms')]"
+							onclick = "[GetScriptedGui('build_farms').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							blockoverride "pre" {
+								spacing = 3
+								text_single = {
+									raw_text = "Build"
+								}
+								text_single = {
+									raw_text = "[GetPlayer.MakeScope.ScriptValue('build_farms')]"
+								}
+							}
+							blockoverride "text" {
+								raw_text = "[Localize('building_type_cereal_fields_01')]."
+							}
+						}
+
+						button_text = {
+							visible = "[GetScriptedGui('is_king_or_emperor').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetVariableSystem.Set('macrobuilder', 'titles')]"
+							onclick = "[GetScriptedGui('integrate_titles').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							layoutpolicy_horizontal = expanding
+							blockoverride "text" {
+								raw_text = "Integrate [GetDataModelSize(GetPlayer.MakeScope.GetList('integrate_titles'))] counties."
+							}
+						}
+
+						button_text = {
+							onclick = "[GetVariableSystem.Set('macrobuilder', 'low control counties')]"
+							onclick = "[GetScriptedGui('low_control_counties').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							layoutpolicy_horizontal = expanding
+							blockoverride "text" {
+								raw_text = "Increase control in [GetPlayer.MakeScope.ScriptValue('low_control_counties')] counties."
+							}
+						}
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[Not(GetVariableSystem.HasValue('macrobuilder', 'titles'))]"
+
+						button_text = {
+							shortcut = find_title_shortcut
+							blockoverride "pre" {
+								spacing = 3
+								text_single = {
+									raw_text = "[Select_CString(GetPlayer.MakeScope.Var('build_in_vassals').IsSet, 'checked', 'unchecked')],"
+								}
+							}
+							blockoverride "text" {
+								raw_text = "Include vassals, V."
+							}
+							onclick = "[GetScriptedGui('build_in_vassals').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('build_farms').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('low_control_counties').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						}
+
+						expand = { }
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						# visible = "[GetVariableSystem.Exists('macrobuilder')]"
+						visible = "[GetVariableSystem.HasValue('macrobuilder', 'farms')]"
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							button_text = {
+								blockoverride "pre" {
+									spacing = 3
+									text_single = {
+										raw_text = "[GetDataModelSize(GetPlayer.MakeScope.GetList('build_farms'))]"
+										visible = "[GetVariableSystem.HasValue('macrobuilder', 'farms')]"
+									}
+								}
+								blockoverride "text" {
+									raw_text = "[GetVariableSystem.Get('macrobuilder')], go back, B."
+								}
+								shortcut = go_back
+								onclick = "[GetVariableSystem.Clear('macrobuilder')]"
+							}
+
+							button_text = {
+								onclick = "[GetScriptedGui('build_farms').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								blockoverride "text" {
+									raw_text = "Reload with Shift E."
+								}
+								shortcut = map_mode_11
+							}
+
+							expand = { }
+						}
+
+						button_text = {
+							layoutpolicy_horizontal = expanding
+							onclick = "[GetScriptedGui('replace_buildings').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('build_farms').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							visible = "[Not(GetPlayer.MakeScope.Var('build_in_vassals').IsSet)]"
+
+
+							blockoverride "pre" {
+								spacing = 3
+								text_single = {
+									raw_text = "[Select_CString(GetPlayer.MakeScope.Var('replace_buildings').IsSet, 'checked', 'unchecked')],"
+								}
+							}
+						    blockoverride "text" {
+						        raw_text = "include holdings with no empty slots."
+						    }
+						}
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[GetVariableSystem.HasValue('macrobuilder', 'titles')]"
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							button_text = {
+								blockoverride "pre" {
+									spacing = 3
+									text_single = {
+										raw_text = "[GetDataModelSize(GetPlayer.MakeScope.GetList('integrate_titles'))]"
+										visible = "[GetVariableSystem.HasValue('macrobuilder', 'titles')]"
+									}
+								}
+								blockoverride "text" {
+									raw_text = "[GetVariableSystem.Get('macrobuilder')], go back, B."
+								}
+								shortcut = go_back
+								onclick = "[GetVariableSystem.Clear('macrobuilder')]"
+							}
+
+							button_text = {
+								onclick = "[GetScriptedGui('integrate_titles').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								blockoverride "text" {
+									raw_text = "Reload with Shift E."
+								}
+								shortcut = map_mode_11
+							}
+
+							expand = { }
+						}
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[GetVariableSystem.HasValue('macrobuilder', 'low control counties')]"
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							button_text = {
+								blockoverride "pre" {
+									spacing = 3
+									text_single = {
+										raw_text = "[GetDataModelSize(GetPlayer.MakeScope.GetList('low_control_counties'))]"
+										visible = "[GetVariableSystem.HasValue('macrobuilder', 'low control counties')]"
+									}
+								}
+								blockoverride "text" {
+									raw_text = "[GetVariableSystem.Get('macrobuilder')], go back, B."
+								}
+								shortcut = go_back
+								onclick = "[GetVariableSystem.Clear('macrobuilder')]"
+							}
+
+							button_text = {
+								onclick = "[GetScriptedGui('low_control_counties').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								blockoverride "text" {
+									raw_text = "Reload with Shift E."
+								}
+								shortcut = map_mode_11
+							}
+
+							expand = { }
+						}
+					}
+
+					scrollbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						visible = "[GetVariableSystem.Exists('macrobuilder')]"
+						blockoverride "scrollbox_margins" {
+							margin_top = 20
+						}
+
+						blockoverride "scrollbox_content" {
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								datamodel = "[GetPlayer.MakeScope.GetList('build_farms')]"
+								visible = "[GetVariableSystem.HasValue('macrobuilder', 'farms')]"
+
+								item = {
+									button_text = {
+										layoutpolicy_horizontal = expanding
+										datacontext = "[Scope.GetProvince]"
+										datacontext = "[Province.GetHolding]"
+										onclick = "[OpenGameViewData('holding_view', Province.Self)]"
+										onclick = "[DefaultOnCoatOfArmsRightClick(Province.GetTitle.GetID)]"
+										onclick = "[GetVariableSystem.Set('county_tabs', 'holdings')]"
+
+									    blockoverride "text" {
+									        raw_text = "[Province.GetNameNoTooltip],"
+									    }
+										# [Province.GetCounty.GetName]
+										blockoverride "extra" {
+											spacing = 3
+
+											text_single = {
+												tooltip = "[Holding.GetTaxTooltip]"
+												raw_text = "[Holding.GetIncome|1] tax."
+											}
+
+											text_single = {
+												raw_text = "in [Province.GetCounty.GetName]."
+											}
+										}
+									}
+								}
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								datamodel = "[GetPlayer.MakeScope.GetList('integrate_titles')]"
+								visible = "[GetVariableSystem.HasValue('macrobuilder', 'titles')]"
+
+								item = {
+									button_text = {
+										layoutpolicy_horizontal = expanding
+										datacontext = "[Scope.Title]"
+										using = prov_click
+									    blockoverride "text" {
+									        raw_text = "[Title.GetNameNoTierNoTooltip], in [Title.GetDeJureLiege.GetNameNoTierNoTooltip], [Title.GetDeJureLiege.GetDeJureLiege.GetNameNoTierNoTooltip]."
+									    }
+									}
+								}
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								datamodel = "[GetPlayer.MakeScope.GetList('low_control_counties')]"
+								visible = "[GetVariableSystem.HasValue('macrobuilder', 'low control counties')]"
+
+								item = {
+									button_text = {
+										layoutpolicy_horizontal = expanding
+										datacontext = "[Scope.Title]"
+										datacontext = "[Scope.Title.GetProvince]"
+										using = prov_click
+									    blockoverride "text" {
+									        raw_text = "[Title.GetCountyData.GetControlLevel|0], [Title.GetNameNoTierNoTooltip]."
+									    }
+										blockoverride "extra" {
+											text_single = {
+												visible = "[GetScriptedGui('has_county_corruption_trigger_sgui').IsShown( GuiScope.SetRoot( Title.MakeScope ).End )]"
+												raw_text = " Corrupted."
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+
+					expand = { }
+				}
+
+
+				expand = { }
+			}
+			# sp sorting
+			vbox = {
+				using = Window_Background_No_Edge
+				layoutpolicy_vertical = expanding
+				layoutpolicy_horizontal = expanding
+				visible = no# "[GetVariableSystem.Exists('sp_sorting')]"
+				margin = { 5 0 }
+				alwaystransparent = no
+
+				button = {
+					onclick = "[GetVariableSystem.Clear('sp_sorting')]"
+					using = close_window_ocr
+					shortcut = map_mode_2
+				}
+
+				vbox = {
+					layoutpolicy_vertical = expanding
+					layoutpolicy_horizontal = expanding
+					spacing = 3
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						raw_text = "Sort buildings by:"
+						margin_bottom = 5
+						background = { using = Background_Area_Border_Solid }
+					}
+
+					expand = { }
+				}
+				expand = {}
+			}
+		}
+	}
+
+	my_realm_window = {
+		using = vanilla
+		alwaystransparent = no
+	}
+}
+
+######################################################
+################ TYPES AND TEMPLATES #################
+######################################################
+
+types OCR
+{
+	# AGOT
+	type vassal_expected_legitimacy_text = text_single {
+		visible = "[And( Character.IsVassalOf( GetPlayer ), Not( Character.IsPlayer ) )]"
+
+		raw_text = "Legit [Character.GetLegitimacyExpectationsOfLiege]."
+
+		tooltip = "VASSAL_EXPECTED_LEGITIMACY_TT"
+	}
+
+	type button_tab_rulers = button_text {
+		visible = "[Not(GetVariableSystem.HasValue('realm_tabs', 'rulers'))]"
+		layoutpolicy_horizontal = expanding
+		onclick = "[GetVariableSystem.Set('realm_tabs', 'rulers')]"
+		onclick = "[GetScriptedGui('all_rulers').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+		blockoverride "pre" {
+			text_single = {
+				raw_text = "G,"
+			}
+			text_single = {
+				raw_text = " showing"
+				visible = "[GetVariableSystem.HasValue('realm_tabs', 'rulers')]"
+			}
+		}
+		blockoverride "text" {
+			raw_text = "Browse rulers by region"
+		}
+		blockoverride "dot" {
+
+		}
+		shortcut = army_merge
+	}
+
+	type hbox_vassal_stats = hbox {
+		spacing = 3
+		text_single = {
+			text = "MY_REALM_WINDOW_VASSAL_OPINION"
+			tooltip = "MY_REALM_WINDOW_VASSAL_OPINION_TT"
+		}
+
+		, = {}
+
+		text_single = {
+			raw_text = "average is [GetPlayer.MakeScope.ScriptValue('avg_vassal_opinion')|0]."
+			margin_right = 3
+		}
+
+		text_single = {
+			tooltip = "[GetPlayer.GetDreadBreakdown]"
+			name = "dread_name"
+			raw_text = "[dread|E]: [GetPlayer.GetDread|0],"
+		}
+
+		hbox = {
+			spacing = 3
+			tooltip = "[Character.GetVassalLimitTooltip]"
+
+			text_single = {
+				text = "MY_REALM_WINDOW_VASSAL_LIMIT"
+			}
+
+			text_single = {
+				text = "MY_REALM_WINDOW_VASSAL_LIMIT_VALUE"
+			}
+
+			text_single = {
+				raw_text = "counts or above."
+			}
+		}
+	}
+
+	type button_ruler_browser = button {
+		shortcut = army_merge
+		# onclick = "[ToggleGameView( 'my_realm' )]"
+		onclick = "[GetVariableSystem.Toggle('ruler_browser')]"
+		visible = "[And(Not(Or(Or(IsGameViewOpen('army'), IsGameViewOpen('my_realm')), IsGameViewOpen('men_at_arms'))), GetPlayer.IsValid)]"
+		using = close_character
+	}
+}
+
+
+template agot_show_law {
+	visible = "[And( And( Not( GuiLawGroup.GetLawGroup.HasFlag( 'realm_law' ) ), Not( GuiLawGroup.GetLawGroup.HasFlag( 'admin_law' ) ) ), GuiLawGroup.IsAvailable )]"
+}

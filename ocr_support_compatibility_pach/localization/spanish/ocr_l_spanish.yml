@@ -1,0 +1,402 @@
+﻿l_spanish:
+ 
+ #checkist:
+ # 1. copy all locs
+ # 2. commit
+ # 3. push
+ # 4. Disconnect
+ # 5. upload
+
+ mod_version: "Versione mod 4.2 per CK3 1.17, ultimo DLC non ancora supportato."
+ mod_changes: "Risolto un problema per cui a volte veniva selezionato un vassallo di un vassallo nell'elenco dei soggetti.\nReso chiaro che la finestra delle decisioni mostra solo le questioni accettate.\nAggiornamento 4.1: Aggiunti i limiti della mappa e un mucchio di statistiche per domini, fedi e culture.\nAggiunte scorciatoie per evitare conflitti con NVDA:\nQ chiude i menu come Esc, Canc chiude tutte le finestre sullo schermo.\nA può essere usato al posto di Control A. Le vecchie scorciatoie restano, non vengono sostituite.\nRielaborata la finestra della fede per mostrare più informazioni e renderla più facile da navigare.\nAggiunti gli edifici all'elenco dei possedimenti nella vista della contea.\nNota, questo potrebbe non mostrare gli edifici aggiunti nelle patch recenti, saranno aggiornati in seguito.\nAggiunta un'intestazione alla vista della contea, che elenca possedimento, contea, signore supremo, titoli de iure e coordinate brevi.\nRisolto il problema che impediva di accettare inviti alle attività."
+
+##########################################
+
+ admin_efficiency: "$ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_VALUE$ efficienza amministrativa"
+ bav_counties_of_wrong_faith: "#medium [Title.MakeScope.ScriptValue('bav_counties_wrong_faith')|0]#! contee di fede sbagliata"
+
+ vassal_directive_improve_development_list_name: "Usa l'[councillor_task|E] #V $task_develop_county$#!"
+ vassal_directive_train_commanders_list_name: "Usa l'[councillor_task|E] #V $task_train_commanders$#!"
+ vassal_directive_build_maa_list_name: "Recluta [men_at_arms|E]"
+ vassal_directive_convert_faith_list_name: "Usa l'[councillor_task|E] #V $task_conversion$#!"
+ vassal_directive_convert_culture_list_name: "Usa l'[councillor_task|E] #V $task_promote_culture$#!"
+ vassal_directive_improve_cultural_acceptance_list_name: "Usa l'[councillor_task|E] #V $task_accept_culture$#!"
+ vassal_directive_building_focus_fortification_list_name: "Costruisci [fortification_buildings|E]"
+ vassal_directive_building_focus_military_list_name: "Costruisci [military_buildings|E]"
+ vassal_directive_building_focus_economy_list_name: "Costruisci [economic_buildings|E]"
+ no_directive_list_name: "Nessuna direttiva"
+ all_available_vassals_for_directive_name: ""
+
+ admin_theme_balanced_list_name: "$admin_theme_balanced_short$"
+ admin_theme_civilian_list_name: "$admin_theme_civilian_short$"
+ admin_theme_military_list_name: "$admin_theme_military_short$"
+ admin_theme_frontier_list_name: "$admin_theme_frontier_short$"
+ admin_theme_imperial_list_name: "$admin_theme_imperial_short$"
+ admin_theme_naval_list_name: "$admin_theme_naval_short$"
+
+ have_wrong_state_faith_counties_name: "Fede non di stato"
+ have_wrong_culture_counties_name: "Cultura non tua"
+
+# impostazioni messaggi
+custom_message_ocr: "Scrivi un messaggio personalizzato, Shift W."
+search_results_ocr: "risultati della ricerca per [MessageSettingsWindow.GetTextFilter]."
+will_pause_ocr: "metterà in pausa,"
+wont_pause_ocr: "non metterà in pausa,"
+message_search_tip_ocr: "Fai clic qui per cercare un messaggio."
+start_typing_message_ocr: "Puoi iniziare a digitare, Esc o Invio per terminare. Per cancellare, Control A e Backspace."
+
+editbox_tip_ocr: "Fai clic qui per digitare."
+write_message_type_tip_ocr: "Puoi iniziare a digitare, Tab passerà al campo successivo."
+edit_date_ocr: "Regola la data qui sotto. Clic destro per cambiare di 5."
+today_date_ocr: "Oggi è: [GetCurrentDate.GetStringLong]"
+decrease_one_ocr: "diminuisci di uno."
+increase_one_ocr: "aumenta di uno."
+stop_text_edit_ocr: "Interrompi modifica testo, Esc."
+title_custom_message_ocr: "Titolo: [CustomMessageWindow.GetTitle]."
+desc_custom_message_ocr: "Descrizione: [CustomMessageWindow.GetDescription]."
+
+see_tooltip: "vedi descrizione"
+LOADING_TIP: "Suggerimento di caricamento:"
+
+ # resources_topbar: "Gold: [GetPlayer.GetGold|0]. $CURRENT_BALANCE$.\nPrestige: [GetPlayer.GetPrestige|0]"
+ north: "Nord"
+ northeast: "Nord-est"
+ east: "Est"
+ southeast: "Sud-est"
+ south: "Sud"
+ southwest: "Sud-ovest"
+ west: "Ovest"
+ northwest: "Nord-ovest"
+ no_direction: ""
+ trait_tooltip: "[Trait.GetNameNoTooltip(Character.Self)], [Trait.GetTraitCategoryLabel].\n[Trait.GetFullDescription(Character.Self, GetPlayer.GetFaith.Self)]."
+
+ test1: "speed_1"
+
+ prev_changes: ""
+ agot_ocr_version: ""
+ agot_ocr_mod_changes: ""
+ ocr_tc_submod_version: ""
+ ocr_tc_submod_changes: ""
+
+foreign_affairs_text: "$no_affairs$$affairs_wars$"
+affairs_wars: "[AddTextIf( GreaterThan_CFixedPoint( GuiScope.SetRoot(Character.MakeScope).ScriptValue('num_of_wars'), '(CFixedPoint)0' ), GuiScope.SetRoot(Character.MakeScope).ScriptValue('num_of_wars'))]"
+# affairs_
+# affairs_
+# affairs_
+# no_affairs: "[AddTextIf(IsDataModelEmpty(CharacterWindow.GetDiplomacyItems), 'No foreign affairs')]"
+no_affairs: "1"
+game_saved: "Partita salvata"
+
+war_started: "data"
+total_war_men: "soldati totali"
+all_wars: "tutte le guerre"
+vassal_wars: "guerre dei vassalli"
+realm_wars: "guerre del tuo dominio"
+holy_wars: "guerre sante"
+great_holy_wars: "crociate"
+civil_wars: "guerre civili"
+
+goose_desc: "[GetPlayer.MakeScope.Var('test').GetValue]"
+
+world_africa_north_west: "Africa nord-occidentale"
+world_africa_north_east: "Africa nord-orientale"
+
+undress_interaction:0 "Spogliati"
+undress_interaction_desc:0 "Togliti i vestiti"
+dress_interaction:0 "Vestiti"
+dress_interaction_desc:0 "Rimettiti i vestiti"
+realms_text: "Testo domini"
+
+powner: "[SCOPE.GetValue('test_distance')]"
+empty: "0"
+
+distance_days: "[SCOPE.GetValue('saved_distance')] giorni"
+distance_months: "[GuiScope.SetRoot(MakeScopeValue(SCOPE.GetValue('saved_distance'))).ScriptValue('distance_in_months')|0] mesi"
+test_prov: "HoldingView.GetProvince"
+
+#TODO pulire le distanze
+AnyProvinceDistance: "[GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('saved_distance', MakeScopeValue(GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('province_distance'))).Custom('ProvinceDistance')]"
+AnyProvinceDirection: "[GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('second', Province.MakeScope).Custom('province_direction')]"
+
+ProvinceDistance: "[GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('saved_distance', MakeScopeValue(GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('second', HoldingView.GetProvince.MakeScope).ScriptValue('province_distance'))).Custom('ProvinceDistance')]"
+ArmyDistance: "[GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('second', Army.GetLocation.MakeScope).ScriptValue('province_distance')|0] giorni"
+
+FortDistance: "[GuiScope.SetRoot(Army.GetLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3')|0] giorni"
+
+FortDistanceDays: "[GuiScope.SetRoot(Army.GetLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3')|0] giorni"
+FortDistanceMonths: "[GuiScope.SetRoot(Army.GetLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3_months')|0] mesi"
+
+AnyProvinceDistanceDirection: "$AnyProvinceDistance$ $AnyProvinceDirection$."
+
+#####
+# nuovo
+# si aspetta Army e Province
+# direzione dall'armata alla provincia
+ArmyProvinceDistance: "[SelectLocalization(GreaterThan_CFixedPoint(GuiScope.SetRoot(Army.GetLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('squared_province_distance'), '(CFixedPoint)3600'), 'ArmyDistanceMonths', 'ArmyDistanceDays')] $ArmyDirection$."
+
+# poiché può esserci un sacco di fortezze, usiamo una versione meno precisa
+ArmyDistanceDays: "[GuiScope.SetRoot(Army.GetLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3')|0] giorni"
+ArmyDistanceMonths: "[GuiScope.SetRoot(Army.GetLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3_months')|0] mesi"
+
+ArmyDirection: "[GuiScope.SetRoot(Army.GetLocation.MakeScope).AddScope('second', Province.MakeScope).Custom('province_direction')]"
+
+####
+# nuovo
+# si aspetta Province
+# direzione dalla tua capitale alla provincia
+OutlinerProvinceDistance: "[SelectLocalization(GreaterThan_CFixedPoint(GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('squared_province_distance'), '(CFixedPoint)3600'), 'OutlinerDistanceMonths', 'OutlinerDistanceDays')] $OutlinerDirection$."
+
+# versione meno precisa, copiata dalle fortezze
+OutlinerDistanceDays: "[GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3')|0] giorni"
+OutlinerDistanceMonths: "[GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3_months')|0] mesi"
+
+OutlinerDirection: "[GuiScope.SetRoot(GetPlayer.GetCapitalLocation.MakeScope).AddScope('second', Province.MakeScope).Custom('province_direction')]"
+
+####
+#####
+# nuovo
+# per finestra di combattimento
+# direzione dall'armata alla provincia
+CombatProvinceDistance: "[SelectLocalization(GreaterThan_CFixedPoint(GuiScope.SetRoot(Combat.GetProvince.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('squared_province_distance'), '(CFixedPoint)3600'), 'CombatDistanceMonths', 'CombatDistanceDays')] $CombatDirection$."
+
+CombatDistanceDays: "[GuiScope.SetRoot(Combat.GetProvince.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3')|0] giorni"
+CombatDistanceMonths: "[GuiScope.SetRoot(Combat.GetProvince.MakeScope).AddScope('second', Province.MakeScope).ScriptValue('square_root_of_distance_3_months')|0] mesi"
+
+CombatDirection: "[GuiScope.SetRoot(Combat.GetProvince.MakeScope).AddScope('second', Province.MakeScope).Custom('province_direction')]"
+
+####
+
+fabricate_claim_title: "Fabbrica una pretesa su [county.GetName], tenuta da [county.GetHolder.GetNameNoTooltip]"
+convert_faith_title: "Converti la fede [county.GetCountyData.GetFaith.GetAdjective] in [county.GetName]"
+
+active_task_warning: "L'attuale incarico del tuo [councillor.GetActiveCouncilTask.GetPositionNamePossesive], [councillor.GetActiveCouncilTask.GetTaskTypeOrDefault.GetName] [councillor.GetActiveCouncilTask.GetTaskTarget], verrà interrotto"
+task_integrate_title_title: "Integra [county.GetName] nel tuo titolo primario, [GetPlayer.GetPrimaryTitle.GetNameNoTooltip]"
+
+task_increase_control_title: "Aumenta il controllo in [county.GetName]"
+
+task_develop_county_title: "Sviluppa [county.GetName], attualmente [county.GetCountyData.GetDevelopmentLevel]"
+task_promote_culture_title: "Promuovi la cultura [GetPlayer.GetCulture.GetName] in [county.GetName] al posto della [county.GetCountyData.GetCulture.GetName]"
+task_accept_culture_title: "Aumenta l'accettazione della [county.GetCountyData.GetCulture.GetName], attualmente [GetPlayer.GetCulture.GetAcceptance( county.GetCountyData.GetCulture)|0]%, presente in [county.GetName]"
+task_convince_dejure_title: "Convinci [county.GetHolder.GetTopLiege.GetPrimaryTitle.GetNameNoTierNoTooltip] a cedere [county.GetName] a [county.GetDeJureLiege.GetNameNoTooltip]"
+task_find_secrets_title: "Trova segreti alla corte di [target_character.GetNameNoTooltip]"
+
+barony_controller_text: "[controller.Char.GetNameOrMeNoTooltip]"
+
+NOT_you: "Non tu"
+NOT_your_vassal: "Non è un tuo vassallo"
+
+holding: "possedimento"
+
+msg_building_done_ocr: "Costruzione completata"
+
+VassalName: "[Character.GetFirstNameNoTooltip], [Character.GetTitleAsNameNoTooltip] di [Character.GetPrimaryTitle.GetNameNoTierNoTooltip]."
+
+MAA_INCREASE_SIZE_SHORT: "$MAA_INCREASE_SIZE$, +[Regiment.GetMAAType.GetStackSize] unità, Costo: [MenAtArmsType.GetCostString( GetPlayer )], Pagina su."
+MAA_DECREASE_SIZE_SHORT: "$MAA_DECREASE_SIZE$, -[Regiment.GetMAAType.GetStackSize] unità, Pagina giù."
+MAA_CHANGE_SIZE_MAINTENANCE: "Costi per ogni livello:\n[MenAtArmsType.GetReinforcementCostString( GetPlayer )],\n[MenAtArmsType.GetFullStrengthMaintenanceCostForPlayerString]."
+
+new_distance_months: "[Divide_CFixedPoint(DistanceToCapital(HoldingView.GetProvince.MakeScope), '(CFixedPoint)31')|0] mesi"
+new_distance_days: "[DistanceToCapital(HoldingView.GetProvince.MakeScope)|0] giorni"
+
+message_test: "È successo qualcosa!"
+messge_test_desc: "Oh, l'umanità!"
+
+sighting_ocr: "[ROOT.Province.GetCounty.GetTitle.Custom('GetAnimalType_province')|U] [hunt_sighting_no_prefix|E]"
+gift_army: "Armata donata"
+
+all_tour_targets: "tutti [GetDataModelSize( GetPlayer.MakeScope.GetList('maa_origins'))]"
+
+save_filters: "Confermi il salvataggio dei filtri?"
+load_filters: "Confermi il caricamento dei filtri?"
+
+ # contest_aptitude_non_existent:0 "Hopeless"
+
+ participate_in_tournament: "Partecipa, tasto E.\nCome spettatore non ottieni nulla da questo torneo, ma non rischi neanche nulla"
+ spectate_tournament: "Assisti, Shift E.\nCome partecipante, otterrai [trait_level_track_xp|E] e un [prize|E] se ti comporti bene."
+
+ ACTIVITYLOCALE_WINDOW_PHASE_IN_PROGRESS_TOOLTIP: "Ultima azione: [ActivityLocaleWindow.GetLastWeeklyPulseEffectData.GetTitle|V][AddLine( ActivityLocaleWindow.GetLastWeeklyPulseEffectData.GetEffectText )]\n\n[Subtract_int32( DaysPerWeek, GetTicksSinceLastProgress( Activity.GetID, DaysPerWeek ) )|V] giorni alla prossima occasione di [activity_phase_action|E]."
+
+ tournament_phase_wresting: "$tournament_phase_wrestling$"
+
+byzantine_court: "[Character.Custom('ByzantineOrConstantinople')]\nAdornata di marmo e oro, una volta a cupola incombe sui visitatori, con ampi mosaici che raffigurano Cristo, i Santi e gli imperatori di un tempo.\nIl trono è fiancheggiato da due leoni d'oro con un ingegnoso meccanismo, che a volte battono la coda sul pavimento e ruggiscono.\nAttorno alla sala, incontri clandestini hanno luogo in nicchie velate e sui balconi sopraelevati."
+mediterranean_court: "Corte in stile mediterraneo, con colonne e pareti di marmo che sorreggono un soffitto a volta. Un camino è acceso in un angolo e la luce del sole entra da una grande rosone.\n[Character.Custom('MediGrandeur')]"
+constantinople_palace: "Chrysotriklinos, il grande palazzo di Costantinopoli."
+byzantine_palace: "Corte bizantina, il gioiello del [Character.GetPrimaryTitle.GetTierAsNameNoTooltip]."
+
+western_court: "Corte in stile occidentale, con mura di blocchi di pietra grezza e strette finestre ad arco. È riscaldata da un grande camino, con lampadari appesi a un tetto spiovente di legno.\n[Character.Custom('WestGrandeur')]"
+
+mena_court: "Corte in stile mediorientale, con sottili colonne di marmo e motivi geometrici che adornano le pareti. La luce macchia il pavimento filtrando attraverso grate alle finestre.\n[Character.Custom('MenaGrandeur')]"
+
+indian_court: "Corte in stile indiano, con pareti di pietra scolpite in intricati bassorilievi, ampie colonne sfaccettate e alte finestre in elaborate nicchie.\n[Character.Custom('IndianGrandeur')]"
+
+unknown_court: "Nessun visitatore è stato in grado di descrivere questa corte al ritorno a casa, come se ci fosse un difetto nella sua stessa definizione.\nSegnala questo problema al creatore della mod."
+
+low_grandeur: "Il pavimento e le pareti sono grezzi e sporchi, e la sala è priva di qualsiasi arredamento, a parte il trono."
+western_mid_grandeur: "Ben tenuta, con un lungo tappeto a motivi triangolari che conduce al trono."
+western_high_grandeur: "Un grande salone, decorato con vasi, panche e sgabelli, illuminato da alti candelabri e vecchie lampade a parete. Un lungo tappeto a motivi geometrici conduce al trono."
+
+mediterranean_mid_grandeur: "La pietra è lucidata, un lungo tappeto rosso conduce al trono e ai cortigiani è offerta una panca di pietra su cui sedere."
+mediterranean_high_grandeur: "Un grande salone, con alti candelabri e panche di pietra per i cortigiani. Un lungo tappeto rosso conduce al trono."
+
+mena_mid_grandeur: "Ben tenuta, con un tappeto con una stella a 8 punte al centro della sala."
+mena_high_grandeur: "Un grande salone, con tappeti e cuscini per i cortigiani, decorato con vasi e lampade a olio accese. Un tappeto più grande con una stella a 8 punte si trova al centro della sala."
+
+indian_mid_grandeur: "Ben tenuta, con un ampio tappeto con disegni elaborati davanti al trono."
+indian_high_grandeur: "Un grande salone, con tappeti e cuscini per i cortigiani e molte lampade a olio accese, con un ampio tappeto dai motivi elaborati davanti al trono."
+
+legendary_inspiration_skill_short: "leggendaria"
+masterful_inspiration_skill_short: "magistrale"
+competent_inspiration_skill_short: "competente"
+decent_inspiration_skill_short: "discreta"
+
+warn_console_title: "apri la console"
+warn_console_text: "attenzione, questo disabiliterà gli obiettivi! Procedere?"
+
+### vecchie modalità mappa ###
+
+epidemics_0: "$epidemics$"
+epidemics_0_desc: "$epidemics_desc$"
+
+legends_0: "$legends$"
+legends_0_desc: "$legends_desc$"
+
+terrain_0: "$terrain$"
+terrain_0_desc: "$terrain_desc$"
+
+baronies_0: "$baronies$"
+baronies_0_desc: "$baronies_desc$"
+
+counties_0: "$counties$"
+counties_0_desc: "$counties_desc$"
+
+realms_0: "$realms$"
+realms_0_desc: "$realms_desc$"
+
+simple_realms_0: "$simple_realms$"
+simple_realms_0_desc: "$simple_realms_desc$"
+
+cultures_0: "$cultures$"
+cultures_0_desc: "$cultures_desc$"
+
+court_languages_0: "$court_languages$"
+court_languages_0_desc: "$court_languages_desc$"
+
+players_0: "$players$"
+players_0_desc: "$players_desc$"
+
+dejure_counties_0: "$dejure_counties$"
+dejure_counties_0_desc: "$dejure_counties_desc$"
+
+dejure_duchies_0: "$dejure_duchies$"
+dejure_duchies_0_desc: "$dejure_duchies_desc$"
+
+dejure_kingdoms_0: "$dejure_kingdoms$"
+dejure_kingdoms_0_desc: "$dejure_kingdoms_desc$"
+
+dejure_empires_0: "$dejure_empires$"
+dejure_empires_0_desc: "$dejure_empires_desc$"
+
+realm_areas_0: "$realm_areas$"
+realm_areas_0_desc: "$realm_areas_desc$"
+
+rally_points_0: "$rally_points$"
+rally_points_0_desc: "$rally_points_desc$"
+
+select_men_at_arms_origin_0: "$select_men_at_arms_origin$"
+select_men_at_arms_origin_0_desc: "$select_men_at_arms_origin_desc$"
+
+religions_0: "$religions$"
+religions_0_desc: "$religions_desc$"
+
+simple_terrain_0: "$simple_terrain$"
+simple_terrain_0_desc: "$simple_terrain_desc$"
+
+grant_titles_0: "$grant_titles$"
+grant_titles_0_desc: "$grant_titles_desc$"
+
+revoke_title_0: "$revoke_title$"
+revoke_title_0_desc: "$revoke_title_desc$"
+
+lease_out_baronies_0: "$lease_out_baronies$"
+lease_out_baronies_0_desc: "$lease_out_baronies_desc$"
+
+grant_vassal_0: "$grant_vassal$"
+grant_vassal_0_desc: "$grant_vassal_desc$"
+
+retract_vassal_0: "$retract_vassal$"
+retract_vassal_0_desc: "$retract_vassal_desc$"
+
+declare_war_0: "$declare_war$"
+declare_war_0_desc: "$declare_war_desc$"
+
+county_development_0: "$county_development$"
+county_development_0_desc: "$county_development_desc$"
+
+council_county_task_0: "$council_county_task$"
+council_county_task_0_desc: "$council_county_task_desc$"
+
+diplomacy_0: "$diplomacy$"
+diplomacy_0_desc: "$diplomacy_desc$"
+
+debug_character_pools_0: "$debug_character_pools$"
+debug_character_pools_0_desc: "$debug_character_pools_desc$"
+
+debug_ai_war_coordinator_targets_0: "$debug_ai_war_coordinator_targets$"
+debug_ai_war_coordinator_targets_0_desc: "$debug_ai_war_coordinator_targets_desc$"
+
+houses_0: "$houses$"
+houses_0_desc: "$houses_desc$"
+
+government_0: "$government$"
+government_0_desc: "$government_desc$"
+
+map_editor_clean_0: "$map_editor_clean$"
+map_editor_clean_0_desc: "$map_editor_clean_desc$"
+
+map_editor_progress_0: "$map_editor_progress$"
+map_editor_progress_0_desc: "$map_editor_progress_desc$"
+
+council_integrate_duchy_task_0: "$council_integrate_duchy_task$"
+council_integrate_duchy_task_0_desc: "$council_integrate_duchy_task_desc$"
+
+council_integrate_kingdom_task_0: "$council_integrate_kingdom_task$"
+council_integrate_kingdom_task_0_desc: "$council_integrate_kingdom_task_desc$"
+
+council_convert_faith_task_0: "$council_convert_faith_task$"
+council_convert_faith_task_0_desc: "$council_convert_faith_task_desc$"
+
+council_increase_control_task_0: "$council_increase_control_task$"
+council_increase_control_task_0_desc: "$council_increase_control_task_desc$"
+
+council_promote_culture_task_0: "$council_promote_culture_task$"
+council_promote_culture_task_0_desc: "$council_promote_culture_task_desc$"
+
+council_accept_culture_task_0: "$council_accept_culture_task$"
+council_accept_culture_task_0_desc: "$council_accept_culture_task_desc$"
+
+council_develop_county_task_0: "$council_develop_county_task$"
+council_develop_county_task_0_desc: "$council_develop_county_task_desc$"
+
+council_fabricate_claim_task_0: "$council_fabricate_claim_task$"
+council_fabricate_claim_task_0_desc: "$council_fabricate_claim_task_desc$"
+
+council_find_secrets_task_0: "$council_find_secrets_task$"
+council_find_secrets_task_0_desc: "$council_find_secrets_task_desc$"
+
+debug_visual_regions_0: "$debug_visual_regions$"
+debug_visual_regions_0_desc: "$debug_visual_regions_desc$"
+
+debug_geographical_region_0: "$debug_geographical_region$"
+debug_geographical_region_0_desc: "$debug_geographical_region_desc$"
+
+struggle_0: "$struggle$"
+struggle_0_desc: "$struggle_desc$"
+
+activity_planner_0: "$activity_planner$"
+activity_planner_0_desc: "$activity_planner_desc$"
+
+travel_planner_0: "$travel_planner$"
+travel_planner_0_desc: "$travel_planner_desc$"
+
+economy_buildings_0: "$economy_buildings$"
+economy_buildings_0_desc: "$economy_buildings_desc$"

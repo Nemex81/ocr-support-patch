@@ -1,0 +1,185 @@
+﻿l_spanish:
+
+COURT_POSITION_TOGGLE_AUTOMATION: "Quando libera:\\n[AddTextIf( CourtPositionType.HasAutomationNone( GetPlayer.Self ), 'Selezionata,')] Nessuna automazione.\\n[AddTextIf( CourtPositionType.HasAutomationShowEvent( GetPlayer.Self ), 'Selezionata,' )] Suggerisci i migliori candidati nell'evento.\\n[AddTextIf( CourtPositionType.HasAutomationAssignBest( GetPlayer.Self ), 'Selezionata,' )] Assegna automaticamente il candidato con la più alta [aptitude|e], se disponibile.\\n[AddTextIf( CourtPositionType.HasAutomationAssignBestOrEvent( GetPlayer.Self ), 'Selezionata,' )] Assegna automaticamente il candidato con la più alta [aptitude|e], o notifica con evento."
+
+admin_theme_civilian_benefits: "Vantaggi dei [vassal|E]:\\nAumenta l'[governor_efficiency|E] in base allo [stewardship|E]\\n[GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.GetSkill('stewardship')] stewardship aggiunge [Multiply_CFixedPoint( IntToFixedPoint(GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.GetSkill('stewardship')), EmptyScope.ScriptValue('efficiency_skill_increase_value'))] percento di efficienza, $theme_skill_increase$\\nl'[influence|E] guadagnata dalla costruzione di [buildings|E] nelle [counties|E] tenute è aumentata"
+
+admin_theme_military_benefits: "Vantaggi dei [vassal|E]:\\nAumenta l'[governor_efficiency|E] in base al [martial|E]\\n[GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.GetSkill('martial')] martial aggiunge [Multiply_CFixedPoint( IntToFixedPoint(GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.GetSkill('martial')), EmptyScope.ScriptValue('efficiency_skill_increase_value'))] percento di efficienza, $theme_skill_increase$"
+
+admin_theme_frontier_benefits: "#emphasis #bold Vantaggi del [liege|E]:#!#!\\nSblocca l'[interaction|E] #high $frontier_influence_war_interaction$#! che consente al signore di chiedere al [vassal|E] di dichiarare guerra per un [title|E] di livello [duchy|E] estero\\n\\n#emphasis #bold Vantaggi del [vassal|E]:#!#!\\nAumenta l'[governor_efficiency|E] in base al [prowess|E]\\n [GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.GetSkill('prowess')] prowess aggiunge [Multiply_CFixedPoint( IntToFixedPoint(GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.GetSkill('prowess')), EmptyScope.ScriptValue('efficiency_skill_increase_value'))] percento di efficienza, $theme_skill_increase$\\nSblocca il [casus_belli|E] #high $EXPANSION_DUCHY_CB_NAME$#!\\nAbilita i [raiding|E]"
+
+admin_theme_imperial_benefits: "Vantaggi dei [vassal|E]:\\nAumenta l'[governor_efficiency|E] in base al [prestige_level|E]\\n Aggiunge [GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.MakeScope.ScriptValue('theme_influence_bonus')] percento di efficienza, [EmptyScope.ScriptValue('efficiency_currency_level_increase_value')|+0%/] per ogni livello\\nAumenta il rating della [powerful_family|E], attuale è [GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.GetHouse.GetHousePower]\\nNon può avere la carica revocata senza una [revoke_title_reason|E]"
+
+admin_theme_naval_benefits: "Vantaggi del [liege|E]:\\nSblocca l'[interaction|E] $frontier_influence_war_interaction$ che consente al signore di chiedere al [vassal|E] di dichiarare guerra per un [title|E] di livello [duchy|E] estero\\n\\nVantaggi del [vassal|E]:\\nAumenta l'[governor_efficiency|E] per ogni [GetBuilding('common_tradeport_01').GetTypeName] controllato\\nHa [GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.MakeScope.ScriptValue('num_tradeports')], aggiungendo [GetPlayer.MakeScope.Var('modified_vassal').GetCharacter.MakeScope.ScriptValue('num_tradeports_bonus')] percento di efficienza, [EmptyScope.ScriptValue('efficiency_building_increase_value')|+0%/] per ogni [GetBuilding('common_tradeport_01').GetTypeName]\\nSblocca il [casus_belli|E] $NAVAL_EXPANSION_DUCHY_CB_NAME$"
+
+theme_skill_increase: "[EmptyScope.ScriptValue('efficiency_skill_increase_value')|+1%/] per ogni punto di [skill|E]."
+
+ADMIN_WINDOW_THEME_ADMINISTRATION_NO_VALID_SUCCESSOR_TT: "Questo [theme|e] non ha candidati validi per la linea di successione e tornerà al signore supremo"
+
+ADMIN_WINDOW_THEME_ADMINISTRATION_LOCAL_PLAYER_HAS_CANDIDATE_WINNING_TT: "Il tuo candidato sta vincendo nella linea di successione per questo [theme|e]"
+
+ADMIN_WINDOW_THEME_ADMINISTRATION_LOCAL_PLAYER_HAS_CANDIDATE_LOSING_TT: "Il tuo candidato sta perdendo nella linea di successione per questo [theme|e]"
+
+ADMIN_WINDOW_THEME_ADMINISTRATION_LOCAL_PLAYER_HAS_INVESTED_WINNING_TT: "Il tuo candidato investito sta vincendo nella linea di successione per questo [theme|e]"
+
+ADMIN_WINDOW_THEME_ADMINISTRATION_LOCAL_PLAYER_HAS_INVESTED_LOSING_TT: "Il tuo candidato investito sta perdendo nella linea di successione per questo [theme|e]"
+
+HIRED_TROOPS_VIEW_REASSIGN: "Riassegna a un altro tema"
+
+improve_development: " Migliora lo [development|E], la capitale di [DirectedVassal.GetHerHis] ha [DirectedVassal.GetCapitalLocation.GetCounty.GetDevelopmentLevel] sviluppo, [DirectedVassal.GetCapitalLocation.GetCounty.GetTitle.MakeScope.ScriptValue('development_rate_sval')|=1] progresso al mese"
+
+train_commanders: " Potenzia gli [men_at_arms|E], ha [DirectedVassal.MakeScope.ScriptValue('every_maa')] con [DirectedVassal.MakeScope.ScriptValue('total_maa')] uomini totali"
+
+build_maa: " Recluta [men_at_arms|E], paga [DirectedVassal.MakeScope.ScriptValue('total_maa_maintenance')|1] oro per mantenerli e [DirectedVassal.GetBalance|=1] reddito"
+
+convert_faith: " Converti [faith|E], ha [DirectedVassal.MakeScope.ScriptValue('wrong_faith_counties')] contee che non sono [DirectedVassal.GetFaith.GetAdjectiveNoTooltip]"
+
+convert_culture: " Promuovi [culture|E], ha [DirectedVassal.MakeScope.ScriptValue('wrong_culture_counties')] contee che non sono [DirectedVassal.GetCulture.GetNameNoTooltip]"
+
+improve_cultural_acceptance: " Migliora l'[cultural_acceptance|E][AddLocalizationIf( GreaterThan_CFixedPoint(DirectedVassal.MakeScope.ScriptValue('wrong_culture_counties'), '(CFixedPoint)0'), 'lowest_culture_county')]"
+
+lowest_culture_county: ", la più bassa è [DirectedVassal.MakeScope.Var('lowest_culture').Culture.GetNameNoTooltip] con [DirectedVassal.MakeScope.ScriptValue('lowest_culture_county')|=0]"
+
+building_focus_fortification: " Costruisci [fortification_buildings|E], ha [DirectedVassal.MakeScope.ScriptValue('num_of_castles')] forti, [DirectedVassal.MakeScope.ScriptValue('average_level_of_forts')|1] livello medio dei forti"
+
+building_focus_military: " Costruisci [military_buildings|E], leve totali [DirectedVassal.MakeScope.ScriptValue('realm_total_levies')] prodotte nel regno"
+
+building_focus_economy: " Costruisci [economic_buildings|E], totale [DirectedVassal.MakeScope.ScriptValue('realm_total_tax')|=1] oro prodotto nel regno"
+
+remove_directive: " Rimuovi la [directive|E] esistente"
+
+bm_story_content_available_copy: "Contenuto speciale della storia disponibile, vedi descrizione comandi."
+
+action_new_task_contract_desc: "[task_contract.GetTaskContractRequest]"
+
+action_new_task_contract_label: "Tier $contract_tier_text$ [task_contract.GetType.GetName], contratto[AddTextIf(task_contract.IsCriminal, ' criminale')], $contract_direction$, da [recipient.GetShortUINameNoTooltip]"
+
+contract_direction: "[DistanceTo(MyCapital, task_contract.GetLocation)|0] [DaysTo(MyCapital, task_contract.GetLocation)] [Direction(MyCapital, task_contract.GetLocation)]"
+
+contract_tier_text: "[AddTextIf(task_contract.IsEasy, '1')][AddTextIf(task_contract.IsMedium, '2')][AddTextIf(task_contract.IsHard, '3')]"
+
+action_new_tier_3_task_contract_label: "$action_new_task_contract_label$"
+
+action_new_criminal_task_contract_label: "$action_new_task_contract_label$"
+
+action_new_governance_issue_label: "Tier $contract_tier_text$ [task_contract.GetType.GetName], questione, $contract_direction$ in [task_contract.GetLocation.GetNameNoTooltip]"
+
+action_new_tier_3_governance_issue_label: "$action_new_governance_issue_label$"
+
+DOMICILE_WINDOW_REMOVE_BUILDING_REFUND: "Demolisci [DOMICILE_BUILDING_TYPE.GetName] e rimborsa [DOMICILE_BUILDING_TYPE.GetRefundDesc], Hotkey X."
+
+JOM_BULLET_WITH_TAB:0 ""
+BULLET_WITH_TAB:0 ""
+BULLET:0 ""
+MODIFIER_BULLET:0 ""
+EFFECT_LIST_BULLET:0 ""
+TAB:0 ""
+SHORT_TAB:0 ""
+FOCUS_TOOLTIP_TEXT:0 "[FOCUS.GetDescription( CHARACTER.GetID )]\\n[FOCUS.GetEffectDescription]."
+LONG_FOCUS_TEXT:2 "[FocusType.GetDescription( Character.GetID )] \\n[FocusType.GetEffectDescription].\\nEsperienza di [FocusType.GetLifestyle.GetName]: [FocusType.GetGainAmount( GetPlayer.Self )|P0]/mese#!."
+UNLOCKED_PERKS:0 "[perks|E] sbloccati [Character.GetPerkPointsUsed( Lifestyle.Self )] su [Lifestyle.GetPerksInLifestyle]."
+EXPERIENCE:0 "[experience|E]: [Character.GetLifestyleXp( Lifestyle.Self, '(bool)yes' )|0] su [Lifestyle.GetXpPerLevel]."
+
+## leggende
+
+CREATE_TRIGGERED_LEGEND_TOOLTIP: "[TriggeredLegendSeed.GetDescription( Character.Self )]\\nCosto:[GetCostString( TriggeredLegendSeed.GetSeed.GetCreationCost( Character.Self ) )]. $LEGEND_MAINTENANCE_LABEL$ [GetIntervalCostString( TriggeredLegendSeed.GetSeed.GetMaintenanceCost( Character.Self ), 'monthly' )].[AddLine( Character.GetCanCreateTriggeredLegendDesc( TriggeredLegendSeed.Self ) )]"
+
+LEGEND_SEEDS: "[Add_int32( GetDataModelSize( Character.GetLegendSeeds ), GetDataModelSize( LocalPlayerCachedData.GetTriggeredLegendSeeds ) )] [legend_seeds|E]"
+
+# suggerimenti
+
+ACTION_IS_VISIBLE_READ_UNREAD:1 "[Select_CString( ImportantActionItem.IsRead, '#same', '#medium')] [ImportantActionItem.GetLabel]#!,"
+ACTION_IS_VISIBLE_READ_UNREAD_COMBINED:1 "[Select_CString( ImportantActionItem.IsRead, '#same', '#medium;italic')] [ImportantActionItem.GetCombinedLabel]#!,"
+
+action_powerful_vassal_not_on_council_combined_label:1 "[recipient.GetUINameNoTooltip], [recipient.GetMilitaryStrengthText] uomini, [recipient.GetOpinionOf( GetPlayer )|+] opinione"
+
+action_can_call_ally_label:2 "Puoi contare sul tuo alleato, [recipient.GetPrimaryTitle.GetNameNoTierNoTooltip]$ally_info$"
+action_can_call_ally_combined_label:0 "[recipient.GetPrimaryTitle.GetNameNoTooltip], [recipient.GetFirstNameNoTooltip]$ally_info$"
+ally_info: ", [recipient.GetMilitaryStrengthText] uomini. Costo [recipient.MakeScope.ScriptValue('prestige_cost_call_ally')|0] prestigio[AddTextIf(recipient.IsAtWar, Concatenate('.', JoinText(recipient.GetSheHe, ' ', ' è in guerra')))]"
+
+action_has_any_display_cb_on_combined_label:0 "[recipient.GetPrimaryTitle.GetNameNoTooltip], [recipient.GetFirstNameNoTooltip], [recipient.GetMilitaryStrengthText] uomini, [recipient.GetGold|0] oro[AddTextIf(recipient.IsAtWar, JoinText(recipient.GetSheHe, '. ', ' è in guerra'))]"
+
+at_war_text: "[AddTextIf(recipient.IsAtWar, JoinText(recipient.GetSheHe, '. ', ' è in guerra'))]"
+action_can_assign_guardian_combined_label:1 "[recipient.GetRelationToString( GetPlayer )], [recipient.GetShortUINameNoTooltip], [recipient.GetAge]"
+
+action_can_ransom_label:0 "Puoi riscattare [recipient.GetShortUINameNoTooltip] per [recipient.Custom('ransom_cost_situation_loc')] oro"
+
+liege_cannot_pay_ransom: "[SCOPE.ScriptValue('current_char_gold')|0] su [SCOPE.ScriptValue('ransom_cost_situation')|0]"
+liege_can_pay_ransom: "[SCOPE.ScriptValue('ransom_cost_situation')|0]"
+
+action_can_ransom_combined_label:0 "[recipient.GetShortUINameNoTooltip] per [recipient.Custom('ransom_cost_situation_loc')] oro"
+
+gives_war_score: ". Attenzione, contribuisce al punteggio di guerra"
+
+action_can_propose_alliance_to_family_member_label:0 "Puoi negoziare un'alleanza con [recipient.GetShortUINameNoTooltip], [recipient.GetMilitaryStrengthText] uomini$at_war_text$[AddTextIf( Or( ObjectsEqual( GetPlayer, recipient.GetLiege ), ObjectsEqual( GetPlayer, recipient.GetTopLiege )),', tuo vassallo')]"
+action_can_propose_alliance_to_family_member_combined_label:0 "[recipient.GetUINameNoTooltip], [recipient.GetMilitaryStrengthText] uomini$at_war_text$[AddTextIf( Or( ObjectsEqual( GetPlayer, recipient.GetLiege ), ObjectsEqual( GetPlayer, recipient.GetTopLiege )),', tuo vassallo')]"
+
+action_can_call_dynasty_member_label:2 "Puoi contare sul tuo membro della dinastia [recipient.GetShortUINameNoTooltip], [recipient.GetMilitaryStrengthText] uomini$at_war_text$"
+action_can_call_dynasty_member_combined_label:0 "[recipient.GetPrimaryTitle.GetNameNoTierNoTooltip], [recipient.GetFirstNameNoTooltip], [recipient.GetMilitaryStrengthText] uomini$at_war_text$"
+
+LIFESTYLE_POINTS_TO_USE_TEXT:0 "Talenti da sbloccare: [Character.GetPerkPoints( Lifestyle.Self )]"
+
+AGENT_MAY_ACCEPT:0 "può tentare ($ACCEPTANCE|=0$)"
+APPOINT_COURT_POSITION_VIEW_APTITUDE:0 "[AppointCourtPositionView.GetAptitudeTextFor(Character.Self)],"
+
+MV_LEVY_MAINTENANCE:0 "@gold_icon! [MilitaryView.GetLevyGoldExpense|1]"
+
+MAX_KNIGHT_COUNT:2 "$knight_culture_player_plural_no_tooltip$: #high [GetKnightCount( GetPlayer.Self )] su [GetKnightLimit( GetPlayer.Self )]#!"
+
+KNIGHTS_CURRENT_MAX:0 "[GetKnightCount( GetPlayer.Self )|V] su [GetKnightLimit( GetPlayer.Self )|V]"
+
+BANNER_MEN_AT_ARMS_NOT_MAX:0 "$UNRAISED|0$ su $RAISE_MAX|0$"
+
+SOLDIERS_INFO:0 "$CURRENT$ su $MAX$"
+
+MAA_CURRENT_SIZE:1 "Dimensione [Regiment.GetMAAChunkCount] su [Regiment.CalcMaxMAAChunkCount]"
+
+MAA_COUNTERS_LABEL:1 "[counters|EU] [MenAtArmsType.GetCountersString]."
+
+MAA_SIZE_CHANGE:1 "+[Regiment.GetMAAType.GetStackSize] unità"
+
+MAA_INCREASE_SIZE_TOOLTIP:1 "$MAA_INCREASE_SIZE$, Costo: [MenAtArmsType.GetCostString( GetPlayer )], Pagina su.\\n$MAA_SIZE_CHANGE$, la manutenzione aumenterà di:\\n[MenAtArmsType.GetReinforcementCostString( GetPlayer )],\\n[MenAtArmsType.GetFullStrengthMaintenanceCostForPlayerString]."
+
+MAA_DECREASE_SIZE_TOOLTIP:1 "$MAA_DECREASE_SIZE$, Pagina giù.\\nLa manutenzione sarà ridotta di:\\n[MenAtArmsView.GetReduceSizeBlockers][MenAtArmsType.GetReinforcementCostString( GetPlayer )],\\n[MenAtArmsType.GetFullStrengthMaintenanceCostForPlayerString]."
+
+MAA_MAINTENANCE:3 "[Select_CString( And( Regiment.IsAtFullStength, Not(Regiment.IsRaised)), '#high ', '#weak ' )]$MAA_UNRAISED_MAINTENANCE_TEXT$: [Regiment.CalcUnraisedCost]/mese#!."
+MAA_RAISED_MAINTENTANCE:0 "[MenAtArmsView.GetFullStrengthText]\\nPagando la manutenzione completa."
+MAA_UNRAISED_MAINTENANCE:0 "[MenAtArmsView.GetFullStrengthText]\\nPagando la manutenzione non sollevata"
+MAA_MAINTENANCE_SHORT:0 "[Regiment.CalcMaintenanceCost]/mese."
+MAA_REINFORCEMENT_COST_ENTRY:2 "[Select_CString( Or( Not(Regiment.IsAtFullStength), Regiment.IsRaised), '#high ' , '#weak ' )]$MAA_FULL_MAINTENANCE_TEXT$: [Regiment.CalcReinforcementCost]/mese#!."
+MAA_REINFORCEMENT:1 "[MenAtArmsView.GetFullStrengthText]\\nPagando la manutenzione completa."
+MAA_FULL_STENGTH:0 "Forza piena in $TIME$."
+MAA_AT_FULL_STRENGTH:0 "A forza piena."
+
+DYNASTY_PERK_TOOLTIP:0 "[Select_CString(DynastyView.CanSelectPerk( DynastyPerk.Self ), 'Sblocca', 'Talento')] [DynastyPerk.GetNameNoTooltip][AddTextIf(Dynasty.HasPerk( DynastyPerk.Self ), ', Sbloccato')].\\n[DynastyPerk.GetEffectDescription( Dynasty.GetDynast )]."
+UNIT_WILL_ARRIVE:0 "$NAME$, [DATE.GetTimeToDate]"
+UNIT_WILL_ARRIVE_RETREAT:1 "$NAME$, [DATE.GetTimeToDate]"
+
+VIRTUE_MODIFIER:0 "[TRAIT.GetName( GetPlayer )|L], [virtue|E]"
+SIN_MODIFIER:0 "[TRAIT.GetName( GetPlayer )|L], [sin|E]"
+
+OPINION_REASON_VIRTUOUS_TRAIT:0 "[TRAIT.GetName( CHARACTER.Self )|L], [virtue|E]"
+OPINION_REASON_SINFUL_TRAIT:0 "[TRAIT.GetName( CHARACTER.Self )|L], [sin|E]"
+
+NO_VIEW_HISTORY_EXISTS:0 "#T Mostra visualizzazione precedente#!\\n@warning_icon!#X Nessuna visualizzazione a cui tornare#!"
+GO_BACK_VIEW_HISTORY:0 "Torna a $VIEW_NAME$. Hotkey B."
+
+petition_liege_decision_option_council_seat:0 "Nomina al consiglio. Concedi il seggio del [council|E]"
+petition_liege_decision_option_pay_debt:0 "Sospendi il debito. Paga il [debt|E]"
+petition_liege_decision_option_war_aid:0 "Assistenza militare. Assisti nella [war|E] esterna"
+petition_liege_decision_option_vassal_war:0 "Pace del regno. Imponi la pace con i [vassals|E]"
+petition_liege_decision_option_faction_war:0 "Smantella fazione. Rompi la potente [faction|E]"
+petition_liege_decision_option_county_control:0 "Invia balivi. Aiuta a sollevare il [control|E] della [county|E]"
+petition_liege_decision_option_county_convert:0 "Sponsorizza sacerdoti. Aiuta a convertire le [counties|E]"
+petition_liege_decision_option_county_opinion:0 "Visita reale. Alza l'[county_opinion|E] nelle [counties|E]"
+petition_liege_decision_option_fortify_border:0 "Fortifica i confini. Rafforza le tue [counties|E] di confine"
+petition_liege_decision_option_title_liege:0 "Concedi pretesa. Concedi il [title|E] [claimed|E]"
+petition_liege_decision_option_title_vassal:0 "Trasferisci pretesa. Cedi il [title|E] [claimed|E] del [vassal|E]"
+petition_liege_decision_option_construct_city:0 "Urbanizza contea. Finanzia il [holding|E] [city|E]"
+petition_liege_decision_option_construct_temple:0 "Sottoscrivi tempio. Finanzia il [holding|E] [temple|E]"
+petition_liege_decision_option_development:0 "Reinsedia i soggetti. Aumenta lo [development|E] della [capital|E]"
+
+pay_homage_decision_option_submission:0 "Dimostra sottomissione, Non dare nulla"
+pay_homage_decision_option_gold:0 "...e Concedi regali, Dai [gold|E]"
+pay_homage_decision_option_hook:0 "...e Prometti un favore, Dai un [hook|E]"
+pay_homage_decision_option_contract:0 "...e Aumenta gli obblighi, Dai obblighi del [contract|E]"
