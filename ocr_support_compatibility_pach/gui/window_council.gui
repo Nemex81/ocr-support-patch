@@ -7,7 +7,7 @@ window = {
     widgetid = "council_window"
     datacontext = "[GetVariableSystem]"
     datacontext = "[CouncilWindow.GetCouncilOwner]"
-	layer = windows_layer
+    layer = windows_layer
     size = { 100% 100% }
     alwaystransparent = yes
     movable = no
@@ -27,14 +27,13 @@ window = {
         using = Window_Position_MainTab_Hide
     }
 
-    # INTERFACCIA OCR
+    # INTERFACCIA OCR (per giocatori ciechi) - ATTIVA quando NON esiste variabile 'ocr'
     widget = {
         name = "ocr_mode_content"
         using = ocr_window
         parentanchor = top|left
-        using = Window_Size_MainTab # serve per l'animazione di apertura
-        visible = "[Not(GetVariableSystem.Exists('ocr'))]"
-        #visible = "[GetVariableSystem.Exists('ocr')]"
+        using = Window_Size_MainTab
+        visible = "[Not(GetVariableSystem.Exists('ocr'))]"  # CORRETTO: OCR attiva quando 'ocr' NON esiste
         using = Window_Position_MainTab
 
         vbox = {
@@ -63,7 +62,6 @@ window = {
                 layoutpolicy_horizontal = expanding
                 layoutpolicy_vertical = expanding
                 visible = "[Not(GetVariableSystem.HasValue('council_tabs', 'kingsguard'))]"
-
 
                 vbox = {
                     layoutpolicy_horizontal = expanding
@@ -412,14 +410,12 @@ window = {
         }
     }
 
-
-    # INTERFACCIA STANDARD
+    # INTERFACCIA STANDARD (per giocatori normovedenti) - ATTIVA quando ESISTE variabile 'ocr'
     widget = {
         name = "normal_mode_content"
-        #using = vanilla_window
         parentanchor = top|right
         using = Window_Size_MainTab
-        visible = "[GetVariableSystem.Exists('ocr')]"
+        visible = "[GetVariableSystem.Exists('ocr')]"  # CORRETTO: Normale quando 'ocr' ESISTE
         using = Window_Position_MainTab
 
         margin_widget = {
@@ -452,6 +448,7 @@ window = {
                         button_tab = {
                             layoutpolicy_horizontal = expanding
                             text = "COUNCIL_WINDOW_PLAYER_COUNCIL"
+
                             down = "[And( CouncilWindow.IsPlayerCouncilShown, Not( GetVariableSystem.Exists( 'diarchy_tab' ) ) )]"
                             onclick = "[CouncilWindow.SetPlayerCouncil]"
                             onclick = "[GetVariableSystem.Clear( 'diarchy_tab' )]"
@@ -459,6 +456,7 @@ window = {
 
                         button_tab = {
                             visible = "[Not(GetPlayer.IsIndependentRuler)]"
+
                             down = "[And( CouncilWindow.IsLiegeCouncilShown, Not( GetVariableSystem.Exists( 'diarchy_tab' ) ) )]"
                             onclick = "[CouncilWindow.SetLiegeCouncil]"
                             onclick = "[GetVariableSystem.Clear( 'diarchy_tab' )]"
@@ -505,14 +503,129 @@ window = {
     }
 }
 
+widget = {
+    name = "potential_task_location_window"
+    size = { 100% 100% }
+
+    state = {
+        name = _show
+        using = Animation_FadeIn_Standard
+    }
+
+    state = {
+        name = _hide
+        using = Animation_FadeOut_Quick
+    }
+
+    portrait_council = {
+        datacontext = "[PotentialTaskLocationWindow.GetActiveTask.GetCouncillor]"
+        datacontext = "[PotentialTaskLocationWindow.GetTaskType.GetCouncilPosition]"
+        parentanchor = bottom|left
+        scale = 2
+        position = {-100 0}
+
+        blockoverride "portrait_button" {
+            intersectionmask = yes
+        }
+
+        blockoverride "mask" {
+            mask = "gfx/portraits/portrait_mask_blank.dds"
+        }
+
+        widget = {
+            parentanchor = bottom|left
+            position = { 85 -5 }
+
+            vbox = {
+                set_parent_size_to_minimum = yes
+                scale = 0.5
+                minimumsize = { 190 0 }
+
+                background = {
+                    texture = "gfx/interface/component_tiles/tile_title_bg_01.dds"
+                    spriteType = Corneredtiled
+                    spriteborder = { 40 8 }
+                    margin = { 10 0 }
+                    margin_right = 25
+                    texture_density = 2
+
+                    modify_texture = {
+                        name = "mask"
+                        texture = "gfx/interface/component_masks/mask_fade_horizontal_middle_thick.dds"
+                        blend_mode = alphamultiply
+                    }
+                }
+
+                text_label_left = {
+                    text = "COUNCIL_WINDOW_MAP_COUNCILLOR_TYPE"
+                    margin = { 5 5 }
+                    layoutpolicy_horizontal = expanding
+                    align = nobaseline
+                }
+
+                text_label_left = {
+                    text = "[PotentialTaskLocationWindow.GetActiveTask.GetCouncillor.GetUINameNoTooltip]"
+                    margin = { 5 5 }
+                    layoutpolicy_horizontal = expanding
+                    align = nobaseline
+                }
+            }
+        }
+    }
+
+    flowcontainer = {
+        parentanchor = top|hcenter
+        direction = vertical
+        scale = 1.2
+        position = {0 100 }
+
+        text_label_center = {
+            text = "COUNCIL_WINDOW_MAP_TASK_NAME"
+            parentanchor = hcenter
+            align = nobaseline
+            margin = { 10 4 }
+        }
+
+        text_label_center = {
+            text = "[PotentialTaskLocationWindow.GetTaskType.GetName]"
+            default_format = "#high"
+            using = Font_Size_Medium
+            parentanchor = hcenter
+            align = nobaseline
+            margin = { 10 4 }
+        }
+
+        text_label_center = {
+            text = "COUNCIL_WINDOW_MAP_INSTRUCTION"
+            parentanchor = hcenter
+            align = nobaseline|hcenter
+            margin = { 50 4 }
+        }
+    }
+
+    icon = {
+        using = Background_Label_Center
+        parentanchor = bottom|hcenter
+        size = { 400 85 }
+        position = { 0 10 }
+
+        button_primary_big = {
+            name = "close_assignment_window"
+            text = BACK_LABEL
+            parentanchor = center
+            onclick = "[PotentialTaskLocationWindow.Close]"
+            tooltip = "COUNCIL_TASK_CANCEL_ASSIGNMENT"
+            shortcut = "close_window"
+        }
+    }
+}
 
 ######################################################
 ################ TYPES AND TEMPLATES #################
 ######################################################
 
 types CouncilWindow {
-    type council_task_info = vbox
-    {
+    type council_task_info = vbox {
         name = "task"
         datacontext = "[ActiveCouncilTask.GetTaskTypeOrDefault]"
         visible = "[Character.IsValid]"
@@ -564,8 +677,6 @@ types CouncilWindow {
         }
         agot_inf_council_task = {}
     }
-}
-
 
     type widget_councillor_item = widget {
         size = { 260 250 }
@@ -1081,10 +1192,9 @@ types CouncilWindow {
                 council_task_info = { layoutpolicy_horizontal = expanding }
                 block "assist_task" {}
             }
-        
-	}
+        }
+    }
 }
-
 
 types CouncilTaskTypes {
     type invalid_potential_council_task_icon_tooltip_widget = widget {
@@ -1113,8 +1223,6 @@ types CouncilTaskTypes {
             }
         }
     }
-}
-
 
     type council_task_icon_tooltip_widget_base = widget {
         size = { 50 50 }
@@ -1155,19 +1263,15 @@ types CouncilTaskTypes {
         }
     }
 
-
     type council_task_icon_tooltip_widget = council_task_icon_tooltip_widget_base {
         datacontext = "[GuiPotentialCouncilTask.GetDummyTaskOrActualIfActive]"
         blockoverride "task_info_heading" { text = COUNCIL_TASK_TT }
         blockoverride "progress_visiblity" { visible = "[And( Not( ActiveCouncilTask.GetTaskType.IsInfiniteTask ), GuiPotentialCouncilTask.IsActive ) ]" }
     }
 
-
     type council_task_map_icon_tooltip_widget = council_task_icon_tooltip_widget_base {
         blockoverride "task_info_heading" { text = COUNCIL_TASK_MAP_TT }
     }
-
-
 
     type vbox_council_layout = vbox {
         vbox = {
@@ -1505,7 +1609,6 @@ types CouncilTaskTypes {
         expand = { layoutpolicy_vertical = growing }
     }
 
-
     type kurultai_hbox = hbox {
         widget_councillor_item = {
             layoutpolicy_horizontal = expanding
@@ -1762,7 +1865,7 @@ types CouncilTaskTypes {
             }
         }
     }
-
+}
 
 types OCR {
     type widget_councillor_item_ocr = widget {
@@ -2040,7 +2143,6 @@ types OCR {
         widget_councillor_item = { using = vanilla }
     }
 
-
     type vbox_council_layout_ocr = vbox {
         vbox = {
             using = ocr
@@ -2204,7 +2306,6 @@ types OCR {
         expand = { layoutpolicy_vertical = growing }
     }
 
-
     type council_line_item_ocr = vbox {
         datacontext = "[GuiCouncilPosition.GetActiveCouncilTask]"
         datacontext = "[ActiveCouncilTask.GetTaskTypeOrDefault]"
@@ -2265,7 +2366,7 @@ types OCR {
             }
         }
     }
-
+}
 
 types AGOT {
     type agot_kingsguard_tab_layout_ocr = container { visible = no }
@@ -2285,4 +2386,3 @@ template agot_show_court_chaplain {
 template agot_show_court_chaplain_selected {
     visible = "[GetVariableSystem.HasValue('council_focus', 'priest')]"
 }
-
