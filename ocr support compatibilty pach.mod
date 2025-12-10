@@ -1,6 +1,5 @@
 version="v1.0"
 tags={
-	"translation"
 	"Fixes"
 	"Accessibility"
 	"Compatibility"
