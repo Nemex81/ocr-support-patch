@@ -1,15 +1,27 @@
-######################################################
-##################### DECISIONS ######################
-######################################################
+##############################################################################################
+##
+## DECISIONS WINDOW - DUAL MODE (OCR + NORMAL)
+## 
+## STRATEGY 1: Separate Types for OCR and Vanilla
+## - vbox_decision_group_foldout_ocr: Compact layout for blind users (spacing=0, addrow=25)
+## - vbox_decision_group_foldout: Graphical layout for sighted users (spacing=4, addrow=50-65)
+##
+## SWITCH MODE: Shift+F11 (toggles 'ocr' variable)
+## - OCR OFF (not exists): Text-based interface for blind users
+## - OCR ON (exists): Full vanilla graphical interface for sighted users
+##
+## MODIFICATION: Vanilla mode has larger, more prominent decision icons
+##
+##############################################################################################
 
 window = {
 	name = "decisions_view"
-	parentanchor = top|right
 	layer = windows_layer
+	size = { 100% 100% }
+	alwaystransparent = yes
 	movable = no
 
-	# Dimensione finestra madre al 100% per permettere entrambe le modalità
-	size = { 100% 100% }
+	datacontext = "[GetVariableSystem]"
 	
 	state = {
 		name = _show
@@ -24,20 +36,18 @@ window = {
 		using = Sound_WindowHide_Standard
 	}
 
-	#################################################################
-	### MODALITÀ NON VEDENTE - BLIND / OCR MODE (default)         ###
-	### Visible when 'ocr' variable does NOT exist                 ###
-	#################################################################
+	#####################################################################
+	### MODALITÀ NON VEDENTE - BLIND MODE (default)                   ###
+	### Visible when 'ocr' variable does NOT exist                     ###
+	### Uses compact OCR-optimized types                               ###
+	#####################################################################
+	
 	widget = {
 		name = "ocr_mode_content"
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		using = ocr_window
 		parentanchor = top|left
 		
-		# I vincoli di posizione/dimensione sono applicati QUI per l'OCR
-		using = Window_Position_MainTab
-		using = Window_Size_MainTab
-
 		vbox = {
 			using = ocr_margins
 
@@ -99,12 +109,12 @@ window = {
 
 					vbox = {
 						name = "decision_groups_container"
-						spacing = 2
+						spacing = 0
 						layoutpolicy_horizontal = expanding
 						datamodel = "[DecisionsView.GetDecisionGroupItems]"
 
 						item = {
-							vbox_decision_group_foldout = {}
+							vbox_decision_group_foldout_ocr = {}
 						}
 					}
 				}
@@ -147,19 +157,19 @@ window = {
 		}
 	}
 
-	#################################################################
-	### MODALITÀ NORMO VEDENTE - SIGHTED / VISUAL MODE           ###
-	### Visible when 'ocr' variable EXISTS (Shift+F11 toggles)    ###
-	### STILE VANILLA: finestra ridotta in alto a destra          ###
-	#################################################################
+	#####################################################################
+	### MODALITÀ NORMO VEDENTE - SIGHTED MODE                         ###
+	### Visible when 'ocr' variable EXISTS (Shift+F11 toggles)        ###
+	### Uses standard vanilla graphical types                          ###
+	### ICONS: Larger and more prominent (size 60%, alpha 0.8)        ###
+	#####################################################################
+	
 	widget = {
 		name = "normal_mode_content"
 		visible = "[GetVariableSystem.Exists('ocr')]"
-		
-		# Pattern vanilla: ancoraggio e dimensionamento come Factions
 		parentanchor = top|right
 		using = Window_Size_MainTab
-
+		
 		margin_widget = {
 			size = { 100% 100% }
 			margin_top = 30
@@ -168,9 +178,7 @@ window = {
 
 			widget = {
 				size = { 100% 100% }
-				using = Window_Background
-				using = Window_Decoration
-
+				
 				vbox = {
 					using = Window_Margins
 
@@ -259,7 +267,7 @@ window = {
 								datamodel = "[DecisionsView.GetDecisionGroupItems]"
 
 								item = {
-									vbox_decision_group_foldout = {}
+									vbox_decision_group_foldout_vanilla = {}
 								}
 							}
 						}
@@ -299,6 +307,8 @@ window = {
 
 						expand = {}
 					}
+
+					expand = {}
 				}
 			}
 		}
@@ -311,7 +321,82 @@ window = {
 
 types Decisions
 {
-	type vbox_decision_group_foldout = vbox {
+	###############################################################
+	### OCR TYPE - Compact layout for blind users              ###
+	### spacing = 0, addrow = 25 (minimal height)               ###
+	### ICONS: Standard size (45%, alpha 0.6) - UNCHANGED      ###
+	###############################################################
+	
+	type vbox_decision_group_foldout_ocr = vbox {
+		datacontext = "[DecisionGroupItem.GetType]"
+		spacing = 0
+		layoutpolicy_horizontal = expanding
+
+		oncreate = "[BindFoldOutContext]"
+		oncreate = "[PdxGuiFoldOut.Unfold]"
+
+		button_expandable_toggle_field = {
+			blockoverride "text" {
+				text = "[DecisionGroupItem.GetGroupTitle]"
+			}
+		}
+
+		vbox = {
+			visible = "[PdxGuiFoldOut.IsUnfolded]"
+			layoutpolicy_horizontal = expanding
+
+			fixedgridbox = {
+				name = "decisions_in_group"
+				datamodel = "[DecisionGroupItem.GetDecisions]"
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				addcolumn = 527
+				addrow = 25
+
+				item = {
+					vbox = {
+						layoutpolicy_horizontal = expanding
+
+						button_decision_entry_cached_ocr = {
+							datacontext = "[DecisionsViewItem.GetDecision]"
+							layoutpolicy_horizontal = expanding
+
+							blockoverride "button_size" {
+								minimumsize = { 527 25 }
+							}
+
+							blockoverride "size_illustration" {
+								minimumsize = { 527 25 }
+							}
+
+							blockoverride "decision_texture_icon" {
+								texture = "[DecisionsViewItem.GetDecisionPicture]"
+							}
+
+							blockoverride "decision_texture_highlight" {
+								texture = "[DecisionsViewItem.GetDecisionPicture]"
+							}
+
+							onclick = "[DecisionsViewItem.OnSelect]"
+							onclick = "[PdxGuiTriggerAllAnimations('decisions_detail_refresh')]"
+							down = "[DecisionsViewItem.IsSelected]"
+						}
+						expand = {}
+					}
+				}
+			}
+		}
+
+		expand = {}
+	}
+
+	###############################################################
+	### VANILLA TYPE - Graphical layout for sighted users      ###
+	### spacing = 4, addrow = variable 50-65 (standard height) ###
+	### ICONS: Larger and more prominent (60%, alpha 0.8)      ###
+	###############################################################
+	
+	type vbox_decision_group_foldout_vanilla = vbox {
 		datacontext = "[DecisionGroupItem.GetType]"
 		spacing = 4
 		layoutpolicy_horizontal = expanding
@@ -341,7 +426,7 @@ types Decisions
 					vbox = {
 						layoutpolicy_horizontal = expanding
 
-						button_decision_entry_cached = {
+						button_decision_entry_cached_vanilla = {
 							datacontext = "[DecisionsViewItem.GetDecision]"
 							layoutpolicy_horizontal = expanding
 
@@ -362,9 +447,10 @@ types Decisions
 							}
 
 							onclick = "[DecisionsViewItem.OnSelect]"
-							onclick = "[PdxGuiTriggerAllAnimations('decision_details_refresh')]"
+							onclick = "[PdxGuiTriggerAllAnimations('decisions_detail_refresh')]"
 							down = "[DecisionsViewItem.IsSelected]"
 						}
+						expand = {}
 					}
 				}
 			}
@@ -373,7 +459,11 @@ types Decisions
 		expand = {}
 	}
 
-	type button_decision_entry_cached = button_decision_entry {
+	###############################################################
+	### BUTTON TYPES - Separate for OCR and Vanilla            ###
+	###############################################################
+
+	type button_decision_entry_cached_ocr = button_decision_entry {
 		blockoverride "illustration_possible_check" {
 			visible = "[DecisionsViewItem.IsPossibleForPlayer]"
 		}
@@ -393,6 +483,46 @@ types Decisions
 		blockoverride "title_not_possible_check" {
 			visible = "[Not(DecisionsViewItem.IsPossibleForPlayer)]"
 		}
+		
+		# OCR: Standard icon size (45%, alpha 0.6)
+		blockoverride "icon_size" {
+			size = { 45% 100% }
+		}
+		
+		blockoverride "icon_alpha" {
+			alpha = 0.6
+		}
+	}
+
+	type button_decision_entry_cached_vanilla = button_decision_entry {
+		blockoverride "illustration_possible_check" {
+			visible = "[DecisionsViewItem.IsPossibleForPlayer]"
+		}
+
+		blockoverride "illustration_not_possible_check" {
+			visible = "[Not(DecisionsViewItem.IsPossibleForPlayer)]"
+		}
+
+		blockoverride "title_possible_check" {
+			visible = "[DecisionsViewItem.IsPossibleForPlayer]"
+		}
+
+		blockoverride "title2_not_possible_check" {
+			visible = "[Not(DecisionsViewItem.IsPossibleForPlayer)]"
+		}
+
+		blockoverride "title_not_possible_check" {
+			visible = "[Not(DecisionsViewItem.IsPossibleForPlayer)]"
+		}
+		
+		# VANILLA: Larger icons (60%, alpha 0.8) for better visibility
+		blockoverride "icon_size" {
+			size = { 60% 100% }
+		}
+		
+		blockoverride "icon_alpha" {
+			alpha = 0.8
+		}
 	}
 
 	type button_decision_entry = button_standard {
@@ -410,10 +540,10 @@ types Decisions
 			margin = { 2 2 }
 
 			block "size_illustration" {
-				size = { 100 100 }
+				size = { 100% 100% }
 			}
 
-			proportionalicon = {
+			proportional_icon = {
 				name = "illustration"
 
 				block "illustration_possible_check" {
@@ -421,7 +551,11 @@ types Decisions
 				}
 
 				parentanchor = right|top
-				size = { 45 100 }
+				
+				block "icon_size" {
+					size = { 45% 100% }
+				}
+				
 				mirror = horizontal
 
 				block "icon_alpha" {
@@ -438,16 +572,23 @@ types Decisions
 				}
 			}
 
-			proportionalicon = {
+			proportional_icon = {
 				block "illustration_not_possible_check" {
 					visible = "[Not(Decision.IsPossibleForPlayer)]"
 				}
 
 				parentanchor = right|top
-				size = { 45 100 }
+				
+				block "icon_size" {
+					size = { 45% 100% }
+				}
+				
 				mirror = horizontal
 				enabled = no
-				alpha = 0.6
+
+				block "icon_alpha" {
+					alpha = 0.6
+				}
 
 				block "decision_texture_highlight" {
 					texture = "[Decision.GetPicture(GetPlayer.Self)]"
@@ -761,6 +902,7 @@ types Contract
 								alpha = 0.9
 								datacontext = "[TaskContract.GetEmployer]"
 								onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+
 								tooltipwidget = {
 									container_character_tooltip = {}
 								}
