@@ -1,6 +1,16 @@
-######################################################
-##################### FACTIONS #######################
-######################################################
+##############################################################################################
+##
+## FACTIONS WINDOW - DUAL MODE (OCR + NORMAL)
+## 
+## STRATEGY 1: Separate Types for OCR and Vanilla
+## - vbox_faction_item_ocr: Compact text layout for blind users
+## - vbox_faction_item: Full graphical layout for sighted users
+##
+## SWITCH MODE: Shift+F11 (toggles 'ocr' variable)
+## - OCR OFF (not exists): Text-based interface for blind users (LEFT side)
+## - OCR ON (exists): Full vanilla graphical interface for sighted users (RIGHT side)
+##
+##############################################################################################
 
 window = {
 	name = "factions_window"
@@ -10,8 +20,9 @@ window = {
 	movable = no
 	layer = windows_layer
 	
-	# Dimensione finestra madre al 100% per permettere entrambe le modalità
+	# Full screen container to allow both modes
 	size = { 100% 100% }
+	alwaystransparent = yes
 
 	state = {
 		name = _show
@@ -27,20 +38,18 @@ window = {
 		on_finish = "[GetVariableSystem.Set( 'factions_view_tabs', 'against_you' )]"
 	}
 
-	#################################################################
-	### MODALITÀ NON VEDENTE - BLIND / OCR MODE (default)         ###
-	### Visible when 'ocr' variable does NOT exist                 ###
-	#################################################################
+	#####################################################################
+	### MODALITÀ NON VEDENTE - BLIND MODE (default)                   ###
+	### Visible when 'ocr' variable does NOT exist                     ###
+	### Uses compact OCR-optimized types                               ###
+	#####################################################################
+	
 	widget = {
 		name = "ocr_mode_content"
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		using = ocr_window
 		parentanchor = top|left
 		
-		# Posizione e dimensione per OCR
-		using = Window_Position_MainTab
-		using = Window_Size_MainTab
-
 		vbox = {
 			using = ocr_margins
 
@@ -63,15 +72,18 @@ window = {
 			vbox = {
 				layoutpolicy_horizontal = expanding
 
-				# OCR tabs as text buttons
 				button_text = {
 					layoutpolicy_horizontal = expanding
 					onclick = "[GetVariableSystem.Set( 'factions_view_tabs', 'against_you' )]"
 					shortcut = speed_1
 					visible = "[Not(IsLandlessAdventurer(GetPlayer))]"
 					blockoverride "pre" {
-						text_single = { raw_text = "[Localize('FACTIONS_WINDOW_TARGETING_FACTIONS')]," }
-						text_single = { raw_text = "tab 1." }
+						text_single = {
+							raw_text = "[Localize('FACTIONS_WINDOW_TARGETING_FACTIONS')],"
+						}
+						text_single = {
+							raw_text = "tab 1."
+						}
 						text_single = {
 							visible = "[GetVariableSystem.HasValue( 'factions_view_tabs', 'against_you' )]"
 							raw_text = "Selected"
@@ -86,8 +98,12 @@ window = {
 					shortcut = speed_2
 					blockoverride "pre" {
 						spacing = 3
-						text_single = { raw_text = "[Localize('FACTIONS_WINDOW_MY_FACTIONS')]," }
-						text_single = { raw_text = "tab 2." }
+						text_single = {
+							raw_text = "[Localize('FACTIONS_WINDOW_MY_FACTIONS')],"
+						}
+						text_single = {
+							raw_text = "tab 2."
+						}
 						text_single = {
 							visible = "[GetVariableSystem.HasValue( 'factions_view_tabs', 'against_liege' )]"
 							raw_text = "Selected"
@@ -100,12 +116,12 @@ window = {
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
 
-				# Against you (OCR version)
 				scrollbox = {
 					name = "against_you"
 					visible = "[And( GetVariableSystem.HasValue( 'factions_view_tabs', 'against_you' ), Not( IsLandlessAdventurer( GetPlayer ) ) ) ]"
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
+
 					using = Animation_Tab_Switch
 
 					blockoverride "scrollbox_content" {
@@ -119,7 +135,7 @@ window = {
 								text = "FACTIONS_WINDOW_TARGETING_FACTIONS"
 							}
 
-							## Factions against Me (OCR items)
+							## Factions against Me
 							vbox = {
 								name = "targeting_factions"
 								layoutpolicy_horizontal = expanding
@@ -144,21 +160,34 @@ window = {
 									visible = "[Not(FactionsWindow.HasTargetingFactions)]"
 									layoutpolicy_horizontal = expanding
 									minimumsize = { 0 110 }
+
 									text = "FACTIONS_WINDOW_NOT_FACTION_AGAINST"
-									background = { using = Background_Area }
+
+									background = {
+										using = Background_Area
+									}
 								}
 
 								vbox = {
 									layoutpolicy_horizontal = expanding
 									margin = { 10 5 }
 									spacing = 10
-									background = { using = Background_Area_With_Header }
+
+									background = {
+										using = Background_Area_With_Header
+									}
 
 									hbox = {
 										layoutpolicy_horizontal = expanding
-										text_single = { raw_text = "[GetDataModelSize(FactionsWindow.GetCantCreateOrJoinFactionVassals)]" }
-										text_single = { raw_text = " " }
-										text_single = { text = "FACTIONS_WINDOW_CASSALC_CANT_CREATE_JOIN" }
+										text_single = {
+											raw_text = "[GetDataModelSize(FactionsWindow.GetCantCreateOrJoinFactionVassals)]"
+										}
+										text_single = {
+											raw_text = " "
+										}
+										text_single = {
+											text = "FACTIONS_WINDOW_CASSALC_CANT_CREATE_JOIN"
+										}
 										dot = {}
 										expand = {}
 									}
@@ -176,11 +205,23 @@ window = {
 
 												char_name = {
 													layoutpolicy_horizontal = expanding
-													blockoverride "width" { max_width = 250 fontsize_min = 14 }
+													blockoverride "width" {
+														max_width = 250
+														fontsize_min = 14
+													}
 													blockoverride "extra" {
-														text_single = { raw_text = "[Character.GetMilitaryStrengthText] men," }
-														text_single = { raw_text = "Opinion [Character.GetOpinionOf(GetPlayer)]." tooltip = "[Character.GetOpinionBreakdownText( GetPlayer )]" }
-														text_single = { raw_text = "Intimidated." visible = "[Character.ShouldShowDreadEffectIconFor( GetPlayer )]" tooltip = "[Character.GetDreadEffectTooltipFor( GetPlayer )]" }
+														text_single = {
+															raw_text = "[Character.GetMilitaryStrengthText] men,"
+														}
+														text_single = {
+															raw_text = "Opinion [Character.GetOpinionOf(GetPlayer)]."
+															tooltip = "[Character.GetOpinionBreakdownText( GetPlayer )]"
+														}
+														text_single = {
+															raw_text = "Intimidated."
+															visible = "[Character.ShouldShowDreadEffectIconFor( GetPlayer )]"
+															tooltip = "[Character.GetDreadEffectTooltipFor( GetPlayer )]"
+														}
 													}
 													tooltip = "[CantCreateOrJoinFactionVassal.GetTooltip]"
 												}
@@ -189,12 +230,37 @@ window = {
 													ignoreinvisible = yes
 													margin_left = 5
 													spacing = 5
-													text_single = { raw_text = "[Character.GetAge] years old." visible = "[Not(Character.IsAdult)]" }
-													text_single = { visible = "[And(Character.PlayerHasHooksOrHookableSecrets, EqualTo_int32(Character.GetHookOrHookableSecretsFrame, '(int32)2'))]" tooltip = "[Character.HookTooltip]" raw_text = "Strong hook." }
-													text_single = { raw_text = "Your friend." datacontext = "[GetRelation( 'friend' )]" visible = "[ScriptedRelation.HasRelationBetween( GetPlayer, Character.Self )]" }
-													text_single = { raw_text = "Your lover." datacontext = "[GetRelation( 'lover' )]" visible = "[ScriptedRelation.HasRelationBetween( GetPlayer, Character.Self )]" }
-													text_single = { raw_text = "Your ally." visible = "[GetScriptedGui('is_allied_to_liege').IsShown( GuiScope.SetRoot( Character.MakeScope ).End )]" }
-													text_single = { raw_text = "Imprisoned." visible = "[Character.IsImprisoned]" }
+													text_single = {
+														raw_text = "[Character.GetAge] years old."
+														visible = "[Not(Character.IsAdult)]"
+													}
+													text_single = {
+														visible = "[And(Character.PlayerHasHooksOrHookableSecrets, EqualTo_int32(Character.GetHookOrHookableSecretsFrame, '(int32)2'))]"
+														tooltip = "[Character.HookTooltip]"
+														raw_text = "Strong hook."
+													}
+
+													text_single = {
+														raw_text = "Your friend."
+														datacontext = "[GetRelation( 'friend' )]"
+														visible = "[ScriptedRelation.HasRelationBetween( GetPlayer, Character.Self )]"
+													}
+
+													text_single = {
+														raw_text = "Your lover."
+														datacontext = "[GetRelation( 'lover' )]"
+														visible = "[ScriptedRelation.HasRelationBetween( GetPlayer, Character.Self )]"
+													}
+
+													text_single = {
+														raw_text = "Your ally."
+														visible = "[GetScriptedGui('is_allied_to_liege').IsShown( GuiScope.SetRoot( Character.MakeScope ).End )]"
+													}
+
+													text_single = {
+														raw_text = "Imprisoned."
+														visible = "[Character.IsImprisoned]"
+													}
 												}
 											}
 										}
@@ -213,12 +279,12 @@ window = {
 					}
 				}
 
-				# Against liege (OCR)
 				scrollbox = {
 					name = "against_liege"
 					visible = "[Or( GetVariableSystem.HasValue( 'factions_view_tabs', 'against_liege' ), IsLandlessAdventurer( GetPlayer ) )]"
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
+
 					using = Animation_Tab_Switch
 
 					blockoverride "scrollbox_content" {
@@ -228,7 +294,10 @@ window = {
 							layoutpolicy_horizontal = expanding
 							spacing = 5
 
-							text_single = { layoutpolicy_horizontal = expanding raw_text = "[Localize('FACTION_WINDOW_JOINED_FACTIONS')]." }
+							text_single = {
+								layoutpolicy_horizontal = expanding
+								raw_text = "[Localize('FACTION_WINDOW_JOINED_FACTIONS')]."
+							}
 
 							vbox = {
 								name = "joined_factions"
@@ -237,7 +306,9 @@ window = {
 								layoutpolicy_horizontal = expanding
 
 								item = {
-									vbox_faction_item_ocr = { layoutpolicy_horizontal = expanding }
+									vbox_faction_item_ocr = {
+										layoutpolicy_horizontal = expanding
+									}
 								}
 							}
 
@@ -246,10 +317,15 @@ window = {
 								visible = "[Not(FactionsWindow.IsInAnyFaction)]"
 								layoutpolicy_horizontal = expanding
 								minimumsize = { 0 110 }
+
 								text = "FACTIONS_WINDOW_NOT_IN_FACTION"
-								background = { using = Background_Area }
+
+								background = {
+									using = Background_Area
+								}
 							}
 
+							# Factions to Join
 							vbox = {
 								name = "joinable_factions"
 								visible = "[FactionsWindow.CanJoinAnyFaction]"
@@ -257,26 +333,37 @@ window = {
 								layoutpolicy_horizontal = expanding
 
 								item = {
-									vbox_faction_item_ocr = { layoutpolicy_horizontal = expanding }
+									vbox_faction_item_ocr = {
+										layoutpolicy_horizontal = expanding
+									}
 								}
 							}
 
+							# Joined Factions
 							text_multi = {
 								name = "joined"
 								visible = "[Not(FactionsWindow.CanJoinAnyFaction)]"
 								layoutpolicy_horizontal = expanding
 								minimumsize = { 0 110 }
+
 								text = "FACTIONS_WINDOW_NOT_JOINABLE_FACTION"
-								background = { using = Background_Area }
+
+								background = {
+									using = Background_Area
+								}
 							}
 						}
 
+						# Potential factions
 						vbox = {
 							name = "potential_factions"
 							layoutpolicy_horizontal = expanding
 							spacing = 5
 
-							text_single = { layoutpolicy_horizontal = expanding text = "FACTION_WINDOW_FACTIONS_TO_CREATE" }
+							text_single = {
+								layoutpolicy_horizontal = expanding
+								text = "FACTION_WINDOW_FACTIONS_TO_CREATE"
+							}
 
 							vbox = {
 								name = "creatable_factions"
@@ -293,8 +380,12 @@ window = {
 										enabled = "[CreateFactionItem.CanPlayerCreateFaction]"
 										tooltip = "[CreateFactionItem.BuildCreateFactionTooltip]"
 										onclick = "[CreateFactionItem.CreateFaction]"
-										blockoverride "text" { raw_text = "[CreateFactionItem.GetCreateFactionText]." }
-										blockoverride "disabled" { visible = "[Not(CreateFactionItem.CanPlayerCreateFaction)]" }
+										blockoverride "text" {
+											raw_text = "[CreateFactionItem.GetCreateFactionText]."
+										}
+										blockoverride "disabled" {
+											visible = "[Not(CreateFactionItem.CanPlayerCreateFaction)]"
+										}
 									}
 								}
 							}
@@ -304,8 +395,12 @@ window = {
 								visible = "[Not(FactionsWindow.CanCreateAnyFaction)]"
 								layoutpolicy_horizontal = expanding
 								minimumsize = { 0 110 }
+
 								text = "FACTIONS_WINDOW_NOT_CREATABLE_FACTION"
-								background = { using = Background_Area }
+
+								background = {
+									using = Background_Area
+								}
 							}
 						}
 					}
@@ -314,18 +409,18 @@ window = {
 		}
 	}
 
-	#################################################################
-	### MODALITÀ NORMO VEDENTE - SIGHTED / VISUAL MODE           ###
-	### Visible when 'ocr' variable EXISTS (Shift+F11 toggles)    ###
-	#################################################################
+	#####################################################################
+	### MODALITÀ NORMO VEDENTE - SIGHTED MODE                         ###
+	### Visible when 'ocr' variable EXISTS (Shift+F11 toggles)        ###
+	### Uses standard vanilla graphical types                          ###
+	#####################################################################
+	
 	widget = {
 		name = "normal_mode_content"
 		visible = "[GetVariableSystem.Exists('ocr')]"
-		
-		# Pattern vanilla: ancoraggio e dimensionamento come originale
 		parentanchor = top|right
 		using = Window_Size_MainTab
-
+		
 		margin_widget = {
 			size = { 100% 100% }
 			margin_top = 30
@@ -334,14 +429,16 @@ window = {
 
 			widget = {
 				size = { 100% 100% }
-				using = Window_Background
-				using = Window_Decoration
-
+				
 				vbox = {
 					using = Window_Margins
 
-					header_pattern = {
+					widget_header_with_picture = {
 						layoutpolicy_horizontal = expanding
+
+						blockoverride "size" {
+							size = { 100% 156 }
+						}
 
 						blockoverride "header_text" {
 							text = "FACTIONS_WINDOW"
@@ -350,10 +447,15 @@ window = {
 						blockoverride "button_close" {
 							onclick = "[FactionsWindow.Close]"
 						}
+
+						blockoverride "illustration_texture" {
+							texture = "gfx/interface/illustrations/factions.dds"
+						}
 					}
 
 					hbox = {
 						layoutpolicy_horizontal = expanding
+						margin_bottom = 5
 
 						button_tab = {
 							name = "targeting_factions"
@@ -361,8 +463,13 @@ window = {
 							visible = "[Not(IsLandlessAdventurer(GetPlayer))]"
 							onclick = "[GetVariableSystem.Set( 'factions_view_tabs', 'against_you' )]"
 							down = "[GetVariableSystem.HasValue( 'factions_view_tabs', 'against_you' )]"
-							text = "FACTIONS_WINDOW_TARGETING_FACTIONS"
-							using = tooltip_above
+
+							text_single = {
+								text = "FACTIONS_WINDOW_TARGETING_FACTIONS"
+								parentanchor = center
+								maximumsize = { 400 -1 }
+								default_format = "#low"
+							}
 						}
 
 						button_tab = {
@@ -371,8 +478,13 @@ window = {
 							visible = "[Or( Not(GetPlayer.IsIndependentRuler), FactionsWindow.IsInAnyFaction)]"
 							onclick = "[GetVariableSystem.Set( 'factions_view_tabs', 'against_liege' )]"
 							down = "[GetVariableSystem.HasValue( 'factions_view_tabs', 'against_liege' )]"
-							text = "FACTIONS_WINDOW_MY_FACTIONS"
-							using = tooltip_above
+
+							text_single = {
+								text = "FACTIONS_WINDOW_MY_FACTIONS"
+								parentanchor = center
+								maximumsize = { 400 -1 }
+								default_format = "#low"
+							}
 						}
 					}
 
@@ -381,11 +493,13 @@ window = {
 						layoutpolicy_vertical = expanding
 
 						background = {
-							texture = "gfx/interface/skinned/illustrations/faction_bg.dds"
+							texture = "gfx/interface/skinned/illustrations/factions.dds"
 							fittype = end
-							alpha = 0.7
+							alpha = 0.4
 							framesize = { 1200 848 }
+
 							using = Mask_Rough_Edges
+
 							modify_texture = {
 								texture = "gfx/interface/component_masks/mask_fade_vertical.dds"
 								blend_mode = alphamultiply
@@ -393,12 +507,12 @@ window = {
 							}
 						}
 
-						# Against you (VANILLA VERSION)
 						scrollbox = {
 							name = "against_you"
 							visible = "[And( GetVariableSystem.HasValue( 'factions_view_tabs', 'against_you' ), Not( IsLandlessAdventurer( GetPlayer ) ) ) ]"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
+
 							using = Animation_Tab_Switch
 
 							blockoverride "scrollbox_content" {
@@ -412,7 +526,7 @@ window = {
 										text = "FACTIONS_WINDOW_TARGETING_FACTIONS"
 									}
 
-									## Factions against Me (vanilla items)
+									## Factions against Me
 									vbox = {
 										name = "targeting_factions"
 										layoutpolicy_horizontal = expanding
@@ -437,17 +551,24 @@ window = {
 											visible = "[Not(FactionsWindow.HasTargetingFactions)]"
 											layoutpolicy_horizontal = expanding
 											minimumsize = { 0 110 }
+
 											text = "FACTIONS_WINDOW_NOT_FACTION_AGAINST"
 											default_format = "#low;italic"
 											align = center
-											background = { using = Background_Area }
+
+											background = {
+												using = Background_Area
+											}
 										}
 
 										vbox = {
 											layoutpolicy_horizontal = expanding
 											margin = { 10 5 }
 											spacing = 10
-											background = { using = Background_Area_With_Header }
+
+											background = {
+												using = Background_Area_With_Header
+											}
 
 											text_single = {
 												text = "FACTIONS_WINDOW_CASSALC_CANT_CREATE_JOIN"
@@ -479,7 +600,7 @@ window = {
 																texture = "gfx/interface/colors/colors_textured.dds"
 																blend_mode = add
 																framesize = { 96 96 }
-																block "master_color_frame" { frame = 5 }
+																frame = 5
 															}
 														}
 													}
@@ -500,12 +621,12 @@ window = {
 							}
 						}
 
-						# Against liege (VANILLA VERSION)
 						scrollbox = {
 							name = "against_liege"
 							visible = "[Or( GetVariableSystem.HasValue( 'factions_view_tabs', 'against_liege' ), IsLandlessAdventurer( GetPlayer ) )]"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
+
 							using = Animation_Tab_Switch
 
 							blockoverride "scrollbox_content" {
@@ -526,7 +647,9 @@ window = {
 										layoutpolicy_horizontal = expanding
 
 										item = {
-											vbox_faction_item = { layoutpolicy_horizontal = expanding }
+											vbox_faction_item = {
+												layoutpolicy_horizontal = expanding
+											}
 										}
 									}
 
@@ -535,10 +658,14 @@ window = {
 										visible = "[Not(FactionsWindow.IsInAnyFaction)]"
 										layoutpolicy_horizontal = expanding
 										minimumsize = { 0 110 }
+
 										text = "FACTIONS_WINDOW_NOT_IN_FACTION"
 										default_format = "#low;italic"
 										align = center
-										background = { using = Background_Area }
+
+										background = {
+											using = Background_Area
+										}
 									}
 
 									vbox = {
@@ -548,7 +675,9 @@ window = {
 										layoutpolicy_horizontal = expanding
 
 										item = {
-											vbox_faction_item = { layoutpolicy_horizontal = expanding }
+											vbox_faction_item = {
+												layoutpolicy_horizontal = expanding
+											}
 										}
 									}
 
@@ -557,10 +686,14 @@ window = {
 										visible = "[Not(FactionsWindow.CanJoinAnyFaction)]"
 										layoutpolicy_horizontal = expanding
 										minimumsize = { 0 110 }
+
 										text = "FACTIONS_WINDOW_NOT_JOINABLE_FACTION"
 										default_format = "#low;italic"
 										align = center
-										background = { using = Background_Area }
+
+										background = {
+											using = Background_Area
+										}
 									}
 								}
 
@@ -599,15 +732,21 @@ window = {
 										visible = "[Not(FactionsWindow.CanCreateAnyFaction)]"
 										layoutpolicy_horizontal = expanding
 										minimumsize = { 0 110 }
+
 										text = "FACTIONS_WINDOW_NOT_CREATABLE_FACTION"
 										default_format = "#low;italic"
 										align = center
-										background = { using = Background_Area }
+
+										background = {
+											using = Background_Area
+										}
 									}
 								}
 							}
 						}
 					}
+
+					expand = {}
 				}
 			}
 		}
@@ -615,12 +754,15 @@ window = {
 }
 
 ######################################################
-################ TYPES AND TEMPLATES #################
+##################### TYPES ##########################
 ######################################################
 
-# VANILLA TYPE - per normo vedenti
 types FactionWindow
 {
+	###############################################################
+	### VANILLA TYPE - Graphical layout for sighted users      ###
+	###############################################################
+	
 	type vbox_faction_item = vbox {
 		name = "faction_item"
 		datacontext = "[FactionItem.GetFaction]"
@@ -846,7 +988,7 @@ types FactionWindow
 			expand = {}
 
 			button_standard = {
-				visible = "[And( FactionItem.IsPlayerLeader, Not( Faction.IsAtWar ) )]"
+				using = agot_can_press_demands
 				name = "press_demands_button"
 				enabled = "[FactionItem.CanPressDemands]"
 				text = "FACTION_WINDOW_PRESS_DEMANDS"
@@ -878,7 +1020,7 @@ types FactionWindow
 
 				text_single = {
 					text = "[FactionItem.GetMembersString]"
-					align = nobaseline
+					align = left
 					position = { 25 0 }
 				}
 			}
@@ -1008,11 +1150,11 @@ types FactionWindow
 			}
 		}
 	}
-}
 
-# OCR TYPE - per non vedenti (da file OCR originale)
-types FactionWindow_OCR
-{
+	###############################################################
+	### OCR TYPE - Compact text layout for blind users         ###
+	###############################################################
+	
 	type vbox_faction_item_ocr = vbox {
 		name = "faction_item"
 		datacontext = "[FactionItem.GetFaction]"
@@ -1070,7 +1212,8 @@ types FactionWindow_OCR
 				tooltip = "[FactionItem.BuildPressDemandsTooltip]"
 			}
 			blockoverride "dot" {}
-			visible = "[And( FactionItem.IsPlayerLeader, Not( Faction.IsAtWar ) )]"
+			using = agot_can_press_demands
+
 			enabled = "[FactionItem.CanPressDemands]"
 			onclick = "[FactionItem.PressDemmands]"
 		}
@@ -1097,95 +1240,118 @@ types FactionWindow_OCR
 		vbox = {
 			layoutpolicy_horizontal = expanding
 
-			text_single = {
-				layoutpolicy_horizontal = expanding
-				raw_text = "[Faction.GetShortEffectDescription]."
-				autoresize = no
+			# Dangerous faction indicator
+			flowcontainer = {
+				name = "leader"
+				spacing = 5
+				ignoreinvisible = yes
+
+				background = {
+					visible = "[Faction.IsDangerous]"
+					using = Status_Bad
+					alpha = 0.2
+					margin = { -5 0 }
+				}
 			}
 
 			vbox = {
-				visible = "[Not(Faction.IsAtWar)]"
 				layoutpolicy_horizontal = expanding
-				layoutpolicy_vertical = expanding
-				margin_right = 10
 
-				hbox = {
+				text_single = {
 					layoutpolicy_horizontal = expanding
-					spacing = 5
-					text_single = {
-						raw_text = "[military_power|E]"
-					}
-					text_single = {
-						tooltip = "[FactionItem.GetPowerTooltip]"
-						raw_text = "[FactionItem.GetPower|%0V]"
-					}
-					expand = {}
+					raw_text = "[Faction.GetShortEffectDescription]."
+					autoresize = no
 				}
 
-				widget = { size = { 0 2 } }
-
-				widget = {
-					size = { 250 20 }
-					scissor = yes
+				### Discontent and power // Not at war
+				vbox = {
+					visible = "[Not(Faction.IsAtWar)]"
 					layoutpolicy_horizontal = expanding
-					text_single = {
-						position = { 0 -23 }
-						raw_text = "[FactionItem.GetPowerTooltip]"
+					layoutpolicy_vertical = expanding
+					margin_right = 10
+
+					hbox = {
 						layoutpolicy_horizontal = expanding
+						spacing = 5
+						text_single = {
+							raw_text = "[military_power|E]"
+						}
+						text_single = {
+							tooltip = "[FactionItem.GetPowerTooltip]"
+							raw_text = "[FactionItem.GetPower|%0V]"
+						}
+						expand = {}
 					}
-				}
 
-				hbox = {
-					layoutpolicy_horizontal = expanding
-					spacing = 5
+					widget = { size = { 0 2 } }
 
-					text_single = {
-						tooltip = "[FactionItem.GetDiscontentTooltip]"
-						raw_text = "[FactionItem.GetDiscontent|0%]"
-					}
-
-					text_single = {
-						raw_text = "[discontent|E]."
+					widget = {
+						size = { 250 20 }
+						scissor = yes
+						layoutpolicy_horizontal = expanding
+						text_single = {
+							position = { 0 -23 }
+							raw_text = "[FactionItem.GetPowerTooltip]"
+							layoutpolicy_horizontal = expanding
+						}
 					}
 
 					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+
 						text_single = {
-							visible = "[FactionItem.IsDiscontentIncreasing]"
-							layoutpolicy_horizontal = expanding
-							text = "FACTIONS_WINDOW_DISCONTENT_INCREASING"
+							tooltip = "[FactionItem.GetDiscontentTooltip]"
+							raw_text = "[FactionItem.GetDiscontent|0%]"
 						}
 
 						text_single = {
-							visible = "[FactionItem.IsDiscontentAtMax]"
-							layoutpolicy_horizontal = expanding
-							text = "FACTIONS_WINDOW_DISCONTENT_CAN_SEND"
+							raw_text = "[discontent|E]."
 						}
 
-						text_single = {
-							visible = "[Not( Or( FactionItem.IsDiscontentAtMax, FactionItem.IsDiscontentIncreasing) )]"
-							layoutpolicy_horizontal = expanding
-							text = "FACTIONS_WINDOW_DISCONTENT_TO_WEAK"
-						}
+						hbox = {
+							text_single = {
+								visible = "[FactionItem.IsDiscontentIncreasing]"
+								layoutpolicy_horizontal = expanding
+								text = "FACTIONS_WINDOW_DISCONTENT_INCREASING"
+							}
 
-						dot = {}
+							text_single = {
+								visible = "[FactionItem.IsDiscontentAtMax]"
+								layoutpolicy_horizontal = expanding
+								text = "FACTIONS_WINDOW_DISCONTENT_CAN_SEND"
+							}
+
+							text_single = {
+								visible = "[Not( Or( FactionItem.IsDiscontentAtMax, FactionItem.IsDiscontentIncreasing) )]"
+								layoutpolicy_horizontal = expanding
+								text = "FACTIONS_WINDOW_DISCONTENT_TO_WEAK"
+							}
+
+							dot = {}
+						}
+						expand = {}
 					}
+				}
+
+				### Faction at war
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					visible = "[Faction.IsAtWar]"
+					text_single = {
+						text = "FACTIONS_WINDOW_FACTION_AT_WAR"
+					}
+
+					dot = {}
+
 					expand = {}
 				}
 			}
-
-			hbox = {
-				layoutpolicy_horizontal = expanding
-				visible = "[Faction.IsAtWar]"
-				text_single = {
-					text = "FACTIONS_WINDOW_FACTION_AT_WAR"
-				}
-
-				dot = {}
-
-				expand = {}
-			}
 		}
 
+		### Faction members
+
+		# Member buttons
 		hbox = {
 			name = "faction_buttons"
 			layoutpolicy_horizontal = expanding
@@ -1207,6 +1373,7 @@ types FactionWindow_OCR
 			expand = {}
 		}
 
+		# Members
 		vbox = {
 			name = "faction_members"
 			visible = "[Not(FactionItem.AreMembersVisible)]"
