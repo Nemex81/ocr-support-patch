@@ -1,19 +1,23 @@
 @txt_width = 700
-
-######################################################
-#################### FINESTRA PRINCIPALE ####################
-######################################################
+####################################################################################################
+# FILE: window_activity_list.gui
+# PATTERN: B - MainTab Right Aligned Full Screen
+# DUAL-MODE: OCR Support + Vanilla Graphics
+# AUTHOR: Luca (Nemex81) + Vanilla CK3
+# DATE: 2025-12-10
+# HOTKEY: F9 - Activities List
+# DESCRIPTION: Window displaying available activities to host and ongoing activities to join
+####################################################################################################
 
 window = {
 	name = "activity_list"
-	movable = no
-	
-	datacontext = "[GetPlayer]"
-	datacontext = "[GetVariableSystem]"
-
-	# Vanilla properties
 	parentanchor = top|right
 	layer = windows_layer
+	movable = no
+
+	datacontext = "[GetVariableSystem]"  # CRITICAL: Must be first for dual-mode
+	datacontext = "[GetPlayer]"
+
 	using = Window_Size_MainTab
 
 	state = {
@@ -21,7 +25,6 @@ window = {
 		using = Animation_FadeIn_Quick
 		using = Sound_WindowShow_Standard
 		using = Window_Position_MainTab
-		on_finish = "[Clear('grand_activity')]"
 	}
 
 	state = {
@@ -29,12 +32,244 @@ window = {
 		using = Animation_FadeOut_Quick
 		using = Sound_WindowHide_Standard
 		using = Window_Position_MainTab_Hide
-		on_finish = "[Set('activity_tip', 'yes')]"
 	}
 
-	# VANILLA VERSION
+	#####################################################################
+	### MODALITÀ NON VEDENTE - BLIND MODE (default)                  ###
+	### Visibile quando 'ocr' NON ESISTE                             ###
+	### OCR-optimized text interface for screen readers              ###
+	#####################################################################
+
+	widget = {
+		name = "ocr_mode_content"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		using = ocr_window
+		parentanchor = top|left
+		using = Window_Size_MainTab
+		using = Window_Position_MainTab
+
+		vbox = {
+			using = ocr_margins
+			spacing = 10
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			error_button = {
+				layoutpolicy_horizontal = expanding
+			}
+
+			header_pattern = {
+				layoutpolicy_horizontal = expanding
+				size = { 0 0 }
+
+				blockoverride "header_text" {
+					text = "ACTIVITY_LIST"
+				}
+
+				blockoverride "button_close" {
+					onclick = "[ActivityListWindow.Close]"
+				}
+			}
+
+			# Current Activity Status
+			vbox = {
+				name = "activity_status_ocr"
+				layoutpolicy_horizontal = expanding
+				datacontext = "[Character.GetInvolvedActivity]"
+				visible = no
+
+				text_single = {
+					name = "status_no_activity"
+					layoutpolicy_horizontal = expanding
+					visible = "[Not(Activity.IsValid)]"
+					raw_text = "No ongoing activity."
+				}
+
+				vbox = {
+					name = "status_involved_activity"
+					layoutpolicy_horizontal = expanding
+					visible = "[Activity.IsValid]"
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						visible = "[Not(ObjectsEqual(Activity.GetHost.Self, Character.Self))]"
+						text = "ACTIVITY_LIST_INVOLVED_ACTIVITY"
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						visible = "[ObjectsEqual(Activity.GetHost.Self, Character.Self)]"
+						text = "ACTIVITY_LIST_HOSTING_ACTIVITY"
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						datacontext = "[Activity.GetCurrentPhase]"
+						datacontext = "[Activity.GetCurrentPhase.GetPhase]"
+
+						blockoverride "text" {
+							text = "ACTIVITY_LIST_CURRENT_PHASE"
+						}
+
+						onclick = "[ToggleGameViewData('activity_window', Activity.Self)]"
+					}
+				}
+			}
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				visible = "[Isnt('activity_focus')]"
+
+				text_single = {
+					visible = "[Isnt('activity_tip')]"
+					layoutpolicy_horizontal = expanding
+					raw_text = "Costs are average and can be lowered. You may preview activities that you can't host."
+				}
+
+				button_text = {
+					layoutpolicy_horizontal = expanding
+					shortcut = map_mode_11
+					blockoverride "text" {
+						raw_text = "[PdxGuiWidget.AccessParent.AccessParent.AccessParent.AccessParent.FindChild('activities').CountVisibleChildren] groups, collapse all with Shift E, expand with E, focus with numbers."
+					}
+					onclick = "[PdxGuiTriggerAllAnimations('collapse_activities')]"
+				}
+			}
+
+			button = {
+				shortcut = map_mode_1
+				onclick = "[PdxGuiTriggerAllAnimations('expand_activities')]"
+				onclick = "[Clear('activity_focus')]"
+			}
+
+			button = {
+				using = close_window_ocr
+				onclick = "[Clear('activity_focus')]"
+				visible = "[Is('activity_focus')]"
+			}
+
+			# Activities List
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				datamodel = "[ActivityListWindow.GetActivityGroupItems]"
+				name = "activities"
+
+				item = {
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						datacontext = "[ActivityGroupItem.GetGroupType]"
+						visible = "[DataModelHasItems(ActivityGroupItem.GetActivities)]"
+
+						vbox = {
+							visible = "[Or(Isnt('activity_focus'), Has('activity_focus', ActivityGroupItem.GetGroupTitle))]"
+							oncreate = "[BindFoldOutContext]"
+							oncreate = "[PdxGuiFoldOut.Unfold]"
+							layoutpolicy_horizontal = expanding
+
+							state = {
+								name = collapse_activities
+								on_finish = "[PdxGuiFoldOut.Fold]"
+							}
+
+							state = {
+								name = expand_activities
+								on_finish = "[PdxGuiFoldOut.Unfold]"
+							}
+
+							button_text = {
+								layoutpolicy_horizontal = expanding
+								onclick = "[PdxGuiFoldOut.Unfold]"
+								onclick = "[Set('activity_focus', ActivityGroupItem.GetGroupTitle)]"
+								shortcuts_list = {
+									blockoverride "click" {
+										onclick = "[Set('activity_focus', ActivityGroupItem.GetGroupTitle)]"
+										onclick = "[PdxGuiFoldOut.Unfold]"
+									}
+								}
+								blockoverride "pre" {
+									text_single = {
+										visible = "[Isnt('activity_focus')]"
+										raw_text = "[IndexNumber|O] group,"
+									}
+								}
+								blockoverride "text" {
+									raw_text = "[ActivityGroupItem.GetGroupTitle], [CollapseIf(PdxGuiFoldOut.IsFolded)]"
+								}
+							}
+
+							vbox = {
+								visible = "[PdxGuiFoldOut.IsUnfolded]"
+								layoutpolicy_horizontal = expanding
+
+								fixedgridbox = {
+									name = "activities_in_group"
+									datamodel = "[ActivityGroupItem.GetActivities]"
+
+									layoutpolicy_horizontal = expanding
+
+									addcolumn = 650
+									addrow = 25
+									setitemsizefromcell = yes
+
+									item = {
+										widget = {
+											button_activity_entry_ocr = {
+												visible = "[ActivityItem.IsOngoing]"
+												onclick = "[ToggleGameViewData('activity_list_detail_invite_window', Activity.Self)]"
+												shortcuts_list = {
+													visible = "[Is('activity_focus')]"
+													blockoverride "click" {
+														onclick = "[ToggleGameViewData('activity_list_detail_invite_window', Activity.Self)]"
+													}
+												}
+											}
+											button_activity_entry_ocr = {
+												visible = "[Not(ActivityItem.IsOngoing)]"
+												onclick = "[ToggleGameViewData('activity_list_detail_host_window', ActivityType.Self)]"
+												shortcuts_list = {
+													visible = "[Is('activity_focus')]"
+													blockoverride "click" {
+														onclick = "[ToggleGameViewData('activity_list_detail_host_window', ActivityType.Self)]"
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			# Tournament Notification Toggle
+			button_checkbox_label = {
+				name = "notify_can_join_ocr"
+				datacontext = "[GetActivityType('activity_tournament')]"
+				layoutpolicy_horizontal = expanding
+
+				onclick = "[ActivityType.ToggleShouldNotifyCanJoinOpenActivity]"
+
+				blockoverride "checkbox" {
+					checked = "[ActivityType.ShouldNotifyCanJoinOpenActivity]"
+				}
+
+				blockoverride "text" {
+					raw_text = "[Localize('ACTIVITY_LIST_NOTIFY_ME_ABOUT_TOURNAMENTS')], [Select_CString(ActivityType.ShouldNotifyCanJoinOpenActivity, 'Enabled', 'Disabled')]."
+				}
+			}
+		}
+	}
+
+	#####################################################################
+	### MODALITÀ NORMO VEDENTE - SIGHTED MODE (Shift+F11)            ###
+	### Visibile quando 'ocr' ESISTE                                  ###
+	### Full vanilla graphical interface                              ###
+	#####################################################################
+
 	margin_widget = {
-		visible = "[Not(GetVariableSystem.Exists('ocr_mod_enabled'))]"
+		name = "normal_mode_content"
+		visible = "[GetVariableSystem.Exists('ocr')]"
 		size = { 100% 100% }
 		margin_top = 30
 		margin_bottom = 25
@@ -73,7 +308,7 @@ window = {
 						text_single = {
 							name = "status_no_activity"
 							text = "ACTIVITY_LIST_NO_ONGOING_ACTIVITY"
-							visible = "[Not( Activity.IsValid )]"
+							visible = "[Not(Activity.IsValid)]"
 							autoresize = yes
 							maximumsize = { 450 -1 }
 							align = center
@@ -88,7 +323,7 @@ window = {
 							text_multi = {
 								name = "status_involved_activity"
 								text = "ACTIVITY_LIST_INVOLVED_ACTIVITY"
-								visible = "[Not( ObjectsEqual( Activity.GetHost.Self, Character.Self ) )]"
+								visible = "[Not(ObjectsEqual(Activity.GetHost.Self, Character.Self))]"
 								autoresize = yes
 								max_width = 450
 								align = center
@@ -97,7 +332,7 @@ window = {
 							text_multi = {
 								name = "status_hosting_activity"
 								text = "ACTIVITY_LIST_HOSTING_ACTIVITY"
-								visible = "[ObjectsEqual( Activity.GetHost.Self, Character.Self )]"
+								visible = "[ObjectsEqual(Activity.GetHost.Self, Character.Self)]"
 								autoresize = yes
 								max_width = 450
 								align = center
@@ -148,191 +383,50 @@ window = {
 							layoutpolicy_vertical = expanding
 
 							blockoverride "scrollbox_content" {
-								name = "activities_container"
-								layoutpolicy_horizontal = expanding
-								layoutpolicy_vertical = expanding
-
 								vbox = {
-									name = "activity_groups_container"
-									margin_bottom = 8
-									spacing = 2
+									name = "activities_container"
 									layoutpolicy_horizontal = expanding
+									layoutpolicy_vertical = expanding
+									spacing = 5
 
-									datamodel = "[ActivityListWindow.GetActivityGroupItems]"
-									item = {
-										vbox_activity_group_foldout = {}
-									}
-								}
-
-								blockoverride "scrollbox_expand" {
-									expand = {}
-								}
-
-								divider_light = {
-									layoutpolicy_horizontal = expanding
-								}
-
-								vbox = {
-									margin_top = 8
-
-									button_checkbox_label = {
-										name = "notify_can_join"
-										datacontext = "[GetActivityType( 'activity_tournament' )]"
-										onclick = "[ActivityType.ToggleShouldNotifyCanJoinOpenActivity]"
-
-										blockoverride "checkbox" {
-											checked = "[ActivityType.ShouldNotifyCanJoinOpenActivity]"
-										}
-
-										blockoverride "text" {
-											text = "ACTIVITY_LIST_NOTIFY_ME_ABOUT_TOURNAMENTS"
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	# OCR VERSION
-	window_ocr = {
-		visible = "[GetVariableSystem.Exists('ocr_mod_enabled')]"
-		
-		blockoverride "ocr_header" {
-			text_single = {
-				layoutpolicy_horizontal = expanding
-				raw_text = "ACTIVITY_LIST"
-			}
-			button = {
-				using = close_window_ocr
-				onclick = "[ActivityListWindow.Close]"
-			}
-		}
-
-		blockoverride "ocr_content" {
-			vbox = {
-				layoutpolicy_horizontal = expanding
-
-				text_single = {
-					visible = "[Isnt('activity_tip')]"
-					layoutpolicy_horizontal = expanding
-					raw_text = "Costs are average and can be lowered. You may preview activities that you can't host."
-				}
-
-				button_text = {
-					visible = "[Isnt('activity_focus')]"
-					layoutpolicy_horizontal = expanding
-					shortcut = map_mode_11
-					blockoverride "text" {
-						raw_text = "[PdxGuiWidget.AccessParent.AccessParent.AccessParent.AccessParent.FindChild('activities').CountVisibleChildren] groups, collapse all with Shift E, expand with E, focus with numbers."
-					}
-					onclick = "[PdxGuiTriggerAllAnimations('collapse_activities')]"
-				}
-
-				button = {
-					shortcut = map_mode_1
-					onclick = "[PdxGuiTriggerAllAnimations('expand_activities')]"
-					onclick = "[Clear('activity_focus')]"
-				}
-
-				button = {
-					using = close_window_ocr
-					onclick = "[Clear('activity_focus')]"
-					visible = "[Is('activity_focus')]"
-				}
-
-				vbox = {
-					layoutpolicy_horizontal = expanding
-					datamodel = "[ActivityListWindow.GetActivityGroupItems]"
-					name = "activities"
-
-					item = {
-						vbox = {
-							layoutpolicy_horizontal = expanding
-							datacontext = "[ActivityGroupItem.GetGroupType]"
-							visible = "[DataModelHasItems( ActivityGroupItem.GetActivities )]"
-
-							vbox = {
-								visible = "[Or(Isnt('activity_focus'), Has('activity_focus', ActivityGroupItem.GetGroupTitle))]"
-								oncreate = "[BindFoldOutContext]"
-								oncreate = "[PdxGuiFoldOut.Unfold]"
-								layoutpolicy_horizontal = expanding
-
-								state = {
-									name = collapse_activities
-									on_finish = "[PdxGuiFoldOut.Fold]"
-								}
-
-								state = {
-									name = expand_activities
-									on_finish = "[PdxGuiFoldOut.Unfold]"
-								}
-
-								button_text = {
-									layoutpolicy_horizontal = expanding
-									onclick = "[PdxGuiFoldOut.Unfold]"
-									onclick = "[Set('activity_focus', ActivityGroupItem.GetGroupTitle)]"
-									
-									shortcuts_list = {
-										blockoverride "click" {
-											onclick = "[Set('activity_focus', ActivityGroupItem.GetGroupTitle)]"
-											onclick = "[PdxGuiFoldOut.Unfold]"
-										}
-									}
-									
-									blockoverride "pre" {
-										text_single = {
-											visible = "[Isnt('activity_focus')]"
-											raw_text = "[IndexNumber|O] group,"
-										}
-									}
-									
-									blockoverride "text" {
-										raw_text = "[ActivityGroupItem.GetGroupTitle], [CollapseIf(PdxGuiFoldOut.IsFolded)]"
-									}
-								}
-
-								vbox = {
-									visible = "[PdxGuiFoldOut.IsUnfolded]"
-									layoutpolicy_horizontal = expanding
-
-									fixedgridbox = {
-										name = "activities_in_group"
-										datamodel = "[ActivityGroupItem.GetActivities]"
+									vbox = {
+										name = "activity_groups_container"
+										margin_bottom = 8
+										spacing = 2
 										layoutpolicy_horizontal = expanding
-
-										addcolumn = 650
-										addrow = 25
-										setitemsizefromcell = yes
+										layoutpolicy_vertical = expanding
+										datamodel = "[ActivityListWindow.GetActivityGroupItems]"
 
 										item = {
-											widget = {
-												button_activity_entry_ocr = {
-													visible = "[ActivityItem.IsOngoing]"
-													onclick = "[ToggleGameViewData( 'activity_list_detail_invite_window', Activity.Self )]"
-													shortcuts_list = {
-														visible = "[Is('activity_focus')]"
-														blockoverride "click" {
-															onclick = "[ToggleGameViewData( 'activity_list_detail_invite_window', Activity.Self )]"
-														}
-													}
-												}
-												button_activity_entry_ocr = {
-													visible = "[Not(ActivityItem.IsOngoing)]"
-													onclick = "[ToggleGameViewData( 'activity_list_detail_host_window', ActivityType.Self )]"
-													shortcuts_list = {
-														visible = "[Is('activity_focus')]"
-														blockoverride "click" {
-															onclick = "[ToggleGameViewData( 'activity_list_detail_host_window', ActivityType.Self )]"
-														}
-													}
-												}
+											vbox_activity_group_foldout = {}
+										}
+									}
+
+									divider_light = {
+										layoutpolicy_horizontal = expanding
+									}
+
+									vbox = {
+										margin_top = 8
+										layoutpolicy_horizontal = expanding
+
+										button_checkbox_label = {
+											name = "notify_can_join"
+											datacontext = "[GetActivityType('activity_tournament')]"
+
+											onclick = "[ActivityType.ToggleShouldNotifyCanJoinOpenActivity]"
+
+											blockoverride "checkbox" {
+												checked = "[ActivityType.ShouldNotifyCanJoinOpenActivity]"
+											}
+
+											blockoverride "text" {
+												text = "ACTIVITY_LIST_NOTIFY_ME_ABOUT_TOURNAMENTS"
 											}
 										}
 									}
+
+									expand = {}
 								}
 							}
 						}
@@ -343,23 +437,19 @@ window = {
 	}
 }
 
-######################################################
-#################### DETAIL HOST ####################
-######################################################
-
+# Detail windows (same for both modes - they open separately)
 window = {
 	name = "activity_list_detail_host"
-	layer = middle
-	
-	datacontext = "[ActivityListDetailHostView.GetType]"
-
-	# Vanilla properties
 	parentanchor = top|right
 	position = { -650 110 }
 	size = { 630 935 }
+	layer = middle
+
 	using = Window_Movable
 	using = Window_Background
 	using = Window_Decoration_Spike
+
+	datacontext = "[ActivityListDetailHostView.GetType]"
 
 	state = {
 		name = _show
@@ -374,9 +464,7 @@ window = {
 		using = Sound_WindowHide_Standard
 	}
 
-	# VANILLA VERSION
 	vbox = {
-		visible = "[Not(GetVariableSystem.Exists('ocr_mod_enabled'))]"
 		using = Window_Margins
 
 		header_pattern = {
@@ -523,10 +611,13 @@ window = {
 					button_primary = {
 						name = "confirm"
 						size = { 380 50 }
+
 						enabled = "[ActivityListDetailHostView.CanConfirm]"
 						tooltip = "[ActivityListDetailHostView.GetConfirmTooltip]"
 						onclick = "[ActivityListDetailHostView.Confirm]"
+
 						text = "ACTIVITY_LIST_DETAIL_HOST_CONFIRM"
+
 						default_clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_confirm"
 						clicksound = "[ActivityListDetailHostView.GetConfirmClickSound]"
 					}
@@ -553,173 +644,21 @@ window = {
 			}
 		}
 	}
-
-	# OCR VERSION
-	window_ocr = {
-		visible = "[GetVariableSystem.Exists('ocr_mod_enabled')]"
-
-		vbox = {
-			using = ocr_margins
-
-			header_pattern = {
-				layoutpolicy_horizontal = expanding
-
-				blockoverride "header_text" {
-					text = "ACTIVITY_LIST_DETAIL_HOST_TITLE"
-				}
-
-				blockoverride "button_close" {
-					onclick = "[ActivityListDetailHostView.Close]"
-				}
-			}
-
-			vbox = {
-				name = "footer"
-				layoutpolicy_horizontal = expanding
-
-				vbox = {
-					layoutpolicy_horizontal = expanding
-
-					text_single = {
-						name = "cost"
-						visible = "[ActivityListDetailHostView.HasCost]"
-						raw_text = "[ActivityListDetailHostView.GetCostDescription]."
-						layoutpolicy_horizontal = expanding
-						tooltip = "ACTIVITY_BASE_COST_TT"
-					}
-
-					button_primary_text = {
-						name = "confirm"
-						layoutpolicy_horizontal = expanding
-						
-						blockoverride "text" {
-							raw_text = "ACTIVITY_LIST_DETAIL_HOST_CONFIRM"
-						}
-
-						blockoverride "disabled" {
-							visible = "[Not(ActivityListDetailHostView.CanConfirm)]"
-						}
-
-						blockoverride "hotkey" {
-							visible = "[ActivityListDetailHostView.CanConfirm]"
-						}
-
-						tooltip_visible = "[Not(ActivityListDetailHostView.CanConfirm)]"
-						tooltip = "[ActivityListDetailHostView.GetConfirmTooltip]"
-						onclick = "[ActivityListDetailHostView.Confirm]"
-						default_clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_confirm"
-						clicksound = "[ActivityListDetailHostView.GetConfirmClickSound]"
-					}
-
-					button_checked_text = {
-						layoutpolicy_horizontal = expanding
-						onclick = "[ActivityType.ToggleShouldNotifyCanHost]"
-						shortcut = army_split_half
-						
-						blockoverride "visible" {
-							visible = "[Not(ActivityType.ShouldNotifyCanHost)]"
-						}
-
-						blockoverride "text" {
-							text = "ACTIVITY_LIST_DETAIL_TOGGLE_SHOULD_NOTIFY_CAN_HOST"
-						}
-						
-						blockoverride "extra_text" {
-							raw_text = ", F."
-						}
-					}
-
-					expand = {}
-				}
-			}
-
-			scrollbox = {
-				name = "description_scrollarea"
-				layoutpolicy_horizontal = expanding
-				layoutpolicy_vertical = expanding
-
-				blockoverride "scrollbox_content" {
-					vbox = {
-						layoutpolicy_horizontal = expanding
-						layoutpolicy_vertical = expanding
-
-						vbox = {
-							name = "effect"
-							layoutpolicy_horizontal = expanding
-
-							text_single = {
-								text = "DECISION_DETAIL_EFFECTS"
-								layoutpolicy_horizontal = expanding
-							}
-
-							text_multi = {
-								layoutpolicy_horizontal = expanding
-								max_width = @txt_width
-								autoresize = yes
-								raw_text = "ACTIVITY_LIST_DETAIL_HOST_EFFECTS"
-							}
-						}
-
-						vbox = {
-							name = "requirements"
-							visible = "[ActivityListDetailHostView.HasRequirements]"
-							layoutpolicy_horizontal = expanding
-
-							text_single = {
-								layoutpolicy_horizontal = expanding
-								text = "DECISION_DETAIL_REQUIREMENTS"
-							}
-
-							text_multi = {
-								alwaystransparent = no
-								minimumsize = { @txt_width -1 }
-								maximumsize = { @txt_width -1 }
-								autoresize = yes
-								raw_text = "[ActivityListDetailHostView.GetRequirementsDescription]."
-							}
-						}
-
-						text_single = {
-							raw_text = "Description:"
-							layoutpolicy_horizontal = expanding
-						}
-
-						text_multi = {
-							name = "description"
-							minimumsize = { @txt_width -1 }
-							maximumsize = { @txt_width -1 }
-							autoresize = yes
-							raw_text = "[ActivityType.GetDescription]."
-						}
-
-						expand = {}
-					}
-				}
-
-				blockoverride "scrollbox_background_fade" {}
-			}
-		}
-	}
 }
-
-######################################################
-#################### DETAIL INVITE ####################
-######################################################
 
 window = {
 	name = "activity_list_detail_invite"
-	layer = middle
-
-	datacontext = "[ActivityListDetailJoinView.GetActivity]"
-	datacontext = "[Activity.GetType]"
-
-	# Vanilla properties
 	parentanchor = top|right
 	position = { -650 110 }
 	size = { 630 935 }
+	layer = middle
+
 	using = Window_Movable
 	using = Window_Background
 	using = Window_Decoration_Spike
+
+	datacontext = "[ActivityListDetailJoinView.GetActivity]"
+	datacontext = "[Activity.GetType]"
 
 	state = {
 		name = _show
@@ -734,9 +673,7 @@ window = {
 		using = Sound_WindowHide_Standard
 	}
 
-	# VANILLA VERSION
 	vbox = {
-		visible = "[Not(GetVariableSystem.Exists('ocr_mod_enabled'))]"
 		using = Window_Margins
 
 		header_pattern = {
@@ -928,18 +865,18 @@ window = {
 
 					container = {
 						name = "latest_departure_date"
-						visible = "[Not( IsDateAfter( GetCurrentDate, ActivityListDetailJoinView.GetLatestDepartureDate ) )]"
+						visible = "[Not(IsDateAfter(GetCurrentDate, ActivityListDetailJoinView.GetLatestDepartureDate))]"
 
 						text_single = {
 							name = "latest_departure_date_normal_guest"
 							text = "ACTIVITY_LIST_DETAIL_JOIN_DEPARTURE_TIME"
-							visible = "[Not( Activity.IsSpecialGuest( GetPlayer ) )]"
+							visible = "[Not(Activity.IsSpecialGuest(GetPlayer))]"
 						}
 
 						container = {
 							name = "latest_departure_date_special_guest"
-							datacontext = "[Activity.GetSpecialGuestTypeForCharacter( GetPlayer )]"
-							visible = "[Activity.IsSpecialGuest( GetPlayer )]"
+							datacontext = "[Activity.GetSpecialGuestTypeForCharacter(GetPlayer)]"
+							visible = "[Activity.IsSpecialGuest(GetPlayer)]"
 
 							text_single = {
 								text = "ACTIVITY_LIST_DETAIL_JOIN_REQUIRED_SPECIAL_GUEST"
@@ -948,7 +885,7 @@ window = {
 
 							text_single = {
 								text = "ACTIVITY_LIST_DETAIL_JOIN_DEPARTURE_TIME"
-								visible = "[Not( ActivitySpecialGuestType.IsRequired )]"
+								visible = "[Not(ActivitySpecialGuestType.IsRequired)]"
 							}
 						}
 					}
@@ -956,7 +893,7 @@ window = {
 					text_single = {
 						name = "may_not_arrive_in_time"
 						text = "ACTIVITY_LIST_DETAIL_JOIN_MAY_NOT_ARRIVE_IN_TIME"
-						visible = "[IsDateAfter( GetCurrentDate, ActivityListDetailJoinView.GetLatestDepartureDate )]"
+						visible = "[IsDateAfter(GetCurrentDate, ActivityListDetailJoinView.GetLatestDepartureDate)]"
 					}
 
 					hbox = {
@@ -972,7 +909,7 @@ window = {
 						button_round = {
 							name = "change_left_character"
 							onclick = "[Activity.DeclineInvite]"
-							visible = "[Not( Activity.GetType.IsOpenInvite )]"
+							visible = "[Not(Activity.GetType.IsOpenInvite)]"
 							size = { 40 40 }
 							tooltip = "ACTIVITY_LIST_DECLINE_INVITE"
 
@@ -989,259 +926,13 @@ window = {
 			}
 		}
 	}
-
-	# OCR VERSION
-	window_ocr = {
-		visible = "[GetVariableSystem.Exists('ocr_mod_enabled')]"
-
-		vbox = {
-			layoutpolicy_horizontal = expanding
-			layoutpolicy_vertical = expanding
-			using = ocr_margins
-
-			vbox = {
-				layoutpolicy_horizontal = expanding
-				layoutpolicy_vertical = expanding
-
-				header_pattern = {
-					layoutpolicy_horizontal = expanding
-
-					blockoverride "header_text" {
-						text = "ACTIVITY_LIST_DETAIL_JOIN_TITLE"
-					}
-
-					blockoverride "button_close" {
-						onclick = "[ActivityListDetailJoinView.Close]"
-					}
-				}
-
-				vbox = {
-					name = "contents"
-					layoutpolicy_horizontal = expanding
-					layoutpolicy_vertical = expanding
-
-					error_button = {
-						layoutpolicy_horizontal = expanding
-					}
-
-					text_single = {
-						layoutpolicy_horizontal = expanding
-						name = "may_not_arrive_in_time"
-						raw_text = "[Localize('ACTIVITY_LIST_DETAIL_JOIN_MAY_NOT_ARRIVE_IN_TIME')]."
-						visible = "[IsDateAfter( GetCurrentDate, ActivityListDetailJoinView.GetLatestDepartureDate )]"
-					}
-
-					vbox = {
-						layoutpolicy_horizontal = expanding
-						name = "latest_departure_date"
-						visible = "[Not( IsDateAfter( GetCurrentDate, ActivityListDetailJoinView.GetLatestDepartureDate ) )]"
-
-						hbox = {
-							layoutpolicy_horizontal = expanding
-
-							text_single = {
-								name = "latest_departure_date_normal_guest"
-								text = "ACTIVITY_LIST_DETAIL_JOIN_DEPARTURE_TIME"
-								visible = "[Not( Activity.IsSpecialGuest( GetPlayer ))]"
-							}
-							dot = {}
-							expand = {}
-						}
-
-						vbox = {
-							layoutpolicy_horizontal = expanding
-							name = "latest_departure_date_special_guest"
-							datacontext = "[Activity.GetSpecialGuestTypeForCharacter( GetPlayer )]"
-							visible = "[Activity.IsSpecialGuest( GetPlayer )]"
-
-							hbox = {
-								layoutpolicy_horizontal = expanding
-
-								text_single = {
-									text = "ACTIVITY_LIST_DETAIL_JOIN_REQUIRED_SPECIAL_GUEST"
-									visible = "[ActivitySpecialGuestType.IsRequired]"
-								}
-
-								text_single = {
-									text = "ACTIVITY_LIST_DETAIL_JOIN_DEPARTURE_TIME"
-									visible = "[Not( ActivitySpecialGuestType.IsRequired )]"
-								}
-
-								dot = {}
-								expand = {}
-							}
-						}
-					}
-
-					hbox = {
-						layoutpolicy_horizontal = expanding
-						
-						text_single = {
-							text = "ACTIVITY_LIST_DETAIL_JOIN_LOCATION"
-						}
-
-						text_single = {
-							raw_text = ","
-						}
-						
-						space = {}
-						
-						text_single = {
-							text = "ACTIVITY_LIST_DETAIL_JOIN_TRAVEL_TIME"
-						}
-						
-						dot = {}
-						expand = {}
-					}
-
-					vbox = {
-						name = "invitation"
-						datacontext = "[Activity.GetHost]"
-						layoutpolicy_horizontal = expanding
-
-						text_multi = {
-							layoutpolicy_horizontal = expanding
-							name = "description"
-							using = wide
-							autoresize = yes
-							text = "[ActivityListDetailJoinView.GetInvitationText]"
-						}
-
-						char_name = {
-							layoutpolicy_horizontal = expanding
-							blockoverride "pre" {
-								text_single = {
-									raw_text = "Signed,"
-								}
-							}
-						}
-
-						hbox = {
-							layoutpolicy_horizontal = expanding
-							spacing = 3
-
-							text_single = {
-								raw_text = "[Character.GetOpinionOf( GetPlayer) ] opinion of you. Yours of [Character.GetHerHim] is [GetPlayer.GetOpinionOf( Character.Self)]."
-								tooltip = "[Character.GetOpinionBreakdownText( GetPlayer )]"
-							}
-
-							text_single = {
-								raw_text = "[Character.GetRelationToString( GetPlayer )]."
-							}
-
-							expand = {}
-						}
-					}
-
-					vbox = {
-						name = "footer"
-						layoutpolicy_horizontal = expanding
-
-						vbox = {
-							layoutpolicy_horizontal = expanding
-
-							vbox = {
-								layoutpolicy_horizontal = expanding
-								
-								button_primary_text = {
-									layoutpolicy_horizontal = expanding
-									name = "confirm"
-									blockoverride "text" {
-										text = "ACTIVITY_LIST_DETAIL_JOIN_CONFIRM"
-									}
-									onclick = "[ActivityListDetailJoinView.Confirm]"
-								}
-
-								button_text = {
-									layoutpolicy_horizontal = expanding
-									name = "change_left_character"
-									onclick = "[Activity.DeclineInvite]"
-									visible = "[Not( Activity.GetType.IsOpenInvite )]"
-									shortcut = mapmode_house_secondary
-
-									blockoverride "text" {
-										raw_text = "Decline invitation, shift D."
-									}
-								}
-							}
-
-							expand = {}
-						}
-					}
-
-					widget = {
-						size = { 0 5 }
-					}
-
-					scrollbox = {
-						name = "description_scrollarea"
-						layoutpolicy_horizontal = expanding
-						layoutpolicy_vertical = expanding
-
-						blockoverride "scrollbox_content" {
-							vbox = {
-								layoutpolicy_horizontal = expanding
-								layoutpolicy_vertical = expanding
-
-								vbox = {
-									name = "phases"
-									layoutpolicy_horizontal = expanding
-
-									text_single = {
-										layoutpolicy_horizontal = expanding
-										text = "ACTIVITY_LIST_DETAIL_JOIN_PHASES_HEADER"
-									}
-
-									activity_phase_progress_timline_widget_ocr = {
-										name = "phase_progres_timeline"
-										layoutpolicy_horizontal = expanding
-
-										blockoverride "current_phase_progress" {
-											tooltip = "ACTIVITY_PHASE_TOOLTIP"
-										}
-									}
-								}
-
-								vbox = {
-									name = "effect"
-									layoutpolicy_horizontal = expanding
-
-									text_single = {
-										layoutpolicy_horizontal = expanding
-										text = "DECISION_DETAIL_EFFECTS"
-									}
-
-									text_multi = {
-										layoutpolicy_horizontal = expanding
-										using = wide
-										autoresize = yes
-										text = "ACTIVITY_LIST_DETAIL_JOIN_EFFECTS"
-									}
-								}
-
-								expand = {}
-							}
-						}
-
-						blockoverride "scrollbox_background_fade" {}
-					}
-				}
-			}
-
-			expand = {}
-		}
-	}
 }
-
-######################################################
-#################### TYPES ####################
-######################################################
 
 types ActivityListTypes
 {
 	type vbox_activity_group_foldout = vbox {
 		datacontext = "[ActivityGroupItem.GetGroupType]"
-		visible = "[Not( IsDataModelEmpty( ActivityGroupItem.GetActivities ) )]"
+		visible = "[Not(IsDataModelEmpty(ActivityGroupItem.GetActivities))]"
 		spacing = 4
 		layoutpolicy_horizontal = expanding
 
@@ -1263,9 +954,8 @@ types ActivityListTypes
 				datamodel = "[ActivityGroupItem.GetActivities]"
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
-
 				addcolumn = 527
-				addrow = "[Select_float( ActivityGroupType.HasTag('big_button'), '(float)65.0', '(float)55.0' )]"
+				addrow = "[Select_float(ActivityGroupType.HasTag('big_button'), '(float)65.0', '(float)55.0')]"
 
 				item = {
 					vbox = {
@@ -1277,22 +967,22 @@ types ActivityListTypes
 							datacontext = "[ActivityItem.GetActivity]"
 							visible = "[ActivityItem.IsOngoing]"
 
-							down = "[IsGameViewDataShown( 'activity_list_detail_invite_window', Activity.Self )]"
-							onclick = "[ToggleGameViewData( 'activity_list_detail_invite_window', Activity.Self )]"
-							tooltip = JOIN_ACTIVITY_TOOLTIP
+							down = "[IsGameViewDataShown('activity_list_detail_invite_window', Activity.Self)]"
+							onclick = "[ToggleGameViewData('activity_list_detail_invite_window', Activity.Self)]"
+							tooltip = "JOIN_ACTIVITY_TOOLTIP"
 						}
 
 						# Hostable Activities
 						button_activity_entry = {
 							datacontext = "[ActivityItem.GetType]"
 							datacontext = "[ActivityItem.GetActivity]"
-							visible = "[Not( ActivityItem.IsOngoing )]"
+							visible = "[Not(ActivityItem.IsOngoing)]"
 
-							down = "[IsGameViewDataShown( 'activity_list_detail_host_window', ActivityType.Self )]"
-							onclick = "[ToggleGameViewData( 'activity_list_detail_host_window', ActivityType.Self )]"
-							tooltip = SHOW_ACTIVITY_TOOLTIP
+							down = "[IsGameViewDataShown('activity_list_detail_host_window', ActivityType.Self)]"
+							onclick = "[ToggleGameViewData('activity_list_detail_host_window', ActivityType.Self)]"
+							tooltip = "SHOW_ACTIVITY_TOOLTIP"
 						}
-						
+
 						expand = {}
 					}
 				}
@@ -1301,18 +991,18 @@ types ActivityListTypes
 	}
 
 	type button_activity_entry = button_standard {
-		minimumsize = "[Select_CVector2f( ActivityGroupType.HasTag('big_button'), '(CVector2f)527,60', '(CVector2f)527,50' )]"
+		minimumsize = "[Select_CVector2f(ActivityGroupType.HasTag('big_button'), '(CVector2f)527,60', '(CVector2f)527,50')]"
 		layoutpolicy_horizontal = expanding
 
 		widget = {
-			minimumsize = "[Select_CVector2f( ActivityGroupType.HasTag('big_button'), '(CVector2f)527,56', '(CVector2f)527,46' )]"
+			minimumsize = "[Select_CVector2f(ActivityGroupType.HasTag('big_button'), '(CVector2f)527,56', '(CVector2f)527,46')]"
 			position = { -2 2 }
 			parentanchor = right|top
 			scissor = yes
 
 			icon = {
 				name = "illustration"
-				visible = "[Or( ActivityItem.IsOngoing, And( Not( ActivityItem.IsOngoing ), ActivityType.CanPlanActivity( GetPlayer ) ) )]"
+				visible = "[Or(ActivityItem.IsOngoing, And(Not(ActivityItem.IsOngoing), ActivityType.CanPlanActivity(GetPlayer)))]"
 				parentanchor = right|top
 				size = { 250 100 }
 				texture = "[ActivityType.GetHeaderBackground]"
@@ -1326,7 +1016,7 @@ types ActivityListTypes
 			}
 
 			highlight_icon = {
-				visible = "[And( Not( ActivityItem.IsOngoing ), Not( ActivityType.CanPlanActivity( GetPlayer ) ) )]"
+				visible = "[And(Not(ActivityItem.IsOngoing), Not(ActivityType.CanPlanActivity(GetPlayer)))]"
 				parentanchor = right|top
 				size = { 250 100 }
 				mirror = horizontal
@@ -1387,7 +1077,7 @@ types ActivityListTypes
 
 				text_single = {
 					name = "title"
-					visible = "[And( Not( ActivityItem.IsOngoing ), ActivityType.CanPlanActivity( GetPlayer ) )]"
+					visible = "[And(Not(ActivityItem.IsOngoing), ActivityType.CanPlanActivity(GetPlayer))]"
 					layoutpolicy_horizontal = growing
 					text = "[ActivityType.GetNameNoTooltip]"
 					default_format = "#clickable"
@@ -1396,7 +1086,7 @@ types ActivityListTypes
 
 				text_single = {
 					name = "title_disabled"
-					visible = "[And( Not( ActivityItem.IsOngoing ), Not( ActivityType.CanPlanActivity( GetPlayer ) ) )]"
+					visible = "[And(Not(ActivityItem.IsOngoing), Not(ActivityType.CanPlanActivity(GetPlayer)))]"
 					layoutpolicy_horizontal = growing
 					text = "[ActivityType.GetNameNoTooltip]"
 					default_format = "#low"
@@ -1405,7 +1095,7 @@ types ActivityListTypes
 
 				text_single = {
 					name = "base_cost"
-					visible = "[Not( ActivityItem.IsOngoing )]"
+					visible = "[Not(ActivityItem.IsOngoing)]"
 					layoutpolicy_horizontal = growing
 					alwaystransparent = yes
 					text = "ACTIVITY_BASE_COST"
@@ -1419,7 +1109,7 @@ types ActivityListTypes
 
 			highlight_icon = {
 				name = "not_possible"
-				visible = "[And( Not( ActivityItem.IsOngoing ), Not( Or(ActivityType.CanPlanActivity( GetPlayer ), ActivityType.CanAlwaysPlan() ) ) )]"
+				visible = "[And(Not(ActivityItem.IsOngoing), Not(Or(ActivityType.CanPlanActivity(GetPlayer), ActivityType.CanAlwaysPlan())))]"
 				size = { 30 30 }
 				texture = "gfx/interface/icons/symbols/icon_cross.dds"
 			}
@@ -1471,13 +1161,13 @@ types OCR {
 				visible = "[Not(ActivityItem.IsOngoing)]"
 
 				text_single = {
-					raw_text = "[ActivityType.GetUiPredictedCost( GetPlayer )|U]"
+					raw_text = "[ActivityType.GetUiPredictedCost(GetPlayer)|U]"
 				}
 
 				, = {}
 
 				text_single = {
-					visible = "[And( Not( ActivityItem.IsOngoing ), Not( Or(ActivityType.CanPlanActivity( GetPlayer ), ActivityType.CanAlwaysPlan() ) ) )]"
+					visible = "[And(Not(ActivityItem.IsOngoing), Not(Or(ActivityType.CanPlanActivity(GetPlayer), ActivityType.CanAlwaysPlan())))]"
 					raw_text = "can't host."
 				}
 			}
@@ -1493,7 +1183,8 @@ types OCR {
 					}
 				}
 				
-				blockoverride "relation" {}
+				blockoverride "relation" {
+				}
 			}
 		}
 	}
