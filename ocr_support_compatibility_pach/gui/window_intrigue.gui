@@ -1229,10 +1229,556 @@ window = {
 	old_intrigue = {}
 }
 
+
+
 ######################################################
 ################ TYPES AND TEMPLATES #################
 ######################################################
 ### IMPORTANTE: MANTIENI QUI SOTTO TUTTI I BLOCCHI ###
-### "types OCR" e "types IntrigueWindowTypes" che  ###
-### erano presenti nel tuo file originale da 68kb  ###
+### "types OCR" e "types IntrigueWindowTypes".     ###
 ######################################################
+
+types IntrigueWindowTypes
+{
+	type widget_scheme_agent_slot_item = widget {
+		datacontext = "[SchemeAgentSlotItem.GetCharacter]"
+		size = { 96 150 }
+
+		background = {
+			using = Background_Area
+		}
+
+		background = {
+			using = Background_Frame
+		}
+
+		vbox = {
+			margin_top = 5
+			margin_bottom = 10
+
+			selectable_target_portrait_widget = {
+				blockoverride "empty_slot" {
+					onclick = "[SchemeItem.ShowPotentialAgents(SchemeAgentSlotItem.Self)]"
+				}
+
+				blockoverride "filled_slot" {
+					button_round = {
+
+						parentanchor = top|right
+						size = { 25 25 }
+
+						onclick = "[CreateCommandPopup( SchemeAgentSlotItem.RemoveAgent )]"
+
+						tooltip = "INTRIGUE_WINDOW_REMOVE_AGENT_TT"
+
+						button_close = {
+							alwaystransparent = yes
+							datacontext = "[SchemeAgentSlotItem.GetCharacter]"
+							parentanchor = center
+							size = { 15 15 }
+						}
+					}
+				}
+
+				icon = {
+					visible = "[SchemeAgentSlotItem.IsExposed]"
+					parentanchor = top|left
+					size = { 25 25 }
+					alwaystransparent = yes
+					texture = "gfx/interface/icons/schemes/icon_discovered_scheme.dds"
+
+					tooltip = "INTRIGUE_WINDOW_AGENT_DISCOVERED_TT"
+
+					background = {
+						using = Background_Area_Dark
+
+						modify_texture = {
+							texture = "gfx/interface/component_masks/mask_glow.dds"
+							blend_mode = alphamultiply
+						}
+					}
+
+					glow = {
+						using = Color_Red
+						using = Glow_Standard
+						glow_radius = 3
+					}
+
+					state = {
+						trigger_on_create = yes
+
+						name = max_glow
+						next = min_glow
+						duration = 1
+						using = Animation_Curve_Default
+
+						glow_alpha = 0.8
+					}
+
+					state = {
+						name = min_glow
+						next = max_glow
+						duration = 1.6
+						using = Animation_Curve_Default
+
+						glow_alpha = 0.2
+					}
+				}
+			}
+
+			vbox = {
+				name = "scheme_agent_info"
+
+				text_single = {
+					text = "[SchemeAgentSlotItem.GetSlot.GetSlotType.GetName]"
+					align = nobaseline
+					max_width = 70
+
+					tooltip = "[SchemeAgentSlotItem.GetSlot.GetSlotType.GetDesc]"
+				}
+
+				hbox = {
+					name = "scheme_agent_contribution"
+					spacing = 5
+
+					tooltip = "[SelectLocalization(SchemeAgentSlotItem.IsFilled, 'INTRIGUE_WINDOW_SCHEME_CONTRIBUTION_TT', 'INTRIGUE_WINDOW_SCHEME_CONTRIBUTION_TT_AGENT_SLOT_EMPTY')]"
+
+					icon = {
+						name = contribution_icon
+						size = { 25 25 }
+						texture = "[SchemeAgentSlotItem.GetContributionIcon]"
+					}
+
+					text_single = {
+						text = "[SchemeAgentSlotItem.GetContribution|0]"
+						align = nobaseline
+						default_format = "#high"
+					}
+				}
+			}
+		}
+	}
+
+	type widget_scheme_countermeasures = widget {
+		size = { 400 80 }
+
+		vbox = {
+			# Scheme Countermeasures heading
+			text_label_center = {
+				text = "[scheme_countermeasures|E]"
+			}
+
+			## Countermeasure icons
+			hbox = {
+				name = "scheme_countermeasure_icons"
+				datamodel = "[IntrigueWindow.GetCountermeasures]"
+
+				background = {
+					texture = "gfx/interface/window_scheme/scheme_countermeasures_bg.dds"
+					margin = { 45 -6 }
+				}
+
+				item = {
+					container = {
+						visible = "[IntrigueWindowCountermeasureItem.IsVisible]"
+
+						datacontext = "[IntrigueWindowCountermeasureItem.GetType]"
+						tooltip = "[IntrigueWindowCountermeasureItem.GetTooltip()]"
+
+						widget = {
+							size = { 50 50 }
+
+							# Selection halo
+							icon = {
+								visible = "[IntrigueWindowCountermeasureItem.IsActive]"
+								texture = "gfx/particles/halo.dds"
+								parentanchor = center
+								size = { 60 60 }
+								color = { 1 0.85 0.6 1 }
+							}
+
+							button_round = {
+								parentanchor = center
+								size = { 48 48 }
+
+								onclick = "[CreateCommandPopup( IntrigueWindowCountermeasureItem.SetCountermeasure( IntrigueWindow.GetCharacter.Self ) )]"
+								alwaystransparent = "[And( IntrigueWindowCountermeasureItem.IsSelectable(), IntrigueWindowCountermeasureItem.IsActive )]"
+
+								# Frame
+								icon = {
+									parentanchor = center
+									size = { 38 38 }
+									alwaystransparent = yes
+
+									texture = "gfx/interface/icons/scheme_countermeasure_types/frame_purple.dds"
+									enabled = "[IntrigueWindowCountermeasureItem.IsSelectable()]"
+								}
+
+								# Countermeasure icon
+								icon = {
+									visible = "[SchemeCountermeasureType.IsValid]"
+									parentanchor = center
+									size = { 38 38 }
+									alwaystransparent = yes
+
+									texture = "[IntrigueWindowCountermeasureItem.GetType.GetIcon]"
+									enabled = "[IntrigueWindowCountermeasureItem.IsSelectable()]"
+								}
+
+								# No countermeasure icon
+								icon = {
+									visible = "[Not( SchemeCountermeasureType.IsValid )]"
+									parentanchor = center
+									size = { 38 38 }
+									alwaystransparent = yes
+
+									texture = "gfx/interface/icons/scheme_countermeasure_types/no_countermeasure.dds"
+									enabled = "[IntrigueWindowCountermeasureItem.IsSelectable()]"
+								}
+
+								# Countermeasure tier
+								icon = {
+									visible = "[SchemeCountermeasureType.IsValid]"
+									parentanchor = center
+									position = { 0 2 }
+									size = { 48 48 }
+									alwaystransparent = yes
+
+									texture = "[SchemeCountermeasureType.GetFrame]"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	type vbox_discovered_scheme_item = vbox {
+		name = "known_scheme"
+		datacontext = "[SchemeItem.GetScheme]"
+
+		background = {
+			using = Background_Area
+			margin_bottom = -2
+		}
+
+		background = {
+			using = Background_Frame
+
+			modify_texture = {
+				texture = "gfx/interface/component_masks/mask_fade_corner.dds"
+				blend_mode = alphamultiply
+				mirror = horizontal
+			}
+		}
+
+		vbox = {
+			name = "my_own_scheme_header"
+			layoutpolicy_horizontal = expanding
+
+			hbox = {
+				name = "my_own_scheme_header"
+				layoutpolicy_horizontal = expanding
+
+				margin = { 0 5 }
+				margin_left = 20
+				margin_right = 5
+
+				background = {
+					texture = "gfx/interface/window_scheme/scheme_panel_header_banner_red.dds"
+					margin_top = -2
+					margin_bottom = -3
+				}
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+
+					icon = {
+						texture = "[Scheme.GetSchemeType.GetIcon]"
+						size = { 30 30 }
+						alwaystransparent = yes
+
+						tooltip = "SCHEME_WINDOW_TT_ITEM"
+
+						background = {
+							texture = "gfx/interface/window_scheme/scheme_panel_header_icon_bg_red.dds"
+							margin = { 13 13 }
+						}
+					}
+
+					text_single = {
+						text = "SCHEME_WINDOW_ITEM_NAME"
+						using = Font_Size_Medium
+						align = nobaseline
+						max_width = 480
+						margin_left = 15
+					}
+
+					expand = {}
+				}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+
+				margin = { 10 5 }
+				spacing = 5
+
+				portrait_head = {
+					name = "target_portrait"
+					datacontext = "[Scheme.GetTargetCharacter]"
+
+					using = tooltip_es
+
+					blockoverride "portrait_button" {
+						tooltip = "SCHEME_WINDOW_SCHEME_TARGET"
+					}
+				}
+
+				vbox = {
+					layoutpolicy_vertical = expanding
+					layoutpolicy_horizontal = expanding
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+
+						tooltip = "SCHEME_WINDOW_SUCCESS_DISCOVERED_TOOLTIP"
+
+						icon = {
+							name = success_icon
+							size = { 30 30 }
+
+							texture = "gfx/interface/icons/schemes/icon_scheme_success.dds"
+						}
+
+						text_multi = {
+							name = "success"
+							autoresize = yes
+							text = "SCHEME_WINDOW_SUCCESS_CHANCE_MAIN"
+							align = nobaseline
+							max_width = 350
+						}
+
+						expand = {}
+					}
+
+					hbox = {
+						visible = "[Scheme.IsSecret]"
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+
+						tooltip = "SCHEME_WINDOW_SECRECY_DISCOVERED_TOOLTIP"
+
+						icon = {
+							name = "secrecy_icon"
+							size = { 30 30 }
+							texture = "gfx/interface/icons/schemes/icon_secrecy.dds"
+						}
+
+						text_single = {
+							name = "secrecy"
+							text = "SCHEME_WINDOW_SECRECY"
+							align = nobaseline
+							max_width = 350
+						}
+
+						expand = {}
+					}
+
+					expand = {}
+				}
+
+				expand = {}
+			}
+		}
+
+		vbox = {
+			name = "known_scheme_members"
+			layoutpolicy_horizontal = expanding
+			margin = { 10 0 }
+			spacing = 5
+
+			background = {
+				using = Background_Area
+			}
+
+			text_single = {
+				layoutpolicy_horizontal = expanding
+				text = "SCHEME_WINDOW_MEMBER_LIST"
+				align = center|nobaseline
+				margin = { 0 5 }
+
+				background = {
+					using = Background_Area
+					margin = { 5 0 }
+				}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+
+				fixedgridbox = {
+					name = "owner_member_grid"
+					datamodel = "[SchemeItem.GetAgentSlots]"
+					addcolumn = 95
+					addrow = 95
+					datamodel_wrap = 5
+					flipdirection = yes
+
+					item = {
+						portrait_head_small = {
+							datacontext = "[SchemeAgentSlotItem.GetCharacter]"
+							visible = "[SchemeAgentSlotItem.IsFilled]"
+						}
+					}
+				}
+
+				expand = {}
+			}
+
+			hbox = {
+				visible = "[Not(SchemeItem.HasAgents)]"
+				layoutpolicy_horizontal = expanding
+				margin_bottom = 15
+
+				text_single = {
+					text = "SCHEME_WINDOW_NO_KNOWN_AGENTS"
+					align = center|nobaseline
+					default_format = "#low;italic"
+				}
+			}
+
+			expand = {}
+		}
+	}
+
+	type vbox_secret_item = vbox {
+		spacing = 7
+
+		item = {
+			hbox = {
+				visible = "[Or( IntrigueWindowSecretGroup.HasUnspentHooks, GetVariableSystem.Exists( 'secrets_show_all' ) )]"
+				layoutpolicy_horizontal = expanding
+
+				background = {
+					using = Background_Area
+				}
+
+				portrait_head_small = {
+					block "portrait" {}
+				}
+
+				vbox = {
+					datacontext = "[IntrigueWindowSecretGroup.GetCharacter]"
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					margin_right = 10
+					margin_top = 5
+					margin_bottom = 10
+
+					vbox = {
+						name = "secrets"
+						datamodel = "[IntrigueWindowSecretGroup.GetSecrets]"
+						visible = "[DataModelHasItems( IntrigueWindowSecretGroup.GetSecrets )]"
+						layoutpolicy_horizontal = expanding
+
+						margin = { 5 5 }
+						spacing = 5
+
+						item = {
+							hbox = {
+								datacontext = "[IntrigueWindowSecretItem.GetSecret]"
+								visible = "[And( Secret.IsValid, Or( Not( IntrigueWindowSecretItem.IsSpent ), GetVariableSystem.Exists( 'secrets_show_all' ) ) )]"
+								layoutpolicy_horizontal = expanding
+
+								spacing = 5
+
+								icon = {
+									texture = "[Secret.GetType.GetIcon]"
+									size = { 30 30 }
+									tooltip = "INTRIGUE_WINDOW_SECRET_TOOLTIP"
+								}
+
+								text_multi = {
+									layoutpolicy_horizontal = expanding
+									text = "INTRIGUE_WINDOW_SECRET_DESC"
+									align = nobaseline
+									autoresize = yes
+									max_width = 300
+								}
+
+								expand = {}
+
+								icon = {
+									visible = "[IntrigueWindowSecretItem.IsWeakHook( Character.Self )]"
+									size = { 20 20 }
+									texture = "gfx/interface/icons/portraits/hook_secret.dds"
+									framesize = {40 40 }
+									frame = 1
+
+									tooltip = "INTRIGUE_WINDOW_BLACKMAIL_WEAK_HOOK_TT"
+								}
+
+								icon = {
+									visible = "[IntrigueWindowSecretItem.IsStrongHook( Character.Self )]"
+									size = { 20 20 }
+									texture = "gfx/interface/icons/portraits/hook_secret.dds"
+									framesize = { 40 40 }
+									frame = 2
+
+									tooltip = "INTRIGUE_WINDOW_BLACKMAIL_STRONG_HOOK_TT"
+								}
+
+								warning_icon = {
+									visible = "[Not( Character.IsPlayerInteractionWithTargetSecretValid( 'blackmail_interaction', Secret.Self ) )]"
+									size = { 20 20 }
+
+									tooltip = "[Character.GetPlayerInteractionWithTargetSecretTooltip( 'blackmail_interaction', Secret.Self )]"
+								}
+							}
+						}
+					}
+
+					expand = {}
+
+					hbox = {
+						visible = "[Character.IsPlayerInteractionShown('blackmail_interaction')]"
+						layoutpolicy_horizontal = expanding
+						margin_right = 5
+						spacing = 5
+
+						expand = {}
+
+						button_standard_small = {
+							name = "blackmail_button"
+							datacontext = "[IntrigueWindowSecretGroup.GetFirstSecret.GetSecret]"
+							size = { 120 25 }
+							enabled = "[IntrigueWindowSecretGroup.CanBlackmail]"
+							onclick = "[Character.OpenPlayerInteraction( 'blackmail_interaction' )]"
+							text = "INTRIGUE_WINDOW_SECRET_KNOWN_TO_ME_BLACKMAIL"
+
+							tooltip = "INTRIGUE_WINDOW_SECRET_BLACKMAIL_TT"
+							using = tooltip_se
+						}
+
+						button_tertiary = {
+							name = "expose_button"
+							datacontext = "[IntrigueWindowSecretGroup.GetFirstSecret.GetSecret]"
+							size = { 120 25 }
+							onclick = "[Character.OpenPlayerInteraction( 'expose_secret_interaction' )]"
+							text = "INTRIGUE_WINDOW_SECRET_EXPOSE"
+
+							tooltip = "INTRIGUE_WINDOW_SECRET_EXPOSE_TT"
+							using = tooltip_se
+						}
+					}
+				}
+
+				expand = {}
+			}
+		}
+	}
+}
