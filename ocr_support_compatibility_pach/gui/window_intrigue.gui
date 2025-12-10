@@ -1229,14 +1229,15 @@ window = {
 	old_intrigue = {}
 }
 
-
-
 ######################################################
 ################ TYPES AND TEMPLATES #################
 ######################################################
 ### IMPORTANTE: MANTIENI QUI SOTTO TUTTI I BLOCCHI ###
-### "types OCR" e "types IntrigueWindowTypes".     ###
+### "types OCR" e "types IntrigueWindowTypes" che  ###
+### erano presenti nel tuo file originale da 68kb  ###
 ######################################################
+
+
 
 types IntrigueWindowTypes
 {

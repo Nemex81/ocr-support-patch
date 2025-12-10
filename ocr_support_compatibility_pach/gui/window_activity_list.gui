@@ -1,5 +1,4 @@
 @txt_width = 700
-
 ####################################################################################################
 # FILE: window_activity_list.gui
 # PATTERN: B - MainTab Right Aligned Full Screen
@@ -1143,8 +1142,6 @@ types ActivityListTypes
 		}
 	}
 }
-
-
 
 types OCR_types {
 	type button_activity_entry_ocr = button_text {
