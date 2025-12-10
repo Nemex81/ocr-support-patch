@@ -1145,7 +1145,8 @@ types ActivityListTypes
 }
 
 
-types OCRTypes {
+
+types OCR_types {
 	type button_activity_entry_ocr = button_text {
 		datacontext = "[ActivityItem.GetType]"
 		datacontext = "[ActivityItem.GetActivity]"
