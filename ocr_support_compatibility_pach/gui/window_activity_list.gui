@@ -1,4 +1,5 @@
 @txt_width = 700
+
 ####################################################################################################
 # FILE: window_activity_list.gui
 # PATTERN: B - MainTab Right Aligned Full Screen
@@ -11,14 +12,13 @@
 
 window = {
 	name = "activity_list"
-	parentanchor = top|right
 	layer = windows_layer
+	size = { 100% 100% }
+	alwaystransparent = yes
 	movable = no
 
 	datacontext = "[GetVariableSystem]"  # CRITICAL: Must be first for dual-mode
 	datacontext = "[GetPlayer]"
-
-	using = Window_Size_MainTab
 
 	state = {
 		name = _show
@@ -267,166 +267,172 @@ window = {
 	### Full vanilla graphical interface                              ###
 	#####################################################################
 
-	margin_widget = {
+	widget = {
 		name = "normal_mode_content"
+		parentanchor = top|right
+		using = Window_Size_MainTab
 		visible = "[GetVariableSystem.Exists('ocr')]"
-		size = { 100% 100% }
-		margin_top = 30
-		margin_bottom = 25
-		margin_right = 13
+		using = Window_Position_MainTab
 
-		widget = {
+		margin_widget = {
 			size = { 100% 100% }
+			margin_top = 30
+			margin_bottom = 25
+			margin_right = 13
 
-			vbox = {
-				using = Window_Margins
+			widget = {
+				size = { 100% 100% }
 
-				widget_header_with_picture = {
-					layoutpolicy_horizontal = expanding
-					max_height = 100
+				vbox = {
+					using = Window_Margins
 
-					blockoverride "illustration_texture" {
-						texture = "gfx/interface/illustrations/window_headers/header_activity.dds"
-						fittype = centercrop
-						alpha = 0.4
-					}
-
-					blockoverride "header_text" {
-						text = "ACTIVITY_LIST"
-					}
-
-					blockoverride "button_close" {
-						onclick = "[ActivityListWindow.Close]"
-					}
-
-					vbox = {
-						name = "activity_status"
+					widget_header_with_picture = {
 						layoutpolicy_horizontal = expanding
-						datacontext = "[Character.GetInvolvedActivity]"
-						margin_top = 40
+						max_height = 100
 
-						text_single = {
-							name = "status_no_activity"
-							text = "ACTIVITY_LIST_NO_ONGOING_ACTIVITY"
-							visible = "[Not(Activity.IsValid)]"
-							autoresize = yes
-							maximumsize = { 450 -1 }
-							align = center
-							default_format = "#weak"
+						blockoverride "illustration_texture" {
+							texture = "gfx/interface/illustrations/window_headers/header_activity.dds"
+							fittype = centercrop
+							alpha = 0.4
+						}
+
+						blockoverride "header_text" {
+							text = "ACTIVITY_LIST"
+						}
+
+						blockoverride "button_close" {
+							onclick = "[ActivityListWindow.Close]"
 						}
 
 						vbox = {
-							name = "status_involved_activity"
+							name = "activity_status"
 							layoutpolicy_horizontal = expanding
-							visible = "[Activity.IsValid]"
+							datacontext = "[Character.GetInvolvedActivity]"
+							margin_top = 40
 
-							text_multi = {
+							text_single = {
+								name = "status_no_activity"
+								text = "ACTIVITY_LIST_NO_ONGOING_ACTIVITY"
+								visible = "[Not(Activity.IsValid)]"
+								autoresize = yes
+								maximumsize = { 450 -1 }
+								align = center
+								default_format = "#weak"
+							}
+
+							vbox = {
 								name = "status_involved_activity"
-								text = "ACTIVITY_LIST_INVOLVED_ACTIVITY"
-								visible = "[Not(ObjectsEqual(Activity.GetHost.Self, Character.Self))]"
-								autoresize = yes
-								max_width = 450
-								align = center
-							}
-
-							text_multi = {
-								name = "status_hosting_activity"
-								text = "ACTIVITY_LIST_HOSTING_ACTIVITY"
-								visible = "[ObjectsEqual(Activity.GetHost.Self, Character.Self)]"
-								autoresize = yes
-								max_width = 450
-								align = center
-							}
-
-							hbox = {
 								layoutpolicy_horizontal = expanding
-								margin_left = 10
-								spacing = 10
+								visible = "[Activity.IsValid]"
 
-								activity_hud_button = {
-									name = "activity_hud_icon"
+								text_multi = {
+									name = "status_involved_activity"
+									text = "ACTIVITY_LIST_INVOLVED_ACTIVITY"
+									visible = "[Not(ObjectsEqual(Activity.GetHost.Self, Character.Self))]"
+									autoresize = yes
+									max_width = 450
+									align = center
 								}
 
-								vbox = {
-									text_single = {
-										layoutpolicy_horizontal = expanding
-										text = "ACTIVITY_LIST_CURRENT_PHASE"
-									}
-									text_single = {
-										layoutpolicy_horizontal = expanding
-										text = "ACTIVITY_LIST_CURRENT_STATE"
-									}
+								text_multi = {
+									name = "status_hosting_activity"
+									text = "ACTIVITY_LIST_HOSTING_ACTIVITY"
+									visible = "[ObjectsEqual(Activity.GetHost.Self, Character.Self)]"
+									autoresize = yes
+									max_width = 450
+									align = center
 								}
 
-								expand = {}
-							}
-						}
-
-						expand = {}
-					}
-				}
-
-				vbox = {
-					layoutpolicy_horizontal = expanding
-					layoutpolicy_vertical = expanding
-
-					vbox = {
-						name = "activity_content"
-						layoutpolicy_horizontal = expanding
-						layoutpolicy_vertical = expanding
-						margin_top = 30
-
-						scrollbox = {
-							name = "host_scrollbox"
-							using = Animation_Tab_Switch
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-
-							blockoverride "scrollbox_content" {
-								vbox = {
-									name = "activities_container"
+								hbox = {
 									layoutpolicy_horizontal = expanding
-									layoutpolicy_vertical = expanding
-									spacing = 5
+									margin_left = 10
+									spacing = 10
+
+									activity_hud_button = {
+										name = "activity_hud_icon"
+									}
 
 									vbox = {
-										name = "activity_groups_container"
-										margin_bottom = 8
-										spacing = 2
-										layoutpolicy_horizontal = expanding
-										layoutpolicy_vertical = expanding
-										datamodel = "[ActivityListWindow.GetActivityGroupItems]"
-
-										item = {
-											vbox_activity_group_foldout = {}
+										text_single = {
+											layoutpolicy_horizontal = expanding
+											text = "ACTIVITY_LIST_CURRENT_PHASE"
 										}
-									}
-
-									divider_light = {
-										layoutpolicy_horizontal = expanding
-									}
-
-									vbox = {
-										margin_top = 8
-										layoutpolicy_horizontal = expanding
-
-										button_checkbox_label = {
-											name = "notify_can_join"
-											datacontext = "[GetActivityType('activity_tournament')]"
-
-											onclick = "[ActivityType.ToggleShouldNotifyCanJoinOpenActivity]"
-
-											blockoverride "checkbox" {
-												checked = "[ActivityType.ShouldNotifyCanJoinOpenActivity]"
-											}
-
-											blockoverride "text" {
-												text = "ACTIVITY_LIST_NOTIFY_ME_ABOUT_TOURNAMENTS"
-											}
+										text_single = {
+											layoutpolicy_horizontal = expanding
+											text = "ACTIVITY_LIST_CURRENT_STATE"
 										}
 									}
 
 									expand = {}
+								}
+							}
+
+							expand = {}
+						}
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						vbox = {
+							name = "activity_content"
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+							margin_top = 30
+
+							scrollbox = {
+								name = "host_scrollbox"
+								using = Animation_Tab_Switch
+								layoutpolicy_horizontal = expanding
+								layoutpolicy_vertical = expanding
+
+								blockoverride "scrollbox_content" {
+									vbox = {
+										name = "activities_container"
+										layoutpolicy_horizontal = expanding
+										layoutpolicy_vertical = expanding
+										spacing = 5
+
+										vbox = {
+											name = "activity_groups_container"
+											margin_bottom = 8
+											spacing = 2
+											layoutpolicy_horizontal = expanding
+											layoutpolicy_vertical = expanding
+											datamodel = "[ActivityListWindow.GetActivityGroupItems]"
+
+											item = {
+												vbox_activity_group_foldout = {}
+											}
+										}
+
+										divider_light = {
+											layoutpolicy_horizontal = expanding
+										}
+
+										vbox = {
+											margin_top = 8
+											layoutpolicy_horizontal = expanding
+
+											button_checkbox_label = {
+												name = "notify_can_join"
+												datacontext = "[GetActivityType('activity_tournament')]"
+
+												onclick = "[ActivityType.ToggleShouldNotifyCanJoinOpenActivity]"
+
+												blockoverride "checkbox" {
+													checked = "[ActivityType.ShouldNotifyCanJoinOpenActivity]"
+												}
+
+												blockoverride "text" {
+													text = "ACTIVITY_LIST_NOTIFY_ME_ABOUT_TOURNAMENTS"
+												}
+											}
+										}
+
+										expand = {}
+									}
 								}
 							}
 						}
