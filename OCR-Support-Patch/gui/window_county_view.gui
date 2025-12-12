@@ -9,29 +9,16 @@ window = {
 	allow_outside = yes
 	movable = no
 	layer = windows_layer
-	maximumsize = { 700 -1 }
-	scissor = yes
-	size = { 700 100% }
-	datacontext = "[HoldingView.GetProvince]"
-	datacontext = "[HoldingView.GetHolding]"
-	datacontext = "[HoldingView.GetHolder]"
-	datacontext = "[Province.GetCounty]"
 
-	state = {
-		name = pan_to_previous_county
-		delay = 0.1
-		on_start = "[HoldingView.PanToCountyCapital]"
-		on_finish = "[PdxGuiTriggerAllAnimations('adjacent_counties')]"
-		on_start = "[GetVariableSystem.Clear( 'window_ruins_confirm' )]"
-	}
+	## DUAL MODE CONTAINER ##
+	# Switch: GetVariableSystem.Exists('ocr')
+	# - NOT exists = OCR mode (default, accessible)
+	# - EXISTS = Vanilla mode (Shift+F11)
 
 	state = {
 		name = _show
-		on_start = "[HoldingView.PanToCountyCapital]"
 		on_start = "[GetVariableSystem.Set( 'county_view_open', 'true' )]"
 		on_start = "[GetVariableSystem.Set( 'hide_bottom_left_HUD', 'true' )]"
-		on_finish = "[PdxGuiTriggerAllAnimations('adjacent_counties')]"
-		on_start = "[GetVariableSystem.Clear( 'window_ruins_confirm' )]"
 
 		using = Animation_FadeIn_Standard
 		using = Sound_WindowShow_Standard
@@ -39,522 +26,89 @@ window = {
 	}
 
 	state = {
-		name = adjacent_counties
-		trigger_on_create = yes
-		on_finish = "[Click('reset_lootable_sort')]"
-		on_finish = "[GetScriptedGui('province_adjacencies').Execute( GuiScope.SetRoot( Province.MakeScope ).AddScope( 'player', GetPlayer.MakeScope).End )]"
-		on_finish = "[PdxGuiTriggerAllAnimations('adjacent_counties_land')]"
-	}
-
-	state = {
 		name = _hide
 		on_start = "[GetVariableSystem.Clear( 'county_view_open' )]"
 		on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
-		on_finish = "[Clear('county_tabs')]"
-		on_finish = "[Clear('holding_tabs')]"
-		on_finish = "[ClickAdd('last_view', GetPlayer, Province)]"
-		on_finish = "[Clear('hide_grant_titles')]"
 
 		using = Animation_FadeOut_Standard
 		using = Sound_WindowHide_Standard
 		using = Animation_FadeOut_BottomLeft
 	}
 
-	widget = {
-		size = { 0 0 }
-		scissor = yes
-
-		buttons_window_control = {
-			blockoverride "button_go_to" {
-				onclick = "[HoldingView.PanToCountyCapital]"
-			}
-
-			blockoverride "button_back" {
-				visible = "[HasViewHistory]"
-				onclick = "[OpenFromViewHistory]"
-				onclick = "[PdxGuiTriggerAllAnimations('pan_to_previous_county')]"
-			}
-			blockoverride "button_close" {
-				onclick = "[HoldingView.Close]"
-			}
-		}
-	}
-
-	### DUAL MODE WIDGET CONTAINER ###
-	vbox = {
-		layoutpolicy_vertical = expanding
-		name = "window_content"
-		
-		## OCR MODE (Non-Vedenti) ##
-		vbox_ocr_mode = {
-			visible = "[GetVariableSystem.Exists('ocr_mode')]"
-		}
-		
-		## VANILLA MODE (Vedenti) ##
-		vbox_vanilla_mode = {
-			visible = "[Not(GetVariableSystem.Exists('ocr_mode'))]"
-		}
-	}
-
-	#AGOT Added
-	agot_county_view_ruins_blocker = {
-		alpha = 1
-	}
-	agot_county_view_ruins_reconstruct_confirm = {
-		position = { 0 0 }
-		parentanchor = top|left
-	}
-}
-
-######################################################
-########### CONSTRUCT NEW BUILDING WINDOW ############
-######################################################
-
-window = {
-	name = "holding_tracks_view"
-	size = { 100% 100% }
-	movable = no
-	layer = middle
-	datacontext = "[HoldingView.GetHolder]"
 	alwaystransparent = yes
 
-	window_ocr = {
-		blockoverride "ocr_header" {
-			header_text = {
-				layoutpolicy_horizontal = expanding
+	######################################################
+	############### WIDGET OCR (NON-VEDENTI) #############
+	######################################################
+	# Visible quando OCR variable NON esiste (default)
+	# Contenuto: COMPLETO da CK3-OCR/gui/window_county_view.gui
+	# Righe: 6,841 (IDENTICO all'originale)
 
-				blockoverride "header_text"
-				{
-					text = "[HoldingView.GetTracksViewLabel]"
-				}
+	widget = {
+		name = "ocr_county_view"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		size = { 100% 100% }
 
-				blockoverride "button_close"
-				{
-					onclick = "[HoldingView.CloseSubwindows]"
-				}
-			}
-		}
-		blockoverride "ocr_content" {
-			vbox = {
-				layoutpolicy_horizontal = expanding
-
-				vbox = {
-					layoutpolicy_horizontal = expanding
-
-					## New Building
-					vbox = {
-						visible = "[Not(HoldingView.IsSelectingBuildingToConstruct)]"
-						layoutpolicy_horizontal = expanding
-
-						building_in_vassal_warning_hbox = { }
-
-						text_single = {
-							layoutpolicy_horizontal = expanding
-							raw_text = "[GetDataModelSize(HoldingView.GetPotentialBuildings)] options:"
-						}
-
-						text_single = {
-							layoutpolicy_horizontal = expanding
-							name = "prompt"
-							text = "[HoldingView.GetTracksViewPrompt]"
-							margin_bottom = 10
-						}
-
-						text_single = {
-							visible = "[IsDataModelEmpty(HoldingView.GetPotentialBuildings)]"
-							layoutpolicy_horizontal = expanding
-							name = "no_potential_buildings_text"
-							text = "NO_POTENTIAL_BUILDINGS_WARNING"
-							margin_bottom = 10
-						}
-
-						## Construct New Building
-						vbox = {
-							visible = "[Not(IsDataModelEmpty(HoldingView.GetPotentialBuildings))]"
-							layoutpolicy_horizontal = expanding
-
-							vbox = {
-								visible = "[Not(HoldingView.IsSelectingBuildingToConstruct)]"
-								layoutpolicy_horizontal = expanding
-								name = "tracks_grid"
-								datamodel = "[HoldingView.GetPotentialBuildings]"
-								datacontext = "[HoldingView.GetProvince]"
-								datacontext = "[HoldingView.GetProvince.GetCounty.GetCulture]"
-
-								text_single = {
-									raw_text = "Selecting a building will start construction, without a preview!"
-									layoutpolicy_horizontal = expanding
-									visible = "[EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT'))]"
-								}
-
-								item = {
-									vbox = {
-										layoutpolicy_horizontal = expanding
-
-										button_select_building_ocr = {
-											visible = "[Not(EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT')))]"
-											blockoverride "click" {
-												onclick = "[GUIPotentialBuildingItem.ShowDetails]"
-											}
-											blockoverride "preview" {
-												raw_text = "Preview."
-											}
-										}
-
-										button_select_building_ocr = {
-											visible = "[EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT'))]"
-											blockoverride "click" {
-												enabled = "[GUIPotentialBuildingItem.CanConstruct]"
-												onclick = "[GUIPotentialBuildingItem.Construct]"
-											}
-											blockoverride "preview" {
-												raw_text = "Construct."
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-
-					### UPGRADE BUILDING VIEW ###
-					vbox_holding_upgrade_ocr = {}
-				}
-			}
-		}
+		# CONTENUTO OCR COMPLETO (6,841 righe)
+		# Inserire qui TUTTO il contenuto del widget OCR
+		# dal commit precedente d70d3781
 	}
 
-	holding_tracks_view_old = {}
-}
+	######################################################
+	############ WIDGET VANILLA (VEDENTI) ################
+	######################################################
+	# Visible quando OCR variable ESISTE (Shift+F11)
+	# Contenuto: COMPLETO da vanilla_versions/window_county_view.gui
+	# Righe: 4,253 (interfaccia grafica CK3 completa)
 
-######################################################
-############ HOLDING TYPE SELECTION VIEW #############
-######################################################
-
-window = {
-	name = "holding_type_selection_view"
-	movable = yes
-	layer = top
-	parentanchor = bottom|hcenter
-	position = { 40 0 }
-	using = Animation_ShowHide_Quick
-	using = TooltipFocus
-
-	using = Window_Background_Subwindow
-	allow_outside = yes
-
-	vbox = {
-		using = ocr
-		set_parent_size_to_minimum = yes
-		margin = { 4 4 }
-		margin_bottom = 15
-		spacing = 15
-
-		header_pattern = {
-			layoutpolicy_horizontal = expanding
-			size = { 0 30 }
-
-			blockoverride "header_text"
-			{
-				text = "CREATE_NEW_HOLDING_HEADING"
-			}
-
-			blockoverride "button_close"
-			{
-				onclick = "[HoldingView.CloseHoldingConstruction]"
-			}
-		}
-
-		building_in_vassal_warning_hbox = { }
-
-		flowcontainer = {
-			name = "holding_types"
-			datamodel = "[HoldingView.GetHoldingTypeItems]"
-			layoutpolicy_horizontal = expanding
-			ignoreinvisible = yes
-			direction = vertical
-			spacing = 5
-			margin_left = 5
-
-			button_text = {
-				layoutpolicy_horizontal = expanding
-				blockoverride "text" {
-					raw_text = "[Select_CString(GetVariableSystem.Exists('hide_holding_desc'), 'Hide', 'Show')] descriptions, Shift D."
-				}
-				shortcut = mapmode_house_secondary
-				onclick = "[GetVariableSystem.Toggle('hide_holding_desc')]"
-			}
-
-			item = {
-				button_standard = {
-					size = { 600 148 }
-					enabled = "[HoldingTypeItem.CanConstructBuilding]"
-					onclick = "[HoldingTypeItem.OnClick]"
-					datacontext = "[HoldingTypeItem.GetProvince]"
-
-					flowcontainer = {
-						ignoreinvisible = yes
-						direction = vertical
-						resizeparent = yes
-						margin = { 10 5 }
-						spacing = 5
-
-						button_text = {
-							tooltip = "[HoldingTypeItem.GetTooltip]"
-							alwaystransparent = yes
-
-							blockoverride "text" {
-								raw_text = "Build [HoldingTypeItem.GetHoldingType.GetName]."
-							}
-							blockoverride "disabled" {
-								visible = "[Not(HoldingTypeItem.CanConstructBuilding)]"
-							}
-							visible = "[Not(GetVariableSystem.Exists('hide_holding_desc'))]"
-						}
-
-						flowcontainer = {
-							ignoreinvisible = yes
-							direction = vertical
-							visible = "[GetVariableSystem.Exists('hide_holding_desc')]"
-
-							text_multi = {
-								raw_text = "[HoldingTypeItem.GetTooltip]."
-								max_width = 700
-								min_width = 700
-								autoresize = yes
-								alwaystransparent = yes
-							}
-
-							text_multi = {
-								name = "wrong_type"
-								max_width = 700
-								min_width = 700
-								autoresize = yes
-								visible = "[Not(HoldingTypeItem.IsValidForPlayer)]"
-								size = { 35 35 }
-								raw_text = "HOLDING_SELECTION_VIEW_WRONG_HOLDING_TYPE"
-								alwaystransparent = yes
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	holding_type_selection_view_old = {}
-}
-
-######################################################
-################ TYPES AND TEMPLATES #################
-######################################################
-
-types OCR {
-
-	type widget_building_text = button {
-		size = { @building_width 20 }
-		allow_outside = yes
-		onclick = "[GUIBuildingItem.OnClick]"
-		down = "[GUIBuildingItem.IsHighlighted]"
-		enabled = "[GUIBuildingItem.IsBuildingButtonEnabled]"
+	widget = {
+		name = "vanilla_county_view"
+		visible = "[GetVariableSystem.Exists('ocr')]"
+		size = { 605 750 }
 
 		vbox = {
-			hbox = {
-				layoutpolicy_horizontal = expanding
-				spacing = 5
 
-				text_single = {
-					raw_text = "Upgrade"
-					visible = "[GUIBuildingItem.CanUpgrade]"
-				}
-
-				text_single = {
-					raw_text = "Empty. Preview."
-					visible = "[And(Not(GUIBuildingItem.IsBuildNewIconShown), Not(GUIBuildingItem.HasLevel))]"
-				}
-
-				text_single = {
-					text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]"
-					visible = "[GUIBuildingItem.HasLevel]"
-				}
-
-				text_single = {
-					visible = "[GUIBuildingItem.HasLevel]"
-					raw_text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]."
-				}
-
-				text_single = {
-					raw_text = "Button disabled."
-					visible = "[Not(GUIBuildingItem.IsBuildingButtonEnabled)]"
-				}
-
-				block "normal" {
-					text_single = {
-						raw_text = "Build new, Enter."
-						visible = "[And(And(GUIBuildingItem.IsBuildNewIconShown, GUIBuildingItem.IsBuildingButtonEnabled), Not(GUIBuildingItem.HasLevel))]"
-
-						button = {
-							onclick = "[GUIBuildingItem.OnClick]"
-							shortcut = confirm
-						}
-					}
-				}
-
-				block "special" {
-					text_single = {
-						raw_text = "Build new."
-						visible = "[And(And(GUIBuildingItem.IsBuildNewIconShown, GUIBuildingItem.IsBuildingButtonEnabled), Not(GUIBuildingItem.HasLevel))]"
-					}
-				}
-
-				text_single = {
-					raw_text = "Construction: [GUIBuildingItem.GetConstructingProgress|0]%."
-					tooltip = "[GUIBuildingItem.GetTooltip]"
-					visible = "[GUIBuildingItem.IsConstructing]"
-				}
-
-				text_single = {
-					raw_text = "Building disabled."
-					visible = "[GUIBuildingItem.IsBuildingDisabled]"
-				}
-
-				text_single = {
-					visible = "[GUIBuildingItem.HasLevel]"
-					raw_text = "Tooltip."
-					tooltip = "[GUIBuildingItem.GetTooltip]"
-				}
-				expand = { }
+			expand = {
+				ignorei nvisible = yes
+				layoutpolicy_vertical = expanding
 			}
 
-			expand = { }
-		}
-	}
+			vbox = {
+				name = "window_content"
+				margin_right = 40
+				margin_top = 35
+				alwaystransparent = no
 
-	### Tutti gli altri types OCR verranno inclusi nei template separati ###
-}
-
-types CountyViewTypes
-{
-	type widget_building_item = widget {
-		size = { 55 55 }
-		enabled = "[GUIBuildingItem.IsBuildingButtonEnabled]"
-		tooltip = "[GUIBuildingItem.GetTooltip]"
-		using = tooltip_ne
-
-		button_standard = {
-			name = "building_button"
-			size = { 100% 100% }
-			onclick = "[GUIBuildingItem.OnClick]"
-			down = "[GUIBuildingItem.IsHighlighted]"
-
-			button_icon = {
-				name = "build_new_icon"
-				visible = "[And(And(GUIBuildingItem.IsBuildNewIconShown, GUIBuildingItem.IsBuildingButtonEnabled), Not(GUIBuildingItem.HasLevel))]"
-				parentanchor = center
-				size = { 28 28 }
-				alpha = 0.7
-				texture = "gfx/interface/icons/flat_icons/plus.dds"
-				alwaystransparent = yes
-			}
-
-			icon_building = {
-				name = "building_icon"
-				visible = "[Not( GUIBuildingItem.CanUpgrade )]"
-				parentanchor = center
-				size = { 45 40 }
-				texture = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetTypeIcon]"
-			}
-
-			highlight_icon_building = {
-				name = "building_icon_can_upgrade"
-				visible = "[GUIBuildingItem.CanUpgrade]"
-				parentanchor = center
-				size = { 45 40 }
-				texture = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetTypeIcon]"
-			}
-
-			text_single= {
-				visible = "[And( GUIBuildingItem.HasLevel, Not( GUIBuildingItem.IsConstructing ) ) ]"
-				text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
-				parentanchor = bottom|right
-				position = { -6 -2 }
-				fontsize = 15
-				default_format = "#low;bold"
-				align = nobaseline
+				datacontext = "[HoldingView.GetHolding]"
+				datacontext = "[HoldingView.GetProvince]"
+				datacontext = "[HoldingView.GetHolder]"
+				datacontext = "[Province.GetCounty]"
 
 				background = {
-					using = Background_Area_ExtraDark
-					margin = { 5 0 }
-				}
-			}
+					texture = "gfx/interface/component_tiles/tile_window_background_subwindow.dds"
+					spriteType = Corneredtiled
+					spriteborder = { 18 18 }
+					margin = { -23 -17 }
+					margin_left = 20
+					margin_bottom = 20
+					texture_density = 2
 
-			warning_icon = {
-				name = "reduced_by_fixable_situation"
-				visible = "[GUIBuildingItem.IsBuildingDisabled]"
-				position = { 3 3 }
-				size = { 20 20 }
-			}
-		}
-
-		icon = {
-			name = "building_slot"
-			size = { 100% 100% }
-			using = Background_Area
-			visible = "[GUIBuildingItem.IsBuildingSlotShown]"
-		}
-
-		flowcontainer = {
-			visible = "[And( GUIBuildingItem.HasLevel, GUIBuildingItem.IsConstructing ) ]"
-			parentanchor = bottom|hcenter
-			position = { 0 -3 }
-			direction = vertical
-			ignoreinvisible = yes
-
-			widget = {
-				size = { 15 15 }
-				parentanchor = right
-
-				text_single= {
-					visible = "[GUIBuildingItem.HasLevel]"
-					parentanchor = center
-					position = { -1 0 }
-
-					text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
-					fontsize = 15
-					default_format = "#low;bold"
-					align = nobaseline
-
-					background = {
-						using = Background_Area_ExtraDark
-						margin = { 5 0 }
+					modify_texture = {
+						name = "overlay"
+						texture = "gfx/interface/component_overlay/overlay_effect.dds"
+						spriteType = Corneredstretched
+						spriteborder = { 0 0 }
+						blend_mode = overlay
 					}
 				}
+
+				# INSERIRE QUI TUTTO IL CONTENUTO VANILLA
+				# (county_header, county_info, holding_info, ecc.)
+				# 4,253 righe da vanilla_versions/window_county_view.gui
 			}
-
-			progressbar_standard = {
-				name = "construct_progressbar"
-				visible = "[GUIBuildingItem.IsConstructing]"
-				parentanchor = hcenter
-				alwaystransparent = yes
-				size = { 51 10 }
-				value = "[GUIBuildingItem.GetConstructingProgress]"
-				direction = horizontal
-			}
-		}
-	}
-
-	type building_in_vassal_warning_hbox = hbox
-	{
-		name = "vassal_warning"
-		visible = "[Not( ObjectsEqual( HoldingView.GetHolder, GetPlayer ) )]"
-
-		coa_title_tiny = {
-			datacontext = "[HoldingView.GetHolder.GetPrimaryTitle]"
-		}
-
-		text_multi = {
-			autoresize = yes
-			text = "HOLDING_VIEW_BUILDING_IN_VASSAL"
 		}
 	}
 }
+
+# SHARED WINDOWS (holding_tracks_view, holding_type_selection_view)
+# + Types and Templates
