@@ -1,18 +1,13 @@
 ######################################################
-################### COUNTY VIEW DUAL MODE ############
-################### VERSIONE DEFINITIVA #############
+################### COUNTY VIEW ######################
 ######################################################
-# File: ocr_support_compatibility_pach/gui/window_county_view.gui
-# Autore: Nemex81
-# Data: Dicembre 2025
+# FILE PRINCIPALE CON APPROCCIO DUALE COMPLETO
+# - Modalità NON VEDENTI (OCR Support): widget ocr_county_view
+# - Modalità VEDENTI (Vanilla): widget vanilla_county_view
 #
-# Questo file implementa il DUAL-MODE per la County View:
-# - VANILLA CK3: Per giocatori normo vedenti (Shift+F11 attivo)
-# - OCR SUPPORT: Per giocatori non vedenti (modalità predefinita)
-#
-# SWITCH MECHANISM:
-# - Premi Shift+F11 per attivare modalità vanilla (grafica)
-# - Modalità OCR (testo) è attiva di default
+# I contenuti sono salvati nei placeholder:
+# - placeholders/window_county_view_ocr.gui
+# - placeholders/window_county_view_vanilla.gui
 ######################################################
 
 window = {
@@ -23,208 +18,267 @@ window = {
 	movable = no
 	layer = windows_layer
 	
-	# Dual sizing: vanilla 605x750, OCR maximumsize 700x-1
+	# Dimensioni: OCR usa 700x100%, Vanilla usa 605x750
 	maximumsize = { 700 -1 }
 	scissor = yes
 	size = { 700 100% }
 	
-	# Common datacontexts
+	# Datacontexts comuni
 	datacontext = "[HoldingView.GetProvince]"
 	datacontext = "[HoldingView.GetHolding]"
 	datacontext = "[HoldingView.GetHolder]"
 	datacontext = "[Province.GetCounty]"
-
-	# =================================================================
-	# COMMON STATES (used by both modes)
-	# =================================================================
+	
+	######################################################
+	############### STATES COMUNI ########################
+	######################################################
 	
 	state = {
 		name = _show
 		on_start = "[HoldingView.PanToCountyCapital]"
 		on_start = "[GetVariableSystem.Set( 'county_view_open', 'true' )]"
 		on_start = "[GetVariableSystem.Set( 'hide_bottom_left_HUD', 'true' )]"
+		
 		using = Animation_FadeIn_Standard
 		using = Sound_WindowShow_Standard
 		using = Animation_FadeIn_BottomLeft
 	}
-
+	
 	state = {
 		name = _hide
 		on_start = "[GetVariableSystem.Clear( 'county_view_open' )]"
 		on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
+		
 		using = Animation_FadeOut_Standard
 		using = Sound_WindowHide_Standard
 		using = Animation_FadeOut_BottomLeft
 	}
-
-	# =================================================================
-	# VANILLA MODE - Per Normo Vedenti (Shift+F11 attivo)
-	# =================================================================
-	# Visible when: GetVariableSystem.Exists('ocr') == true
-	# Activation: Press Shift+F11 in-game
-	# Source: vanilla_versions/window_county_view.gui (SHA: eaf663fc)
-	# =================================================================
 	
-	widget = {
-		name = "vanilla_county_view"
-		visible = "[GetVariableSystem.Exists('ocr')]"
-		size = { 100% 100% }
-		
-		### ============================================
-		### INSERIRE QUI CONTENUTO VANILLA COMPLETO
-		### ============================================
-		# 
-		# ISTRUZIONI:
-		# 1. Apri: ocr_support_compatibility_pach/gui/vanilla_versions/window_county_view.gui
-		# 2. Copia TUTTO il contenuto all'interno del window { } principale
-		#    (escludi il "window = {" iniziale e il "}" finale)
-		# 3. Incollalo qui sotto, sostituendo il placeholder text_single
-		# 4. Il contenuto vanilla è circa 6000 righe
-		#
-		# Il file vanilla contiene:
-		# - Interfaccia grafica completa
-		# - Sistema building con icone
-		# - Tooltip interattivi
-		# - Animazioni e effetti visivi
-		# - Gestione holding, county, tasks
-		#
-		
-		text_single = {
-			text = "[VANILLA MODE] - Insert complete vanilla content here"
-			parentanchor = center
-			using = Font_Size_Big
-		}
-		
-		text_multi = {
-			parentanchor = center
-			position = { 0 50 }
-			max_width = 400
-			autoresize = yes
-			text = "Questo è un PLACEHOLDER. Per completare:\n\n1. Apri vanilla_versions/window_county_view.gui\n2. Copia il contenuto del window { } block\n3. Incollalo qui\n\nSHA originale: eaf663fc\nRighe: ~6000"
-		}
+	state = {
+		name = pan_to_previous_county
+		delay = 0.1
+		on_start = "[HoldingView.PanToCountyCapital]"
 	}
-
-	# =================================================================
-	# OCR SUPPORT MODE - Per Non Vedenti (Modalità Predefinita)
-	# =================================================================
-	# Visible when: GetVariableSystem.Exists('ocr') == false (default)
-	# Deactivation: Press Shift+F11 to switch to vanilla
-	# Source: Agamidae/CK3-OCR/OCR-Support (SHA: e06dee47)
-	# =================================================================
+	
+	######################################################
+	########## MODALITÀ OCR (NON VEDENTI) ###############
+	######################################################
+	# Visibile quando: GetVariableSystem.Exists('ocr') == false
+	# (modalità predefinita)
+	# Contenuto completo in: placeholders/window_county_view_ocr.gui
+	######################################################
 	
 	widget = {
 		name = "ocr_county_view"
-		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		size = { 100% 100% }
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		
-		### ============================================
-		### INSERIRE QUI CONTENUTO OCR SUPPORT COMPLETO
-		### ============================================
-		#
-		# ISTRUZIONI:
-		# 1. Recupera il file da Agamidae/CK3-OCR repository:
-		#    OCR-Support/gui/window_county_view.gui
-		# 2. Copia TUTTO il contenuto all'interno del window { } principale
-		#    (escludi il "window = {" iniziale e il "}" finale)
-		# 3. Incollalo qui sotto, sostituendo il placeholder text_single
-		# 4. Il contenuto OCR Support è circa 6000 righe
-		#
-		# Il file OCR contiene:
-		# - Interfaccia testuale completa
-		# - Navigazione accessibile
-		# - Informazioni holding/county/buildings in formato testo
-		# - Sistema task management
+		###################################################
+		# CONTENUTO OCR SUPPORT (DA PLACEHOLDER)
+		# Source: Agamidae/CK3-OCR
+		# File: OCR-Support/gui/window_county_view.gui
+		# SHA: e06dee47c06b9197d8808d0ad3b273317bdf6cde
+		###################################################
+		# 
+		# TODO: Incolla qui il CORPO del window { } da:
+		# placeholders/window_county_view_ocr.gui
+		# 
+		# NON includere la riga "window = {" iniziale
+		# e la "}" finale di chiusura del window.
+		# 
+		# Il contenuto include:
+		# - Sistema OCR completo per non vedenti
+		# - Navigazione testuale counties/holdings
+		# - Building management accessibile
+		# - Task system
 		# - Adjacent counties navigation
-		# - Tutte le features OCR Support originali
-		#
+		# 
+		###################################################
 		
-		text_single = {
-			text = "[OCR SUPPORT MODE] - Insert complete OCR content here"
-			parentanchor = center
-			using = Font_Size_Big
-		}
-		
-		text_multi = {
-			parentanchor = center
-			position = { 0 50 }
-			max_width = 400
-			autoresize = yes
-			text = "Questo è un PLACEHOLDER. Per completare:\n\n1. Vai su github.com/Agamidae/CK3-OCR\n2. Naviga in OCR-Support/gui/window_county_view.gui\n3. Copia il contenuto del window { } block\n4. Incollalo qui\n\nSHA originale: e06dee47\nRighe: ~6000"
+		# PLACEHOLDER TEMPORANEO - sostituire con contenuto OCR
+		vbox = {
+			margin = { 20 20 }
+			spacing = 10
+			
+			text_single = {
+				text = "[OCR MODE ATTIVA]"
+				using = Font_Size_Big
+				default_format = "#high"
+			}
+			
+			text_multi = {
+				max_width = 600
+				autoresize = yes
+				text = "Modalità per NON VEDENTI attiva.\n\nPer completare questo widget:\n1. Apri: placeholders/window_county_view_ocr.gui\n2. Copia il contenuto del window { } block\n3. Incollalo qui sostituendo questo placeholder\n\nPremi Shift+F11 per passare alla modalità VANILLA (vedenti)"
+			}
+			
+			text_single = {
+				text = "Contenuto OCR: ~6000 righe | SHA: e06dee47"
+				default_format = "#weak"
+			}
 		}
 	}
-
-	# =================================================================
-	# COMMON ELEMENTS (visible in both modes)
-	# =================================================================
+	
+	######################################################
+	########## MODALITÀ VANILLA (VEDENTI) ###############
+	######################################################
+	# Visibile quando: GetVariableSystem.Exists('ocr') == true
+	# (attivato con Shift+F11)
+	# Contenuto completo in: placeholders/window_county_view_vanilla.gui
+	######################################################
+	
+	widget = {
+		name = "vanilla_county_view"
+		size = { 100% 100% }
+		visible = "[GetVariableSystem.Exists('ocr')]"
+		
+		###################################################
+		# CONTENUTO VANILLA CK3 (DA PLACEHOLDER)
+		# Source: vanilla_versions/window_county_view.gui
+		# SHA: eaf663fc6ca458f6d5fcfe0a1a7e247b23a57609
+		###################################################
+		# 
+		# TODO: Incolla qui il CORPO del window { } da:
+		# placeholders/window_county_view_vanilla.gui
+		# 
+		# NON includere la riga "window = {" iniziale
+		# e la "}" finale di chiusura del window.
+		# 
+		# Il contenuto include:
+		# - Interfaccia grafica completa CK3
+		# - Building icons e progressbar
+		# - Tooltip interattivi
+		# - County/Holding stats visivi
+		# - Animazioni
+		# 
+		###################################################
+		
+		# PLACEHOLDER TEMPORANEO - sostituire con contenuto VANILLA
+		vbox = {
+			margin = { 20 20 }
+			spacing = 10
+			
+			text_single = {
+				text = "[VANILLA MODE ATTIVA]"
+				using = Font_Size_Big
+				default_format = "#high"
+			}
+			
+			text_multi = {
+				max_width = 600
+				autoresize = yes
+				text = "Modalità per VEDENTI attiva.\n\nPer completare questo widget:\n1. Apri: placeholders/window_county_view_vanilla.gui\n2. Copia il contenuto del window { } block\n3. Incollalo qui sostituendo questo placeholder\n\nPremi Shift+F11 per tornare alla modalità OCR (non vedenti)"
+			}
+			
+			text_single = {
+				text = "Contenuto Vanilla: ~6000 righe | SHA: eaf663fc"
+				default_format = "#weak"
+			}
+		}
+	}
+	
+	######################################################
+	############## ELEMENTI COMUNI ######################
+	######################################################
 	
 	old_county = { }
 	
-	agot_county_view_ruins_blocker = { 
-		alpha = 1 
+	agot_county_view_ruins_blocker = {
+		alpha = 1
 	}
 	
-	agot_county_view_ruins_reconstruct_confirm = { 
-		position = { 0 0 } 
-		parentanchor = top|left 
+	agot_county_view_ruins_reconstruct_confirm = {
+		position = { 0 0 }
+		parentanchor = top|left
 	}
 }
 
 ######################################################
-# ISTRUZIONI DI COMPLETAMENTO DETTAGLIATE
+######### FINESTRE CONDIVISE (BUILDINGS) #############
 ######################################################
-#
-# PASSO 1: INSERIRE CONTENUTO VANILLA
-# -------------------------------------
-# a) Apri: ocr_support_compatibility_pach/gui/vanilla_versions/window_county_view.gui
-# b) Individua il blocco principale: window { ... }
-# c) Seleziona TUTTO il contenuto DENTRO il window { }
-#    (NON includere "window = {" e l'ultima "}")
-# d) Copia (~6000 righe)
-# e) Incolla nel widget "vanilla_county_view" sopra,
-#    sostituendo i due text_single di placeholder
-#
-# PASSO 2: INSERIRE CONTENUTO OCR SUPPORT  
-# -----------------------------------------
-# a) Vai su: https://github.com/Agamidae/CK3-OCR
-# b) Naviga in: OCR-Support/gui/window_county_view.gui
-# c) Individua il blocco principale: window { ... }
-# d) Seleziona TUTTO il contenuto DENTRO il window { }
-#    (NON includere "window = {" e l'ultima "}")
-# e) Copia (~6000 righe)
-# f) Incolla nel widget "ocr_county_view" sopra,
-#    sostituendo i due text_single di placeholder
-#
-# PASSO 3: VERIFICA
-# ------------------
-# a) Il file finale dovrebbe essere ~12,000 righe
-# b) Controlla che le parentesi { } siano bilanciate
-# c) Verifica che non ci siano "window = {" duplicati
-# d) Testa in-game:
-#    - Default: modalità OCR (testo)
-#    - Shift+F11: modalità Vanilla (grafica)
-#
+# Queste finestre sono usate da entrambe le modalità
+
+window = {
+	name = "holding_tracks_view"
+	size = { 100% 100% }
+	movable = no
+	layer = middle
+	datacontext = "[HoldingView.GetHolder]"
+	
+	# TODO: Completare con contenuto da vanilla_versions
+	# Questo è condiviso tra OCR e Vanilla
+	
+	text_single = {
+		text = "HOLDING TRACKS VIEW - Da completare"
+	}
+}
+
+window = {
+	name = "holding_type_selection_view"
+	movable = yes
+	layer = top
+	parentanchor = bottom|hcenter
+	position = { 40 0 }
+	using = Animation_ShowHide_Quick
+	
+	# TODO: Completare con contenuto da vanilla_versions
+	# Questo è condiviso tra OCR e Vanilla
+	
+	text_single = {
+		text = "HOLDING TYPE SELECTION - Da completare"
+	}
+}
+
 ######################################################
-# INFORMAZIONI TECNICHE
+################## TYPES #############################
 ######################################################
-#
-# MECCANISMO DI SWITCH:
-# - La variabile 'ocr' viene settata/unsettata da Shift+F11
-# - GetVariableSystem.Exists('ocr') restituisce:
-#   * true = modalità vanilla attiva
-#   * false = modalità OCR attiva (default)
-#
-# COMPATIBILITÀ:
-# - Entrambe le modalità sono completamente funzionanti
-# - Condividono gli stessi datacontext e states
-# - AGOT compatibility inclusa (old_county, ruins_blocker)
-#
-# DIMENSIONI FILE:
-# - Vanilla content: ~175 KB (~6000 righe)
-# - OCR content: ~125 KB (~6000 righe)
-# - File completo: ~300 KB (~12000 righe)
-#
-# FONTI VERIFICATE:
-# - Vanilla: SHA eaf663fc6ca458f6d5fcfe0a1a7e247b23a57609
-# - OCR: SHA e06dee47c06b9197d8808d0ad3b273317bdf6cde
-#
+
+types CountyViewTypes {
+	# TODO: Completare con types da vanilla_versions
+	# Questi sono condivisi tra OCR e Vanilla
+}
+
+######################################################
+################## ISTRUZIONI ########################
+######################################################
+# 
+# STEP 1: COMPLETARE OCR MODE
+# ---------------------------
+# 1. Apri: placeholders/window_county_view_ocr.gui
+# 2. Il file contiene il contenuto completo di OCR Support
+# 3. Copia TUTTO il contenuto del window { } block
+#    (escludi "window = {" iniziale e "}" finale)
+# 4. Incolla nel widget "ocr_county_view" sopra
+#    sostituendo il vbox placeholder
+# 
+# STEP 2: COMPLETARE VANILLA MODE
+# --------------------------------
+# 1. Apri: placeholders/window_county_view_vanilla.gui
+# 2. Il file contiene il contenuto completo Vanilla CK3
+# 3. Copia TUTTO il contenuto del window { } block
+#    (escludi "window = {" iniziale e "}" finale)
+# 4. Incolla nel widget "vanilla_county_view" sopra
+#    sostituendo il vbox placeholder
+# 
+# STEP 3: COMPLETARE FINESTRE CONDIVISE
+# --------------------------------------
+# 1. Apri: vanilla_versions/window_county_view.gui
+# 2. Copia i contenuti di:
+#    - holding_tracks_view window { }
+#    - holding_type_selection_view window { }
+#    - types CountyViewTypes { }
+# 3. Incollali nelle sezioni TODO corrispondenti
+# 
+# STEP 4: TEST
+# ------------
+# 1. Lancia il gioco
+# 2. Default: modalità OCR (non vedenti)
+# 3. Premi Shift+F11: switch a modalità Vanilla (vedenti)
+# 4. Verifica che entrambe le modalità funzionino
+# 
+# FILE SIZE FINALE ATTESO:
+# - Total: ~12,000 righe
+# - OCR content: ~6,000 righe
+# - Vanilla content: ~6,000 righe
+# 
 ######################################################
