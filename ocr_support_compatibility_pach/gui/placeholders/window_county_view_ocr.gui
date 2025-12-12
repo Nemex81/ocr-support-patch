@@ -1,0 +1,16 @@
+######################################################
+############ PLACEHOLDER OCR COUNTY VIEW ############
+############## (NON VEDENTI - OCR) ##################
+######################################################
+# Questo file contiene il CONTENUTO COMPLETO della
+# County View in modalità OCR Support originale.
+#
+# Destinazione tipica di inclusione:
+# - come base per ocr_county_view nel file:
+#   ocr_support_compatibility_pach/gui/window_county_view.gui
+#
+# USO CONSIGLIATO:
+# - Copia tutto il blocco window = { ... } qui sotto
+# - Incollalo al posto del widget "ocr_county_view".
+######################################################
+
