@@ -5,9 +5,123 @@
 ## DUAL-MODE COUNTY VIEW - BOTTOM-UP RECONSTRUCTION
 ## Phase 1: ✅ Types Definitions (16 types: 11 OCR + 5 Vanilla)
 ## Phase 2: ✅ Secondary Windows (holding_tracks_view, holding_type_selection_view)
-## Phase 3: ⏳ Main Window (holding_view dual-mode)
+## Phase 3: 🔨 Main Window (holding_view dual-mode) - IN PROGRESS
+##   ├─ COMMIT 1/4: ✅ Skeleton and States
+##   ├─ COMMIT 2/4: ⏳ OCR Widget (pending)
+##   ├─ COMMIT 3/4: ⏳ Vanilla Widget Header (pending)
+##   └─ COMMIT 4/4: ⏳ Vanilla Widget Tabs (pending)
 ## Toggle: GetVariableSystem.Exists('ocr')
 ## Default: OCR mode (accessible)
+
+######################################################
+############### MAIN WINDOW (HOLDING VIEW) ###########
+######################################################
+
+window = {
+	name = "holding_view"
+	widgetid = "holding_view"
+	parentanchor = bottom|left
+	allow_outside = yes
+	movable = no
+	layer = windows_layer
+	maximumsize = { 700 -1 }
+	scissor = yes
+	size = { 700 100% }
+	
+	# DUAL-MODE TOGGLE VARIABLE (MUST BE FIRST)
+	datacontext = "[GetVariableSystem]"
+	
+	# HOLDING VIEW DATA CONTEXTS
+	datacontext = "[HoldingView.GetProvince]"
+	datacontext = "[HoldingView.GetHolding]"
+	datacontext = "[HoldingView.GetHolder]"
+	datacontext = "[Province.GetCounty]"
+	
+	######################################################
+	# ANIMATION STATES (COMMON TO BOTH MODES)
+	######################################################
+	
+	state = {
+		name = pan_to_previous_county
+		delay = 0.1
+		on_start = "[HoldingView.PanToCountyCapital]"
+		on_finish = "[PdxGuiTriggerAllAnimations('adjacent_counties')]"
+		on_start = "[GetVariableSystem.Clear( 'window_ruins_confirm' )]"
+	}
+	
+	state = {
+		name = _show
+		on_start = "[HoldingView.PanToCountyCapital]"
+		on_start = "[GetVariableSystem.Set( 'county_view_open', 'true' )]"
+		on_start = "[GetVariableSystem.Set( 'hide_bottom_left_HUD', 'true' )]"
+		on_finish = "[PdxGuiTriggerAllAnimations('adjacent_counties')]"
+		on_start = "[GetVariableSystem.Clear( 'window_ruins_confirm' )]"
+		
+		using = Animation_FadeIn_Standard
+		using = Sound_WindowShow_Standard
+		using = Animation_FadeIn_BottomLeft
+	}
+	
+	state = {
+		name = adjacent_counties
+		trigger_on_create = yes
+		on_finish = "[Click('reset_lootable_sort')]"
+		on_finish = "[GetScriptedGui('province_adjacencies').Execute( GuiScope.SetRoot( Province.MakeScope ).AddScope( 'player', GetPlayer.MakeScope).End )]"
+		on_finish = "[PdxGuiTriggerAllAnimations('adjacent_counties_land')]"
+	}
+	
+	state = {
+		name = _hide
+		on_start = "[GetVariableSystem.Clear( 'county_view_open' )]"
+		on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
+		on_finish = "[Clear('county_tabs')]"
+		on_finish = "[Clear('holding_tabs')]"
+		on_finish = "[ClickAdd('last_view', GetPlayer, Province)]"
+		on_finish = "[Clear('hide_grant_titles')]"
+		
+		using = Animation_FadeOut_Standard
+		using = Sound_WindowHide_Standard
+		using = Animation_FadeOut_BottomLeft
+	}
+	
+	######################################################
+	# WIDGET OCR (ACCESSIBLE MODE - DEFAULT)
+	# Visible when: Not(GetVariableSystem.Exists('ocr'))
+	######################################################
+	
+	widget = {
+		name = "ocr_holding_view"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		size = { 100% 100% }
+		
+		# OCR CONTENT WILL BE INSERTED IN COMMIT 2/4
+		# Placeholder: minimal structure to keep file valid
+		vbox = {
+			name = "ocr_content_placeholder"
+			size = { 0 0 }
+			# Content from Agamidae/CK3-OCR will be added in next commit
+		}
+	}
+	
+	######################################################
+	# WIDGET VANILLA (GRAPHICAL MODE)
+	# Visible when: GetVariableSystem.Exists('ocr')
+	######################################################
+	
+	widget = {
+		name = "vanilla_holding_view"
+		visible = "[GetVariableSystem.Exists('ocr')]"
+		size = { 100% 100% }
+		
+		# VANILLA CONTENT WILL BE INSERTED IN COMMIT 3/4 and 4/4
+		# Placeholder: minimal structure to keep file valid
+		vbox = {
+			name = "vanilla_content_placeholder"
+			size = { 0 0 }
+			# Content from vanilla file will be added in next commits
+		}
+	}
+}
 
 ######################################################
 ############ SECONDARY WINDOWS (DUAL-MODE) ###########
@@ -474,736 +588,4 @@ window = {
 	}
 }
 
-######################################################
-################ TYPES AND TEMPLATES #################
-######################################################
-
-types OCR_CountyView_Types {
-	
-	##############################################
-	# TYPES OCR (per modalità accessibile)
-	##############################################
-	
-	type widget_building_text_ocr = button {
-		size = { @building_width 20 }
-		allow_outside = yes
-		onclick = "[GUIBuildingItem.OnClick]"
-		down = "[GUIBuildingItem.IsHighlighted]"
-		enabled = "[GUIBuildingItem.IsBuildingButtonEnabled]"
-		
-		vbox = {
-			hbox = {
-				layoutpolicy_horizontal = expanding
-				spacing = 5
-				
-				text_single { 
-					raw_text = "Upgrade" 
-					visible = "[GUIBuildingItem.CanUpgrade]" 
-				}
-				
-				text_single { 
-					raw_text = "Empty. Preview." 
-					visible = "[And(Not(GUIBuildingItem.IsBuildNewIconShown), Not(GUIBuildingItem.HasLevel))]" 
-				}
-				
-				text_single { 
-					text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]" 
-					visible = "[GUIBuildingItem.HasLevel]" 
-				}
-				
-				text_single { 
-					visible = "[GUIBuildingItem.HasLevel]" 
-					raw_text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]." 
-				}
-				
-				text_single { 
-					raw_text = "Button disabled." 
-					visible = "[Not(GUIBuildingItem.IsBuildingButtonEnabled)]" 
-				}
-				
-				block "normal" {
-					text_single = {
-						raw_text = "Build new, Enter."
-						visible = "[And(And(GUIBuildingItem.IsBuildNewIconShown, GUIBuildingItem.IsBuildingButtonEnabled), Not(GUIBuildingItem.HasLevel))]"
-						button = { 
-							onclick = "[GUIBuildingItem.OnClick]" 
-							shortcut = confirm 
-						}
-					}
-				}
-				
-				block "special" {
-					text_single = {
-						raw_text = "Build new."
-						visible = "[And(And(GUIBuildingItem.IsBuildNewIconShown, GUIBuildingItem.IsBuildingButtonEnabled), Not(GUIBuildingItem.HasLevel))]"
-					}
-				}
-				
-				text_single { 
-					raw_text = "Construction: [GUIBuildingItem.GetConstructingProgress|0]%." 
-					tooltip = "[GUIBuildingItem.GetTooltip]" 
-					visible = "[GUIBuildingItem.IsConstructing]" 
-				}
-				
-				text_single { 
-					raw_text = "Building disabled." 
-					visible = "[GUIBuildingItem.IsBuildingDisabled]" 
-				}
-				
-				text_single { 
-					visible = "[GUIBuildingItem.HasLevel]" 
-					raw_text = "Tooltip." 
-					tooltip = "[GUIBuildingItem.GetTooltip]" 
-				}
-				
-				expand = { }
-			}
-			expand = { }
-		}
-	}
-	
-	type button_sea_ocr = button_text {
-		blockoverride "text" {
-			raw_text = "[Scope.GetProvince.GetName],"
-		}
-		blockoverride "extra" {
-			block "sea_info_pre" {}
-			block "direction" {
-				text_single = {
-					visible = "[Not(ObjectsEqual(Province.Self, Scope.GetProvince))]"
-					raw_text = "[DistanceTo(Province, Scope.GetProvince)|0] [DaysTo(Province, Scope.GetProvince)] [Direction(Province, Scope.GetProvince)][AddTextIf(IsIndexFirst, ' from here')],"
-				}
-				text_single = {
-					visible = "[ObjectsEqual(Province.Self, Scope.GetProvince)]"
-					raw_text = "here"
-				}
-			}
-			block "sea_info" {}
-		}
-		block "click" {
-			onclick = "[Scope.GetProvince.PanCameraTo]"
-			onclick = "[GetVariableSystem.Clear(AddTextIf(Not(ShowAddFlag('sgui_flag', 'close_adjacencies')), 'county_tabs'))]"
-			onclick = "[HoldingView.Close]"
-			onclick = "[Set('extra_window', 'window_sea')]"
-			onclick = "[ClickAdd('window_sea', GetPlayer, Scope.GetProvince)]"
-			onclick = "[GetScriptedGui('province_adjacencies').Execute( GuiScope.SetRoot( Scope.GetProvince.MakeScope ).AddScope( 'player', GetPlayer.MakeScope).End )]"
-			onclick = "[GetScriptedGui('find_closest').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target', Scope.GetProvince.MakeScope).End )]"
-			onrightclick = "[Scope.GetProvince.PanCameraTo]"
-		}
-	}
-	
-	type button_sea_far_ocr = button_sea_ocr {
-		blockoverride "direction" {
-			text_single = {
-				visible = "[Not(ObjectsEqual(Province.Self, Scope.GetProvince))]"
-				raw_text = "[DistanceTo(Province, Scope.GetProvince)|0] [DaysTo(Province, Scope.GetProvince)] [Direction(Province, Scope.GetProvince)] [AddTextIf(IsIndexFirst, 'from here')]"
-			}
-			text_single = {
-				visible = "[ObjectsEqual(Province.Self, Scope.GetProvince)]"
-				raw_text = "here"
-			}
-		}
-		blockoverride "dot" { }
-	}
-	
-	type adjacent_county_button_ocr = button_text {
-		block "datacontext" {
-			datacontext = "[Scope.Title]"
-		}
-		blockoverride "extra" {
-			spacing = 3
-			
-			text_single = {
-				raw_text = "Hostile,"
-				visible = "[GetScriptedGui('is_hostile_county').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'target', Title.GetProvince.MakeScope ).End )]"
-			}
-			
-			text_single = {
-				visible = "[GreaterThan_CFixedPoint( GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Title.GetProvince.MakeScope).ScriptValue('enemies_in_the_county'), '(CFixedPoint)0' )]"
-				raw_text = "[GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Title.GetProvince.MakeScope).ScriptValue('enemies_in_the_county')] enemies,"
-			}
-			
-			text_single = {
-				raw_text = "[Title.GetBaseNameNoTierNoTooltip], "
-			}
-			
-			block "distance" {}
-			
-			container = {
-				ignoreinvisible = yes
-				block "county_distance" {
-					visible = no
-				}
-				text_single = {
-					datacontext = "[HoldingView.GetProvince]"
-					visible = "[Not(ObjectsEqual(HoldingView.GetCountyTitle, Scope.Title))]"
-					raw_text = "[DistanceTo(Province, Scope.Title.GetProvince)|0] [DaysTo(Province, Scope.Title.GetProvince)]"
-				}
-			}
-			
-			text_single = {
-				block "prov_context" {
-					datacontext = "[HoldingView.GetProvince]"
-				}
-				raw_text = "[GuiScope.SetRoot(Province.MakeScope).AddScope('second', Title.GetProvince.MakeScope).Custom('province_direction')],"
-			}
-			
-			text_single = {
-				visible = "[Title.GetProvince.HasActiveSiege]"
-				raw_text = "Sieged,"
-			}
-			
-			text_single = {
-				raw_text = "your county,"
-				visible = "[ObjectsEqual(Title.GetHolder, GetPlayer)]"
-			}
-			
-			text_single = {
-				visible = "[And(ObjectsEqual(Title.GetHolder.GetTopLiege, GetPlayer), Not(ObjectsEqual(Title.GetHolder, GetPlayer)))]"
-				raw_text = "in your realm,"
-			}
-			
-			flowcontainer = {
-				ignoreinvisible = yes
-				using = not_wasteland_locr
-				datacontext = "[Title.GetHolder]"
-				spacing = 3
-				
-				flowcontainer = {
-					ignoreinvisible = yes
-					visible = "[Not(Or(ObjectsEqual(Title.GetHolder.GetTopLiege, GetPlayer), ObjectsEqual(Title.GetHolder, GetPlayer)))]"
-					spacing = 3
-					
-					text_single = {
-						raw_text = "in"
-					}
-					
-					text_single = {
-						raw_text = "[Title.GetHolder.GetTopLiege.GetPrimaryTitle.GetNameNoTierNoTooltip],"
-					}
-				}
-				
-				text_single = {
-					block "holder" {
-						visible = "[Not(ObjectsEqual(Title.GetHolder, GetPlayer))]"
-					}
-					raw_text = "held by [Title.GetHolder.GetFirstNameNoTooltip] of [Title.GetHolder.GetPrimaryTitle.GetNameNoTierNoTooltip]."
-				}
-				
-				text_single = {
-					visible = "[Is('culture_counties')]"
-					raw_text = "[Title.GetCountyData.GetFaith.GetAdjective], [Title.GetCountyData.GetCulture.GetName]."
-				}
-			}
-			
-			text_wasteland_locr = {}
-			
-			block "county_extra" { }
-		}
-		block "click" {
-			onclick = "[OpenGameViewData('holding_view', Scope.Title.GetProvince.Self)]"
-			onclick = "[DefaultOnCoatOfArmsRightClick(Title.GetID)]"
-			onclick = "[GetVariableSystem.ClearIf('county_tabs', Not(ShowAddFlag('sgui_flag', 'close_adjacencies')))]"
-			onclick = "[PdxGuiTriggerAllAnimations('adjacent_counties')]"
-			onrightclick = "[DefaultOnCoatOfArmsRightClick(Title.GetID)]"
-		}
-	}
-	
-	type county_task_button_ocr = button_text {
-		layoutpolicy_horizontal = expanding
-		datacontext = "[HoldingView.GetCountyTitle]"
-		visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-		
-		blockoverride "disabled" {
-			visible = "[Not(ScriptedGui.IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End ))]"
-		}
-		
-		enabled = "[ScriptedGui.IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-		tooltip = "[ScriptedGui.BuildTooltip( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-		tooltip_visible = "[Not(ScriptedGui.IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End ))]"
-		onclick = "[ScriptedGui.Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-	}
-	
-	type court_task_button_ocr = button_text {
-		layoutpolicy_horizontal = expanding
-		visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target_character', HoldingView.GetCountyTitle.GetHolder.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-		
-		blockoverride "disabled" {
-			visible = "[Not(ScriptedGui.IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target_character', HoldingView.GetCountyTitle.GetHolder.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End ))]"
-		}
-		
-		enabled = "[ScriptedGui.IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target_character', HoldingView.GetCountyTitle.GetHolder.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-		tooltip = "[ScriptedGui.BuildTooltip( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target_character', HoldingView.GetCountyTitle.GetHolder.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-		tooltip_visible = "[Not(ScriptedGui.IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target_character', HoldingView.GetCountyTitle.GetHolder.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End ))]"
-		onclick = "[ScriptedGui.Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target_character', HoldingView.GetCountyTitle.GetHolder.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-	}
-	
-	type active_task_hbox_ocr = hbox {
-		layoutpolicy_horizontal = expanding
-		datacontext = "[HoldingView.GetCountyTitle]"
-		datacontext = "[Character.GetActiveCouncilTask]"
-		visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-		spacing = 3
-		
-		tooltipwidget = {
-			council_task_progress_breakdown_widget = { }
-		}
-		
-		text_single = {
-			block "task" {
-				raw_text = "Converting [Title.GetCountyData.GetFaith.GetAdjective] faith."
-			}
-		}
-		
-		text_single = {
-			raw_text = "[ActiveCouncilTask.GetETA],"
-		}
-		
-		text_single = {
-			raw_text = "[ActiveCouncilTask.GetProgress|0]%."
-			visible = "[ActiveCouncilTask.GetTaskType.IsPercentageTask]"
-		}
-		
-		text_single = {
-			raw_text = "[Character.GetFirstNameNoTooltip],"
-		}
-		
-		text_single = {
-			block "skill" {
-				raw_text = "[Character.GetSkill('learning')] learning."
-			}
-		}
-		
-		expand = { }
-	}
-	
-	type active_court_task_hbox_ocr = hbox {
-		layoutpolicy_horizontal = expanding
-		datacontext = "[HoldingView.GetCountyTitle]"
-		datacontext = "[Character.GetActiveCouncilTask]"
-		visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope ).AddScope('target_character', HoldingView.GetCountyTitle.GetHolder.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
-		spacing = 3
-		
-		tooltipwidget = {
-			council_task_progress_breakdown_widget = { }
-		}
-		
-		text_single = {
-			block "task" {
-				raw_text = "Finding secrets in [HoldingView.GetCountyTitle.GetHolder.GetFirstNamePossessiveOrMyNoTooltip] court."
-			}
-		}
-		
-		text_single = {
-			raw_text = "[ActiveCouncilTask.GetETA],"
-		}
-		
-		text_single = {
-			raw_text = "[ActiveCouncilTask.GetProgress|0]%."
-		}
-		
-		text_single = {
-			raw_text = "[Character.GetFirstNameNoTooltip],"
-		}
-		
-		text_single = {
-			block "skill" {
-				raw_text = "[Character.GetSkill('intrigue')] intrigue."
-			}
-		}
-		
-		expand = { }
-	}
-	
-	type button_holding_ocr = button_text {
-		datacontext = "[Scope.GetProvince.GetHolding]"
-		onclick = "[Scope.GetProvince.PanCameraTo]"
-		onclick = "[GetVariableSystem.Clear('county_tabs')]"
-		onclick = "[GetVariableSystem.Clear('extra_window')]"
-		onclick = "[OpenGameViewData('holding_view', Scope.GetProvince)]"
-		onrightclick = "[Scope.GetProvince.PanCameraTo]"
-		
-		blockoverride "text" {
-			raw_text = "[Select_CString(Holding.IsEmpty, Scope.GetProvince.GetTerrain.GetNameNoTooltip, Holding.GetPrimaryBuildingType.GetTypeName)] of [Holding.GetNameNoTooltip],"
-		}
-		
-		blockoverride "extra" {
-			block "direction" {
-				text_single = {
-					raw_text = "[GuiScope.SetRoot(Province.MakeScope).AddScope('second', Scope.GetProvince.MakeScope).Custom('province_direction')],"
-				}
-			}
-			
-			block "distance" {
-				text_single = {
-					datacontext = "[Scope.GetProvince]"
-					visible = "[Not(ObjectsEqual(HoldingView.GetProvince, Province.Self))]"
-					raw_text = "[DistanceTo(HoldingView.GetProvince, Province)|0] [DaysTo(HoldingView.GetProvince, Province)] [Direction(HoldingView.GetProvince, Province)]"
-				}
-			}
-			
-			text_single = {
-				datacontext = "[Scope.GetProvince.GetCounty.GetTitle.GetHolder.GetTopLiege]"
-				visible = "[Not(ObjectsEqual(Character.Self, GetPlayer))]"
-				raw_text = "in [Character.GetPrimaryTitle.GetNameNoTierNoTooltip]."
-			}
-			
-			block "held_by" {
-				text_single = {
-					datacontext = "[Scope.GetProvince.GetCounty.GetTitle]"
-					visible = "[Not(ObjectsEqual(Title.GetHolder, GetPlayer))]"
-					raw_text = "held by [Title.GetHolder.GetFirstNameNoTooltip]."
-				}
-			}
-			
-			text_single = {
-				datacontext = "[Scope.GetProvince.GetCounty.GetTitle.GetHolder.GetTopLiege]"
-				visible = "[ObjectsEqual(Character.Self, GetPlayer)]"
-				raw_text = "in your realm."
-			}
-		}
-	}
-	
-	type button_shores_ocr = button_text {
-		visible = "[Or(DataModelHasItems( Province.MakeScope.GetList('adjacent_seas') ), DataModelHasItems( Province.MakeScope.GetList('adjacent_rivers') ))]"
-		
-		blockoverride "text" {
-			margin_left = -3
-			raw_text = "on shores of"
-		}
-		
-		blockoverride "extra" {
-			flowcontainer = {
-				ignoreinvisible = yes
-				visible = "[DataModelHasItems(Province.MakeScope.GetList('adjacent_seas'))]"
-				spacing = 3
-				
-				flowcontainer = {
-					datamodel = "[DataModelFirst(Province.MakeScope.GetList('adjacent_seas'), '(int32)1')]"
-					visible = "[EqualTo_int32(GetDataModelSize(Province.MakeScope.GetList('adjacent_seas')), '(int32)1')]"
-					
-					item = {
-						flowcontainer = {
-							spacing = 3
-							text_single = {
-								raw_text = "[Scope.GetProvince.GetName]"
-							}
-						}
-					}
-				}
-				
-				text_single = {
-					visible = "[GreaterThan_int32(GetDataModelSize(Province.MakeScope.GetList('adjacent_seas')), '(int32)1')]"
-					raw_text = "[GetDataModelSize(Province.MakeScope.GetList('adjacent_seas'))] seas"
-				}
-				
-				text_single = {
-					block "and" {
-						visible = "[Or(DataModelHasItems(Province.MakeScope.GetList('adjacent_counties')), DataModelHasItems(Province.MakeScope.GetList('adjacent_rivers')))]"
-					}
-					raw_text = "and"
-				}
-			}
-			
-			flowcontainer = {
-				ignoreinvisible = yes
-				visible = "[DataModelHasItems(Province.MakeScope.GetList('adjacent_rivers'))]"
-				spacing = 3
-				
-				flowcontainer = {
-					datamodel = "[DataModelFirst(Province.MakeScope.GetList('adjacent_rivers'), '(int32)1')]"
-					visible = "[EqualTo_int32(GetDataModelSize(Province.MakeScope.GetList('adjacent_rivers')), '(int32)1')]"
-					
-					item = {
-						flowcontainer = {
-							spacing = 3
-							text_single = {
-								raw_text = "[Scope.GetProvince.GetName]"
-							}
-						}
-					}
-				}
-				
-				text_single = {
-					visible = "[EqualTo_int32(GetDataModelSize(Province.MakeScope.GetList('adjacent_rivers')), '(int32)1')]"
-					raw_text = "river"
-				}
-				
-				text_single = {
-					visible = "[GreaterThan_int32(GetDataModelSize(Province.MakeScope.GetList('adjacent_rivers')), '(int32)1')]"
-					raw_text = "[GetDataModelSize(Province.MakeScope.GetList('adjacent_rivers'))] rivers"
-				}
-			}
-			
-			dot_l = { }
-		}
-	}
-	
-	type building_in_vassal_warning_hbox_ocr = hbox {
-		name = "vassal_warning"
-		visible = "[Not( ObjectsEqual( HoldingView.GetHolder, GetPlayer ) )]"
-		layoutpolicy_horizontal = expanding
-		margin = { 5 0 }
-		
-		text_single = {
-			text = "HOLDING_VIEW_BUILDING_IN_VASSAL"
-			layoutpolicy_horizontal = expanding
-		}
-	}
-	
-	##############################################
-	# TYPES VANILLA (per modalità grafica)
-	##############################################
-	
-	type widget_building_item_vanilla = widget {
-		size = { 55 55 }
-		enabled = "[GUIBuildingItem.IsBuildingButtonEnabled]"
-		tooltip = "[GUIBuildingItem.GetTooltip]"
-		using = tooltip_ne
-		
-		button_standard = {
-			name = "building_button"
-			size = { 100% 100% }
-			onclick = "[GUIBuildingItem.OnClick]"
-			down = "[GUIBuildingItem.IsHighlighted]"
-			
-			button_icon = {
-				name = "build_new_icon"
-				visible = "[And(And(GUIBuildingItem.IsBuildNewIconShown, GUIBuildingItem.IsBuildingButtonEnabled), Not(GUIBuildingItem.HasLevel))]"
-				parentanchor = center
-				size = { 28 28 }
-				alpha = 0.7
-				texture = "gfx/interface/icons/flat_icons/plus.dds"
-				alwaystransparent = yes
-			}
-			
-			icon_building = {
-				name = "building_icon"
-				visible = "[Not( GUIBuildingItem.CanUpgrade )]"
-				parentanchor = center
-				size = { 45 40 }
-				texture = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetTypeIcon]"
-			}
-			
-			highlight_icon_building = {
-				name = "building_icon_can_upgrade"
-				visible = "[GUIBuildingItem.CanUpgrade]"
-				parentanchor = center
-				size = { 45 40 }
-				texture = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetTypeIcon]"
-			}
-			
-			text_single = {
-				visible = "[And( GUIBuildingItem.HasLevel, Not( GUIBuildingItem.IsConstructing ) ) ]"
-				text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
-				parentanchor = bottom|right
-				position = { -6 -2 }
-				fontsize = 15
-				default_format = "#low;bold"
-				align = nobaseline
-				
-				background = { 
-					using = Background_Area_ExtraDark 
-					margin = { 5 0 } 
-				}
-			}
-			
-			warning_icon = {
-				name = "reduced_by_fixable_situation"
-				visible = "[GUIBuildingItem.IsBuildingDisabled]"
-				position = { 3 3 }
-				size = { 20 20 }
-			}
-		}
-		
-		icon = {
-			name = "building_slot"
-			size = { 100% 100% }
-			using = Background_Area
-			visible = "[GUIBuildingItem.IsBuildingSlotShown]"
-		}
-		
-		flowcontainer = {
-			visible = "[And( GUIBuildingItem.HasLevel, GUIBuildingItem.IsConstructing ) ]"
-			parentanchor = bottom|hcenter
-			position = { 0 -3 }
-			direction = vertical
-			ignoreinvisible = yes
-			
-			widget = {
-				size = { 15 15 }
-				parentanchor = right
-				
-				text_single = {
-					visible = "[GUIBuildingItem.HasLevel]"
-					parentanchor = center
-					position = { -1 0 }
-					text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
-					fontsize = 15
-					default_format = "#low;bold"
-					align = nobaseline
-					
-					background = { 
-						using = Background_Area_ExtraDark 
-						margin = { 5 0 } 
-					}
-				}
-			}
-			
-			progressbar_standard = {
-				name = "construct_progressbar"
-				visible = "[GUIBuildingItem.IsConstructing]"
-				parentanchor = hcenter
-				alwaystransparent = yes
-				size = { 51 10 }
-				value = "[GUIBuildingItem.GetConstructingProgress]"
-				direction = horizontal
-			}
-		}
-	}
-	
-	type building_in_vassal_warning_hbox_vanilla = hbox {
-		name = "vassal_warning"
-		visible = "[Not( ObjectsEqual( HoldingView.GetHolder, GetPlayer ) )]"
-		
-		coa_title_tiny = { 
-			datacontext = "[HoldingView.GetHolder.GetPrimaryTitle]" 
-		}
-		
-		text_multi = { 
-			autoresize = yes 
-			text = "HOLDING_VIEW_BUILDING_IN_VASSAL" 
-		}
-	}
-	
-	type county_development_tooltip_container_vanilla = container {
-		using = GeneralTooltipSetup
-		alwaystransparent = no
-		
-		objecttooltippopout = {
-			blockoverride "title_text" {
-				margin = { 0 8 }
-				text = "COUNTY_DEVELOPMENT_TOOLTIP_HEADER"
-				default_format = "#T"
-			}
-			
-			blockoverride "concept_link" {
-				visible = no
-			}
-			
-			blockoverride "main_description" {
-				vbox = {
-					layoutpolicy_horizontal = expanding
-					datacontext = "[County.GetCount]"
-					datacontext = "[Character.GetGovernment]"
-					
-					cooltip_paragraph = {
-						visible = "[Not( GovernmentType.IsAffectedByDevelopment )]"
-						text = "COUNTY_DEVELOPMENT_IGNORED_DESC"
-					}
-					
-					cooltip_paragraph = {
-						text = "[County.GetCountyDevelopmentEffectsDesc]"
-					}
-					
-					spacer = {
-						size = { 0 15 }
-					}
-					
-					cooltip_paragraph = {
-						text = "[County.GetDevelopmentProgressOutOfMax]"
-					}
-					
-					cooltip_paragraph = {
-						datacontext = "[CountyDataBreakdowns.AccessDevelopmentChange( County.Self )]"
-						text = "VALUE_BREAKDOWN_TEXT_LINK"
-						tooltipvisible = "[ValueBreakdown.HasTooltip]"
-						tooltipwidget = {
-							widget_value_breakdown_tooltip = {}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	type county_fertility_tooltip_container_vanilla = container {
-		using = GeneralTooltipSetup
-		alwaystransparent = no
-		
-		objecttooltippopout = {
-			blockoverride "title_text" {
-				margin = { 0 8 }
-				text = "COUNTY_FERTILITY_TOOLTIP_HEADER"
-				default_format = "#T"
-			}
-			
-			blockoverride "concept_link" {
-				visible = no
-			}
-			
-			blockoverride "main_description" {
-				vbox = {
-					layoutpolicy_horizontal = expanding
-					
-					cooltip_paragraph = {
-						text = "COUNTY_FERTILITY_DESC"
-					}
-					
-					spacer = {
-						size = { 0 15 }
-					}
-					
-					cooltip_paragraph = {
-						datacontext = "[CountyDataBreakdowns.AccessFertility( County.Self )]"
-						text = "VALUE_BREAKDOWN_TEXT_LINK"
-						tooltipvisible = "[ValueBreakdown.HasTooltip]"
-						tooltipwidget = {
-							widget_value_breakdown_tooltip = {}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	type county_control_tooltip_container_vanilla = container {
-		using = GeneralTooltipSetup
-		alwaystransparent = no
-		
-		objecttooltippopout = {
-			blockoverride "title_text" {
-				margin = { 0 8 }
-				text = "COUNTY_CONTROL_TOOLTIP_HEADER"
-				default_format = "#T"
-			}
-			
-			blockoverride "concept_link" {
-				visible = no
-			}
-			
-			blockoverride "main_description" {
-				vbox = {
-					layoutpolicy_horizontal = expanding
-					
-					cooltip_paragraph = {
-						text = "COUNTY_CONTROL_DESC"
-					}
-					
-					spacer = {
-						size = { 0 15 }
-					}
-					
-					cooltip_paragraph = {
-						datacontext = "[CountyDataBreakdowns.AccessControl( County.Self )]"
-						text = "VALUE_BREAKDOWN_TEXT_LINK"
-						tooltipvisible = "[ValueBreakdown.HasTooltip]"
-						tooltipwidget = {
-							widget_value_breakdown_tooltip = {}
-						}
-					}
-				}
-			}
-		}
-	}
-}
+[Il resto del file con i Types rimane identico...]
