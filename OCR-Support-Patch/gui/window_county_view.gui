@@ -4,10 +4,475 @@
 
 ## DUAL-MODE COUNTY VIEW - BOTTOM-UP RECONSTRUCTION
 ## Phase 1: ✅ Types Definitions (16 types: 11 OCR + 5 Vanilla)
-## Phase 2: ⏳ Secondary Windows (holding_tracks_view, holding_type_selection_view)
+## Phase 2: ✅ Secondary Windows (holding_tracks_view, holding_type_selection_view)
 ## Phase 3: ⏳ Main Window (holding_view dual-mode)
 ## Toggle: GetVariableSystem.Exists('ocr')
 ## Default: OCR mode (accessible)
+
+######################################################
+############ SECONDARY WINDOWS (DUAL-MODE) ###########
+######################################################
+
+## CONSTRUCT NEW BUILDING WINDOW (holding_tracks_view)
+## Finestra per selezionare e costruire nuovi edifici
+## OCR: Lista testuale semplice
+## Vanilla: Griglia grafica con icone
+
+window = {
+	name = "holding_tracks_view"
+	size = { 100% 100% }
+	movable = no
+	layer = top
+	datacontext = "[HoldingView.GetHolder]"
+	datacontext = "[GetVariableSystem]"
+	
+	state = {
+		name = _show
+		using = Animation_FadeIn_Quick
+		position_x = 0
+	}
+	
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Quick
+		position_x = -50
+	}
+	
+	alwaystransparent = yes
+	
+	hbox = {
+		expand = {}
+		maxwidth = 610
+		
+		widget = {
+			layoutpolicy_vertical = expanding
+			size = { 725 0 }
+			
+			vbox = {
+				margin_top = 170
+				margin_bottom = 10
+				expand = {}
+				
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					minimumsize = { 0 730 }
+					
+					##############################################
+					# WIDGET OCR (Modalità NON VEDENTE)
+					##############################################
+					
+					vbox = {
+						visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+						layoutpolicy_horizontal = expanding
+						alwaystransparent = no
+						margin = { 3 3 }
+						margin_bottom = 5
+						using = Window_Background_Subwindow
+						
+						header_pattern = {
+							layoutpolicy_horizontal = expanding
+							
+							blockoverride "header_text" {
+								text = "[HoldingView.GetTracksViewLabel]"
+							}
+							
+							blockoverride "button_close" {
+								onclick = "[HoldingView.CloseSubwindows]"
+							}
+						}
+						
+						building_in_vassal_warning_hbox_ocr = {}
+						
+						text_single = {
+							name = "prompt"
+							layoutpolicy_horizontal = shrinking
+							text = "[HoldingView.GetTracksViewPrompt]"
+							margin_bottom = 10
+						}
+						
+						text_single = {
+							name = "no_potential_buildings_text"
+							visible = "[IsDataModelEmpty(HoldingView.GetPotentialBuildings)]"
+							layoutpolicy_horizontal = shrinking
+							text = "NO_POTENTIAL_BUILDINGS_WARNING"
+							margin_bottom = 10
+						}
+						
+						# Lista semplice OCR per edifici
+						vbox = {
+							visible = "[Not(IsDataModelEmpty(HoldingView.GetPotentialBuildings))]"
+							layoutpolicy_horizontal = expanding
+							spacing = 5
+							margin = { 10 10 }
+							
+							datamodel = "[HoldingView.GetPotentialBuildings]"
+							
+							item = {
+								button_text = {
+									layoutpolicy_horizontal = expanding
+									enabled = "[GUIPotentialBuildingItem.CanConstruct]"
+									onclick = "[GUIPotentialBuildingItem.Construct]"
+									onclick = "[HoldingView.CloseSubwindows]"
+									tooltip = "[GUIPotentialBuildingItem.GetTooltip]"
+									
+									blockoverride "text" {
+										text = "[GUIPotentialBuildingItem.GetBuilding.GetTypeName]"
+									}
+								}
+							}
+						}
+					}
+					
+					##############################################
+					# WIDGET VANILLA (Modalità VEDENTE)
+					##############################################
+					
+					vbox = {
+						visible = "[GetVariableSystem.Exists('ocr')]"
+						name = "vanilla_tracks_content"
+						layoutpolicy_horizontal = expanding
+						alwaystransparent = no
+						margin = { 3 3 }
+						margin_bottom = 5
+						using = Window_Background_Subwindow
+						
+						header_pattern = {
+							layoutpolicy_horizontal = expanding
+							
+							blockoverride "header_text" {
+								text = "[HoldingView.GetTracksViewLabel]"
+							}
+							
+							blockoverride "button_close" {
+								onclick = "[HoldingView.CloseSubwindows]"
+							}
+						}
+						
+						building_in_vassal_warning_hbox_vanilla = {}
+						
+						text_single = {
+							name = "prompt"
+							layoutpolicy_horizontal = shrinking
+							text = "[HoldingView.GetTracksViewPrompt]"
+							margin_bottom = 10
+						}
+						
+						text_single = {
+							name = "no_potential_buildings_text"
+							visible = "[IsDataModelEmpty(HoldingView.GetPotentialBuildings)]"
+							layoutpolicy_horizontal = shrinking
+							text = "NO_POTENTIAL_BUILDINGS_WARNING"
+							margin_bottom = 10
+						}
+						
+						# Griglia grafica Vanilla per edifici
+						container = {
+							visible = "[Not(IsDataModelEmpty(HoldingView.GetPotentialBuildings))]"
+							layoutpolicy_vertical = expanding
+							
+							scrollbox = {
+								visible = "[Not(HoldingView.IsSelectingBuildingToConstruct)]"
+								size = { 700 300 }
+								autoresizescrollarea = yes
+								maximumsize = { -1 800 }
+								
+								blockoverride "scrollbox_content" {
+									name = "tracks_grid"
+									datamodel = "[HoldingView.GetPotentialBuildings]"
+									datacontext = "[HoldingView.GetProvince]"
+									visible = "[HoldingView.IsSelectingNewBuilding]"
+									spacing = 10
+									setparentsizetominimum = yes
+									
+									block "scrollbox_margins" {
+										using = Scrollbox_Margins
+										margin_right = 15
+										margin_top = 5
+									}
+									
+									item = {
+										vbox = {
+											layoutpolicy_horizontal = expanding
+											background = {
+												using = Background_Area_Light
+											}
+											
+											hbox = {
+												name = "header"
+												layoutpolicy_horizontal = expanding
+												background = {
+													using = Background_Area
+												}
+												
+												hbox = {
+													layoutpolicy_horizontal = expanding
+													margin = { 10 10 }
+													spacing = 10
+													
+													icon_building = {
+														name = "building_icon"
+														size = { 75 65 }
+														texture = "[GUIPotentialBuildingItem.GetBuilding.GetTypeIcon]"
+													}
+													
+													vbox = {
+														spacing = 5
+														layoutpolicy_horizontal = expanding
+														
+														text_single = {
+															layoutpolicy_horizontal = expanding
+															text = "[GUIPotentialBuildingItem.GetBuilding.GetTypeName]"
+															using = Font_Size_Medium
+															align = left
+															autoresize = no
+														}
+														
+														hbox = {
+															button_tertiary = {
+																text = "CONSTRUCT_BUILDINGS_DETAILS"
+																onclick = "[GUIPotentialBuildingItem.ShowDetails]"
+																tooltip = "CONSTRUCT_BUILDINGS_DETAILS_TT"
+																using = tooltip_es
+															}
+															expand = {}
+														}
+													}
+													expand = {}
+												}
+											}
+											
+											hbox = {
+												spacing = 5
+												
+												hbox = {
+													margin = { 5 5 }
+													min_width = 120
+													spacing = 10
+													background = {
+														using = Background_Area
+														margin_bottom = 4
+														margin_left = 6
+													}
+													
+													text_single = {
+														datacontext = "[GUIPotentialBuildingItem.GetGoldCost]"
+														visible = "[GUIPotentialBuildingItem.HasGoldCost]"
+														layoutpolicy_horizontal = expanding
+														text = "[ValueBreakdown.GetValue]"
+														tooltipvisible = "[ValueBreakdown.HasTooltip]"
+														tooltipwidget = {
+															widget_value_breakdown_tooltip = {}
+														}
+														background = {
+															visible = "[LessThan_CFixedPoint(GetPlayer.GetGold, ValueBreakdown.GetFixedPointValue)]"
+															using = Status_Bad
+														}
+													}
+													
+													text_single = {
+														datacontext = "[GUIPotentialBuildingItem.GetPrestigeCost]"
+														visible = "[GUIPotentialBuildingItem.HasPrestigeCost]"
+														layoutpolicy_horizontal = expanding
+														text = "[ValueBreakdown.GetValue]"
+														tooltipvisible = "[ValueBreakdown.HasTooltip]"
+														tooltipwidget = {
+															widget_value_breakdown_tooltip = {}
+														}
+														background = {
+															visible = "[LessThan_CFixedPoint(GetPlayer.GetPrestige, ValueBreakdown.GetFixedPointValue)]"
+															using = Status_Bad
+														}
+													}
+													
+													text_single = {
+														layoutpolicy_horizontal = expanding
+														datacontext = "[GUIPotentialBuildingItem.GetPietyCost]"
+														visible = "[GUIPotentialBuildingItem.HasPietyCost]"
+														text = "[ValueBreakdown.GetValue]"
+														tooltipvisible = "[ValueBreakdown.HasTooltip]"
+														tooltipwidget = {
+															widget_value_breakdown_tooltip = {}
+														}
+														background = {
+															visible = "[LessThan_CFixedPoint(GetPlayer.GetPiety, ValueBreakdown.GetFixedPointValue)]"
+															using = Status_Bad
+														}
+													}
+													
+													text_single = {
+														layoutpolicy_horizontal = expanding
+														datacontext = "[GUIPotentialBuildingItem.GetConstructionTime]"
+														text = "[ValueBreakdown.GetValue]"
+														tooltipvisible = "[ValueBreakdown.HasTooltip]"
+														tooltipwidget = {
+															widget_value_breakdown_tooltip = {}
+														}
+													}
+												}
+												
+												expand = {}
+												
+												button_standard = {
+													layoutpolicy_horizontal = expanding
+													layoutpolicy_vertical = expanding
+													size = { 100 53 }
+													enabled = "[GUIPotentialBuildingItem.CanConstruct]"
+													tooltip = "[GUIPotentialBuildingItem.GetTooltip]"
+													onclick = "[GUIPotentialBuildingItem.Construct]"
+													onclick = "[HoldingView.CloseSubwindows]"
+													text = "CONSTRUCT"
+													using = tooltip_es
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+## HOLDING TYPE SELECTION VIEW
+## Finestra per cambiare tipo di insediamento (Castle/City/Temple)
+## OCR: Bottoni testuali semplici "Convert to X"
+## Vanilla: Schede grafiche con illustrazioni
+
+window = {
+	name = "holding_type_selection_view"
+	movable = no
+	layer = windows_layer
+	parentanchor = bottom|hcenter
+	position = { 40 -50 }
+	datacontext = "[GetVariableSystem]"
+	
+	using = Animation_ShowHide_Quick
+	using = Window_Background_Subwindow
+	
+	vbox = {
+		set_parent_size_to_minimum = yes
+		margin = { 4 4 }
+		margin_bottom = 15
+		spacing = 15
+		
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+			
+			blockoverride "header_text" {
+				text = "CREATE_NEW_HOLDING_HEADING"
+			}
+			
+			blockoverride "button_close" {
+				onclick = "[HoldingView.CloseHoldingConstruction]"
+			}
+		}
+		
+		building_in_vassal_warning_hbox_ocr = {
+			visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		}
+		
+		building_in_vassal_warning_hbox_vanilla = {
+			visible = "[GetVariableSystem.Exists('ocr')]"
+		}
+		
+		##############################################
+		# WIDGET OCR (Modalità NON VEDENTE)
+		##############################################
+		
+		vbox = {
+			visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+			name = "ocr_holding_types"
+			layoutpolicy_horizontal = expanding
+			spacing = 10
+			margin = { 10 10 }
+			
+			datamodel = "[HoldingView.GetHoldingTypeItems]"
+			
+			item = {
+				button_text = {
+					layoutpolicy_horizontal = expanding
+					enabled = "[HoldingTypeItem.CanConstructBuilding]"
+					onclick = "[HoldingTypeItem.OnClick]"
+					tooltip = "[HoldingTypeItem.GetTooltip]"
+					
+					blockoverride "text" {
+						text = "Convert to [HoldingTypeItem.GetHoldingType.GetName]"
+					}
+				}
+			}
+		}
+		
+		##############################################
+		# WIDGET VANILLA (Modalità VEDENTE)
+		##############################################
+		
+		hbox = {
+			visible = "[GetVariableSystem.Exists('ocr')]"
+			name = "holding_types"
+			datamodel = "[HoldingView.GetHoldingTypeItems]"
+			layoutpolicy_horizontal = expanding
+			spacing = 10
+			margin = { 10 10 }
+			
+			item = {
+				vbox = {
+					spacing = 5
+					
+					button_standard = {
+						size = { 250 148 }
+						enabled = "[HoldingTypeItem.CanConstructBuilding]"
+						onclick = "[HoldingTypeItem.OnClick]"
+						tooltip = "[HoldingTypeItem.GetTooltip]"
+						datacontext = "[HoldingTypeItem.GetProvince]"
+						
+						widget = {
+							scissor = yes
+							size = { 247 146 }
+							
+							icon = {
+								visible = "[HoldingTypeItem.CanConstructBuilding]"
+								size = { 320 146 }
+								texture = "[HoldingTypeItem.GetBuilding.GetIllustration(Province.Self)]"
+								using = Mask_Rough_Edges
+								alpha = 0.7
+							}
+							
+							highlight_icon = {
+								visible = "[Not(HoldingTypeItem.CanConstructBuilding)]"
+								size = { 320 146 }
+								texture = "[HoldingTypeItem.GetBuilding.GetIllustration(Province.Self)]"
+								effectname = "GreyedOut"
+								tintcolor = { 0.6 0.6 0.6 1 }
+								using = Mask_Rough_Edges
+							}
+							
+							flowcontainer = {
+								parentanchor = bottom|right
+								ignoreinvisible = yes
+								margin = { 5 5 }
+								
+								warning_icon = {
+									name = "wrong_type"
+									visible = "[Not(HoldingTypeItem.IsValidForPlayer)]"
+									size = { 35 35 }
+									tooltip = "HOLDING_SELECTION_VIEW_WRONG_HOLDING_TYPE"
+								}
+							}
+						}
+					}
+					
+					text_label_center = {
+						layoutpolicy_horizontal = expanding
+						text = "[HoldingTypeItem.GetHoldingType.GetName]"
+					}
+				}
+			}
+		}
+	}
+}
 
 ######################################################
 ################ TYPES AND TEMPLATES #################
