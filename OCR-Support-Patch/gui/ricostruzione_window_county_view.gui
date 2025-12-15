@@ -95,33 +95,10 @@ window = {
 	# Visible when: Not(GetVariableSystem.Exists('ocr'))
 	# RECOVERED FROM COMMIT 2/4
 	######################################################
-	
-	widget = {
-		name = "ocr_holding_view"
-		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
-		size = { 100% 100% }
-		
-		### PLACEHOLDER: OCR WIDGET CONTENT ###
-		# This section should contain ~900 lines of OCR accessible interface
-		# Including:
-		# - Window control buttons (invisible but functional)
-		# - Main scrollbox with holdings information
-		# - County and barony navigation
-		# - Buildings list with upgrade buttons
-		# - Councillor tasks section
-		# - Adjacent counties navigation
-		# - All text-based accessible UI elements
-		
-		# NOTE: Full OCR content needs to be recovered from commit 6842a77
-		# Due to file size limits, placeholder inserted here
-		# Please integrate complete OCR widget from saved local backup
-		
-		text_label_center = {
-			text = "OCR MODE - Content to be restored from backup"
-			parentanchor = center
-		}
-	}
-	
+
+# inserisci quì ilcodice pe ril widget in modlaità non vedenti
+
+
 	######################################################
 	# WIDGET VANILLA (GRAPHICAL MODE - Shift+F11)
 	# Visible when: GetVariableSystem.Exists('ocr')
@@ -1390,72 +1367,558 @@ window = {
 				vbox = {
 					layoutpolicy_horizontal = expanding
 					minimumsize = { 0 730 }
-					
+
+
+
 					##############################################
 					# WIDGET OCR (Modalità NON VEDENTE)
 					##############################################
-					
+
 					vbox = {
-						visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+						layoutpolicy_vertical = expanding
 						layoutpolicy_horizontal = expanding
-						alwaystransparent = no
-						margin = { 3 3 }
-						margin_bottom = 5
-						using = Window_Background_Subwindow
-						
-						header_pattern = {
-							layoutpolicy_horizontal = expanding
-							
-							blockoverride "header_text" {
-								text = "[HoldingView.GetTracksViewLabel]"
-							}
-							
-							blockoverride "button_close" {
-								onclick = "[HoldingView.CloseSubwindows]"
-							}
-						}
-						
-						building_in_vassal_warning_hbox_ocr = {}
-						
-						text_single = {
-							name = "prompt"
-							layoutpolicy_horizontal = shrinking
-							text = "[HoldingView.GetTracksViewPrompt]"
-							margin_bottom = 10
-						}
-						
-						text_single = {
-							name = "no_potential_buildings_text"
-							visible = "[IsDataModelEmpty(HoldingView.GetPotentialBuildings)]"
-							layoutpolicy_horizontal = shrinking
-							text = "NO_POTENTIAL_BUILDINGS_WARNING"
-							margin_bottom = 10
-						}
-						
-						# Lista semplice OCR per edifici
+						name = "window_content_ocr"
+						margin_left = 20
+						margin_right = 20
+						margin_top = 20
+						margin_bottom = 20
+						spacing = 10
+
+						# ✅ Datacontexts already defined in parent window (not duplicating)
+						# (HoldingView.GetProvince, HoldingView.GetHolding, HoldingView.GetHolder, Province.GetCounty)
+
+						### HEADER SECTION ###
 						vbox = {
-							visible = "[Not(IsDataModelEmpty(HoldingView.GetPotentialBuildings))]"
-							layoutpolicy_horizontal = expanding
+							name = "ocr_header"
 							spacing = 5
-							margin = { 10 10 }
 							
-							datamodel = "[HoldingView.GetPotentialBuildings]"
+							# County/Holding Title
+							text_label_left = {
+								name = "header_county_name"
+								text = "[County.GetName]"
+								align = left
+							}
 							
-							item = {
-								button_text = {
-									layoutpolicy_horizontal = expanding
-									enabled = "[GUIPotentialBuildingItem.CanConstruct]"
-									onclick = "[GUIPotentialBuildingItem.Construct]"
-									onclick = "[HoldingView.CloseSubwindows]"
-									tooltip = "[GUIPotentialBuildingItem.GetTooltip]"
-									
-									blockoverride "text" {
-										text = "[GUIPotentialBuildingItem.GetBuilding.GetTypeName]"
-									}
+							# Holder info line
+							text_label_left = {
+								name = "header_holder_info"
+								text = "Ruled by [Holder.GetFirstName] [Holder.GetHouse.GetName]"
+								align = left
+							}
+						}
+
+						### TAB MENU ###
+						hbox = {
+							name = "ocr_tab_menu"
+							spacing = 8
+							layoutpolicy_horizontal = expanding
+							
+							# Info Tab Button
+							button = {
+								name = "tab_btn_info"
+								text = "Info (E)"
+								tooltip = "County general information: name, holder, culture, religion, development level"
+								onclick = "[GetVariableSystem.Set('county_tabs', 'info')]"
+								onclick = "[PdxGuiUpdateLocalizationOnLocaleChanged('tab_btn_info')]"
+								size = { 100 32 }
+							}
+							
+							# Stats Tab Button
+							button = {
+								name = "tab_btn_stats"
+								text = "Stats (S)"
+								tooltip = "County statistics: population, development, income, culture diversity, religion breakdown"
+								onclick = "[GetVariableSystem.Set('county_tabs', 'stats')]"
+								onclick = "[PdxGuiUpdateLocalizationOnLocaleChanged('tab_btn_stats')]"
+								size = { 100 32 }
+							}
+							
+							# Holdings Tab Button
+							button = {
+								name = "tab_btn_holdings"
+								text = "Holdings (H)"
+								tooltip = "Baronies in this county: primary holding, invested holdings, vassals"
+								onclick = "[GetVariableSystem.Set('county_tabs', 'holdings')]"
+								onclick = "[PdxGuiUpdateLocalizationOnLocaleChanged('tab_btn_holdings')]"
+								size = { 100 32 }
+							}
+							
+							# Buildings Tab Button
+							button = {
+								name = "tab_btn_buildings"
+								text = "Buildings (B)"
+								tooltip = "Constructions in each holding: completed buildings, under construction, available builds"
+								onclick = "[GetVariableSystem.Set('county_tabs', 'buildings')]"
+								onclick = "[PdxGuiUpdateLocalizationOnLocaleChanged('tab_btn_buildings')]"
+								size = { 100 32 }
+							}
+							
+							# Adjacent Tab Button
+							button = {
+								name = "tab_btn_adjacent"
+								text = "Adjacent (A)"
+								tooltip = "Neighboring counties: list of adjacent counties with holders"
+								onclick = "[GetVariableSystem.Set('county_tabs', 'adjacent')]"
+								onclick = "[PdxGuiUpdateLocalizationOnLocaleChanged('tab_btn_adjacent')]"
+								size = { 100 32 }
+							}
+							
+							# Council/Actions Tab Button
+							button = {
+								name = "tab_btn_actions"
+								text = "Council (C)"
+								tooltip = "Councillor tasks: available actions and ongoing council assignments"
+								onclick = "[GetVariableSystem.Set('county_tabs', 'actions')]"
+								onclick = "[PdxGuiUpdateLocalizationOnLocaleChanged('tab_btn_actions')]"
+								size = { 100 32 }
+							}
+						}
+
+						### TAB CONTENT CONTAINER ###
+						vbox = {
+							name = "ocr_tab_content"
+							spacing = 10
+							layoutpolicy_vertical = expanding
+							layoutpolicy_horizontal = expanding
+
+							######################################
+							# TAB 1: INFO TAB
+							######################################
+							vbox = {
+								name = "ocr_info_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'info')]"
+								spacing = 8
+								layoutpolicy_vertical = expanding
+								
+								# County Name
+								text_label_left = {
+									text = "County: [County.GetName]"
+									align = left
+								}
+								
+								# Holder Information
+								text_label_left = {
+									text = "Holder: [Holder.GetFirstName] [Holder.GetHouse.GetName]"
+									align = left
+								}
+								
+								# Culture
+								text_label_left = {
+									text = "Culture: [County.GetCulture.GetName]"
+									align = left
+								}
+								
+								# Religion
+								text_label_left = {
+									text = "Religion: [County.GetReligion.GetName]"
+									align = left
+								}
+								
+								# Development Level
+								text_label_left = {
+									text = "Development: [County.GetDevelopmentLevel]"
+									align = left
+								}
+								
+								# Capital Barony
+								text_label_left = {
+									text = "Capital: [County.GetCapitalBarony.GetName]"
+									align = left
+								}
+								
+								# De Jure Kingdom
+								text_label_left = {
+									text = "De Jure Kingdom: [County.GetDeJureKingdom.GetName]"
+									align = left
+								}
+								
+								# Terrain Type
+								text_label_left = {
+									text = "Terrain: [County.GetTerrain.GetName]"
+									align = left
+								}
+								
+								# Coastal Status
+								text_label_left = {
+									text = "Coastal: [County.IsCoastal]"
+									align = left
+								}
+								
+								# Special Notes Spacer
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								# Holder Title if vassal
+								text_label_left = {
+									text = "Holder Title: [Holder.GetTitledName]"
+									align = left
+								}
+							}
+
+							######################################
+							# TAB 2: STATS TAB
+							######################################
+							vbox = {
+								name = "ocr_stats_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'stats')]"
+								spacing = 8
+								layoutpolicy_vertical = expanding
+								
+								# Population
+								text_label_left = {
+									text = "Population: [County.GetTotalPopulation]"
+									align = left
+								}
+								
+								# Development
+								text_label_left = {
+									text = "Development Level: [County.GetDevelopmentLevel]"
+									align = left
+								}
+								
+								# Development Progress to next level
+								text_label_left = {
+									text = "Development Progress: [County.GetDevelopmentProgress]%"
+									align = left
+								}
+								
+								# Income
+								text_label_left = {
+									text = "Monthly Income: [County.GetMonthlyIncome]"
+									align = left
+								}
+								
+								# Culture Acceptance
+								text_label_left = {
+									text = "Culture Acceptance: [County.GetCultureAcceptance]%"
+									align = left
+								}
+								
+								# Religion Acceptance
+								text_label_left = {
+									text = "Religion Acceptance: [County.GetReligionAcceptance]%"
+									align = left
+								}
+								
+								# Stability
+								text_label_left = {
+									text = "Stability: [County.GetStabilityLevel]"
+									align = left
+								}
+								
+								# Divider
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								# Culture Breakdown Header
+								text_label_left = {
+									text = "Culture Breakdown:"
+									align = left
+								}
+								
+								# Main Culture
+								text_label_left = {
+									text = "[County.GetCulture.GetName]: [County.GetCulturePercentage]%"
+									align = left
+								}
+								
+								# Religion Breakdown Header
+								text_label_left = {
+									text = "Religion Breakdown:"
+									align = left
+								}
+								
+								# Main Religion
+								text_label_left = {
+									text = "[County.GetReligion.GetName]: [County.GetReligionPercentage]%"
+									align = left
+								}
+							}
+
+							######################################
+							# TAB 3: HOLDINGS TAB
+							######################################
+							vbox = {
+								name = "ocr_holdings_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'holdings')]"
+								spacing = 8
+								layoutpolicy_vertical = expanding
+								
+								# Holdings Header
+								text_label_left = {
+									text = "Holdings in [County.GetName]:"
+									align = left
+								}
+								
+								# Primary Holding
+								text_label_left = {
+									text = "PRIMARY: [County.GetCapitalBarony.GetName]"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  Type: [County.GetCapitalBarony.GetHoldingType]"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  Holder: [County.GetCapitalBarony.GetHolder.GetFirstName] [County.GetCapitalBarony.GetHolder.GetHouse.GetName]"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  Level: [County.GetCapitalBarony.GetLevel]"
+									align = left
+								}
+								
+								# Other Holdings Placeholder
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "Other Holdings:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[Explanation: Use scrollable list or multiple individual vbox entries for each holding]"
+									align = left
+								}
+								
+								# De Facto Vassal Info
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "Invested Holdings / De Facto Vassals:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[Explanation: List all invested or vassal holdings with holder info]"
+									align = left
+								}
+							}
+
+							######################################
+							# TAB 4: BUILDINGS TAB
+							######################################
+							vbox = {
+								name = "ocr_buildings_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'buildings')]"
+								spacing = 8
+								layoutpolicy_vertical = expanding
+								
+								# Buildings Header
+								text_label_left = {
+									text = "Buildings in [County.GetName]:"
+									align = left
+								}
+								
+								# Primary Holding Buildings
+								text_label_left = {
+									text = "[County.GetCapitalBarony.GetName] ([County.GetCapitalBarony.GetHoldingType]):"
+									align = left
+								}
+								
+								# Completed Buildings Placeholder
+								text_label_left = {
+									text = "  Completed:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  [List completed buildings or 'None']"
+									align = left
+								}
+								
+								# Under Construction
+								text_label_left = {
+									text = "  Under Construction:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  [List building + completion date or 'None']"
+									align = left
+								}
+								
+								# Available Builds
+								text_label_left = {
+									text = "  Available Builds:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  [List 3-5 highest priority builds + cost]"
+									align = left
+								}
+								
+								# Other Holdings Building Summary
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "Other Holdings Summary:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[Explanation: For each other holding, show main building status]"
+									align = left
+								}
+							}
+
+							######################################
+							# TAB 5: ADJACENT COUNTIES TAB
+							######################################
+							vbox = {
+								name = "ocr_adjacent_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'adjacent')]"
+								spacing = 8
+								layoutpolicy_vertical = expanding
+								
+								# Adjacent Header
+								text_label_left = {
+									text = "Adjacent Counties to [County.GetName]:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[Use Tab to navigate, Enter to focus on adjacent county]"
+									align = left
+								}
+								
+								# Adjacent 1
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[Adjacent County 1 Name]"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  Holder: [Holder Name]"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  Relation: [De Jure Kingdom info or independent]"
+									align = left
+								}
+								
+								# Adjacent 2
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[Adjacent County 2 Name]"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  Holder: [Holder Name]"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "  Relation: [De Jure Kingdom info or independent]"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[etc for all adjacent counties]"
+									align = left
+								}
+							}
+
+							######################################
+							# TAB 6: COUNCIL/ACTIONS TAB
+							######################################
+							vbox = {
+								name = "ocr_actions_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'actions')]"
+								spacing = 8
+								layoutpolicy_vertical = expanding
+								
+								# Council Header
+								text_label_left = {
+									text = "Council Tasks and Available Actions:"
+									align = left
+								}
+								
+								# Active Council Tasks
+								text_label_left = {
+									text = "Active Council Tasks:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[Show assigned councillor tasks with progress if any]"
+									align = left
+								}
+								
+								# Available Direct Actions
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "Available Actions:"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "• Develop County (Costs: gold/prestige)"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "• Construct Building (Primary holding only)"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "• Grant Holdings to Vassal"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "• Appoint Councillor Tasks"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "---"
+									align = left
+								}
+								
+								text_label_left = {
+									text = "[Note: Actual action buttons/links to be implemented]"
+									align = left
 								}
 							}
 						}
 					}
+
+
+
 					
 					##############################################
 					# WIDGET VANILLA (Modalità VEDENTE)
