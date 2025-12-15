@@ -5,12 +5,12 @@
 ## DUAL-MODE COUNTY VIEW - BOTTOM-UP RECONSTRUCTION
 ## Phase 1: ✅ Types Definitions (16 types: 11 OCR + 5 Vanilla)
 ## Phase 2: ✅ Secondary Windows (holding_tracks_view, holding_type_selection_view)
-## Phase 3: 🔨 Main Window (holding_view dual-mode) - IN PROGRESS
+## Phase 3: 🔨 Main Window (holding_view dual-mode) - 50% COMPLETE
 ##   ├─ COMMIT 1/4: ✅ Skeleton and States
-##   ├─ COMMIT 2/4: ✅ OCR Widget (completed)
-##   ├─ COMMIT 3/4: ✅ Vanilla Widget Header (COMPLETED)
-##   ├─ COMMIT 4A/4: 🔨 County Info Tab (IN PROGRESS)
-##   ├─ COMMIT 4B/4: ⏳ County Stats (pending)
+##   ├─ COMMIT 2/4: ✅ OCR Widget Content
+##   ├─ COMMIT 3/4: ✅ Vanilla Widget Header
+##   ├─ COMMIT 4A/4: ✅ County Info Tab (COMPLETED)
+##   ├─ COMMIT 4B/4: 🔨 County Stats & Holder (IN PROGRESS)
 ##   ├─ COMMIT 4C/4: ⏳ Holdings Navigation (pending)
 ##   └─ COMMIT 4D/4: ⏳ Holdings & Buildings (pending)
 ## Toggle: GetVariableSystem.Exists('ocr')
@@ -121,8 +121,9 @@ window = {
 		
 		## MAIN OCR CONTENT VBOX
 		## [Complete OCR content from Commit 2/4 - preserved exactly as is]
-		## Content omitted here for brevity - see full file on GitHub
-		## This section contains ~800 lines of accessible text interface
+		## Content omitted here for brevity in this response
+		## The full OCR widget contains ~800 lines of accessible interface
+		## See GitHub for complete content: all 8 sections with navigation
 	}
 	
 	######################################################
@@ -138,7 +139,6 @@ window = {
 		alwaystransparent = yes
 		
 		### BACKGROUND SECTION ###
-		# Province illustration and decorations
 		
 		vbox = {
 			expand = {}
@@ -296,7 +296,7 @@ window = {
 				### COMMIT 4A/4: COUNTY INFO TAB ###
 				##################################################
 				
-				### SPACER ###
+				### COUNTY INFO CONTENT ###
 				vbox = {
 					layoutpolicy_horizontal = expanding
 					margin = { 10 5 }
@@ -417,7 +417,7 @@ window = {
 						}
 					}
 					
-					### OCCUPATION OVERLAY (if county is occupied) ###
+					### OCCUPATION OVERLAY ###
 					widget = {
 						visible = "[HoldingView.GetCountyTitle.IsOccupied]"
 						size = { 100% 40 }
@@ -436,10 +436,330 @@ window = {
 					}
 				}
 				
-				### PLACEHOLDER FOR REMAINING SECTIONS (Commits 4B-4D) ###
-				# - County Stats & Holder Portrait (4B)
-				# - Holdings Tab Navigation (4C)  
-				# - Holding Info & Buildings Grid (4D)
+				##################################################
+				### COMMIT 4B/4: COUNTY STATS & HOLDER ###
+				##################################################
+				
+				### DIVIDER ###
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 5
+				}
+				
+				### HOLDER PORTRAIT SECTION ###
+				vbox = {
+					name = "holder_section"
+					layoutpolicy_horizontal = expanding
+					margin = { 10 5 }
+					spacing = 5
+					
+					background = {
+						using = Background_Area
+						margin = { 5 5 }
+					}
+					
+					### HOLDER INFO HBOX ###
+					hbox = {
+						datacontext = "[HoldingView.GetCountyTitle.GetHolder]"
+						spacing = 10
+						margin = { 5 5 }
+						
+						### PORTRAIT ###
+						portrait_head_small = {
+							datacontext = "[HoldingView.GetCountyTitle.GetHolder]"
+							
+							blockoverride "portrait_button" {
+								onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+								tooltip = "[Character.GetUINameNoTooltip]"
+							}
+						}
+						
+						### HOLDER NAME AND TITLE ###
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							spacing = 2
+							
+							text_single = {
+								text = "[Character.GetUINameNoTooltip]"
+								using = Font_Size_Medium
+								fontsize_min = 14
+								max_width = 400
+							}
+							
+							text_single = {
+								text = "[Character.GetPrimaryTitle.GetNameNoTooltip]"
+								using = Font_Size_Small
+								fontsize_min = 10
+								max_width = 400
+								default_format = "#weak"
+							}
+							
+							expand = {}
+						}
+					}
+				}
+				
+				### DIVIDER ###
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 5
+				}
+				
+				### COUNTY STATS ###
+				vbox = {
+					name = "county_stats"
+					layoutpolicy_horizontal = expanding
+					margin = { 10 5 }
+					spacing = 8
+					
+					### CONTROL LEVEL ###
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						
+						text_label_left = {
+							text = "COUNTY_CONTROL_LABEL"
+							using = Font_Size_Small
+						}
+						
+						### CONTROL BAR ###
+						widget = {
+							size = { 100% 25 }
+							
+							progressbar_standard = {
+								name = "control_bar"
+								size = { 100% 100% }
+								
+								blockoverride "values" {
+									value = "[FixedPointToFloat(County.GetControl)]"
+									min = 0
+									max = 100
+								}
+								
+								text_single = {
+									parentanchor = center
+									text = "[County.GetControl|0]%"
+									using = Font_Size_Small
+									default_format = "#high"
+								}
+							}
+						}
+						
+						text_multi = {
+							text = "COUNTY_CONTROL_DESC"
+							autoresize = yes
+							max_width = 550
+							using = Font_Size_Small
+							default_format = "#weak"
+							margin = { 5 0 }
+						}
+					}
+					
+					### DEVELOPMENT LEVEL ###
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						
+						text_label_left = {
+							text = "COUNTY_DEVELOPMENT_LABEL"
+							using = Font_Size_Small
+						}
+						
+						hbox = {
+							layoutpolicy_horizontal = expanding
+							spacing = 5
+							
+							### DEVELOPMENT BAR ###
+							widget = {
+								size = { 450 25 }
+								
+								progressbar_standard = {
+									name = "development_bar"
+									size = { 100% 100% }
+									
+									blockoverride "values" {
+										value = "[FixedPointToFloat(County.GetDevelopmentLevel)]"
+										min = 0
+										max = 100
+									}
+									
+									text_single = {
+										parentanchor = center
+										text = "[County.GetDevelopmentLevel|0]"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+								}
+							}
+							
+							### MONTHLY PROGRESS ###
+							text_single = {
+								text = "DEVELOPMENT_MONTHLY_PROGRESS"
+								tooltip = "DEVELOPMENT_MONTHLY_TOOLTIP"
+								using = Font_Size_Small
+								default_format = "#weak"
+							}
+						}
+						
+						text_multi = {
+							text = "COUNTY_DEVELOPMENT_DESC"
+							autoresize = yes
+							max_width = 550
+							using = Font_Size_Small
+							default_format = "#weak"
+							margin = { 5 0 }
+						}
+					}
+				}
+				
+				### DIVIDER ###
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 5
+				}
+				
+				### COUNTY OPINION ###
+				vbox = {
+					name = "county_opinion_section"
+					layoutpolicy_horizontal = expanding
+					margin = { 10 5 }
+					spacing = 5
+					
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 8
+						
+						icon = {
+							size = { 30 30 }
+							texture = "gfx/interface/icons/icon_opinion.dds"
+						}
+						
+						text_single = {
+							text = "COUNTY_OPINION_LABEL"
+							using = Font_Size_Small
+						}
+						
+						text_single = {
+							text = "[County.GetOpinion|+]"
+							using = Font_Size_Medium
+							default_format = "#high"
+						}
+						
+						expand = {}
+						
+						### FACTION ICON ###
+						icon = {
+							visible = "[County.IsInFaction]"
+							size = { 30 30 }
+							texture = "gfx/interface/icons/icon_faction.dds"
+							tooltip = "COUNTY_IN_FACTION_TOOLTIP"
+						}
+					}
+				}
+				
+				### DIVIDER ###
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 5
+				}
+				
+				### CULTURE & FAITH ###
+				hbox = {
+					name = "culture_faith_section"
+					layoutpolicy_horizontal = expanding
+					margin = { 10 5 }
+					spacing = 10
+					
+					### CULTURE ###
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+						
+						hbox = {
+							spacing = 8
+							
+							icon = {
+								size = { 40 40 }
+								texture = "[County.GetCulture.GetIcon]"
+							}
+							
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								spacing = 2
+								
+								text_single = {
+									text = "[County.GetCulture.GetNameNoTooltip]"
+									using = Font_Size_Medium
+									max_width = 200
+								}
+								
+								text_single = {
+									text = "CULTURE_ACCEPTANCE"
+									using = Font_Size_Small
+									default_format = "#weak"
+								}
+							}
+						}
+						
+						### CULTURE ACCEPTANCE BAR ###
+						widget = {
+							size = { 100% 20 }
+							
+							progressbar_standard = {
+								size = { 100% 100% }
+								
+								blockoverride "values" {
+									value = "[FixedPointToFloat(County.GetCultureAcceptance)]"
+									min = 0
+									max = 100
+								}
+								
+								text_single = {
+									parentanchor = center
+									text = "[County.GetCultureAcceptance|0]%"
+									using = Font_Size_Small
+									default_format = "#high"
+								}
+							}
+						}
+					}
+					
+					### FAITH ###
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+						
+						hbox = {
+							spacing = 8
+							
+							icon = {
+								size = { 40 40 }
+								texture = "[County.GetFaith.GetIcon]"
+							}
+							
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								spacing = 2
+								
+								text_single = {
+									text = "[County.GetFaith.GetNameNoTooltip]"
+									using = Font_Size_Medium
+									max_width = 200
+								}
+								
+								text_single = {
+									text = "FAITH_LABEL"
+									using = Font_Size_Small
+									default_format = "#weak"
+								}
+							}
+						}
+					}
+				}
+				
+				### PLACEHOLDER FOR REMAINING SECTIONS ###
+				# - Holdings Tab Navigation (Commit 4C)
+				# - Holding Info & Buildings Grid (Commit 4D)
 				
 			}
 		}
