@@ -9,7 +9,10 @@
 ##   ├─ COMMIT 1/4: ✅ Skeleton and States
 ##   ├─ COMMIT 2/4: ✅ OCR Widget (completed)
 ##   ├─ COMMIT 3/4: ✅ Vanilla Widget Header (COMPLETED)
-##   └─ COMMIT 4/4: ⏳ Vanilla Widget Tabs (pending)
+##   ├─ COMMIT 4A/4: 🔨 County Info Tab (IN PROGRESS)
+##   ├─ COMMIT 4B/4: ⏳ County Stats (pending)
+##   ├─ COMMIT 4C/4: ⏳ Holdings Navigation (pending)
+##   └─ COMMIT 4D/4: ⏳ Holdings & Buildings (pending)
 ## Toggle: GetVariableSystem.Exists('ocr')
 ## Default: OCR mode (accessible)
 
@@ -289,12 +292,154 @@ window = {
 					}
 				}
 				
-				### PLACEHOLDER FOR TAB CONTENT (COMMIT 4/4) ###
-				# Tab navigation and content sections will be added in next commit
-				# This includes:
-				# - County tab (holdings list, modifiers, progress bars)
-				# - Holding tab (type selector, stats, special buildings)
-				# - Buildings tab (grid, upgrade buttons, construction)
+				##################################################
+				### COMMIT 4A/4: COUNTY INFO TAB ###
+				##################################################
+				
+				### SPACER ###
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					margin = { 10 5 }
+					spacing = 5
+					
+					### DE JURE HIERARCHY ###
+					vbox = {
+						datacontext = "[HoldingView.GetCountyTitle]"
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						
+						### DE JURE LIEGES CHAIN ###
+						fixedgridbox = {
+							name = "dejure_hierarchy"
+							datamodel = "[Title.GetDeJureLieges]"
+							flipdirection = yes
+							addcolumn = 40
+							addrow = 40
+							maxverticalslots = 1
+							
+							item = {
+								coa_title_tiny_crown = {}
+							}
+						}
+					}
+					
+					### COUNTY MODIFIERS ROW ###
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+						margin_top = 5
+						
+						### MODIFIERS ICONS ###
+						fixedgridbox = {
+							name = "county_modifiers"
+							datacontext = "[HoldingView.GetCountyTitle]"
+							datamodel = "[Title.GetModifiers]"
+							flipdirection = yes
+							addcolumn = 30
+							addrow = 30
+							maxverticalslots = 1
+							
+							item = {
+								icon_modifier = {
+									blockoverride "icon_size" {
+										size = { 30 30 }
+									}
+								}
+							}
+						}
+						
+						expand = {}
+						
+						### MOVE DOMICILE BUTTON ###
+						button_standard = {
+							name = "move_domicile_button"
+							datacontext = "[GetPlayer]"
+							visible = "[And(And(Character.IsDomicileInProvince(Province.Self), Not(Province.IsCapitalBarony)), Character.CanMoveDomicile)]"
+							size = { 180 30 }
+							text = "HOLDING_VIEW_MOVE_DOMICILE"
+							tooltip = "HOLDING_VIEW_MOVE_DOMICILE_TOOLTIP"
+							onclick = "[Character.MoveDomicile(Province.Self)]"
+							using = Font_Size_Small
+						}
+					}
+					
+					### COUNTY FERTILITY BAR ###
+					vbox = {
+						name = "fertility_bar_section"
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						margin_top = 5
+						
+						### FERTILITY LABEL ###
+						text_label_center = {
+							text = "COUNTY_FERTILITY_LABEL"
+							layoutpolicy_horizontal = expanding
+							using = Font_Size_Small
+						}
+						
+						### FERTILITY PROGRESSBAR ###
+						widget = {
+							size = { 100% 20 }
+							
+							progressbar_standard = {
+								name = "fertility_bar"
+								size = { 100% 100% }
+								
+								blockoverride "values" {
+									value = "[FixedPointToFloat(Province.GetFertility)]"
+									min = 0
+									max = 100
+								}
+								
+								blockoverride "color" {
+									tintcolor = { 0.4 0.8 0.3 1.0 }
+								}
+							}
+							
+							### FERTILITY VALUE TEXT ###
+							text_single = {
+								parentanchor = center
+								text = "[Province.GetFertility|0]"
+								using = Font_Size_Small
+								default_format = "#high"
+							}
+						}
+						
+						### SEASONAL INFO ###
+						text_multi = {
+							name = "seasonal_info"
+							layoutpolicy_horizontal = expanding
+							autoresize = yes
+							max_width = 550
+							text = "COUNTY_FERTILITY_SEASONAL_DESC"
+							using = Font_Size_Small
+							margin = { 5 2 }
+						}
+					}
+					
+					### OCCUPATION OVERLAY (if county is occupied) ###
+					widget = {
+						visible = "[HoldingView.GetCountyTitle.IsOccupied]"
+						size = { 100% 40 }
+						
+						background = {
+							using = Background_Area_Dark
+							tintcolor = { 0.8 0.2 0.2 0.5 }
+						}
+						
+						text_label_center = {
+							parentanchor = center
+							text = "COUNTY_OCCUPIED"
+							using = Font_Size_Medium
+							default_format = "#high"
+						}
+					}
+				}
+				
+				### PLACEHOLDER FOR REMAINING SECTIONS (Commits 4B-4D) ###
+				# - County Stats & Holder Portrait (4B)
+				# - Holdings Tab Navigation (4C)  
+				# - Holding Info & Buildings Grid (4D)
 				
 			}
 		}
