@@ -721,13 +721,215 @@ window = {
 						}
 					}
 				}
+
+
+
+				##################################################
+				### COMMIT 4C/4: HOLDINGS NAVIGATION TABS ###
+				##################################################
 				
-				### PLACEHOLDER FOR COMMITS 4C/4 and 4D/4 ###
-				text_label_center = {
-					text = "Holdings Navigation & Buildings Grid - To be added in Commits 4C/4 and 4D/4"
-					margin = { 10 20 }
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 5
+				}
+
+				### HOLDINGS TABS NAVIGATION ###
+				vbox = {
+					name = "holdings_tabs_section"
+					layoutpolicy_horizontal = expanding
+					margin = { 10 5 }
+					spacing = 5
+					
+					### SECTION HEADER ###
+					text_label_left = {
+						text = "HOLDINGS_IN_COUNTY"
+						using = Font_Size_Medium
+						margin_bottom = 5
+					}
+					
+					### TABS CONTAINER ###
+					hbox = {
+						name = "holding_tabs_container"
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+						
+						# Dynamic tabs for each holding in the county
+						fixedgridbox = {
+							name = "holdings_tabs_grid"
+							datacontext = "[HoldingView.GetCountyTitle]"
+							datamodel = "[County.GetProvinces]"
+							layoutpolicy_horizontal = expanding
+							addcolumn = 110
+							addrow = 45
+							maxverticalslots = 1
+							
+							item = {
+								button_tab = {
+									name = "holding_tab"
+									datacontext = "[Province.GetHolding]"
+									size = { 105 40 }
+									down = "[ObjectsEqual(Province.Self, HoldingView.GetProvince)]"
+									onclick = "[OpenGameViewData('holding_view', Province.Self)]"
+									tooltip = "HOLDING_TAB_TOOLTIP"
+									
+									### TAB CONTENT ###
+									vbox = {
+										size = { 100% 100% }
+										spacing = 2
+										margin = { 3 3 }
+										
+										# Holding type icon (Castle/City/Temple/Empty)
+										icon = {
+											name = "holding_type_icon"
+											size = { 24 24 }
+											parentanchor = hcenter
+											texture = "[Select_CString(Holding.IsEmpty, 'gfx/interface/icons/holding_types/empty_holding.dds', Holding.GetPrimaryBuildingType.GetTypeIcon)]"
+											alpha = "[Select_float(Holding.IsEmpty, '0.5', '1.0')]"
+										}
+										
+										# Holding name
+										text_single = {
+											name = "holding_name"
+											text = "[Holding.GetNameNoTooltip]"
+											using = Font_Size_Small
+											fontsize_min = 10
+											max_width = 95
+											align = center|nobaseline
+											parentanchor = hcenter
+											default_format = "#low"
+										}
+									}
+									
+									### ACTIVE INDICATOR ###
+									widget = {
+										visible = "[ObjectsEqual(Province.Self, HoldingView.GetProvince)]"
+										size = { 100% 3 }
+										parentanchor = bottom|hcenter
+										
+										background = {
+											using = Color_Blue
+											margin = { 2 0 }
+										}
+									}
+									
+									### CONSTRUCTION IN PROGRESS INDICATOR ###
+									icon = {
+										name = "construction_indicator"
+										visible = "[Province.HasConstructions]"
+										size = { 20 20 }
+										parentanchor = top|right
+										position = { -2 2 }
+										texture = "gfx/interface/icons/flat_icons/construction.dds"
+										tooltip = "HOLDING_TAB_CONSTRUCTION_IN_PROGRESS"
+									}
+								}
+							}
+						}
+						
+						### ADD NEW HOLDING BUTTON ###
+						button_standard = {
+							name = "construct_new_holding_button"
+							visible = "[HoldingView.CanConstructNewHolding]"
+							size = { 105 40 }
+							onclick = "[HoldingView.OpenHoldingConstruction]"
+							tooltip = "CONSTRUCT_NEW_HOLDING_TOOLTIP"
+							enabled = "[HoldingView.CanConstructNewHolding]"
+							
+							vbox = {
+								parentanchor = center
+								spacing = 2
+								
+								icon = {
+									size = { 24 24 }
+									texture = "gfx/interface/icons/flat_icons/plus.dds"
+									parentanchor = hcenter
+								}
+								
+								text_single = {
+									text = "BUILD_NEW"
+									using = Font_Size_Small
+									fontsize_min = 10
+									parentanchor = hcenter
+								}
+							}
+						}
+						
+						expand = {}
+					}
+					
+					### HOLDING INFO STRIP ###
+					hbox = {
+						name = "holding_info_strip"
+						layoutpolicy_horizontal = expanding
+						margin_top = 5
+						spacing = 10
+						
+						background = {
+							using = Background_Area
+							margin = { 5 3 }
+						}
+						
+						# Current holding type
+						hbox = {
+							spacing = 5
+							margin = { 5 3 }
+							
+							icon = {
+								size = { 20 20 }
+								texture = "[Select_CString(Holding.IsEmpty, 'gfx/interface/icons/holding_types/empty_holding.dds', Holding.GetPrimaryBuildingType.GetTypeIcon)]"
+							}
+							
+							text_single = {
+								text = "[Select_CString(Holding.IsEmpty, 'EMPTY_HOLDING', Holding.GetPrimaryBuildingType.GetTypeName)]"
+								using = Font_Size_Small
+							}
+						}
+						
+						# Building slots used
+						hbox = {
+							visible = "[Not(Holding.IsEmpty)]"
+							spacing = 5
+							
+							icon = {
+								size = { 20 20 }
+								texture = "gfx/interface/icons/building_slot.dds"
+							}
+							
+							text_single = {
+								text = "BUILDING_SLOTS_USED"
+								using = Font_Size_Small
+								tooltip = "BUILDING_SLOTS_TOOLTIP"
+							}
+						}
+						
+						expand = {}
+						
+						# Special buildings indicator
+						hbox = {
+							visible = "[Holding.HasSpecialBuilding]"
+							spacing = 5
+							margin = { 5 3 }
+							
+							icon = {
+								size = { 20 20 }
+								texture = "gfx/interface/icons/flat_icons/special_building.dds"
+							}
+							
+							text_single = {
+								text = "SPECIAL_BUILDING_PRESENT"
+								using = Font_Size_Small
+								default_format = "#high"
+							}
+						}
+					}
 				}
 				
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 5
+				}
+
+
 			}
 		}
 	}
