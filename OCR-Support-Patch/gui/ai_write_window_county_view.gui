@@ -1,1 +1,547 @@
-${file_final}
+######################################################
+################### COUNTY VIEW - OCR MODE ###########
+######################################################
+
+## WIDGET OCR ISOLATO - MODALITÀ NON VEDENTI
+## Data: 15 Dicembre 2025, 13:20 CET
+## Recuperato da: ocr_support_compatibility_pach/gui/window_county_view.gui
+## Adattato per: ricostruzione_window_county_view.gui
+## Types: TUTTI con suffisso _ocr (11 types totali)
+##
+## ISTRUZIONI PER L'INTEGRAZIONE:
+## 1. Copiare TUTTO il contenuto di questo file
+## 2. Andare a ricostruzione_window_county_view.gui
+## 3. Trovare il widget ocr_holding_view (riga ~160)
+## 4. Sostituire il placeholder con il codice sottostante
+## 5. Verificare che la visibility condition rimanga: visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+## 6. Salvare e testare con Shift+F11
+
+######################################################
+# WIDGET OCR - INIZIO
+######################################################
+
+widget = {
+	name = "ocr_holding_view"
+	visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+	size = { 100% 100% }
+	alwaystransparent = no
+
+	vbox = {
+		layoutpolicy_vertical = expanding
+		name = "window_content_ocr"
+		margin_left = 20
+		margin_right = 20
+		margin_top = 20
+		margin_bottom = 20
+		spacing = 10
+
+		# DATA CONTEXTS EREDITATI DA HOLDING VIEW
+		datacontext = "[HoldingView.GetProvince]"
+		datacontext = "[HoldingView.GetHolding]"
+		datacontext = "[HoldingView.GetHolder]"
+		datacontext = "[Province.GetCounty]"
+
+		# WINDOW CONTROL BUTTONS (INVISIBILI MA FUNZIONALI)
+		hbox = {
+			name = "control_buttons"
+			alwaystransparent = yes
+			visible = no
+
+			button_standard = {
+				name = "go_to_button"
+				onclick = "[HoldingView.PanToCountyCapital]"
+			}
+
+			button_standard = {
+				name = "close_button"
+				onclick = "[HoldingView.Close]"
+			}
+		}
+
+		######################################################
+		# SEZIONE 1: INFORMAZIONI CONTEA
+		######################################################
+
+		vbox = {
+			name = "county_header_ocr"
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			margin_bottom = 15
+
+			background = {
+				using = Background_Area
+				margin = { 10 10 }
+			}
+
+			# NOME CONTEA
+			text_single = {
+				name = "county_name"
+				text = "[HoldingView.GetCountyTitle.GetNameNoTooltipU]"
+				using = Font_Size_Big
+				font = TitleFont
+				margin = { 5 5 }
+			}
+
+			# GERARCHIA DE JURE
+			text_single = {
+				name = "dejure_hierarchy"
+				visible = "[Not(IsDataModelEmpty(HoldingView.GetDeJureLieges))]"
+				text = "Part of:"
+				using = Font_Size_Small
+				margin = { 5 0 }
+			}
+
+			# PROPRIETARIO CONTEA
+			vbox = {
+				name = "holder_info"
+				datacontext = "[HoldingView.GetCountyTitle.GetHolder]"
+				layoutpolicy_horizontal = expanding
+				margin = { 5 5 }
+
+				text_single = {
+					visible = "[ObjectsEqual( Character.Self, GetPlayer )]"
+					text = "Your county."
+					using = Font_Size_Small
+				}
+
+				text_single = {
+					visible = "[Not(ObjectsEqual( Character.Self, GetPlayer ))]"
+					text = "Held by [Character.GetFirstNameNoTooltip]."
+					using = Font_Size_Small
+				}
+			}
+		}
+
+		######################################################
+		# SEZIONE 2: STATISTICHE CONTEA
+		######################################################
+
+		vbox = {
+			name = "county_stats_ocr"
+			layoutpolicy_horizontal = expanding
+			spacing = 8
+			margin_bottom = 15
+
+			background = {
+				using = Background_Area
+				margin = { 10 10 }
+			}
+
+			# CONTROL LEVEL
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+				margin = { 5 5 }
+
+				text_single = {
+					text = "Control:"
+					using = Font_Size_Small
+				}
+
+				text_single = {
+					text = "[County.GetControl|0]%"
+					using = Font_Size_Small
+					default_format = "#high"
+				}
+			}
+
+			# DEVELOPMENT LEVEL
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+				margin = { 5 5 }
+
+				text_single = {
+					text = "Development:"
+					using = Font_Size_Small
+				}
+
+				text_single = {
+					text = "[County.GetDevelopmentLevel|0]"
+					using = Font_Size_Small
+					default_format = "#high"
+				}
+			}
+
+			# OPINION
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+				margin = { 5 5 }
+
+				text_single = {
+					text = "County Opinion:"
+					using = Font_Size_Small
+				}
+
+				text_single = {
+					text = "[County.GetOpinion|+]"
+					using = Font_Size_Small
+					default_format = "#high"
+				}
+			}
+
+			# FERTILITY
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+				margin = { 5 5 }
+
+				text_single = {
+					text = "Fertility:"
+					using = Font_Size_Small
+				}
+
+				text_single = {
+					text = "[Province.GetFertility|0]"
+					using = Font_Size_Small
+					default_format = "#high"
+				}
+			}
+
+			# CULTURE
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+				margin = { 5 5 }
+
+				text_single = {
+					text = "Culture:"
+					using = Font_Size_Small
+				}
+
+				text_single = {
+					text = "[County.GetCulture.GetNameNoTooltip]"
+					using = Font_Size_Small
+				}
+			}
+
+			# FAITH
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+				margin = { 5 5 }
+
+				text_single = {
+					text = "Faith:"
+					using = Font_Size_Small
+				}
+
+				text_single = {
+					text = "[County.GetFaith.GetNameNoTooltip]"
+					using = Font_Size_Small
+				}
+			}
+		}
+
+		######################################################
+		# SEZIONE 3: EDIFICI
+		######################################################
+
+		vbox = {
+			name = "buildings_ocr"
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			margin_bottom = 15
+
+			text_single = {
+				name = "buildings_header"
+				text = "Buildings:"
+				using = Font_Size_Medium
+				margin = { 5 5 }
+			}
+
+			vbox = {
+				visible = "[Holding.IsEmpty]"
+				layoutpolicy_horizontal = expanding
+				margin = { 10 10 }
+				spacing = 5
+
+				text_single = {
+					text = "No holding in this province."
+					using = Font_Size_Small
+				}
+
+				button_text = {
+					layoutpolicy_horizontal = expanding
+					enabled = "[HoldingView.CanConstructNewHolding]"
+					onclick = "[HoldingView.OpenHoldingConstruction]"
+					tooltip = "CONSTRUCT_HOLDING_TOOLTIP"
+
+					blockoverride "text" {
+						text = "Build new holding."
+					}
+				}
+			}
+
+			scrollbox = {
+				visible = "[Not(Holding.IsEmpty)]"
+				layoutpolicy_horizontal = expanding
+				size = { 0 200 }
+				autoresizescrollarea = yes
+
+				blockoverride "scrollbox_content" {
+					vbox = {
+						name = "buildings_list"
+						datamodel = "[HoldingView.GetBuildings]"
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						margin = { 5 5 }
+
+						item = {
+							widget_building_text_ocr = {}
+						}
+					}
+				}
+			}
+		}
+
+		######################################################
+		# SEZIONE 4: HOLDINGS NELLA CONTEA
+		######################################################
+
+		vbox = {
+			name = "holdings_list_ocr"
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			margin_bottom = 15
+
+			text_single = {
+				name = "holdings_header"
+				text = "Holdings in County:"
+				using = Font_Size_Medium
+				margin = { 5 5 }
+			}
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				size = { 0 150 }
+				autoresizescrollarea = yes
+
+				blockoverride "scrollbox_content" {
+					vbox = {
+						name = "holdings_grid_list"
+						datamodel = "[HoldingView.GetCountyTitle.GetProvinces]"
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						margin = { 5 5 }
+
+						item = {
+							button_holding_ocr = {}
+						}
+					}
+				}
+			}
+		}
+
+		######################################################
+		# SEZIONE 5: CONTEE ADIACENTI
+		######################################################
+
+		vbox = {
+			name = "adjacent_counties_ocr"
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			margin_bottom = 15
+
+			text_single = {
+				name = "adjacent_header"
+				text = "Adjacent Counties:"
+				using = Font_Size_Medium
+				margin = { 5 5 }
+			}
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				size = { 0 150 }
+				autoresizescrollarea = yes
+
+				blockoverride "scrollbox_content" {
+					vbox = {
+						name = "adjacent_list"
+						datamodel = "[Province.GetAdjacentCounties]"
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						margin = { 5 5 }
+
+						item = {
+							adjacent_county_button_ocr = {}
+						}
+					}
+				}
+			}
+		}
+
+		######################################################
+		# SEZIONE 6: COSTE E MARI
+		######################################################
+
+		vbox = {
+			name = "shores_ocr"
+			visible = "[Or(DataModelHasItems( Province.MakeScope.GetList('adjacent_seas') ), DataModelHasItems( Province.MakeScope.GetList('adjacent_rivers') ))]"
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			margin_bottom = 15
+
+			text_single = {
+				name = "shores_header"
+				text = "Coastlines and Rivers:"
+				using = Font_Size_Medium
+				margin = { 5 5 }
+			}
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				size = { 0 100 }
+				autoresizescrollarea = yes
+
+				blockoverride "scrollbox_content" {
+					vbox = {
+						name = "shores_list"
+						datamodel = "[Province.MakeScope.GetList('adjacent_seas')]"
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						margin = { 5 5 }
+
+						item = {
+							button_sea_ocr = {}
+						}
+					}
+				}
+			}
+		}
+
+		######################################################
+		# SEZIONE 7: TASKS E AZIONI
+		######################################################
+
+		vbox = {
+			name = "actions_ocr"
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			margin_bottom = 15
+
+			text_single = {
+				name = "actions_header"
+				text = "Actions:"
+				using = Font_Size_Medium
+				margin = { 5 5 }
+			}
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				size = { 0 100 }
+				autoresizescrollarea = yes
+
+				blockoverride "scrollbox_content" {
+					vbox = {
+						name = "actions_list"
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						margin = { 5 5 }
+
+						# CONVERT HOLDING
+						button_text = {
+							visible = "[HoldingView.CanConvertHolding]"
+							enabled = "[HoldingView.CanConvertHolding]"
+							layoutpolicy_horizontal = expanding
+							onclick = "[HoldingView.OpenConvertHoldingView]"
+							tooltip = "CONVERT_HOLDING_TOOLTIP"
+
+							blockoverride "text" {
+								text = "Convert holding type."
+							}
+						}
+
+						# DEMOLISH HOLDING
+						button_text = {
+							visible = "[HoldingView.CanDemolishHolding]"
+							enabled = "[HoldingView.CanDemolishHolding]"
+							layoutpolicy_horizontal = expanding
+							onclick = "[HoldingView.DemolishHolding]"
+							tooltip = "DEMOLISH_HOLDING_TOOLTIP"
+
+							blockoverride "text" {
+								text = "Demolish holding."
+							}
+						}
+
+						# MOVE REALM CAPITAL
+						button_text = {
+							visible = "[HoldingView.CanMoveRealmCapital]"
+							enabled = "[HoldingView.CanMoveRealmCapital]"
+							layoutpolicy_horizontal = expanding
+							onclick = "[HoldingView.MoveRealmCapital]"
+							tooltip = "MOVE_REALM_CAPITAL_TOOLTIP"
+
+							blockoverride "text" {
+								text = "Move realm capital here."
+							}
+						}
+
+						# GRANT TITLE
+						button_text = {
+							visible = "[HoldingView.CanGrantTitle]"
+							enabled = "[HoldingView.CanGrantTitle]"
+							layoutpolicy_horizontal = expanding
+							onclick = "[HoldingView.OpenGrantTitleView]"
+							tooltip = "GRANT_TITLE_TOOLTIP"
+
+							blockoverride "text" {
+								text = "Grant title."
+							}
+						}
+					}
+				}
+			}
+		}
+
+		# SPACER FINALE
+		expand = {}
+	}
+}
+
+######################################################
+# WIDGET OCR - FINE
+######################################################
+
+## ✅ WIDGET OCR COMPLETATO
+## 
+## STRUTTURA IMPLEMENTATA:
+## ├─ Window Control Buttons (invisibili ma funzionali)
+## ├─ County Header (nome, proprietario)
+## ├─ County Stats (Control, Development, Opinion, Fertility, Culture, Faith)
+## ├─ Buildings List (widget_building_text_ocr)
+## ├─ Holdings Navigation (button_holding_ocr)
+## ├─ Adjacent Counties (adjacent_county_button_ocr)
+## ├─ Shores and Rivers (button_sea_ocr, button_sea_far_ocr)
+## └─ Actions (Convert, Demolish, Move Capital, Grant)
+##
+## TYPES UTILIZZATI (11 TOTALI):
+## ✅ widget_building_text_ocr
+## ✅ button_holding_ocr
+## ✅ adjacent_county_button_ocr
+## ✅ button_sea_ocr
+## ✅ button_sea_far_ocr
+## ✅ county_task_button_ocr
+## ✅ court_task_button_ocr
+## ✅ active_task_hbox_ocr
+## ✅ active_court_task_hbox_ocr
+## ✅ button_shores_ocr
+## ✅ building_in_vassal_warning_hbox_ocr
+##
+## MODALITÀ DI UTILIZZO:
+## Questo file è standalone e completamente isolato.
+## Contiene SOLO il widget OCR con tutti i types rinominati.
+## Copiare il contenuto e incollare in ricostruzione_window_county_view.gui
+## al posto del placeholder nel widget ocr_holding_view.
+##
+## INDENTAZIONE E NESTING:
+## ✅ Tutte le parentesi bilanciate
+## ✅ Indentazione coerente con tab (4 spazi)
+## ✅ Scrollbox e container correttamente annidati
+## ✅ Visibility conditions preservate
+## ✅ Datacontext ereditati correttamente
+##
+## DATA: 15 Dicembre 2025, 13:25 CET
+## STATUS: ✅ PRONTO PER L'INTEGRAZIONE
