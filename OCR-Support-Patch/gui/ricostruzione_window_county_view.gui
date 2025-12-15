@@ -930,6 +930,414 @@ window = {
 				}
 
 
+				##################################################
+				### COMMIT 4D/4: BUILDINGS GRID & ACTIONS ###
+				##################################################
+				
+				### BUILDINGS SECTION ###
+				vbox = {
+					name = "buildings_section"
+					layoutpolicy_horizontal = expanding
+					margin = { 10 5 }
+					spacing = 8
+					
+					### SECTION HEADER WITH BUILD NEW BUTTON ###
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 10
+						
+						text_label_left = {
+							text = "BUILDINGS_LABEL"
+							using = Font_Size_Medium
+						}
+						
+						expand = {}
+						
+						### BUILD NEW BUILDING BUTTON ###
+						button_standard = {
+							name = "build_new_building_button"
+							visible = "[Not(Holding.IsEmpty)]"
+							size = { 140 30 }
+							onclick = "[HoldingView.OpenBuildingConstructionView]"
+							tooltip = "BUILD_NEW_BUILDING_TOOLTIP"
+							enabled = "[HoldingView.CanBuildNewBuilding]"
+							
+							hbox = {
+								parentanchor = center
+								spacing = 5
+								
+								icon = {
+									size = { 20 20 }
+									texture = "gfx/interface/icons/flat_icons/plus.dds"
+								}
+								
+								text_single = {
+									text = "BUILD_NEW"
+									using = Font_Size_Small
+								}
+							}
+						}
+					}
+					
+					### EMPTY HOLDING MESSAGE ###
+					vbox = {
+						visible = "[Holding.IsEmpty]"
+						layoutpolicy_horizontal = expanding
+						spacing = 10
+						margin = { 10 20 }
+						
+						background = {
+							using = Background_Area_Dark
+							margin = { 10 10 }
+						}
+						
+						icon = {
+							size = { 60 60 }
+							parentanchor = hcenter
+							texture = "gfx/interface/icons/holding_types/empty_holding.dds"
+							alpha = 0.5
+						}
+						
+						text_multi = {
+							layoutpolicy_horizontal = expanding
+							autoresize = yes
+							max_width = 500
+							text = "EMPTY_HOLDING_DESC"
+							using = Font_Size_Small
+							align = center
+							margin = { 10 5 }
+						}
+						
+						button_primary = {
+							name = "construct_holding_button"
+							size = { 200 35 }
+							parentanchor = hcenter
+							text = "CONSTRUCT_HOLDING"
+							onclick = "[HoldingView.OpenHoldingConstruction]"
+							tooltip = "CONSTRUCT_HOLDING_TOOLTIP"
+							enabled = "[HoldingView.CanConstructNewHolding]"
+						}
+					}
+					
+					### BUILDINGS GRID ###
+					scrollbox = {
+						name = "buildings_scrollbox"
+						visible = "[Not(Holding.IsEmpty)]"
+						layoutpolicy_horizontal = expanding
+						size = { 0 350 }
+						autoresizescrollarea = yes
+						maximumsize = { -1 500 }
+						
+						blockoverride "scrollbox_content" {
+							fixedgridbox = {
+								name = "buildings_grid"
+								datamodel = "[HoldingView.GetBuildings]"
+								layoutpolicy_horizontal = expanding
+								addcolumn = 75
+								addrow = 75
+								maxverticalslots = 1
+								flipdirection = yes
+								setparentsizetominimum = yes
+								margin = { 10 10 }
+								spacing = 8
+								
+								item = {
+									widget = {
+										size = { 70 70 }
+										
+										### BUILDING BUTTON ###
+										button_standard = {
+											name = "building_button"
+											size = { 100% 100% }
+											onclick = "[GUIBuildingItem.OnClick]"
+											down = "[GUIBuildingItem.IsHighlighted]"
+											enabled = "[GUIBuildingItem.IsBuildingButtonEnabled]"
+											tooltip = "[GUIBuildingItem.GetTooltip]"
+											
+											### BUILDING ICON ###
+											icon = {
+												name = "building_icon"
+												visible = "[GUIBuildingItem.HasLevel]"
+												parentanchor = center
+												size = { 55 50 }
+												texture = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetTypeIcon]"
+											}
+											
+											### BUILD NEW ICON ###
+											icon = {
+												name = "build_new_icon"
+												visible = "[And(And(GUIBuildingItem.IsBuildNewIconShown, GUIBuildingItem.IsBuildingButtonEnabled), Not(GUIBuildingItem.HasLevel))]"
+												parentanchor = center
+												size = { 35 35 }
+												alpha = 0.7
+												texture = "gfx/interface/icons/flat_icons/plus.dds"
+												alwaystransparent = yes
+											}
+											
+											### BUILDING LEVEL ###
+											text_single = {
+												visible = "[And(GUIBuildingItem.HasLevel, Not(GUIBuildingItem.IsConstructing))]"
+												text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
+												parentanchor = bottom|right
+												position = { -6 -2 }
+												fontsize = 16
+												default_format = "#low;bold"
+												align = nobaseline
+												
+												background = {
+													using = Background_Area_ExtraDark
+													margin = { 5 0 }
+												}
+											}
+											
+											### CONSTRUCTION PROGRESS BAR ###
+											widget = {
+												visible = "[And(GUIBuildingItem.HasLevel, GUIBuildingItem.IsConstructing)]"
+												parentanchor = bottom|hcenter
+												position = { 0 -3 }
+												
+												vbox = {
+													spacing = 2
+													
+													text_single = {
+														text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
+														parentanchor = right
+														position = { -1 0 }
+														fontsize = 15
+														default_format = "#low;bold"
+														align = nobaseline
+														
+														background = {
+															using = Background_Area_ExtraDark
+															margin = { 5 0 }
+														}
+													}
+													
+													progressbar_standard = {
+														name = "construct_progressbar"
+														parentanchor = hcenter
+														alwaystransparent = yes
+														size = { 60 10 }
+														
+														blockoverride "values" {
+															value = "[GUIBuildingItem.GetConstructingProgress]"
+															min = 0
+															max = 100
+														}
+													}
+												}
+											}
+											
+											### BUILDING DISABLED WARNING ###
+											warning_icon = {
+												name = "reduced_by_fixable_situation"
+												visible = "[GUIBuildingItem.IsBuildingDisabled]"
+												position = { 3 3 }
+												size = { 22 22 }
+												tooltip = "BUILDING_DISABLED_TOOLTIP"
+											}
+										}
+										
+										### EMPTY BUILDING SLOT ###
+										icon = {
+											name = "building_slot"
+											size = { 100% 100% }
+											using = Background_Area
+											visible = "[GUIBuildingItem.IsBuildingSlotShown]"
+										}
+									}
+								}
+							}
+						}
+					}
+					
+					### BUILDINGS LEGEND (optional) ###
+					hbox = {
+						visible = "[Not(Holding.IsEmpty)]"
+						layoutpolicy_horizontal = expanding
+						spacing = 15
+						margin_top = 5
+						
+						hbox = {
+							spacing = 5
+							
+							icon = {
+								size = { 16 16 }
+								texture = "gfx/interface/icons/flat_icons/construction.dds"
+							}
+							
+							text_single = {
+								text = "UNDER_CONSTRUCTION"
+								using = Font_Size_Small
+								default_format = "#weak"
+							}
+						}
+						
+						expand = {}
+						
+						hbox = {
+							spacing = 5
+							
+							icon = {
+								size = { 16 16 }
+								using = Background_Area
+							}
+							
+							text_single = {
+								text = "EMPTY_SLOT"
+								using = Font_Size_Small
+								default_format = "#weak"
+							}
+						}
+					}
+				}
+				
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 8
+				}
+				
+				##################################################
+				### HOLDING ACTIONS SECTION ###
+				##################################################
+				
+				vbox = {
+					name = "holding_actions_section"
+					layoutpolicy_horizontal = expanding
+					margin = { 10 5 }
+					spacing = 5
+					
+					text_label_left = {
+						text = "HOLDING_ACTIONS_LABEL"
+						using = Font_Size_Medium
+						margin_bottom = 5
+					}
+					
+					### ACTIONS GRID ###
+					fixedgridbox = {
+						name = "holding_actions_grid"
+						layoutpolicy_horizontal = expanding
+						addcolumn = 270
+						addrow = 35
+						maxverticalslots = 1
+						spacing = 8
+						
+						item = {
+							### CONVERT HOLDING TYPE ###
+							button_standard = {
+								name = "convert_holding_button"
+								visible = "[HoldingView.CanConvertHolding]"
+								size = { 265 32 }
+								onclick = "[HoldingView.OpenConvertHoldingView]"
+								tooltip = "CONVERT_HOLDING_TOOLTIP"
+								enabled = "[HoldingView.CanConvertHolding]"
+								
+								hbox = {
+									spacing = 8
+									margin = { 8 0 }
+									
+									icon = {
+										size = { 24 24 }
+										texture = "gfx/interface/icons/flat_icons/convert.dds"
+									}
+									
+									text_single = {
+										text = "CONVERT_HOLDING"
+										using = Font_Size_Small
+									}
+								}
+							}
+						}
+						
+						item = {
+							### DEMOLISH HOLDING ###
+							button_standard = {
+								name = "demolish_holding_button"
+								visible = "[HoldingView.CanDemolishHolding]"
+								size = { 265 32 }
+								onclick = "[HoldingView.DemolishHolding]"
+								tooltip = "DEMOLISH_HOLDING_TOOLTIP"
+								enabled = "[HoldingView.CanDemolishHolding]"
+								
+								hbox = {
+									spacing = 8
+									margin = { 8 0 }
+									
+									icon = {
+										size = { 24 24 }
+										texture = "gfx/interface/icons/flat_icons/demolish.dds"
+									}
+									
+									text_single = {
+										text = "DEMOLISH_HOLDING"
+										using = Font_Size_Small
+									}
+								}
+							}
+						}
+						
+						item = {
+							### MOVE REALM CAPITAL ###
+							button_standard = {
+								name = "move_realm_capital_button"
+								visible = "[HoldingView.CanMoveRealmCapital]"
+								size = { 265 32 }
+								onclick = "[HoldingView.MoveRealmCapital]"
+								tooltip = "MOVE_REALM_CAPITAL_TOOLTIP"
+								enabled = "[HoldingView.CanMoveRealmCapital]"
+								
+								hbox = {
+									spacing = 8
+									margin = { 8 0 }
+									
+									icon = {
+										size = { 24 24 }
+										texture = "gfx/interface/icons/flat_icons/capital.dds"
+									}
+									
+									text_single = {
+										text = "MOVE_REALM_CAPITAL"
+										using = Font_Size_Small
+									}
+								}
+							}
+						}
+						
+						item = {
+							### GRANT TITLE ###
+							button_standard = {
+								name = "grant_title_button"
+								visible = "[HoldingView.CanGrantTitle]"
+								size = { 265 32 }
+								onclick = "[HoldingView.OpenGrantTitleView]"
+								tooltip = "GRANT_TITLE_TOOLTIP"
+								enabled = "[HoldingView.CanGrantTitle]"
+								
+								hbox = {
+									spacing = 8
+									margin = { 8 0 }
+									
+									icon = {
+										size = { 24 24 }
+										texture = "gfx/interface/icons/flat_icons/grant.dds"
+									}
+									
+									text_single = {
+										text = "GRANT_TITLE"
+										using = Font_Size_Small
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				### BOTTOM SPACER ###
+				expand = {
+					minimumsize = { 0 10 }
+				}
+
+
 			}
 		}
 	}
