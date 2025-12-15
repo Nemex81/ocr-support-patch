@@ -1,7 +1,7 @@
 # 📋 DOCUMENTO DI RIEPILOGO PROGETTO CK3 OCR SUPPORT - ACCESSIBILITY FIX
 
-**Versione**: 3.2 - Progetto Esteso + County View (75% completato)  
-**Data ultima modifica**: 14 Dicembre 2025, 23:52 CET  
+**Versione**: 3.3 - County View System Commit 4A/4 Completato  
+**Data ultima modifica**: 15 Dicembre 2025, 01:22 CET  
 **Versione progetto**: OCR Support Compatibility Patch - Dual Mode View + County System  
 **Repository**: [https://github.com/Nemex81/ocr-support-patch](https://github.com/Nemex81/ocr-support-patch)  
 **Sviluppatore**: Luca "Nemex81" (utente cieco, Italia)  
@@ -22,9 +22,9 @@ Risolvere il problema di **finestre nere** nella modalità normo vedente della m
 ### ✅ OBIETTIVO FASE 1 RAGGIUNTO
 Tutte le 11 finestre principali del gioco sono state convertite con successo al sistema dual-mode, permettendo partite multiplayer completamente funzionali tra giocatori ciechi (modalità OCR testuale) e normovedenti (modalità grafica vanilla).
 
-### 🔨 OBIETTIVO FASE 2 IN CORSO - 75% COMPLETATO
-Conversione del sistema County View (window_county_view.gui) con approccio bottom-up incrementale in 4 commit.
-**Progress**: 3/4 commit completati - Solo Commit 4/4 (Vanilla Tabs) rimanente.
+### 🔨 OBIETTIVO FASE 2 IN CORSO - 25% COMPLETATO
+Conversione del sistema County View (window_county_view.gui) con approccio bottom-up incrementale in 4 SUB-COMMIT (4A, 4B, 4C, 4D).
+**Progress**: 1/4 sub-commit completati (Commit 4A/4 ✅) - 3 sub-commit rimanenti.
 
 ---
 
@@ -61,7 +61,8 @@ widget = {
 **Uso**: window_county_view.gui (Vista Contea + Costruzione Holdings)  
 **Caratteristiche**:
 - Sistema multi-finestra interconnesso (holding_view + holding_tracks_view + holding_type_selection_view)
-- Approccio incrementale bottom-up in 4 commit
+- Approccio incrementale bottom-up in 4 commit principali
+- Commit 4/4 suddiviso in 4 SUB-COMMIT (4A, 4B, 4C, 4D)
 - Types definitions condivisi tra OCR e Vanilla
 - Finestre secondarie già dual-mode
 - Window principale con widget duale molto esteso (~2500 righe vanilla)
@@ -77,9 +78,9 @@ widget = {
 - `holding_tracks_view`: Finestra costruzione nuovi edifici (dual-mode completo)
 - `holding_type_selection_view`: Selezione tipo holding (Castle/City/Temple) (dual-mode completo)
 
-**Fase 3: 🔨 Main Window - 75% COMPLETATO (holding_view dual-mode)**
+**Fase 3: 🔨 Main Window - 25% COMPLETATO (holding_view dual-mode)**
 
-Approccio incrementale in **4 COMMIT**:
+Approccio incrementale in **4 COMMIT PRINCIPALI + 4 SUB-COMMIT**:
 
 ---
 
@@ -322,399 +323,804 @@ widget = {
 
 ---
 
-#### COMMIT 4/4: ⏳ Vanilla Widget Tabs (FINALE - In pianificazione)
+#### COMMIT 4/4: 🔨 Vanilla Widget Tabs (SUDDIVISO IN 4A-4D) - 25% COMPLETATO
 
-**Obiettivo**: Completare widget vanilla con tab navigation e tutto il contenuto grafico
-
-**Stato**: Non ancora iniziato (prossimo step)  
-**Stima righe**: ~1700 righe vanilla (la sezione più grande)  
+**Obiettivo**: Completare widget vanilla con tab navigation e tutto il contenuto grafico  
+**Stima righe totali**: ~1800 righe vanilla (la sezione più grande)  
 **File finale previsto**: ~2500 righe totali (~60 KB)
 
----
-
-### 📋 PIANIFICAZIONE DETTAGLIATA COMMIT 4/4 (FINALE)
-
-**Da inserire dopo l'header del Commit 3/4**:
-
-#### SEZIONE 1: Tab Navigation System
-
-**Obiettivo**: Sistema di navigazione tra 3 tab principali
-
-```gui
-### TAB BUTTONS ###
-hbox = {
-    name = "tab_buttons"
-    layoutpolicy_horizontal = expanding
-    spacing = 5
-    margin = { 10 5 }
-    
-    # County Info Tab
-    button_tab = {
-        name = "county_info_button"
-        layoutpolicy_horizontal = expanding
-        text = "COUNTY_VIEW_TAB"
-        default = yes
-        onclick = "[HoldingView.SelectCountyTab]"
-        down = "[HoldingView.IsCountyTabSelected]"
-    }
-    
-    # Holdings Tab
-    button_tab = {
-        name = "holdings_button"
-        layoutpolicy_horizontal = expanding
-        text = "HOLDING_VIEW_TAB"
-        onclick = "[HoldingView.SelectHoldingsTab]"
-        down = "[HoldingView.IsHoldingsTabSelected]"
-    }
-    
-    # Buildings Tab
-    button_tab = {
-        name = "buildings_button"
-        layoutpolicy_horizontal = expanding
-        text = "BUILDINGS_VIEW_TAB"
-        visible = "[HoldingView.HasHolding]"
-        onclick = "[HoldingView.SelectBuildingsTab]"
-        down = "[HoldingView.IsBuildingsTabSelected]"
-    }
-}
-```
-
-**Elementi necessari**:
-- ✅ 3 button_tab con stati down corretti
-- ✅ Visibility condition per Buildings tab (solo se holding esiste)
-- ✅ Default tab: County Info
-- ✅ Layout expanding per occupare tutto lo spazio disponibile
+**Strategia**: Suddivisione in 4 SUB-COMMIT incrementali testabili
 
 ---
 
-#### SEZIONE 2: County Info Tab Content
+### 📋 COMMIT 4A/4: ✅ COUNTY INFO TAB (COMPLETATO - 15 Dic 2025 01:20)
 
-**Obiettivo**: Mostrare lista holdings, modifiers, e progress bars della contea
+**Commit SHA**: `7154a1617e0d3d8e5686964b7538a810963ea8f9`  
+**File size**: 12.9 KB (~150 righe aggiunte)  
+**Link commit**: [View on GitHub](https://github.com/Nemex81/ocr-support-patch/commit/7154a1617e0d3d8e5686964b7538a810963ea8f9)
+
+**Obiettivo**: Aggiungere prima sezione tab content con info contea
+
+**Contenuto implementato**:
 
 ```gui
+### COMMIT 4A/4: COUNTY INFO TAB ###
+
 vbox = {
-    name = "county_info_content"
-    visible = "[HoldingView.IsCountyTabSelected]"
-    layoutpolicy_vertical = expanding
+    layoutpolicy_horizontal = expanding
+    margin = { 10 5 }
+    spacing = 5
     
-    ### HOLDINGS LIST IN COUNTY ###
+    ### DE JURE HIERARCHY ###
     vbox = {
-        name = "holdings_list"
-        layoutpolicy_horizontal = expanding
+        datacontext = "[HoldingView.GetCountyTitle]"
         
-        text_label_center = {
-            text = "COUNTY_HOLDINGS_HEADER"
-        }
-        
-        # Holdings icons clickable
-        hbox = {
-            datamodel = "[County.GetHoldings]"
-            spacing = 5
+        fixedgridbox = {
+            name = "dejure_hierarchy"
+            datamodel = "[Title.GetDeJureLieges]"
+            flipdirection = yes
+            addcolumn = 40
+            addrow = 40
+            maxverticalslots = 1
             
             item = {
-                button_standard_hover = {
-                    size = { 60 60 }
-                    onclick = "[DefaultOnCoatOfArmsClick(Holding.GetID)]"
-                    tooltip = "[Holding.GetNameNoTooltip]"
-                    
-                    icon_holding = {
-                        texture = "[Holding.GetType.GetIcon]"
-                        size = { 50 50 }
+                coa_title_tiny_crown = {}
+            }
+        }
+    }
+    
+    ### COUNTY MODIFIERS ROW ###
+    hbox = {
+        fixedgridbox = {
+            name = "county_modifiers"
+            datacontext = "[HoldingView.GetCountyTitle]"
+            datamodel = "[Title.GetModifiers]"
+            flipdirection = yes
+            addcolumn = 30
+            addrow = 30
+            maxverticalslots = 1
+            
+            item = {
+                icon_modifier = {
+                    blockoverride "icon_size" {
+                        size = { 30 30 }
                     }
                 }
             }
         }
+        
+        expand = {}
+        
+        ### MOVE DOMICILE BUTTON ###
+        button_standard = {
+            name = "move_domicile_button"
+            datacontext = "[GetPlayer]"
+            visible = "[And(And(Character.IsDomicileInProvince(Province.Self), Not(Province.IsCapitalBarony)), Character.CanMoveDomicile)]"
+            size = { 180 30 }
+            text = "HOLDING_VIEW_MOVE_DOMICILE"
+            onclick = "[Character.MoveDomicile(Province.Self)]"
+        }
     }
     
-    divider_light = { layoutpolicy_horizontal = expanding }
-    
-    ### COUNTY MODIFIERS GRID ###
+    ### COUNTY FERTILITY BAR ###
     vbox = {
-        name = "county_modifiers"
-        layoutpolicy_horizontal = expanding
+        name = "fertility_bar_section"
+        spacing = 3
         
         text_label_center = {
-            text = "COUNTY_MODIFIERS_HEADER"
+            text = "COUNTY_FERTILITY_LABEL"
         }
         
-        fixedgridbox = {
-            name = "modifiers_grid"
-            datamodel = "[County.GetModifiers]"
-            addrow = 40
-            addcolumn = 40
-            maxhorizontalslots = 8
+        widget = {
+            size = { 100% 20 }
             
-            item = {
-                icon = {
-                    size = { 35 35 }
-                    texture = "[Modifier.GetIcon]"
-                    tooltip = "[Modifier.GetTooltip]"
+            progressbar_standard = {
+                name = "fertility_bar"
+                size = { 100% 100% }
+                
+                blockoverride "values" {
+                    value = "[FixedPointToFloat(Province.GetFertility)]"
+                    min = 0
+                    max = 100
+                }
+                
+                blockoverride "color" {
+                    tintcolor = { 0.4 0.8 0.3 1.0 }
                 }
             }
-        }
-    }
-    
-    divider_light = { layoutpolicy_horizontal = expanding }
-    
-    ### DEVELOPMENT PROGRESS BAR ###
-    vbox = {
-        layoutpolicy_horizontal = expanding
-        
-        text_label_left = {
-            text = "COUNTY_DEVELOPMENT"
-        }
-        
-        progressbar_standard = {
-            name = "development_bar"
-            size = { 300 25 }
-            value = "[FixedPointToFloat(County.GetDevelopmentLevel)]"
-            min = 0
-            max = 100
             
             text_single = {
                 parentanchor = center
-                text = "[County.GetDevelopmentLevel|0]"
+                text = "[Province.GetFertility|0]"
+                default_format = "#high"
             }
+        }
+        
+        ### SEASONAL INFO ###
+        text_multi = {
+            name = "seasonal_info"
+            autoresize = yes
+            max_width = 550
+            text = "COUNTY_FERTILITY_SEASONAL_DESC"
         }
     }
     
-    ### CONTROL PROGRESS BAR ###
-    vbox = {
-        layoutpolicy_horizontal = expanding
+    ### OCCUPATION OVERLAY ###
+    widget = {
+        visible = "[HoldingView.GetCountyTitle.IsOccupied]"
+        size = { 100% 40 }
         
+        background = {
+            using = Background_Area_Dark
+            tintcolor = { 0.8 0.2 0.2 0.5 }
+        }
+        
+        text_label_center = {
+            parentanchor = center
+            text = "COUNTY_OCCUPIED"
+            default_format = "#high"
+        }
+    }
+}
+```
+
+**Elementi implementati**:
+- ✅ **De Jure Hierarchy**: Catena lieges con CoA tiny crown
+- ✅ **County Modifiers**: Fixedgridbox con icons 30x30
+- ✅ **Move Domicile Button**: Conditional visibility per landless players
+- ✅ **Fertility Bar**: Progressbar 0-100 con colore verde customizzato
+- ✅ **Seasonal Info**: Text multi con descrizione variazioni stagionali
+- ✅ **Occupation Overlay**: Warning rosso se contea occupata
+
+**Test in-game effettuati**:
+- ✅ De jure hierarchy mostra impero/regno/ducato correttamente
+- ✅ County modifiers icons visibili e con tooltip
+- ✅ Move domicile button appare solo quando necessario
+- ✅ Fertility bar con valore corretto (0-100)
+- ✅ Seasonal info text leggibile
+- ✅ Occupation overlay appare se contea occupata
+
+**Risultato**: Prima sezione county info completa e funzionale
+
+---
+
+### 📋 COMMIT 4B/4: ⏳ COUNTY STATS & HOLDER (PROSSIMO)
+
+**Obiettivo**: Aggiungere stats contea e portrait holder  
+**Stima righe**: ~500 righe  
+**Posizione**: Dopo County Info Tab, prima delle tab buttons
+
+**Da implementare**:
+
+#### SEZIONE 1: Holder Portrait Section
+
+```gui
+### HOLDER PORTRAIT SECTION ###
+vbox = {
+    name = "holder_section"
+    layoutpolicy_horizontal = expanding
+    margin = { 10 5 }
+    spacing = 5
+    
+    background = {
+        using = Background_Area
+    }
+    
+    ### HOLDER INFO HBOX ###
+    hbox = {
+        datacontext = "[HoldingView.GetCountyTitle.GetHolder]"
+        spacing = 10
+        
+        ### PORTRAIT ###
+        portrait_head_small = {
+            datacontext = "[HoldingView.GetCountyTitle.GetHolder]"
+            
+            blockoverride "portrait_button" {
+                onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+            }
+        }
+        
+        ### HOLDER NAME AND TITLE ###
+        vbox = {
+            layoutpolicy_horizontal = expanding
+            
+            text_single = {
+                text = "[Character.GetUINameNoTooltip]"
+                using = Font_Size_Medium
+                fontsize_min = 14
+            }
+            
+            text_single = {
+                text = "[Character.GetPrimaryTitle.GetNameNoTooltip]"
+                using = Font_Size_Small
+                fontsize_min = 10
+            }
+            
+            expand = {}
+        }
+    }
+    
+    divider_light = { layoutpolicy_horizontal = expanding }
+}
+```
+
+#### SEZIONE 2: County Stats Bars
+
+```gui
+### COUNTY STATS ###
+vbox = {
+    name = "county_stats"
+    layoutpolicy_horizontal = expanding
+    margin = { 10 5 }
+    spacing = 5
+    
+    ### CONTROL LEVEL ###
+    vbox = {
         text_label_left = {
-            text = "COUNTY_CONTROL"
+            text = "COUNTY_CONTROL_LABEL"
         }
         
         progressbar_standard = {
             name = "control_bar"
-            size = { 300 25 }
-            value = "[FixedPointToFloat(County.GetControl)]"
-            min = 0
-            max = 100
+            size = { 100% 25 }
+            
+            blockoverride "values" {
+                value = "[FixedPointToFloat(County.GetControl)]"
+                min = 0
+                max = 100
+            }
             
             text_single = {
                 parentanchor = center
                 text = "[County.GetControl|0]%"
             }
         }
+        
+        text_multi = {
+            text = "COUNTY_CONTROL_DESC"
+            autoresize = yes
+            max_width = 550
+        }
     }
+    
+    ### DEVELOPMENT LEVEL ###
+    vbox = {
+        text_label_left = {
+            text = "COUNTY_DEVELOPMENT_LABEL"
+        }
+        
+        hbox = {
+            progressbar_standard = {
+                name = "development_bar"
+                size = { 450 25 }
+                
+                blockoverride "values" {
+                    value = "[FixedPointToFloat(County.GetDevelopmentLevel)]"
+                    min = 0
+                    max = 100
+                }
+                
+                text_single = {
+                    parentanchor = center
+                    text = "[County.GetDevelopmentLevel|0]"
+                }
+            }
+            
+            # Monthly progress indicator
+            text_single = {
+                text = "DEVELOPMENT_MONTHLY_PROGRESS"
+                tooltip = "DEVELOPMENT_MONTHLY_TOOLTIP"
+            }
+        }
+        
+        text_multi = {
+            text = "COUNTY_DEVELOPMENT_DESC"
+            autoresize = yes
+            max_width = 550
+        }
+    }
+    
+    divider_light = { layoutpolicy_horizontal = expanding }
 }
 ```
 
-**Elementi necessari**:
-- ✅ Holdings list con icons cliccabili (datamodel County.GetHoldings)
-- ✅ County modifiers grid (fixedgridbox con max 8 colonne)
-- ✅ Development progress bar (0-100 con valore corrente)
-- ✅ Control progress bar (0-100% con indicatore)
-- ✅ Dividers per separare le sezioni
-
----
-
-#### SEZIONE 3: Holdings Tab Content
-
-**Obiettivo**: Mostrare dettagli holding corrente con type selector e stats
+#### SEZIONE 3: County Opinion
 
 ```gui
+### COUNTY OPINION ###
 vbox = {
-    name = "holdings_content"
-    visible = "[HoldingView.IsHoldingsTabSelected]"
-    layoutpolicy_vertical = expanding
+    name = "county_opinion_section"
+    layoutpolicy_horizontal = expanding
+    margin = { 10 5 }
+    spacing = 5
     
-    ### HOLDING TYPE SELECTOR ###
     hbox = {
-        name = "holding_type_icons"
-        layoutpolicy_horizontal = expanding
-        spacing = 10
-        margin = { 10 10 }
-        
-        # Castle icon
         icon = {
-            size = { 60 60 }
-            texture = "gfx/interface/icons/holding_types/castle.dds"
-            visible = "[Holding.IsCastle]"
+            size = { 30 30 }
+            texture = "gfx/interface/icons/icon_opinion.dds"
         }
         
-        # City icon
-        icon = {
-            size = { 60 60 }
-            texture = "gfx/interface/icons/holding_types/city.dds"
-            visible = "[Holding.IsCity]"
+        text_single = {
+            text = "COUNTY_OPINION_LABEL"
         }
         
-        # Temple icon
-        icon = {
-            size = { 60 60 }
-            texture = "gfx/interface/icons/holding_types/temple.dds"
-            visible = "[Holding.IsTemple]"
+        text_single = {
+            text = "[County.GetOpinion|+]"
+            default_format = "#high"
         }
         
-        # Tribal icon
+        expand = {}
+        
+        # Faction icon (if in faction)
         icon = {
-            size = { 60 60 }
-            texture = "gfx/interface/icons/holding_types/tribal.dds"
-            visible = "[Holding.IsTribal]"
+            visible = "[County.IsInFaction]"
+            size = { 30 30 }
+            texture = "gfx/interface/icons/icon_faction.dds"
+            tooltip = "COUNTY_IN_FACTION_TOOLTIP"
         }
     }
     
     divider_light = { layoutpolicy_horizontal = expanding }
+}
+```
+
+#### SEZIONE 4: Culture & Faith
+
+```gui
+### CULTURE & FAITH ###
+hbox = {
+    name = "culture_faith_section"
+    layoutpolicy_horizontal = expanding
+    margin = { 10 5 }
+    spacing = 10
     
-    ### HOLDING STATS ###
+    ### CULTURE ###
     vbox = {
-        name = "holding_stats"
         layoutpolicy_horizontal = expanding
-        spacing = 5
         
-        # Tax
         hbox = {
             icon = {
-                size = { 30 30 }
-                texture = "gfx/interface/icons/icon_gold.dds"
+                size = { 40 40 }
+                texture = "[County.GetCulture.GetIcon]"
             }
             
-            text_single = {
-                text = "TAX_LABEL"
-            }
-            
-            text_single = {
-                text = "[Holding.GetIncome|1]"
-                default_format = "#high"
+            vbox = {
+                text_single = {
+                    text = "[County.GetCulture.GetNameNoTooltip]"
+                    using = Font_Size_Medium
+                }
+                
+                text_single = {
+                    text = "CULTURE_ACCEPTANCE"
+                    using = Font_Size_Small
+                }
             }
         }
         
-        # Levies
-        hbox = {
-            visible = "[Not(Holding.GetType.HasParameter('no_levies'))]"
+        progressbar_standard = {
+            size = { 100% 20 }
             
-            icon = {
-                size = { 30 30 }
-                texture = "gfx/interface/icons/icon_soldier.dds"
+            blockoverride "values" {
+                value = "[FixedPointToFloat(County.GetCultureAcceptance)]"
+                min = 0
+                max = 100
             }
             
             text_single = {
-                text = "LEVIES_LABEL"
-            }
-            
-            text_single = {
-                text = "[Holding.GetMaxLevySize|0]"
-                default_format = "#high"
-            }
-        }
-        
-        # Garrison
-        hbox = {
-            icon = {
-                size = { 30 30 }
-                texture = "gfx/interface/icons/icon_garrison.dds"
-            }
-            
-            text_single = {
-                text = "GARRISON_LABEL"
-            }
-            
-            text_single = {
-                text = "[Holding.GetGarrisonSize|0]"
-                default_format = "#high"
+                parentanchor = center
+                text = "[County.GetCultureAcceptance|0]%"
             }
         }
     }
     
-    divider_light = { layoutpolicy_horizontal = expanding }
-    
-    ### SPECIAL BUILDINGS ###
+    ### FAITH ###
     vbox = {
-        name = "special_buildings"
         layoutpolicy_horizontal = expanding
-        visible = "[Or(HoldingView.GetGUIDuchyCapitalBuilding.HasLevel, HoldingView.GetGUISpecialBuilding.HasLevel)]"
         
-        # Duchy capital building
         hbox = {
-            visible = "[HoldingView.GetGUIDuchyCapitalBuilding.HasLevel]"
-            
-            icon_building = {
-                datacontext = "[HoldingView.GetGUIDuchyCapitalBuilding]"
-                texture = "[Building.GetType.GetIcon]"
+            icon = {
+                size = { 40 40 }
+                texture = "[County.GetFaith.GetIcon]"
             }
             
-            text_single = {
-                text = "DUCHY_CAPITAL_BUILDING"
-            }
-        }
-        
-        # Special building
-        hbox = {
-            visible = "[HoldingView.GetGUISpecialBuilding.HasLevel]"
-            
-            icon_building = {
-                datacontext = "[HoldingView.GetGUISpecialBuilding]"
-                texture = "[Building.GetType.GetIcon]"
-            }
-            
-            text_single = {
-                text = "SPECIAL_BUILDING"
+            vbox = {
+                text_single = {
+                    text = "[County.GetFaith.GetNameNoTooltip]"
+                    using = Font_Size_Medium
+                }
+                
+                text_single = {
+                    text = "FAITH_LABEL"
+                    using = Font_Size_Small
+                }
             }
         }
     }
 }
 ```
 
-**Elementi necessari**:
-- ✅ Holding type icons (Castle/City/Temple/Tribal)
-- ✅ Stats con icons (Tax/Levies/Garrison)
-- ✅ Special buildings section (Duchy capital + Special)
-- ✅ Visibility conditions corrette per ogni elemento
+**Checklist Commit 4B/4**:
+- [ ] Portrait holder con onclick
+- [ ] Holder name e primary title
+- [ ] Control bar (0-100%)
+- [ ] Development bar con monthly progress
+- [ ] County opinion con faction icon
+- [ ] Culture icon e acceptance bar
+- [ ] Faith icon e name
+- [ ] Dividers tra sezioni
+- [ ] Tooltips su tutti gli elementi
+- [ ] Test in-game con contee diverse (your/realm/foreign)
+- [ ] Verifica valori corretti (control/development/opinion)
+
+**Stima tempo**: ~30 minuti implementazione + 10 minuti testing
 
 ---
 
-#### SEZIONE 4: Buildings Tab Content
+### 📋 COMMIT 4C/4: ⏳ HOLDINGS NAVIGATION (DA FARE)
 
-**Obiettivo**: Griglia edifici costruiti con upgrade buttons
+**Obiettivo**: Sistema navigazione holdings con tab buttons  
+**Stima righe**: ~300 righe  
+**Posizione**: Dopo County Stats, prima del contenuto holding
+
+**Da implementare**:
+
+#### SEZIONE 1: Holdings Tab Buttons
 
 ```gui
-vbox = {
-    name = "buildings_content"
-    visible = "[HoldingView.IsBuildingsTabSelected]"
-    layoutpolicy_vertical = expanding
+### HOLDINGS TAB BUTTONS ###
+fixedgridbox = {
+    name = "holdings_tab_buttons"
+    datamodel = "[County.GetHoldings]"
+    flipdirection = yes
+    addcolumn = 70
+    addrow = 70
+    maxverticalslots = 1
     
-    ### BUILDINGS GRID ###
+    item = {
+        button_tab = {
+            name = "holding_tab_button"
+            size = { 60 60 }
+            onclick = "[HoldingView.SelectHolding(Holding.Self)]"
+            down = "[ObjectsEqual(Holding.Self, HoldingView.GetHolding)]"
+            tooltip = "[Holding.GetNameNoTooltip]"
+            
+            ### HOLDING ICON ###
+            icon = {
+                parentanchor = center
+                size = { 50 50 }
+                texture = "[Holding.GetType.GetIcon]"
+            }
+            
+            ### COUNTY CAPITAL INDICATOR ###
+            icon = {
+                visible = "[Holding.IsCountyCapital]"
+                parentanchor = top|right
+                size = { 20 20 }
+                texture = "gfx/interface/icons/symbols/icon_county_capital.dds"
+            }
+            
+            ### REALM CAPITAL INDICATOR ###
+            icon = {
+                visible = "[Holding.IsRealmCapital]"
+                parentanchor = top|left
+                size = { 20 20 }
+                texture = "gfx/interface/icons/symbols/icon_realm_capital.dds"
+            }
+        }
+    }
+}
+```
+
+**Checklist Commit 4C/4**:
+- [ ] Holdings tab buttons fixedgridbox
+- [ ] Holding icons (Castle/City/Temple/Tribal)
+- [ ] County capital indicator (top-right)
+- [ ] Realm capital indicator (top-left)
+- [ ] Down state per holding selezionato
+- [ ] Onclick seleziona holding
+- [ ] Tooltip con nome holding
+- [ ] Test cambio holding runtime
+- [ ] Verifica indicatori capital corretti
+
+**Stima tempo**: ~20 minuti implementazione + 5 minuti testing
+
+---
+
+### 📋 COMMIT 4D/4: ⏳ HOLDING INFO & BUILDINGS (FINALE - DA FARE)
+
+**Obiettivo**: Info holding corrente + griglia edifici  
+**Stima righe**: ~800 righe  
+**Posizione**: Dopo holdings tabs, fino a fine widget
+
+**Da implementare**:
+
+#### SEZIONE 1: Holding Info
+
+```gui
+### HOLDING INFO SECTION ###
+vbox = {
+    name = "holding_info"
+    datacontext = "[HoldingView.GetHolding]"
+    visible = "[HoldingView.HasHolding]"
+    layoutpolicy_horizontal = expanding
+    margin = { 10 5 }
+    spacing = 5
+    
+    ### HOLDING ILLUSTRATION ###
+    widget = {
+        size = { 100% 200 }
+        
+        background = {
+            texture = "[Holding.GetIllustration]"
+            fittype = centercrop
+            
+            modify_texture = {
+                name = "mask"
+                texture = "gfx/interface/component/masks/mask_fade_vertical.dds"
+                blend_mode = alphamultiply
+            }
+        }
+    }
+    
+    ### HOLDING NAME AND TYPE ###
+    hbox = {
+        spacing = 10
+        
+        icon = {
+            size = { 60 60 }
+            texture = "[Holding.GetType.GetIcon]"
+        }
+        
+        vbox = {
+            text_single = {
+                text = "[Holding.GetNameNoTooltip]"
+                using = Font_Size_Big
+            }
+            
+            text_single = {
+                text = "[Holding.GetTypeName]"
+                using = Font_Size_Small
+            }
+        }
+        
+        expand = {}
+        
+        ### MOVE REALM CAPITAL BUTTON ###
+        button_standard = {
+            visible = "[And(Holding.IsCountyCapital, Holding.CanMoveRealmCapital)]"
+            text = "MOVE_REALM_CAPITAL"
+            onclick = "[Holding.MoveRealmCapital]"
+            tooltip = "MOVE_REALM_CAPITAL_TOOLTIP"
+        }
+    }
+    
+    divider_light = { layoutpolicy_horizontal = expanding }
+}
+```
+
+#### SEZIONE 2: Holding Stats
+
+```gui
+### HOLDING STATS ###
+hbox = {
+    name = "holding_stats"
+    layoutpolicy_horizontal = expanding
+    spacing = 10
+    
+    ### TAX ###
+    vbox = {
+        icon = {
+            size = { 40 40 }
+            texture = "gfx/interface/icons/icon_gold.dds"
+        }
+        
+        text_single = {
+            text = "[Holding.GetIncome|1]"
+            default_format = "#high"
+        }
+        
+        text_single = {
+            text = "TAX_LABEL"
+            using = Font_Size_Small
+        }
+    }
+    
+    ### LEVIES ###
+    vbox = {
+        visible = "[Not(Holding.GetType.HasParameter('no_levies'))]"
+        
+        icon = {
+            size = { 40 40 }
+            texture = "gfx/interface/icons/icon_soldier.dds"
+        }
+        
+        text_single = {
+            text = "[Holding.GetMaxLevySize|0]"
+            default_format = "#high"
+        }
+        
+        text_single = {
+            text = "LEVIES_LABEL"
+            using = Font_Size_Small
+        }
+    }
+    
+    ### GARRISON ###
+    vbox = {
+        icon = {
+            size = { 40 40 }
+            texture = "gfx/interface/icons/icon_garrison.dds"
+        }
+        
+        text_single = {
+            text = "[Holding.GetGarrisonSize|0]"
+            default_format = "#high"
+        }
+        
+        text_single = {
+            text = "GARRISON_LABEL"
+            using = Font_Size_Small
+        }
+    }
+    
+    ### SUPPLY LIMIT ###
+    vbox = {
+        icon = {
+            size = { 40 40 }
+            texture = "gfx/interface/icons/icon_supply.dds"
+        }
+        
+        text_single = {
+            text = "[Holding.GetSupplyLimit|0]"
+            default_format = "#high"
+        }
+        
+        text_single = {
+            text = "SUPPLY_LABEL"
+            using = Font_Size_Small
+        }
+    }
+}
+```
+
+#### SEZIONE 3: Special Buildings Slots
+
+```gui
+### SPECIAL BUILDINGS ###
+hbox = {
+    name = "special_buildings"
+    visible = "[Or(HoldingView.GetGUIDuchyCapitalBuilding.HasLevel, HoldingView.GetGUISpecialBuilding.HasLevel)]"
+    layoutpolicy_horizontal = expanding
+    spacing = 10
+    margin = { 10 5 }
+    
+    ### DUCHY CAPITAL BUILDING ###
+    button_standard = {
+        visible = "[HoldingView.GetGUIDuchyCapitalBuilding.HasLevel]"
+        datacontext = "[HoldingView.GetGUIDuchyCapitalBuilding]"
+        size = { 80 80 }
+        onclick = "[Building.OnClick]"
+        tooltip = "[Building.GetTooltip]"
+        
+        icon = {
+            parentanchor = center
+            size = { 70 70 }
+            texture = "[Building.GetType.GetIcon]"
+        }
+        
+        text_single = {
+            parentanchor = bottom|right
+            text = "[Building.GetLevel]"
+            default_format = "#high"
+        }
+    }
+    
+    ### SPECIAL BUILDING ###
+    button_standard = {
+        visible = "[HoldingView.GetGUISpecialBuilding.HasLevel]"
+        datacontext = "[HoldingView.GetGUISpecialBuilding]"
+        size = { 80 80 }
+        onclick = "[Building.OnClick]"
+        tooltip = "[Building.GetTooltip]"
+        
+        icon = {
+            parentanchor = center
+            size = { 70 70 }
+            texture = "[Building.GetType.GetIcon]"
+        }
+        
+        text_single = {
+            parentanchor = bottom|right
+            text = "[Building.GetLevel]"
+            default_format = "#high"
+        }
+    }
+}
+```
+
+#### SEZIONE 4: Buildings Grid
+
+```gui
+### BUILDINGS GRID ###
+vbox = {
+    name = "buildings_grid_section"
+    layoutpolicy_horizontal = expanding
+    margin = { 10 5 }
+    spacing = 5
+    
+    text_label_center = {
+        text = "BUILDINGS_LABEL"
+    }
+    
+    ### GRID 4x2 ###
     gridbox = {
         name = "buildings_grid"
-        layoutpolicy_horizontal = expanding
         datamodel = "[HoldingView.GetBuildings]"
-        addrow = 80
-        addcolumn = 80
+        layoutpolicy_horizontal = expanding
+        addrow = 90
+        addcolumn = 90
         maxverticalslots = 2
         maxhorizontalslots = 4
         
         item = {
-            # Building slot
+            ### BUILDING SLOT ###
             button_standard = {
-                size = { 70 70 }
+                size = { 80 80 }
                 onclick = "[Building.OnClick]"
+                enabled = "[Building.HasLevel]"
                 tooltip = "[Building.GetTooltip]"
                 
-                # Building icon
-                icon_building = {
+                ### BUILDING ICON ###
+                icon = {
+                    visible = "[Building.HasLevel]"
                     parentanchor = center
-                    size = { 60 60 }
+                    size = { 70 70 }
                     texture = "[Building.GetType.GetIcon]"
-                    
-                    # Building level indicator
-                    text_single = {
-                        parentanchor = bottom|right
-                        position = { -5 -5 }
-                        text = "[Building.GetLevel]"
-                        default_format = "#high"
-                        fontsize = 16
-                    }
                 }
                 
-                # Upgrade available indicator
+                ### EMPTY SLOT INDICATOR ###
+                icon = {
+                    visible = "[Not(Building.HasLevel)]"
+                    parentanchor = center
+                    size = { 70 70 }
+                    texture = "gfx/interface/icons/buildings/icon_building_empty.dds"
+                    alpha = 0.3
+                }
+                
+                ### LEVEL INDICATOR ###
+                text_single = {
+                    visible = "[Building.HasLevel]"
+                    parentanchor = bottom|right
+                    position = { -5 -5 }
+                    text = "[Building.GetLevel]"
+                    default_format = "#high"
+                    fontsize = 18
+                }
+                
+                ### UPGRADE AVAILABLE ###
                 icon = {
                     visible = "[Building.CanUpgrade]"
                     parentanchor = top|right
-                    size = { 20 20 }
+                    size = { 25 25 }
                     texture = "gfx/interface/icons/symbols/icon_upgrade.dds"
+                }
+                
+                ### CONSTRUCTION IN PROGRESS ###
+                widget = {
+                    visible = "[Building.IsUnderConstruction]"
+                    size = { 100% 100% }
+                    
+                    progressbar_standard = {
+                        parentanchor = bottom|hcenter
+                        position = { 0 -5 }
+                        size = { 70 10 }
+                        
+                        blockoverride "values" {
+                            value = "[FixedPointToFloat(Building.GetConstructionProgress)]"
+                            min = 0
+                            max = 100
+                        }
+                    }
                 }
             }
         }
@@ -735,19 +1141,7 @@ vbox = {
 }
 ```
 
-**Elementi necessari**:
-- ✅ Buildings gridbox (4x2 grid, max 8 slots)
-- ✅ Building icons con level indicator (numero in basso a destra)
-- ✅ Upgrade indicator (icona in alto a destra se disponibile)
-- ✅ Onclick per aprire building details
-- ✅ "Construct New Building" button con visibility/enabled conditions
-- ✅ Tooltip per ogni edificio e per il pulsante costruzione
-
----
-
-#### SEZIONE 5: Additional Overlays
-
-**Obiettivo**: Finestre overlay per siege, raid, construction
+#### SEZIONE 5: Siege/Raid Overlays
 
 ```gui
 ### SIEGE OVERLAY ###
@@ -755,22 +1149,31 @@ widget = {
     name = "siege_overlay"
     visible = "[Province.HasActiveSiege]"
     parentanchor = bottom|hcenter
-    position = { 0 -50 }
+    position = { 0 -100 }
+    size = { 250 100 }
+    
+    background = {
+        using = Background_Area_Dark
+        margin = { 5 5 }
+    }
     
     vbox = {
-        using = Window_Background_Subwindow
-        margin = { 10 10 }
-        
         datacontext = "[Province.GetSiege]"
+        margin = { 10 10 }
+        spacing = 5
         
         text_label_center = {
             text = "SIEGE_IN_PROGRESS"
         }
         
-        # Siege progress bar
         progressbar_standard = {
             size = { 200 25 }
-            value = "[FixedPointToFloat(Siege.GetProgress)]"
+            
+            blockoverride "values" {
+                value = "[FixedPointToFloat(Siege.GetProgress)]"
+                min = 0
+                max = 100
+            }
             
             text_single = {
                 parentanchor = center
@@ -778,9 +1181,13 @@ widget = {
             }
         }
         
-        # Attacker info
         text_single = {
-            text = "SIEGE_ATTACKER"
+            text = "SIEGE_ATTACKER_LABEL"
+        }
+        
+        button_tertiary = {
+            text = "GO_TO_SIEGE"
+            onclick = "[Siege.GoToSiege]"
         }
     }
 }
@@ -790,183 +1197,65 @@ widget = {
     name = "raid_overlay"
     visible = "[Province.HasActiveRaid]"
     parentanchor = bottom|hcenter
-    position = { 0 -50 }
+    position = { 0 -100 }
+    size = { 250 80 }
+    
+    background = {
+        using = Background_Area_Dark
+        margin = { 5 5 }
+    }
     
     vbox = {
-        using = Window_Background_Subwindow
-        margin = { 10 10 }
-        
         datacontext = "[Province.GetRaid]"
+        margin = { 10 10 }
+        spacing = 5
         
         text_label_center = {
             text = "RAID_IN_PROGRESS"
         }
         
-        # Raid loot info
         hbox = {
-            icon_gold = { }
+            icon = {
+                size = { 30 30 }
+                texture = "gfx/interface/icons/icon_gold.dds"
+            }
+            
             text_single = {
                 text = "[Raid.GetLootAmount|0]"
+                default_format = "#high"
             }
+        }
+        
+        button_tertiary = {
+            text = "GO_TO_RAID"
+            onclick = "[Raid.GoToRaid]"
         }
     }
 }
 ```
 
-**Elementi necessari**:
-- ✅ Siege overlay widget con progress bar
-- ✅ Raid overlay widget con loot amount
-- ✅ Visibility conditions basate su Province.HasActiveSiege/Raid
-- ✅ Positioning corretto (bottom|hcenter)
-
----
-
-### ✅ CHECKLIST IMPLEMENTAZIONE COMMIT 4/4
-
-**Prima di iniziare**:
-- [ ] Backup del file corrente (post-Commit 3/4)
-- [ ] Accesso al file vanilla sorgente da Agamidae repository
-- [ ] Identificare sezioni da copiare (righe ~300-2000 del file vanilla)
-
-**Durante implementazione**:
-- [ ] **SEZIONE 1**: Tab buttons navigation (3 tabs)
-  - [ ] County Info button (default)
-  - [ ] Holdings button
-  - [ ] Buildings button (conditional visibility)
-  - [ ] Down states corretti per ogni tab
-
-- [ ] **SEZIONE 2**: County Info Tab
-  - [ ] Holdings list con icons cliccabili
-  - [ ] County modifiers grid (fixedgridbox)
-  - [ ] Development progress bar
-  - [ ] Control progress bar
-  - [ ] Dividers tra sezioni
-
-- [ ] **SEZIONE 3**: Holdings Tab
-  - [ ] Holding type icons (Castle/City/Temple/Tribal)
-  - [ ] Stats section (Tax/Levies/Garrison con icons)
-  - [ ] Special buildings section
-  - [ ] Visibility conditions per ogni elemento
-
-- [ ] **SEZIONE 4**: Buildings Tab
-  - [ ] Buildings gridbox (4x2, max 8 slots)
-  - [ ] Building icons con level indicator
-  - [ ] Upgrade indicator icons
-  - [ ] Onclick handlers per building details
-  - [ ] "Construct New Building" button
-  - [ ] Tooltips per edifici e pulsante
-
-- [ ] **SEZIONE 5**: Overlays
-  - [ ] Siege overlay widget
-  - [ ] Raid overlay widget
-  - [ ] Visibility conditions Province.HasActiveSiege/Raid
-
-**Dopo implementazione**:
-- [ ] Verifica indentazione corretta
-- [ ] Verifica chiusura parentesi (ogni `{` ha corrispondente `}`)
-- [ ] Test in-game modalità OCR (Shift+F11 OFF)
-- [ ] Test in-game modalità Vanilla (Shift+F11 ON)
-- [ ] Test ogni tab (County/Holdings/Buildings)
-- [ ] Test buildings grid e upgrade
-- [ ] Test construction window
+**Checklist Commit 4D/4** (FINALE):
+- [ ] Holding illustration background
+- [ ] Holding name e type icon
+- [ ] Move realm capital button (conditional)
+- [ ] Stats icons (Tax/Levies/Garrison/Supply)
+- [ ] Special buildings slots (Duchy + Special)
+- [ ] Buildings grid 4x2 (8 slots max)
+- [ ] Building level indicators
+- [ ] Upgrade available icons
+- [ ] Construction progress bars
+- [ ] Empty slot indicators (alpha 0.3)
+- [ ] "Construct New Building" button
+- [ ] Siege overlay widget
+- [ ] Raid overlay widget
+- [ ] Test tutti gli holding types (Castle/City/Temple/Tribal)
+- [ ] Test construction system
+- [ ] Test upgrade buildings
 - [ ] Test siege/raid overlays
-- [ ] Test toggle Shift+F11 runtime
-- [ ] Verifica checksum identico in multiplayer
+- [ ] Verifica chiusura parentesi
+- [ ] Test finale multiplayer checksum
 
----
-
-### 📝 COMMIT MESSAGE FINALE (Template)
-
-```
-Commit 4/4: Vanilla Widget Tabs - Complete graphical interface (FINAL)
-
-- Add tab navigation system (County/Holdings/Buildings)
-- Implement County Info tab:
-  * Holdings list with clickable icons
-  * County modifiers grid display
-  * Development progress bar (0-100)
-  * Control progress bar (0-100%)
-- Implement Holdings tab:
-  * Holding type selector icons (Castle/City/Temple/Tribal)
-  * Stats display (Tax/Levies/Garrison)
-  * Special buildings section (Duchy capital + Special)
-- Implement Buildings tab:
-  * Buildings grid (4x2 layout, max 8 slots)
-  * Building level indicators
-  * Upgrade available icons
-  * "Construct New Building" button
-- Add siege/raid overlay widgets
-- Complete dual-mode County View system
-
-Technical details:
-- Tab buttons with down states for active tab indication
-- Conditional visibility for Buildings tab (holding must exist)
-- Progress bars with centered value display
-- Gridbox layouts for modifiers and buildings
-- Overlay widgets for active siege/raid events
-
-Result:
-- PHASE 3 COMPLETE: Main Window fully functional
-- Pattern D implementation: 100% complete
-- County View System: PRODUCTION READY
-- File size: ~60 KB (~2500 lines total)
-- Full dual-mode support: OCR + Vanilla
-```
-
----
-
-### 🎯 TEST FINALE COMPLETO
-
-**Test Case 1: Modalità OCR (Default)**
-- [ ] Click su provincia → Finestra si apre in OCR mode
-- [ ] Screen reader legge correttamente tutti i testi
-- [ ] Navigazione keyboard funziona (Tab/Arrow keys)
-- [ ] Shortcuts funzionano (E, H, T, A, Z, X, etc.)
-- [ ] Scrollbox accessibile via keyboard
-- [ ] Province/county info leggibili
-- [ ] Holdings info leggibili
-- [ ] Adjacent counties navigation (Z/X)
-
-**Test Case 2: Modalità Vanilla (Shift+F11)**
-- [ ] Shift+F11 → Finestra passa a vanilla mode
-- [ ] Background illustration visibile
-- [ ] CoA contea visibile e cliccabile
-- [ ] County header con nome e holder status
-- [ ] Control buttons funzionanti (Close/Back/Go)
-- [ ] Tab buttons cliccabili e down state corretto
-- [ ] County Info tab:
-  - [ ] Holdings icons cliccabili
-  - [ ] Modifiers grid popolato
-  - [ ] Development bar con valore corretto
-  - [ ] Control bar con percentuale corretta
-- [ ] Holdings tab:
-  - [ ] Type icon corretto (Castle/City/Temple/Tribal)
-  - [ ] Stats visibili (Tax/Levies/Garrison)
-  - [ ] Special buildings section (se presenti)
-- [ ] Buildings tab:
-  - [ ] Grid edifici popolato correttamente
-  - [ ] Level indicators visibili
-  - [ ] Upgrade icons se disponibili
-  - [ ] "Construct New Building" button (se slot disponibile)
-
-**Test Case 3: Toggle Runtime**
-- [ ] Shift+F11 → Switch da OCR a Vanilla senza crash
-- [ ] Shift+F11 → Switch da Vanilla a OCR senza crash
-- [ ] Dati persistenti tra toggle (provincia selezionata)
-- [ ] Nessun freeze o lag durante switch
-
-**Test Case 4: Construction Windows**
-- [ ] Click "Construct New Building" → holding_type_selection_view si apre
-- [ ] Holding type selection funziona (Castle/City/Temple)
-- [ ] Dopo selezione tipo → holding_tracks_view si apre
-- [ ] Building track selection funziona
-- [ ] Construction confirmation funziona
-
-**Test Case 5: Multiplayer**
-- [ ] Checksum identico con/senza mod attivata
-- [ ] Player 1 (OCR mode) + Player 2 (Vanilla mode) stesso checksum
-- [ ] Nessun desync durante partita
-- [ ] Toggle Shift+F11 non influenza multiplayer checksum
+**Stima tempo**: ~60 minuti implementazione + 20 minuti testing completo
 
 ---
 
@@ -988,19 +1277,23 @@ Result:
 | 10 | Factions | - | `window_factions.gui` | **B** | ✅ Completato | 11 Dic 2025 |
 | 11 | Character Lifestyle | - | `window_character_lifestyle.gui` | **C** | ✅ Completato | 12 Dic 2025 |
 
-### Fase 2: County View System (4/4 commit) - 🔨 75% COMPLETATO
+### Fase 2: County View System (SUB-COMMITS 4A-4D) - 🔨 25% COMPLETATO
 
 | Step | Descrizione | Stato | Commit SHA | Data |
 |------|-------------|-------|------------|------|
 | **Phase 1** | Types Definitions (16 types) | ✅ Completato | - | Pre-esistente |
 | **Phase 2** | Secondary Windows (2 finestre) | ✅ Completato | - | Pre-esistente |
-| **Phase 3** | **Main Window holding_view** | 🔨 **75%** | - | **In corso** |
+| **Phase 3** | **Main Window holding_view** | 🔨 **25%** | - | **In corso** |
 | ├─ Commit 1/4 | Skeleton and States | ✅ Completato | `deeee...` | 14 Dic 2025 |
 | ├─ Commit 2/4 | OCR Widget Content | ✅ Completato | `6842a77` | 14 Dic 2025 |
-| ├─ Commit 3/4 | Vanilla Widget Header | ✅ Completato | `675ad46` | **14 Dic 2025 23:52** |
-| └─ Commit 4/4 | Vanilla Widget Tabs | ⏳ **PROSSIMO** | - | - |
+| ├─ Commit 3/4 | Vanilla Widget Header | ✅ Completato | `675ad46` | 14 Dic 2025 23:52 |
+| └─ **Commit 4/4** | **Vanilla Widget Tabs** | 🔨 **25%** | - | **In corso** |
+|    ├─ **4A/4** | **County Info Tab** | ✅ **COMPLETATO** | **`7154a16`** | **15 Dic 2025 01:20** |
+|    ├─ **4B/4** | **County Stats & Holder** | ⏳ **PROSSIMO** | - | - |
+|    ├─ **4C/4** | **Holdings Navigation** | ⏳ Pianificato | - | - |
+|    └─ **4D/4** | **Holding Info & Buildings** | ⏳ Pianificato | - | - |
 
-**Progress**: 3/4 commit completati - **Solo Commit 4/4 rimanente per completare County View System**
+**Progress**: **1/4 sub-commit completati (25%)** - **3 sub-commit rimanenti**
 
 ---
 
@@ -1008,17 +1301,17 @@ Result:
 
 | Metrica | Fase 1 | Fase 2 (in corso) | Totale Progetto |
 |---------|--------|-------------------|------------------|
-| **Finestre completate** | 11/11 (100%) ✅ | 3/4 (75%) 🔨 | 14/15 (93%) |
+| **Finestre completate** | 11/11 (100%) ✅ | Sub 1/4 (25%) 🔨 | In progress |
 | **Pattern standardizzati** | 3 (A, B, C) | 1 (D) | 4 |
-| **Righe di codice** | ~550,000 | ~42,000 | ~592,000 |
-| **File GUI modificati** | 11 | 1 (75% completo) | 12 |
+| **Righe di codice** | ~550,000 | ~13,000 | ~563,000 |
+| **File GUI modificati** | 11 | 1 (25% sub-commits) | 12 |
 | **Giorni sviluppo** | 9 giorni | 1 giorno | 10 giorni |
-| **Ore lavoro stimate** | 40+ ore | 7+ ore | **47+ ore** |
-| **Commit totali** | 11 | 3/4 | **14/15** |
+| **Ore lavoro stimate** | 40+ ore | 8+ ore | **48+ ore** |
+| **Commit totali** | 11 | 4 (+ 1 sub) | **15 + 1 sub** |
 | **Repository GitHub** | 1 attivo | 1 attivo | 1 |
 | **Data inizio** | 04 Dic 2025 | 14 Dic 2025 | 04 Dic 2025 |
 | **Data completamento** | 12 Dic 2025 | **In corso** | **In corso** |
-| **Progress totale** | 100% | **75%** | **93%** |
+| **Progress totale** | 100% | **25% (sub)** | **In progress** |
 
 ---
 
@@ -1030,39 +1323,42 @@ Ciao! Riprendo il progetto OCR Support Fix per Crusader Kings 3.
 
 Stato attuale:
 - Fase 1: 11/11 finestre completate (100% ✅)
-- Fase 2: County View System (75% completato)
+- Fase 2: County View System (25% sub-commits completato)
   - Phase 1: Types ✅
   - Phase 2: Secondary Windows ✅
-  - Phase 3: Main Window 🔨 (Commit 3/4 completato)
+  - Phase 3: Main Window 🔨 (Commit 4/4 suddiviso in 4A-4D)
     - Commit 1/4: Skeleton ✅
     - Commit 2/4: OCR Widget ✅
-    - Commit 3/4: Vanilla Header ✅ (appena completato 14 Dic 23:52)
-    - Commit 4/4: Vanilla Tabs ⏳ (FINALE - da implementare)
+    - Commit 3/4: Vanilla Header ✅
+    - Commit 4A/4: County Info Tab ✅ (appena completato 15 Dic 01:20)
+    - Commit 4B/4: County Stats & Holder ⏳ (PROSSIMO)
+    - Commit 4C/4: Holdings Navigation ⏳
+    - Commit 4D/4: Holding Info & Buildings ⏳ (FINALE)
 
 Repository: https://github.com/Nemex81/ocr-support-patch
 Compatibile: CK3 v1.17.1, OCR Support v4.2
 
 [Incolla QUESTO DOCUMENTO completo]
 
-Prossimo step: Commit 4/4 - Vanilla Widget Tabs (FINALE)
-Accedi al file window_county_view.gui e completa con:
-- Tab navigation (County/Holdings/Buildings)
-- County Info tab content
-- Holdings tab content  
-- Buildings tab content
-- Siege/Raid overlays
+Prossimo step: Commit 4B/4 - County Stats & Holder Portrait
+Accedi al file window_county_view.gui e aggiungi:
+- Holder portrait section
+- Control level bar
+- Development level bar
+- County opinion
+- Culture & Faith section
 
-File finale: ~2500 righe (~60 KB)
-Status: ULTIMO COMMIT per completare County View System
+File corrente: ~13 KB (~150 righe da Commit 4A/4)
+Target Commit 4B/4: ~18 KB (~500 righe aggiunte)
 ```
 
 ### Informazioni critiche da fornire sempre
 1. **Nome finestra** (es. `window_county_view.gui`)
-2. **Fase e commit corrente** ("Phase 3, Commit 4/4 - FINALE")
+2. **Sub-commit corrente** ("Commit 4B/4 - County Stats & Holder")
 3. **Pattern identificato** (D - County View Bottom-Up)
-4. **Comportamento** (completare tab content e overlays)
-5. **File sorgente vanilla** (righe ~300-2000 da Agamidae repository)
-6. **Checklist implementazione** (vedi sezione pianificazione sopra)
+4. **Comportamento** (aggiungere stats e portrait holder)
+5. **SHA file corrente** (`0a243fde4e859095b9c2cf0dd3bcad5ad36ae030`)
+6. **Checklist implementazione** (vedi sezione pianificazione Commit 4B/4 sopra)
 
 ---
 
@@ -1073,7 +1369,7 @@ Status: ULTIMO COMMIT per completare County View System
 | **Mod OCR Support** | https://github.com/Agamidae/CK3-OCR |
 | **Compatibility Patch** | https://github.com/Nemex81/ocr-support-patch |
 | **File County View (OCR)** | https://github.com/Agamidae/CK3-OCR/blob/main/OCR-Support/gui/window_county_view.gui |
-| **Commit 3/4 su GitHub** | https://github.com/Nemex81/ocr-support-patch/commit/675ad4656cb9f8c3d62d6acfa8e1d7dbcd0e0ce5 |
+| **Commit 4A/4 su GitHub** | https://github.com/Nemex81/ocr-support-patch/commit/7154a1617e0d3d8e5686964b7538a810963ea8f9 |
 | **CK3 Modding Wiki** | https://ck3.paradoxwikis.com/Modding |
 | **NVDA Screen Reader** | https://www.nvaccess.org/ |
 | **AutoHotkey** | https://www.autohotkey.com/docs/ |
@@ -1096,14 +1392,14 @@ Questo progetto rappresenta un importante passo avanti nell'accessibilità dei v
 
 **Fase 2 County View** introduce:
 - ✅ Approccio bottom-up per sistemi complessi
-- ✅ Sviluppo incrementale testabile
+- ✅ Sviluppo incrementale testabile con sub-commits
 - ✅ Separazione Types/Secondary/Main Windows
-- ✅ 4-commit strategy per main window (~2500 righe)
-- 🔨 **75% completato - 1 commit rimanente per il finale**
+- ✅ 4-sub-commit strategy per completare vanilla tabs (~1800 righe)
+- 🔨 **25% completato (Commit 4A/4) - 3 sub-commit rimanenti**
 
 ---
 
 **Documento compilato da**: Luca "Nemex81"  
-**Ultima modifica**: 14 Dicembre 2025, 23:52 CET  
-**Versione**: 3.2 - FASE 2 75% COMPLETATO (County View)  
-**Status**: 🔨 IN DEVELOPMENT - **COMMIT 4/4 NEXT (FINAL)**
+**Ultima modifica**: 15 Dicembre 2025, 01:22 CET  
+**Versione**: 3.3 - FASE 2 SUB-COMMIT 4A/4 COMPLETATO  
+**Status**: 🔨 IN DEVELOPMENT - **COMMIT 4B/4 NEXT (County Stats & Holder)**
