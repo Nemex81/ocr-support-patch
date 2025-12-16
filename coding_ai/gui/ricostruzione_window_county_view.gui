@@ -132,10 +132,10 @@ window = {
 		parentanchor = bottom|left
 		alwaystransparent = yes
 		
-		# Initialize default tab on show
+		# Initialize default section on show
 		state = {
 			name = _show
-			on_start = "[GetVariableSystem.Set('county_tabs', 'info')]"
+			on_start = "[GetVariableSystem.Set('ocr_section', 'overview')]"
 		}
 		
 		vbox = {
