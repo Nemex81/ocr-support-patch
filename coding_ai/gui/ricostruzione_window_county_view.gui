@@ -1167,6 +1167,125 @@ window = {
 							
 							} # End adjacent_details vbox
 							
+							######################################
+							# SECTION: TASKS (Press T)
+							######################################
+							
+							# Summary row - always visible
+							button_standard = {
+								name = "tasks_summary"
+								layoutpolicy_horizontal = expanding
+								size = { 0 30 }
+								onclick = "[GetVariableSystem.Set('ocr_section', 'tasks')]"
+								shortcut = "map_mode_5"
+								
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									margin = { 8 5 }
+									
+									text_single = {
+										raw_text = "Tasks (T):"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									text_single = {
+										raw_text = "Councillor tasks"
+										using = Font_Size_Small
+									}
+									
+									expand = {}
+								}
+							}
+							
+							# Detail block - visible when section is expanded
+							vbox = {
+								name = "tasks_details"
+								visible = "[GetVariableSystem.HasValue('ocr_section', 'tasks')]"
+								spacing = 5
+								layoutpolicy_horizontal = expanding
+								margin_left = 10
+								margin_bottom = 8
+								
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									margin = { 5 3 }
+									
+									text_single = {
+										raw_text = "Active council tasks:"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+								}
+								
+								text_single = {
+									raw_text = "No tasks available for this holding"
+									using = Font_Size_Small
+									margin = { 5 3 }
+								}
+							}
+							
+							} # End tasks_details vbox
+							
+							######################################
+							# SECTION: ACTIONS (Press G)
+							######################################
+							
+							# Summary row - always visible
+							button_standard = {
+								name = "actions_summary"
+								layoutpolicy_horizontal = expanding
+								size = { 0 30 }
+								onclick = "[GetVariableSystem.Set('ocr_section', 'actions')]"
+								shortcut = "map_mode_6"
+								
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									margin = { 8 5 }
+									
+									text_single = {
+										raw_text = "Actions (G):"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									text_single = {
+										raw_text = "Grant Convert Demolish"
+										using = Font_Size_Small
+									}
+									
+									expand = {}
+								}
+							}
+							
+							# Detail block - visible when section is expanded
+							vbox = {
+								name = "actions_details"
+								visible = "[GetVariableSystem.HasValue('ocr_section', 'actions')]"
+								spacing = 5
+								layoutpolicy_horizontal = expanding
+								margin_left = 10
+								margin_bottom = 8
+								
+								text_single = {
+									raw_text = "Available actions:"
+									using = Font_Size_Small
+									default_format = "#high"
+									margin = { 5 3 }
+								}
+								
+								text_single = {
+									raw_text = "Grant title, Convert holdings, Demolish buildings"
+									using = Font_Size_Small
+									margin = { 5 3 }
+								}
+							}
+							
+							} # End actions_details vbox
+							
 						} # End main content vbox
 					} # End scrollbox_content blockoverride
 				} # End scrollbox
