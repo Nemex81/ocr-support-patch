@@ -987,6 +987,100 @@ window = {
 							} # End buildings_details vbox
 
 							######################################
+							# SECTION: BUILDABLE (Press U - "Upgrades/Unbuild")
+							######################################
+							
+							# Summary row - always visible
+			button_standard = {
+								name = "buildable_summary"
+								layoutpolicy_horizontal = expanding
+								size = { 0 30 }
+								onclick = "[GetVariableSystem.Set('ocr_section', 'buildable')]"
+								shortcut = "map_mode_5"
+								
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									margin = { 8 5 }
+									
+									text_single = {
+										raw_text = "Buildable (U):"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									text_single = {
+										raw_text = "[GetDataModelSize(HoldingView.GetAvailableBuildings)] available"
+										using = Font_Size_Small
+									}
+									
+									expand = {}
+								}
+							}
+							
+							# Detail block - visible when section is expanded
+							vbox = {
+								name = "buildable_details"
+								visible = "[GetVariableSystem.HasValue('ocr_section', 'buildable')]"
+								spacing = 5
+								layoutpolicy_horizontal = expanding
+								margin_left = 10
+								margin_bottom = 8
+								
+								# Buildable Buildings List
+								vbox = {
+									datamodel = "[HoldingView.GetAvailableBuildings]"
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									
+									item = {
+										button_standard = {
+											layoutpolicy_horizontal = expanding
+											size = { 0 35 }
+											onclick = "[GUIPotentialBuildingItem.ShowDetails]"
+											tooltip = "[GUIPotentialBuildingItem.GetBuilding.GetNameNoTooltip]"
+											
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												spacing = 10
+												margin = { 5 3 }
+												
+												icon = {
+													size = { 25 25 }
+													texture = "[GUIPotentialBuildingItem.GetBuilding.GetTypeIcon]"
+												}
+												
+												text_single = {
+													text = "[GUIPotentialBuildingItem.GetBuilding.GetNameNoTooltip]"
+													layoutpolicy_horizontal = expanding
+													using = Font_Size_Small
+													align = left
+												}
+												
+												text_single = {
+													visible = "[GUIPotentialBuildingItem.CanConstruct]"
+													raw_text = "Can build"
+													using = Font_Size_Small
+													default_format = "#high"
+												}
+												
+												text_single = {
+													visible = "[Not(GUIPotentialBuildingItem.CanConstruct)]"
+													raw_text = "Cannot build"
+													using = Font_Size_Small
+													default_format = "#weak"
+												}
+												
+												expand = {}
+											}
+										}
+									}
+								}
+							}
+							
+							} # End buildable_details vbox
+
+							######################################
 							# SECTION: ADJACENT (Press A)
 							######################################
 							
