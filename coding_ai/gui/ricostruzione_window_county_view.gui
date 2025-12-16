@@ -91,6 +91,35 @@ window = {
 	}
 	
 	######################################################
+	# WINDOW CONTROL BUTTONS (ACCESSIBILITY)
+	# Common to both OCR and Vanilla modes
+	######################################################
+	
+	widget = {
+		size = { 0 0 }
+		scissor = yes
+
+		buttons_window_control = {
+			blockoverride "button_go_to" {
+				onclick = "[HoldingView.PanToCountyCapital]"
+				tooltip = "Go to county capital"
+			}
+
+			blockoverride "button_back" {
+				visible = "[HasViewHistory]"
+				onclick = "[OpenFromViewHistory]"
+				onclick = "[PdxGuiTriggerAllAnimations('pan_to_previous_county')]"
+				tooltip = "Return to previous view"
+			}
+			
+			blockoverride "button_close" {
+				onclick = "[HoldingView.Close]"
+				tooltip = "Close county view"
+			}
+		}
+	}
+	
+	######################################################
 	# WIDGET OCR (ACCESSIBLE MODE - DEFAULT)
 	# Visible when: Not(GetVariableSystem.Exists('ocr'))
 	# RECOVERED FROM COMMIT 2/4
@@ -147,21 +176,142 @@ window = {
 					}
 				}
 				
+				### ERROR BUTTON (ACCESSIBILITY) ###
+				error_button = {
+					layoutpolicy_horizontal = expanding
+				}
+				
 				### HEADER SECTION ###
 				vbox = {
 					name = "ocr_header"
 					layoutpolicy_horizontal = expanding
 					spacing = 5
 					
-					# County/Holding Title
-					text_label_left = {
-						name = "header_county_name"
-						text = "[HoldingView.GetCountyTitle.GetNameNoTooltipU]"
-						using = Font_Size_Big
+					# Main title with full hierarchy
+					hbox = {
 						layoutpolicy_horizontal = expanding
+						spacing = 3
+						
+						text_single = {
+							raw_text = "[HoldingView.GetProvince.GetTitle.GetNameNoTier],"
+							using = Font_Size_Medium
+						}
+						text_single = {
+							raw_text = "[HoldingView.GetCountyTitle.GetNameNoTier],"
+							using = Font_Size_Medium
+						}
+						text_single = {
+							raw_text = "held by [HoldingView.GetTopLiege.GetPrimaryTitle.GetNameNoTierNoTooltip]."
+							using = Font_Size_Small
+						}
 					}
 					
-					# Holder info line
+					# De jure hierarchy
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						margin_left = 3
+						
+						text_single = {
+							raw_text = "De jure"
+							using = Font_Size_Small
+						}
+						text_single = {
+							raw_text = "[HoldingView.GetCountyTitle.GetDeJureLiege.GetNameNoTierNoTooltip],"
+							using = Font_Size_Small
+						}
+						text_single = {
+							raw_text = "[HoldingView.GetCountyTitle.GetDeJureLiege.GetDeJureLiege.GetNameNoTierNoTooltip]."
+							using = Font_Size_Small
+						}
+					}
+					
+					# Coordinates
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						
+						text_single = {
+							raw_text = "Position X Y:"
+							using = Font_Size_Small
+						}
+						text_single = {
+							raw_text = "[FixedPointToInt(Divide_CFixedPoint(County.GetCapital.MakeScope.Var('pos_x').GetValue, '(CFixedPoint)100'))|0],"
+							using = Font_Size_Small
+						}
+						text_single = {
+							raw_text = "[FixedPointToInt(Divide_CFixedPoint(County.GetCapital.MakeScope.Var('pos_y').GetValue, '(CFixedPoint)100'))|0]."
+							using = Font_Size_Small
+						}
+					}
+					
+					# Holding type and terrain info
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						
+						# Capital indicator
+						container = {
+							ignoreinvisible = yes
+							visible = "[ObjectsEqual(HoldingView.GetProvince, GetPlayer.GetCapitalLocation)]"
+							
+							text_single = {
+								visible = "[Not( GetPlayer.IsLandlessRuler )]"
+								raw_text = "Your Capital,"
+								using = Font_Size_Small
+								default_format = "#high"
+							}
+						}
+						
+						# Your holding indicator
+						text_single = {
+							raw_text = "Your"
+							visible = "[And(And(HoldingView.GetTitle.GetLesseeOrHolder.IsLocalPlayer, Not( ObjectsEqual( HoldingView.GetProvince, GetPlayer.GetCapitalLocation ) ) ), Not(GetPlayer.IsLandlessRuler))]"
+							using = Font_Size_Small
+							default_format = "#high"
+						}
+						
+						# Hostile indicator
+						text_single = {
+							raw_text = "Hostile"
+							visible = "[GetScriptedGui('is_hostile_barony').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'target', Province.MakeScope ).End )]"
+							using = Font_Size_Small
+							default_format = "#weak"
+						}
+						
+						# Border indicator
+						text_single = {
+							raw_text = "border"
+							visible = "[GetScriptedGui('is_border_province').IsShown( GuiScope.SetRoot( Province.MakeScope ).End )]"
+							using = Font_Size_Small
+						}
+						
+						# Terrain/Holding type
+						text_single = {
+							visible = "[HoldingView.GetHolding.IsEmpty]"
+							raw_text = "[HoldingView.GetProvince.GetTerrain.GetNameNoTooltip] of"
+							using = Font_Size_Small
+						}
+						text_single = {
+							visible = "[Not(HoldingView.GetHolding.IsEmpty)]"
+							raw_text = "[HoldingView.GetHolding.GetType.GetName] of"
+							using = Font_Size_Small
+						}
+						
+						# Province/Holding name
+						text_single = {
+							visible = "[Not(HoldingView.GetProvince.GetTitle.IsValid)]"
+							raw_text = "[HoldingView.GetHolding.GetNameNoTooltip]"
+							using = Font_Size_Small
+						}
+						text_single = {
+							visible = "[HoldingView.GetProvince.GetTitle.IsValid]"
+							raw_text = "[HoldingView.GetProvince.GetTitle.GetNameNoTier]"
+							using = Font_Size_Small
+						}
+					}
+					
+					# Holder information
 					text_label_left = {
 						name = "header_holder_info"
 						text = "HOLDING_VIEW_RULER_INFO"
