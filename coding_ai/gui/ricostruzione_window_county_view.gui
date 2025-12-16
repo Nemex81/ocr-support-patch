@@ -324,6 +324,20 @@ window = {
 					layoutpolicy_horizontal = expanding
 					margin_top = 5
 				}
+				
+				### LAND PROVINCE CONTENT (SCRIPTED GUI INTEGRATION) ###
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					visible = "[GetScriptedGui('is_land').IsShown( GuiScope.SetRoot( Province.MakeScope ).End )]"
+					
+					# Scripted GUI state triggers for dynamic data
+					state = {
+						name = "adjacent_counties_land"
+						on_finish = "[GetScriptedGui('adjacent_counties').Execute( GuiScope.SetRoot( HoldingView.GetCountyTitle.MakeScope ).AddScope( 'player', GetPlayer.MakeScope).AddScope('target', HoldingView.GetProvince.MakeScope).End )]"
+						on_finish = "[GetScriptedGui('county_holding_list').Execute( GuiScope.SetRoot( HoldingView.GetCountyTitle.MakeScope ).End )]"
+						on_finish = "[GetScriptedGui('find_closest').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target', HoldingView.GetProvince.MakeScope).End )]"
+					}
 
 				### TAB MENU ###
 				hbox = {
@@ -698,6 +712,8 @@ window = {
 						}
 					}
 				}
+				
+				} # End land province vbox with scripted GUI integration
 				
 				### BOTTOM SPACER ###
 				expand = {
