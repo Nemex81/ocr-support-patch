@@ -234,7 +234,6 @@ window = {
 										layoutpolicy_horizontal = expanding
 										onclick = "[OpenGameViewData('holding_view', Province.Self)]"
 										shortcut = "next"
-										enabled = "[Not(Holding.IsEmpty)]"
 										visible = "[Not(Holding.IsEmpty)]"
 										
 										blockoverride "text" {
@@ -293,7 +292,7 @@ window = {
 										
 										text_label_left = {
 											visible = "[Not(GUIBuildingItem.IsConstructing)]"
-											text = "Building: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip], Level: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
+											text = "Building: [GUIBuildingItem.GetCurrentOrConstructingBuilding.GetNameNoTooltip], Level: [GUIBuildingItem.GetCurrentOrConstructingBuilding.GetLevel]"
 											layoutpolicy_horizontal = expanding
 										}
 										
@@ -304,7 +303,7 @@ window = {
 											spacing = 5
 											
 											text_single = {
-												text = "Under Construction: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]"
+												text = "Under Construction: [GUIBuildingItem.GetCurrentOrConstructingBuilding.GetNameNoTooltip]"
 												layoutpolicy_horizontal = expanding
 											}
 											
