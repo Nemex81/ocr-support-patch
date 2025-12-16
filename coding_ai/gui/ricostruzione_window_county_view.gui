@@ -1203,7 +1203,7 @@ window = {
 							vbox = {
 								name = "tasks_details"
 								visible = "[GetVariableSystem.HasValue('ocr_section', 'tasks')]"
-								spacing = 5
+								spacing = 8
 								layoutpolicy_horizontal = expanding
 								margin_left = 10
 								margin_bottom = 8
@@ -1211,7 +1211,7 @@ window = {
 								hbox = {
 									layoutpolicy_horizontal = expanding
 									spacing = 3
-									margin = { 5 3 }
+									margin = { 5 5 }
 									
 									text_single = {
 										raw_text = "Active council tasks:"
@@ -1220,10 +1220,30 @@ window = {
 									}
 								}
 								
+								# Task correnti del Conte (riusa i tuoi types esistenti)
+								vbox = {
+									datacontext = "[HoldingView.GetCountyTitle]"
+									spacing = 6
+									margin_left = 10
+									
+									item = {
+										type = "active_court_task_hbox_ocr"
+										visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
+									}
+									
+									item = {
+										type = "court_task_button_ocr"
+										visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End )]"
+									}
+								}
+								
+								# Fallback se nessun task
 								text_single = {
-									raw_text = "No tasks available for this holding"
+									visible = "[Not(ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('county', Title.MakeScope).AddScope('councillor', Character.MakeScope).AddScope('councillor_liege', GetPlayer.MakeScope).End ))]"
+									raw_text = "No active council tasks for this county."
 									using = Font_Size_Small
-									margin = { 5 3 }
+									default_format = "#weak"
+									margin = { 5 5 }
 								}
 							}
 							
@@ -1265,22 +1285,82 @@ window = {
 							vbox = {
 								name = "actions_details"
 								visible = "[GetVariableSystem.HasValue('ocr_section', 'actions')]"
-								spacing = 5
+								spacing = 8
 								layoutpolicy_horizontal = expanding
 								margin_left = 10
 								margin_bottom = 8
 								
-								text_single = {
-									raw_text = "Available actions:"
-									using = Font_Size_Small
-									default_format = "#high"
-									margin = { 5 3 }
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									margin = { 5 5 }
+									
+									text_single = {
+										raw_text = "Available actions:"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
 								}
 								
-								text_single = {
-									raw_text = "Grant title, Convert holdings, Demolish buildings"
+								# GRANT TITLE
+								button_text = {
+									name = "grant_title_btn"
+									size = { 0 28 }
+									margin = { 8 8 }
+									visible = "[HoldingView.CanGrantTitle]"
+									text = "Grant title, Enter"
+									shortcut = "confirm"
+									onclick = "[HoldingView.OpenGrantTitleView]"
+									tooltip = "GRANT_TITLE_TOOLTIP"
 									using = Font_Size_Small
-									margin = { 5 3 }
+								}
+								
+								# CONVERT HOLDING
+								button_text = {
+									name = "convert_holding_btn"
+									size = { 0 28 }
+									margin = { 8 8 }
+									visible = "[HoldingView.CanConvertHolding]"
+									text = "Convert holding, Enter"
+									shortcut = "confirm"
+									onclick = "[HoldingView.OpenConvertHoldingView]"
+									tooltip = "CONVERT_HOLDING_TOOLTIP"
+									using = Font_Size_Small
+								}
+								
+								# DEMOLISH HOLDING
+								button_text = {
+									name = "demolish_holding_btn"
+									size = { 0 28 }
+									margin = { 8 8 }
+									visible = "[HoldingView.CanDemolishHolding]"
+									text = "Demolish holding, Enter"
+									shortcut = "confirm"
+									onclick = "[HoldingView.DemolishHolding]"
+									tooltip = "DEMOLISH_HOLDING_TOOLTIP"
+									using = Font_Size_Small
+								}
+								
+								# BUILD NEW BUILDING
+								button_text = {
+									name = "build_new_btn"
+									size = { 0 28 }
+									margin = { 8 8 }
+									visible = "[Not(HoldingView.GetHolding.IsEmpty)]"
+									text = "Build new building, Enter"
+									shortcut = "confirm"
+									onclick = "[HoldingView.OpenBuildingConstructionView]"
+									tooltip = "BUILD_NEW_BUILDING_TOOLTIP"
+									using = Font_Size_Small
+								}
+								
+								# FALLBACK SE NESSUNA AZIONE DISPONIBILE
+								text_single = {
+									visible = "[And(And(And(And(Not(HoldingView.CanGrantTitle), Not(HoldingView.CanConvertHolding)), Not(HoldingView.CanDemolishHolding)), IsEmpty(HoldingView.GetPotentialBuildings)))]"
+									raw_text = "No actions available for this holding."
+									using = Font_Size_Small
+									default_format = "#weak"
+									margin = { 5 5 }
 								}
 							}
 							
