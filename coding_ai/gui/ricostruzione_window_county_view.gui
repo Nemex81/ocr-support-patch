@@ -423,6 +423,113 @@ window = {
 								spacing = 8
 								layoutpolicy_horizontal = expanding
 								
+								# Infection Status (if applicable)
+								hbox = {
+									visible = "[GetScriptedGui('is_province_infected').IsShown( GuiScope.SetRoot( Province.MakeScope ).End )]"
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									
+									text_single = {
+										raw_text = "WARNING: Infected province!"
+										using = Font_Size_Small
+										default_format = "#weak"
+									}
+								}
+								
+								# Terrain Information
+								hbox = {
+									visible = "[Not(HoldingView.GetHolding.IsEmpty)]"
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									
+									text_single = {
+										raw_text = "Terrain:"
+										using = Font_Size_Small
+									}
+									text_single = {
+										datacontext = "[HoldingView.GetProvince]"
+										raw_text = "[Province.GetTerrain.GetName]"
+										using = Font_Size_Small
+									}
+								}
+								
+								# Distance from Capital
+								hbox = {
+									datacontext = "[HoldingView.GetProvince]"
+									visible = "[Not(ObjectsEqual(HoldingView.GetProvince, GetPlayer.GetCapitalLocation))]"
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									
+									text_single = {
+										raw_text = "From your capital:"
+										using = Font_Size_Small
+									}
+									text_single = {
+										raw_text = "[DistanceTo(MyCapital, Province)|0] distance,"
+										using = Font_Size_Small
+									}
+									text_single = {
+										raw_text = "[DaysTo(MyCapital, Province)] days,"
+										using = Font_Size_Small
+									}
+									text_single = {
+										raw_text = "[Direction(MyCapital, Province)]"
+										using = Font_Size_Small
+									}
+								}
+								
+								# River/Sea Crossings
+								hbox = {
+									visible = "[DataModelHasItems(Province.MakeScope.GetList('sea_crossings'))]"
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									
+									text_single = {
+										raw_text = "Strait crossing present"
+										using = Font_Size_Small
+									}
+								}
+								
+								hbox = {
+									visible = "[DataModelHasItems(Province.MakeScope.GetList('river_large_crossings'))]"
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									
+									text_single = {
+										raw_text = "Major river crossing"
+										using = Font_Size_Small
+									}
+								}
+								
+								hbox = {
+									visible = "[DataModelHasItems(Province.MakeScope.GetList('river_crossings'))]"
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									
+									text_single = {
+										raw_text = "River crossing"
+										using = Font_Size_Small
+									}
+								}
+								
+								# Shores indicator
+								hbox = {
+									visible = "[DataModelHasItems(Province.MakeScope.GetList('adjacent_rivers'))]"
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									
+									text_single = {
+										raw_text = "Adjacent to river"
+										using = Font_Size_Small
+									}
+								}
+								
+								divider_light = {
+									layoutpolicy_horizontal = expanding
+									margin_top = 5
+									margin_bottom = 5
+								}
+								
 								# County Name
 								text_label_left = {
 									text = "HOLDING_VIEW_COUNTY_NAME"
@@ -465,6 +572,39 @@ window = {
 									text = "HOLDING_VIEW_DE_JURE_HIERARCHY"
 									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
+								}
+								
+								# County Status Indicators
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+									
+									text_single = {
+										raw_text = "Your county"
+										visible = "[And(HoldingView.GetCountyTitle.GetHolder.IsLocalPlayer, Not(HoldingView.GetTitle.GetLesseeOrHolder.IsLocalPlayer))]"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									text_single = {
+										raw_text = "Hostile county"
+										visible = "[GetScriptedGui('is_hostile_county').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'target', Province.MakeScope ).End )]"
+										using = Font_Size_Small
+										default_format = "#weak"
+									}
+									
+									text_single = {
+										raw_text = "Border county"
+										visible = "[GetScriptedGui('is_border_county').IsShown( GuiScope.SetRoot( HoldingView.GetCountyTitle.MakeScope ).End )]"
+										using = Font_Size_Small
+									}
+									
+									text_single = {
+										raw_text = "Capital county"
+										visible = "[And(And(ObjectsEqual(HoldingView.GetCountyTitle, GetPlayer.GetCapitalLocation.GetCoATitle), Not( ObjectsEqual( HoldingView.GetProvince, GetPlayer.GetCapitalLocation ) ) ), Not(GetPlayer.IsLandlessRuler))]"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
 								}
 							}
 
@@ -559,37 +699,94 @@ window = {
 									using = Font_Size_Medium
 								}
 								
-								# Holdings List
+								# Holdings List with detailed information
 								vbox = {
 									datacontext = "[HoldingView.GetCountyTitle]"
 									datamodel = "[County.GetProvinces]"
 									layoutpolicy_horizontal = expanding
-									spacing = 5
+									spacing = 8
 									
 									item = {
-										button_standard = {
-											name = "holding_item"
-											datacontext = "[Province.GetHolding]"
+										vbox = {
 											layoutpolicy_horizontal = expanding
-											size = { 0 40 }
-											onclick = "[OpenGameViewData('holding_view', Province.Self)]"
-											tooltip = "HOLDING_ITEM_TOOLTIP"
+											spacing = 3
 											
+											# Main holding button
+											button_standard = {
+												name = "holding_item"
+												datacontext = "[Province.GetHolding]"
+												layoutpolicy_horizontal = expanding
+												size = { 0 40 }
+												onclick = "[OpenGameViewData('holding_view', Province.Self)]"
+												tooltip = "HOLDING_ITEM_TOOLTIP"
+												
+												hbox = {
+													layoutpolicy_horizontal = expanding
+													spacing = 10
+													margin = { 10 5 }
+													
+													icon = {
+														size = { 30 30 }
+														texture = "[Select_CString(Holding.IsEmpty, 'gfx/interface/icons/holding_types/empty_holding.dds', Holding.GetPrimaryBuildingType.GetTypeIcon)]"
+													}
+													
+													vbox = {
+														layoutpolicy_horizontal = expanding
+														spacing = 2
+														
+														# Holding name with status
+														hbox = {
+															layoutpolicy_horizontal = expanding
+															spacing = 3
+															
+															text_single = {
+																text = "[Holding.GetNameNoTooltip]"
+																using = Font_Size_Small
+																align = left
+															}
+															
+															text_single = {
+																visible = "[Holding.IsEmpty]"
+																raw_text = "(Empty slot)"
+																using = Font_Size_Small
+																default_format = "#weak"
+															}
+														}
+														
+														# Holder info
+														text_single = {
+															datacontext = "[Province.GetTitle]"
+															datacontext = "[Title.GetLesseeOrHolder]"
+															visible = "[And(Not(Character.IsLocalPlayer), Not(Holding.IsEmpty))]"
+															raw_text = "Held by [Character.GetFirstNameNoTooltip]"
+															using = Font_Size_Small
+															default_format = "#weak"
+															align = left
+														}
+													}
+												}
+											}
+											
+											# Additional holding details
 											hbox = {
 												layoutpolicy_horizontal = expanding
-												spacing = 10
-												margin = { 10 5 }
+												spacing = 5
+												margin_left = 45
 												
-												icon = {
-													size = { 30 30 }
-													texture = "[Select_CString(Holding.IsEmpty, 'gfx/interface/icons/holding_types/empty_holding.dds', Holding.GetPrimaryBuildingType.GetTypeIcon)]"
+												# Terrain type
+												text_single = {
+													visible = "[Not(Holding.IsEmpty)]"
+													raw_text = "[Province.GetTerrain.GetName]"
+													using = Font_Size_Small
+													default_format = "#weak"
 												}
 												
+												# Building count
 												text_single = {
-													text = "[Holding.GetNameNoTooltip]"
-													layoutpolicy_horizontal = expanding
+													visible = "[Not(Holding.IsEmpty)]"
+													raw_text = "• Buildings: [Holding.GetBuildingCount]"
 													using = Font_Size_Small
-													align = left
+													default_format = "#weak"
 												}
 											}
 										}
