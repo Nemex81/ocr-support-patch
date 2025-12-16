@@ -996,7 +996,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 								size = { 0 30 }
 								onclick = "[GetVariableSystem.Set('ocr_section', 'buildable')]"
-								shortcut = "map_mode_5"
+								shortcut = "map_mode_7"
 								
 								hbox = {
 									layoutpolicy_horizontal = expanding
