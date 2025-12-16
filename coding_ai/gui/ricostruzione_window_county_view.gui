@@ -946,32 +946,37 @@ window = {
 									spacing = 3
 									
 									item = {
-										hbox = {
+										button_standard = {
+											visible = "[GUIBuildingItem.HasLevel]"
 											layoutpolicy_horizontal = expanding
-											spacing = 10
-											margin = { 5 3 }
+											size = { 0 35 }
+											onclick = "[GUIBuildingItem.OnClick]"
+											tooltip = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]"
 											
-											icon = {
-												visible = "[GUIBuildingItem.HasLevel]"
-												size = { 30 30 }
-												texture = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetTypeIcon]"
-											}
-											
-											text_single = {
-												visible = "[GUIBuildingItem.HasLevel]"
-												text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]"
+											hbox = {
 												layoutpolicy_horizontal = expanding
-												using = Font_Size_Small
-												align = left
+												spacing = 10
+												margin = { 5 3 }
+												
+												icon = {
+													size = { 25 25 }
+													texture = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetTypeIcon]"
+												}
+												
+												text_single = {
+													text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]"
+													layoutpolicy_horizontal = expanding
+													using = Font_Size_Small
+													align = left
+												}
+												
+												text_single = {
+													text = "Lv [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
+													using = Font_Size_Small
+												}
+												
+												expand = {}
 											}
-											
-											text_single = {
-												visible = "[GUIBuildingItem.HasLevel]"
-												text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
-												using = Font_Size_Small
-											}
-											
-											expand = {}
 										}
 									}
 								}
