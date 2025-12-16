@@ -255,31 +255,45 @@ window = {
 								
 								# County Name
 								text_label_left = {
-									text = "COUNTY_NAME_LABEL"
+									text = "HOLDING_VIEW_COUNTY_NAME"
+									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
 								}
 								
 								# Holder Information
 								text_label_left = {
-									text = "HOLDER_INFO_LABEL"
+									datacontext = "[HoldingView.GetCountyTitle.GetHolder]"
+									text = "HOLDING_VIEW_HOLDER_INFO"
+									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
 								}
 								
 								# Culture
 								text_label_left = {
-									text = "CULTURE_LABEL"
+									text = "HOLDING_VIEW_CULTURE"
+									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
 								}
 								
 								# Religion
 								text_label_left = {
-									text = "RELIGION_LABEL"
+									text = "HOLDING_VIEW_FAITH"
+									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
 								}
 								
 								# Development Level
 								text_label_left = {
-									text = "DEVELOPMENT_LABEL"
+									text = "COUNTY_DEVELOPMENT"
+									layoutpolicy_horizontal = expanding
+									using = Font_Size_Small
+								}
+								
+								# De Jure Hierarchy
+								text_label_left = {
+									datacontext = "[HoldingView.GetCountyTitle]"
+									text = "HOLDING_VIEW_DE_JURE_HIERARCHY"
+									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
 								}
 							}
@@ -295,19 +309,66 @@ window = {
 								
 								# Control Level
 								text_label_left = {
-									text = "CONTROL_LEVEL_LABEL"
+									text = "COUNTY_CONTROL_LABEL"
+									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
+								}
+								
+								widget = {
+									size = { 100% 25 }
+									
+									progressbar_standard = {
+										name = "control_bar"
+										size = { 100% 100% }
+										
+										blockoverride "values" {
+											value = "[FixedPointToFloat(County.GetControl)]"
+											min = 0
+											max = 100
+										}
+										
+										text_single = {
+											parentanchor = center
+											text = "[County.GetControl|0]%"
+											using = Font_Size_Small
+											default_format = "#high"
+										}
+									}
 								}
 								
 								# Development
 								text_label_left = {
-									text = "DEVELOPMENT_LEVEL_LABEL"
+									text = "COUNTY_DEVELOPMENT_LABEL"
+									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
+								}
+								
+								widget = {
+									size = { 100% 25 }
+									
+									progressbar_standard = {
+										name = "development_bar"
+										size = { 100% 100% }
+										
+										blockoverride "values" {
+											value = "[FixedPointToFloat(County.GetDevelopmentLevel)]"
+											min = 0
+											max = 100
+										}
+										
+										text_single = {
+											parentanchor = center
+											text = "[County.GetDevelopmentLevel|0]"
+											using = Font_Size_Small
+											default_format = "#high"
+										}
+									}
 								}
 								
 								# Income
 								text_label_left = {
-									text = "MONTHLY_INCOME_LABEL"
+									text = "HOLDING_VIEW_TAX_INCOME"
+									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
 								}
 							}
@@ -323,8 +384,46 @@ window = {
 								
 								# Holdings Header
 								text_label_left = {
-									text = "HOLDINGS_IN_COUNTY_LABEL"
-									using = Font_Size_Small
+									text = "HOLDINGS_IN_COUNTY"
+									layoutpolicy_horizontal = expanding
+									using = Font_Size_Medium
+								}
+								
+								# Holdings List
+								vbox = {
+									datacontext = "[HoldingView.GetCountyTitle]"
+									datamodel = "[County.GetProvinces]"
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									
+									item = {
+										button_standard = {
+											name = "holding_item"
+											datacontext = "[Province.GetHolding]"
+											layoutpolicy_horizontal = expanding
+											size = { 0 40 }
+											onclick = "[OpenGameViewData('holding_view', Province.Self)]"
+											tooltip = "HOLDING_ITEM_TOOLTIP"
+											
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												spacing = 10
+												margin = { 10 5 }
+												
+												icon = {
+													size = { 30 30 }
+													texture = "[Select_CString(Holding.IsEmpty, 'gfx/interface/icons/holding_types/empty_holding.dds', Holding.GetPrimaryBuildingType.GetTypeIcon)]"
+												}
+												
+												text_single = {
+													text = "[Holding.GetNameNoTooltip]"
+													layoutpolicy_horizontal = expanding
+													using = Font_Size_Small
+													align = left
+												}
+											}
+										}
+									}
 								}
 							}
 
@@ -339,8 +438,46 @@ window = {
 								
 								# Buildings Header
 								text_label_left = {
-									text = "BUILDINGS_IN_COUNTY_LABEL"
-									using = Font_Size_Small
+									text = "BUILDINGS_LABEL"
+									layoutpolicy_horizontal = expanding
+									using = Font_Size_Medium
+								}
+								
+								# Buildings List
+								vbox = {
+									datamodel = "[HoldingView.GetBuildings]"
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									
+									item = {
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											spacing = 10
+											margin = { 5 3 }
+											
+											icon = {
+												visible = "[GUIBuildingItem.HasLevel]"
+												size = { 30 30 }
+												texture = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetTypeIcon]"
+											}
+											
+											text_single = {
+												visible = "[GUIBuildingItem.HasLevel]"
+												text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]"
+												layoutpolicy_horizontal = expanding
+												using = Font_Size_Small
+												align = left
+											}
+											
+											text_single = {
+												visible = "[GUIBuildingItem.HasLevel]"
+												text = "BUILDING_LEVEL_LABEL"
+												using = Font_Size_Small
+											}
+											
+											expand = {}
+										}
+									}
 								}
 							}
 
@@ -356,7 +493,50 @@ window = {
 								# Adjacent Header
 								text_label_left = {
 									text = "ADJACENT_COUNTIES_LABEL"
-									using = Font_Size_Small
+									layoutpolicy_horizontal = expanding
+									using = Font_Size_Medium
+								}
+								
+								# Adjacent Counties List
+								vbox = {
+									datacontext = "[HoldingView.GetCountyTitle]"
+									datamodel = "[Title.GetAdjacentCounties]"
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									
+									item = {
+										button_standard = {
+											name = "adjacent_county_item"
+											layoutpolicy_horizontal = expanding
+											size = { 0 40 }
+											onclick = "[OpenGameViewData('holding_view', Title.GetProvince.Self)]"
+											tooltip = "ADJACENT_COUNTY_TOOLTIP"
+											
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												spacing = 10
+												margin = { 10 5 }
+												
+												coa_title_tiny = {
+													datacontext = "[Title]"
+												}
+												
+												text_single = {
+													text = "[Title.GetNameNoTooltip]"
+													layoutpolicy_horizontal = expanding
+													using = Font_Size_Small
+													align = left
+												}
+												
+												text_single = {
+													datacontext = "[Title.GetHolder]"
+													text = "[Character.GetShortUINameNoTooltip]"
+													using = Font_Size_Small
+													default_format = "#weak"
+												}
+											}
+										}
+									}
 								}
 							}
 						}
