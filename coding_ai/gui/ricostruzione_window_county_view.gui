@@ -96,7 +96,280 @@ window = {
 	# RECOVERED FROM COMMIT 2/4
 	######################################################
 
-# inserisci quì il codice  widget in modalita non vedenti
+	widget = {
+		name = "ocr_holding_view"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		size = { 605 750 }
+		parentanchor = bottom|left
+		alwaystransparent = yes
+		
+		vbox = {
+			expand = {}
+			ignoreinvisible = yes
+			layoutpolicy_vertical = expanding
+			
+			vbox = {
+				name = "window_content_ocr"
+				margin_right = 40
+				margin_top = 35
+				margin_left = 20
+				margin_bottom = 20
+				alwaystransparent = no
+				spacing = 10
+				
+				datacontext = "[HoldingView.GetHolding]"
+				datacontext = "[HoldingView.GetProvince]"
+				datacontext = "[HoldingView.GetHolder]"
+				datacontext = "[Province.GetCounty]"
+				
+				### BACKGROUND ###
+				background = {
+					texture = "gfx/interface/component/tiles/tile_window_background_subwindow.dds"
+					spritetype = Corneredtiled
+					spriteborder = { 18 18 }
+					margin = { -23 -17 }
+					margin_left = 20
+					margin_bottom = 20
+					texture_density = 2
+
+					modify_texture = {
+						name = "overlay"
+						texture = "gfx/interface/component/overlay/overlay_effect.dds"
+						spritetype = Corneredstretched
+						spriteborder = { 0 0 }
+						blendmode = overlay
+					}
+				}
+				
+				### HEADER SECTION ###
+				vbox = {
+					name = "ocr_header"
+					layoutpolicy_horizontal = expanding
+					spacing = 5
+					
+					# County/Holding Title
+					text_label_left = {
+						name = "header_county_name"
+						text = "[HoldingView.GetCountyTitle.GetNameNoTooltipU]"
+						using = Font_Size_Big
+						layoutpolicy_horizontal = expanding
+					}
+					
+					# Holder info line
+					text_label_left = {
+						name = "header_holder_info"
+						text = "HOLDING_VIEW_RULER_INFO"
+						using = Font_Size_Small
+						layoutpolicy_horizontal = expanding
+					}
+				}
+
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 5
+				}
+
+				### TAB MENU ###
+				hbox = {
+					name = "ocr_tab_menu"
+					spacing = 8
+					layoutpolicy_horizontal = expanding
+					
+					# Info Tab Button
+					button_standard = {
+						name = "tab_btn_info"
+						text = "INFO_TAB"
+						tooltip = "COUNTY_INFO_TAB_TOOLTIP"
+						onclick = "[GetVariableSystem.Set('county_tabs', 'info')]"
+						size = { 100 32 }
+						using = Font_Size_Small
+					}
+					
+					# Stats Tab Button
+					button_standard = {
+						name = "tab_btn_stats"
+						text = "STATS_TAB"
+						tooltip = "COUNTY_STATS_TAB_TOOLTIP"
+						onclick = "[GetVariableSystem.Set('county_tabs', 'stats')]"
+						size = { 100 32 }
+						using = Font_Size_Small
+					}
+					
+					# Holdings Tab Button
+					button_standard = {
+						name = "tab_btn_holdings"
+						text = "HOLDINGS_TAB"
+						tooltip = "COUNTY_HOLDINGS_TAB_TOOLTIP"
+						onclick = "[GetVariableSystem.Set('county_tabs', 'holdings')]"
+						size = { 100 32 }
+						using = Font_Size_Small
+					}
+					
+					# Buildings Tab Button
+					button_standard = {
+						name = "tab_btn_buildings"
+						text = "BUILDINGS_TAB"
+						tooltip = "COUNTY_BUILDINGS_TAB_TOOLTIP"
+						onclick = "[GetVariableSystem.Set('county_tabs', 'buildings')]"
+						size = { 100 32 }
+						using = Font_Size_Small
+					}
+					
+					# Adjacent Tab Button
+					button_standard = {
+						name = "tab_btn_adjacent"
+						text = "ADJACENT_TAB"
+						tooltip = "COUNTY_ADJACENT_TAB_TOOLTIP"
+						onclick = "[GetVariableSystem.Set('county_tabs', 'adjacent')]"
+						size = { 100 32 }
+						using = Font_Size_Small
+					}
+				}
+
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 5
+				}
+
+				### TAB CONTENT CONTAINER ###
+				scrollbox = {
+					name = "ocr_tab_content"
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					size = { 0 600 }
+					
+					blockoverride "scrollbox_content" {
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							spacing = 10
+							margin = { 10 10 }
+
+							######################################
+							# TAB 1: INFO TAB
+							######################################
+							vbox = {
+								name = "ocr_info_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'info')]"
+								spacing = 8
+								layoutpolicy_horizontal = expanding
+								
+								# County Name
+								text_label_left = {
+									text = "COUNTY_NAME_LABEL"
+									using = Font_Size_Small
+								}
+								
+								# Holder Information
+								text_label_left = {
+									text = "HOLDER_INFO_LABEL"
+									using = Font_Size_Small
+								}
+								
+								# Culture
+								text_label_left = {
+									text = "CULTURE_LABEL"
+									using = Font_Size_Small
+								}
+								
+								# Religion
+								text_label_left = {
+									text = "RELIGION_LABEL"
+									using = Font_Size_Small
+								}
+								
+								# Development Level
+								text_label_left = {
+									text = "DEVELOPMENT_LABEL"
+									using = Font_Size_Small
+								}
+							}
+
+							######################################
+							# TAB 2: STATS TAB
+							######################################
+							vbox = {
+								name = "ocr_stats_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'stats')]"
+								spacing = 8
+								layoutpolicy_horizontal = expanding
+								
+								# Control Level
+								text_label_left = {
+									text = "CONTROL_LEVEL_LABEL"
+									using = Font_Size_Small
+								}
+								
+								# Development
+								text_label_left = {
+									text = "DEVELOPMENT_LEVEL_LABEL"
+									using = Font_Size_Small
+								}
+								
+								# Income
+								text_label_left = {
+									text = "MONTHLY_INCOME_LABEL"
+									using = Font_Size_Small
+								}
+							}
+
+							######################################
+							# TAB 3: HOLDINGS TAB
+							######################################
+							vbox = {
+								name = "ocr_holdings_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'holdings')]"
+								spacing = 8
+								layoutpolicy_horizontal = expanding
+								
+								# Holdings Header
+								text_label_left = {
+									text = "HOLDINGS_IN_COUNTY_LABEL"
+									using = Font_Size_Small
+								}
+							}
+
+							######################################
+							# TAB 4: BUILDINGS TAB
+							######################################
+							vbox = {
+								name = "ocr_buildings_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'buildings')]"
+								spacing = 8
+								layoutpolicy_horizontal = expanding
+								
+								# Buildings Header
+								text_label_left = {
+									text = "BUILDINGS_IN_COUNTY_LABEL"
+									using = Font_Size_Small
+								}
+							}
+
+							######################################
+							# TAB 5: ADJACENT COUNTIES TAB
+							######################################
+							vbox = {
+								name = "ocr_adjacent_tab"
+								visible = "[GetVariableSystem.HasValue('county_tabs', 'adjacent')]"
+								spacing = 8
+								layoutpolicy_horizontal = expanding
+								
+								# Adjacent Header
+								text_label_left = {
+									text = "ADJACENT_COUNTIES_LABEL"
+									using = Font_Size_Small
+								}
+							}
+						}
+					}
+				}
+				
+				### BOTTOM SPACER ###
+				expand = {
+					minimumsize = { 0 10 }
+				}
+			}
+		}
+	}
 
 
 
