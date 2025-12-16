@@ -96,7 +96,324 @@ window = {
 	# RECOVERED FROM COMMIT 2/4
 	######################################################
 
-# inserisci quì il codice  widget in modalita non vedenti
+	widget = {
+		name = "ocr_holding_view"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		size = { 605 750 }
+		parentanchor = bottom|left
+		alwaystransparent = no
+		
+		vbox = {
+			name = "ocr_main_container"
+			layoutpolicy_vertical = expanding
+			layoutpolicy_horizontal = expanding
+			margin = { 15 15 }
+			spacing = 10
+			
+			### HEADER SECTION ###
+			vbox = {
+				name = "ocr_header"
+				layoutpolicy_horizontal = expanding
+				spacing = 5
+				
+				# County Title
+				text_label_left = {
+					text = "[HoldingView.GetCountyTitle.GetNameNoTooltipU]"
+					using = Font_Size_Big
+					layoutpolicy_horizontal = expanding
+				}
+				
+				# Ownership Status
+				text_label_left = {
+					name = "ownership_status"
+					visible = "[ObjectsEqual(HoldingView.GetCountyTitle.GetHolder, GetPlayer)]"
+					text = "HOLDING_VIEW_YOUR_COUNTY"
+					using = Font_Size_Small
+					layoutpolicy_horizontal = expanding
+				}
+				
+				text_label_left = {
+					name = "realm_status"
+					visible = "[HoldingView.GetCountyTitle.GetHolder.IsOtherLiegeOrAbove(GetPlayer)]"
+					text = "HOLDING_VIEW_TOP_REALM_COUNTY"
+					using = Font_Size_Small
+					layoutpolicy_horizontal = expanding
+				}
+				
+				text_label_left = {
+					name = "foreign_status"
+					visible = "[Not(Or(ObjectsEqual(HoldingView.GetCountyTitle.GetHolder, GetPlayer), HoldingView.GetCountyTitle.GetHolder.IsOtherLiegeOrAbove(GetPlayer)))]"
+					text = "HOLDING_VIEW_FOREIGN_COUNTY"
+					using = Font_Size_Small
+					layoutpolicy_horizontal = expanding
+				}
+			}
+			
+			divider_light = {
+				layoutpolicy_horizontal = expanding
+			}
+			
+			### COUNTY HOLDER SECTION ###
+			vbox = {
+				name = "ocr_holder_section"
+				layoutpolicy_horizontal = expanding
+				spacing = 5
+				
+				text_label_left = {
+					text = "Ruler: [HoldingView.GetCountyTitle.GetHolder.GetUINameNoTooltip]"
+					using = Font_Size_Medium
+					layoutpolicy_horizontal = expanding
+				}
+				
+				text_label_left = {
+					text = "Title: [HoldingView.GetCountyTitle.GetHolder.GetPrimaryTitle.GetNameNoTooltip]"
+					using = Font_Size_Small
+					layoutpolicy_horizontal = expanding
+					default_format = "#weak"
+				}
+			}
+			
+			divider_light = {
+				layoutpolicy_horizontal = expanding
+			}
+			
+			### COUNTY STATS SECTION ###
+			vbox = {
+				name = "ocr_county_stats"
+				layoutpolicy_horizontal = expanding
+				spacing = 8
+				
+				# Control Level
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					spacing = 3
+					
+					text_label_left = {
+						text = "Control Level: [County.GetControl|0]%"
+						using = Font_Size_Small
+					}
+					
+					progressbar_standard = {
+						name = "control_bar"
+						size = { 100% 20 }
+						tooltip = "County Control Level: [County.GetControl|0]%"
+						
+						blockoverride "values" {
+							value = "[FixedPointToFloat(County.GetControl)]"
+							min = 0
+							max = 100
+						}
+					}
+				}
+				
+				# Development Level
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					spacing = 3
+					
+					text_label_left = {
+						text = "Development: [County.GetDevelopmentLevel|0], Progress: +[County.GetDevelopmentProgress|1] per month"
+						using = Font_Size_Small
+					}
+					
+					progressbar_standard = {
+						name = "development_bar"
+						size = { 100% 20 }
+						tooltip = "Development Level: [County.GetDevelopmentLevel|0]"
+						
+						blockoverride "values" {
+							value = "[FixedPointToFloat(County.GetDevelopmentLevel)]"
+							min = 0
+							max = 100
+						}
+					}
+				}
+				
+				# Cultural Acceptance
+				text_label_left = {
+					text = "Cultural Acceptance: [County.GetCultureAcceptance|0]%"
+					using = Font_Size_Small
+				}
+				
+				# Religious Acceptance
+				text_label_left = {
+					text = "Faith: [County.GetFaith.GetNameNoTooltip]"
+					using = Font_Size_Small
+				}
+				
+				# County Opinion
+				text_label_left = {
+					text = "County Opinion: [County.GetOpinion|+]"
+					using = Font_Size_Small
+				}
+			}
+			
+			divider_light = {
+				layoutpolicy_horizontal = expanding
+			}
+			
+			### HOLDINGS NAVIGATION SECTION (STEP 1 - 4C/4) ###
+			vbox = {
+				name = "ocr_holdings_navigation"
+				layoutpolicy_horizontal = expanding
+				spacing = 5
+				
+				text_label_left = {
+					text = "HOLDINGS_IN_COUNTY"
+					using = Font_Size_Medium
+				}
+				
+				# Holdings List
+				vbox = {
+					name = "holdings_list"
+					datamodel = "[County.GetProvinces]"
+					layoutpolicy_horizontal = expanding
+					spacing = 3
+					
+					item = {
+						button_text = {
+							datacontext = "[Province.GetHolding]"
+							layoutpolicy_horizontal = expanding
+							text = "[Holding.GetNameNoTooltip] - [Select_CString(Holding.IsEmpty, 'Empty Holding', Holding.GetPrimaryBuildingType.GetTypeName)]"
+							onclick = "[OpenGameViewData('holding_view', Province.Self)]"
+							shortcut = "next"
+							enabled = "[Not(Holding.IsEmpty)]"
+							tooltip = "[Holding.GetType.GetName] of [Province.GetName]"
+							
+							blockoverride "text" {
+								text = "[Holding.GetNameNoTooltip] - [Select_CString(Holding.IsEmpty, 'Empty Holding', Holding.GetPrimaryBuildingType.GetTypeName)]"
+							}
+						}
+					}
+				}
+			}
+			
+			divider_light = {
+				layoutpolicy_horizontal = expanding
+			}
+			
+			### BUILDINGS SECTION (STEP 2 - 4D/4) ###
+			scrollbox = {
+				name = "ocr_buildings_section"
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				
+				blockoverride "scrollbox_content" {
+					vbox = {
+						name = "buildings_content"
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+						
+						text_label_left = {
+							text = "BUILDINGS_LABEL"
+							using = Font_Size_Medium
+						}
+						
+						# Empty Holding Message
+						vbox = {
+							visible = "[Holding.IsEmpty]"
+							layoutpolicy_horizontal = expanding
+							spacing = 5
+							
+							text_label_left = {
+								text = "EMPTY_HOLDING_DESC"
+								using = Font_Size_Small
+								layoutpolicy_horizontal = expanding
+							}
+							
+							button_text = {
+								text = "CONSTRUCT_HOLDING"
+								onclick = "[HoldingView.OpenHoldingConstruction]"
+								enabled = "[HoldingView.CanConstructNewHolding]"
+								tooltip = "CONSTRUCT_HOLDING_TOOLTIP"
+								layoutpolicy_horizontal = expanding
+							}
+						}
+						
+						# Buildings List
+						vbox = {
+							visible = "[Not(Holding.IsEmpty)]"
+							datamodel = "[HoldingView.GetBuildings]"
+							layoutpolicy_horizontal = expanding
+							spacing = 5
+							
+							item = {
+								# Completed Buildings
+								vbox = {
+									visible = "[And(GUIBuildingItem.HasLevel, Not(GUIBuildingItem.IsConstructing))]"
+									layoutpolicy_horizontal = expanding
+									spacing = 2
+									
+									text_label_left = {
+										text = "Building: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip], Level: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
+										using = Font_Size_Small
+										layoutpolicy_horizontal = expanding
+										tooltip = "[GUIBuildingItem.GetTooltip]"
+									}
+								}
+								
+								# Under Construction
+								vbox = {
+									visible = "[GUIBuildingItem.IsConstructing]"
+									layoutpolicy_horizontal = expanding
+									spacing = 2
+									
+									text_label_left = {
+										text = "Under Construction: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]"
+										using = Font_Size_Small
+									}
+									
+									progressbar_standard = {
+										name = "construction_progress"
+										size = { 100% 15 }
+										tooltip = "[Multiply_CFixedPoint(GUIBuildingItem.GetConstructingProgress, '100')|0]% completed"
+										
+										blockoverride "values" {
+											value = "[GUIBuildingItem.GetConstructingProgress]"
+											min = 0
+											max = 100
+										}
+									}
+								}
+								
+								# Empty Slot
+								button_text = {
+									visible = "[And(GUIBuildingItem.IsBuildNewIconShown, Not(GUIBuildingItem.HasLevel))]"
+									text = "Empty Slot Available - Press Enter to Build"
+									onclick = "[GUIBuildingItem.OnClick]"
+									enabled = "[GUIBuildingItem.IsBuildingButtonEnabled]"
+									tooltip = "[GUIBuildingItem.GetTooltip]"
+									layoutpolicy_horizontal = expanding
+									shortcut = "confirm"
+								}
+							}
+						}
+						
+						# Build New Building Button
+						button_text = {
+							visible = "[Not(Holding.IsEmpty)]"
+							text = "BUILD_NEW"
+							onclick = "[HoldingView.OpenBuildingConstructionView]"
+							enabled = "[HoldingView.CanBuildNewBuilding]"
+							tooltip = "BUILD_NEW_BUILDING_TOOLTIP"
+							layoutpolicy_horizontal = expanding
+						}
+					}
+				}
+			}
+			
+			### BOTTOM SPACER ###
+			expand = {}
+			
+			### CLOSE BUTTON ###
+			button_text = {
+				text = "Close (ESC)"
+				onclick = "[HoldingView.Close]"
+				shortcut = "close_window"
+				layoutpolicy_horizontal = expanding
+			}
+		}
+	}
 
 
 
