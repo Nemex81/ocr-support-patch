@@ -681,6 +681,93 @@ window = {
 									layoutpolicy_horizontal = expanding
 									using = Font_Size_Small
 								}
+								
+								divider_light = {
+									layoutpolicy_horizontal = expanding
+									margin_top = 10
+									margin_bottom = 5
+								}
+								
+								# County Modifiers Section
+								vbox = {
+									visible = "[Not( IsDataModelEmpty(HoldingView.GetCountyModifiers))]"
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									
+									text_single = {
+										layoutpolicy_horizontal = expanding
+										raw_text = "[GetDataModelSize(HoldingView.GetCountyModifiers)] County modifiers:"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									vbox = {
+										datamodel = "[HoldingView.GetCountyModifiers]"
+										layoutpolicy_horizontal = expanding
+										spacing = 3
+										
+										item = {
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												spacing = 5
+												margin_left = 10
+												
+												icon = {
+													size = { 20 20 }
+													texture = "[Modifier.GetIcon]"
+												}
+												
+												text_single = {
+													text = "[Modifier.GetNameNoTooltip]"
+													layoutpolicy_horizontal = expanding
+													using = Font_Size_Small
+													align = left
+												}
+											}
+										}
+									}
+								}
+								
+								# Province Modifiers
+								vbox = {
+									visible = "[Not( IsDataModelEmpty(HoldingView.GetProvinceModifiers))]"
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									margin_top = 5
+									
+									text_single = {
+										layoutpolicy_horizontal = expanding
+										raw_text = "[GetDataModelSize(HoldingView.GetProvinceModifiers)] Province modifiers:"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									vbox = {
+										datamodel = "[HoldingView.GetProvinceModifiers]"
+										layoutpolicy_horizontal = expanding
+										spacing = 3
+										
+										item = {
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												spacing = 5
+												margin_left = 10
+												
+												icon = {
+													size = { 20 20 }
+													texture = "[Modifier.GetIcon]"
+												}
+												
+												text_single = {
+													text = "[Modifier.GetNameNoTooltip]"
+													layoutpolicy_horizontal = expanding
+													using = Font_Size_Small
+													align = left
+												}
+											}
+										}
+									}
+								}
 							}
 
 							######################################
