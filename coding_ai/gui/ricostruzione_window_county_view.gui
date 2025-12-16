@@ -103,6 +103,12 @@ window = {
 		parentanchor = bottom|left
 		alwaystransparent = yes
 		
+		# Initialize default tab on show
+		state = {
+			name = _show
+			on_start = "[GetVariableSystem.Set('county_tabs', 'info')]"
+		}
+		
 		vbox = {
 			expand = {}
 			ignoreinvisible = yes
@@ -178,8 +184,8 @@ window = {
 					# Info Tab Button
 					button_standard = {
 						name = "tab_btn_info"
-						text = "INFO_TAB"
-						tooltip = "COUNTY_INFO_TAB_TOOLTIP"
+						text = "Info"
+						tooltip = "County general information"
 						onclick = "[GetVariableSystem.Set('county_tabs', 'info')]"
 						size = { 100 32 }
 						using = Font_Size_Small
@@ -188,8 +194,8 @@ window = {
 					# Stats Tab Button
 					button_standard = {
 						name = "tab_btn_stats"
-						text = "STATS_TAB"
-						tooltip = "COUNTY_STATS_TAB_TOOLTIP"
+						text = "Stats"
+						tooltip = "County statistics"
 						onclick = "[GetVariableSystem.Set('county_tabs', 'stats')]"
 						size = { 100 32 }
 						using = Font_Size_Small
@@ -198,8 +204,8 @@ window = {
 					# Holdings Tab Button
 					button_standard = {
 						name = "tab_btn_holdings"
-						text = "HOLDINGS_TAB"
-						tooltip = "COUNTY_HOLDINGS_TAB_TOOLTIP"
+						text = "Holdings"
+						tooltip = "Baronies in this county"
 						onclick = "[GetVariableSystem.Set('county_tabs', 'holdings')]"
 						size = { 100 32 }
 						using = Font_Size_Small
@@ -208,8 +214,8 @@ window = {
 					# Buildings Tab Button
 					button_standard = {
 						name = "tab_btn_buildings"
-						text = "BUILDINGS_TAB"
-						tooltip = "COUNTY_BUILDINGS_TAB_TOOLTIP"
+						text = "Buildings"
+						tooltip = "Buildings in holdings"
 						onclick = "[GetVariableSystem.Set('county_tabs', 'buildings')]"
 						size = { 100 32 }
 						using = Font_Size_Small
@@ -218,8 +224,8 @@ window = {
 					# Adjacent Tab Button
 					button_standard = {
 						name = "tab_btn_adjacent"
-						text = "ADJACENT_TAB"
-						tooltip = "COUNTY_ADJACENT_TAB_TOOLTIP"
+						text = "Adjacent"
+						tooltip = "Neighboring counties"
 						onclick = "[GetVariableSystem.Set('county_tabs', 'adjacent')]"
 						size = { 100 32 }
 						using = Font_Size_Small
@@ -322,14 +328,14 @@ window = {
 										size = { 100% 100% }
 										
 										blockoverride "values" {
-											value = "[FixedPointToFloat(County.GetControl)]"
+											value = "[County.GetControl]"
 											min = 0
-											max = 100
+											max = 1
 										}
 										
 										text_single = {
 											parentanchor = center
-											text = "[County.GetControl|0]%"
+											text = "[Multiply_CFixedPoint(County.GetControl, '(CFixedPoint)100')|0]%"
 											using = Font_Size_Small
 											default_format = "#high"
 										}
@@ -351,7 +357,7 @@ window = {
 										size = { 100% 100% }
 										
 										blockoverride "values" {
-											value = "[FixedPointToFloat(County.GetDevelopmentLevel)]"
+											value = "[County.GetDevelopmentLevel]"
 											min = 0
 											max = 100
 										}
@@ -471,7 +477,7 @@ window = {
 											
 											text_single = {
 												visible = "[GUIBuildingItem.HasLevel]"
-												text = "BUILDING_LEVEL_LABEL"
+												text = "[GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
 												using = Font_Size_Small
 											}
 											
