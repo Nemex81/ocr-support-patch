@@ -339,71 +339,14 @@ window = {
 						on_finish = "[GetScriptedGui('find_closest').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target', HoldingView.GetProvince.MakeScope).End )]"
 					}
 
-				### TAB MENU ###
-				hbox = {
-					name = "ocr_tab_menu"
-					spacing = 8
-					layoutpolicy_horizontal = expanding
-					
-					# Info Tab Button
-					button_standard = {
-						name = "tab_btn_info"
-						text = "Info"
-						tooltip = "County general information"
-						onclick = "[GetVariableSystem.Set('county_tabs', 'info')]"
-						size = { 100 32 }
-						using = Font_Size_Small
-					}
-					
-					# Stats Tab Button
-					button_standard = {
-						name = "tab_btn_stats"
-						text = "Stats"
-						tooltip = "County statistics"
-						onclick = "[GetVariableSystem.Set('county_tabs', 'stats')]"
-						size = { 100 32 }
-						using = Font_Size_Small
-					}
-					
-					# Holdings Tab Button
-					button_standard = {
-						name = "tab_btn_holdings"
-						text = "Holdings"
-						tooltip = "Baronies in this county"
-						onclick = "[GetVariableSystem.Set('county_tabs', 'holdings')]"
-						size = { 100 32 }
-						using = Font_Size_Small
-					}
-					
-					# Buildings Tab Button
-					button_standard = {
-						name = "tab_btn_buildings"
-						text = "Buildings"
-						tooltip = "Buildings in holdings"
-						onclick = "[GetVariableSystem.Set('county_tabs', 'buildings')]"
-						size = { 100 32 }
-						using = Font_Size_Small
-					}
-					
-					# Adjacent Tab Button
-					button_standard = {
-						name = "tab_btn_adjacent"
-						text = "Adjacent"
-						tooltip = "Neighboring counties"
-						onclick = "[GetVariableSystem.Set('county_tabs', 'adjacent')]"
-						size = { 100 32 }
-						using = Font_Size_Small
-					}
-				}
-
 				divider_light = {
 					layoutpolicy_horizontal = expanding
 					margin_top = 5
 				}
 
-				### TAB CONTENT CONTAINER ###
+				### SINGLE-FLOW SCROLLABLE CONTENT (OCR SUPPORT STYLE) ###
 				scrollbox = {
-					name = "ocr_tab_content"
+					name = "ocr_content"
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
 					size = { 0 600 }
@@ -411,17 +354,49 @@ window = {
 					blockoverride "scrollbox_content" {
 						vbox = {
 							layoutpolicy_horizontal = expanding
-							spacing = 10
-							margin = { 10 10 }
+							spacing = 3
+							margin = { 5 5 }
 
 							######################################
-							# TAB 1: INFO TAB
+							# SECTION: OVERVIEW (Press E)
 							######################################
-							vbox = {
-								name = "ocr_info_tab"
-								visible = "[GetVariableSystem.HasValue('county_tabs', 'info')]"
-								spacing = 8
+							
+							# Summary row - always visible
+							button_standard = {
+								name = "overview_summary"
 								layoutpolicy_horizontal = expanding
+								size = { 0 30 }
+								onclick = "[GetVariableSystem.Set('ocr_section', 'overview')]"
+								shortcut = "map_mode_1"
+								
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									margin = { 8 5 }
+									
+									text_single = {
+										raw_text = "Overview (E):"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									text_single = {
+										raw_text = "[HoldingView.GetCountyTitle.GetNameNoTier]"
+										using = Font_Size_Small
+									}
+									
+									expand = {}
+								}
+							}
+							
+							# Detail block - visible when section is expanded
+							vbox = {
+								name = "overview_details"
+								visible = "[GetVariableSystem.HasValue('ocr_section', 'overview')]"
+								spacing = 5
+								layoutpolicy_horizontal = expanding
+								margin_left = 10
+								margin_bottom = 8
 								
 								# Infection Status (if applicable)
 								hbox = {
@@ -607,15 +582,55 @@ window = {
 									}
 								}
 							}
+							
+							} # End overview_details vbox
 
 							######################################
-							# TAB 2: STATS TAB
+							# SECTION: HOLDINGS (Press H)
 							######################################
-							vbox = {
-								name = "ocr_stats_tab"
-								visible = "[GetVariableSystem.HasValue('county_tabs', 'stats')]"
-								spacing = 8
+							
+							# Summary row - always visible  
+							button_standard = {
+								name = "holdings_summary"
 								layoutpolicy_horizontal = expanding
+								size = { 0 30 }
+								onclick = "[GetVariableSystem.Set('ocr_section', 'holdings')]"
+								shortcut = "map_mode_2"
+								
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									spacing = 5
+									margin = { 8 5 }
+									
+									text_single = {
+										raw_text = "Holdings (H):"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									text_single = {
+										raw_text = "[GetDataModelSize(County.GetProvinces)] baronies"
+										using = Font_Size_Small
+									}
+									
+									expand = {}
+								}
+							}
+							
+							# Detail block - visible when section is expanded
+							vbox = {
+								name = "holdings_details"
+								visible = "[GetVariableSystem.HasValue('ocr_section', 'holdings')]"
+								spacing = 5
+								layoutpolicy_horizontal = expanding
+								margin_left = 10
+								margin_bottom = 8
+								
+								# Stats section (control, development, modifiers)
+								vbox = {
+									name = "county_stats"
+									spacing = 5
+									layoutpolicy_horizontal = expanding
 								
 								# Control Level
 								text_label_left = {
@@ -769,29 +784,29 @@ window = {
 									}
 								}
 							}
-
-							######################################
-							# TAB 3: HOLDINGS TAB
-							######################################
-							vbox = {
-								name = "ocr_holdings_tab"
-								visible = "[GetVariableSystem.HasValue('county_tabs', 'holdings')]"
-								spacing = 8
+							
+							} # End county_stats vbox (was stats tab)
+							
+							divider_light = {
 								layoutpolicy_horizontal = expanding
-								
-								# Holdings Header
-								text_label_left = {
-									text = "HOLDINGS_IN_COUNTY"
-									layoutpolicy_horizontal = expanding
-									using = Font_Size_Medium
-								}
-								
-								# Holdings List with detailed information
-								vbox = {
-									datacontext = "[HoldingView.GetCountyTitle]"
-									datamodel = "[County.GetProvinces]"
-									layoutpolicy_horizontal = expanding
-									spacing = 8
+								margin_top = 5
+								margin_bottom = 5
+							}
+							
+							# Holdings List Header
+							text_single = {
+								raw_text = "Baronies in county:"
+								using = Font_Size_Small
+								default_format = "#high"
+								layoutpolicy_horizontal = expanding
+							}
+							
+							# Holdings List with detailed information
+							vbox = {
+								datacontext = "[HoldingView.GetCountyTitle]"
+								datamodel = "[County.GetProvinces]"
+								layoutpolicy_horizontal = expanding
+								spacing = 5
 									
 									item = {
 										vbox = {
@@ -880,28 +895,55 @@ window = {
 									}
 								}
 							}
+							
+							} # End holdings_details vbox
 
 							######################################
-							# TAB 4: BUILDINGS TAB
+							# SECTION: BUILDINGS (Press B)
 							######################################
-							vbox = {
-								name = "ocr_buildings_tab"
-								visible = "[GetVariableSystem.HasValue('county_tabs', 'buildings')]"
-								spacing = 8
+							
+							# Summary row - always visible
+							button_standard = {
+								name = "buildings_summary"
 								layoutpolicy_horizontal = expanding
+								size = { 0 30 }
+								onclick = "[GetVariableSystem.Set('ocr_section', 'buildings')]"
+								shortcut = "map_mode_3"
 								
-								# Buildings Header
-								text_label_left = {
-									text = "BUILDINGS_LABEL"
+								hbox = {
 									layoutpolicy_horizontal = expanding
-									using = Font_Size_Medium
+									spacing = 5
+									margin = { 8 5 }
+									
+									text_single = {
+										raw_text = "Buildings (B):"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									text_single = {
+										raw_text = "[GetDataModelSize(HoldingView.GetBuildings)] total"
+										using = Font_Size_Small
+									}
+									
+									expand = {}
 								}
+							}
+							
+							# Detail block - visible when section is expanded
+							vbox = {
+								name = "buildings_details"
+								visible = "[GetVariableSystem.HasValue('ocr_section', 'buildings')]"
+								spacing = 5
+								layoutpolicy_horizontal = expanding
+								margin_left = 10
+								margin_bottom = 8
 								
 								# Buildings List
 								vbox = {
 									datamodel = "[HoldingView.GetBuildings]"
 									layoutpolicy_horizontal = expanding
-									spacing = 5
+									spacing = 3
 									
 									item = {
 										hbox = {
@@ -934,29 +976,57 @@ window = {
 									}
 								}
 							}
+							
+							} # End buildings_details vbox
 
 							######################################
-							# TAB 5: ADJACENT COUNTIES TAB
+							# SECTION: ADJACENT (Press A)
 							######################################
-							vbox = {
-								name = "ocr_adjacent_tab"
-								visible = "[GetVariableSystem.HasValue('county_tabs', 'adjacent')]"
-								spacing = 8
+							
+							# Summary row - always visible
+							button_standard = {
+								name = "adjacent_summary"
 								layoutpolicy_horizontal = expanding
+								size = { 0 30 }
+								onclick = "[GetVariableSystem.Set('ocr_section', 'adjacent')]"
+								shortcut = "map_mode_4"
 								
-								# Adjacent Header
-								text_label_left = {
-									text = "ADJACENT_COUNTIES_LABEL"
+								hbox = {
 									layoutpolicy_horizontal = expanding
-									using = Font_Size_Medium
+									spacing = 5
+									margin = { 8 5 }
+									
+									text_single = {
+										raw_text = "Adjacent (A):"
+										using = Font_Size_Small
+										default_format = "#high"
+									}
+									
+									text_single = {
+										datacontext = "[HoldingView.GetCountyTitle]"
+										raw_text = "[GetDataModelSize(Title.GetAdjacentCounties)] counties"
+										using = Font_Size_Small
+									}
+									
+									expand = {}
 								}
+							}
+							
+							# Detail block - visible when section is expanded
+							vbox = {
+								name = "adjacent_details"
+								visible = "[GetVariableSystem.HasValue('ocr_section', 'adjacent')]"
+								spacing = 5
+								layoutpolicy_horizontal = expanding
+								margin_left = 10
+								margin_bottom = 8
 								
 								# Adjacent Counties List
 								vbox = {
 									datacontext = "[HoldingView.GetCountyTitle]"
 									datamodel = "[Title.GetAdjacentCounties]"
 									layoutpolicy_horizontal = expanding
-									spacing = 5
+									spacing = 3
 									
 									item = {
 										button_standard = {
@@ -993,9 +1063,12 @@ window = {
 									}
 								}
 							}
-						}
-					}
-				}
+							
+							} # End adjacent_details vbox
+							
+						} # End main content vbox
+					} # End scrollbox_content blockoverride
+				} # End scrollbox
 				
 				} # End land province vbox with scripted GUI integration
 				
