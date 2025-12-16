@@ -96,7 +96,403 @@ window = {
 	# RECOVERED FROM COMMIT 2/4
 	######################################################
 
-# inserisci quì il codice  widget in modalita non vedenti
+	widget = {
+		name = "ocr_holding_view"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		size = { 100% 100% }
+		
+		### WINDOW CONTROL BUTTONS (invisible but functional) ###
+		widget = {
+			size = { 0 0 }
+			scissor = yes
+			
+			buttons_window_control = {
+				blockoverride "button_go_to" {
+					onclick = "[HoldingView.PanToCountyCapital]"
+					tooltip = "GO_TO_PROVINCE_TT"
+					using = tooltip_ne
+				}
+				
+				blockoverride "button_back" {
+					visible = "[HasViewHistory]"
+					onclick = "[OpenFromViewHistory]"
+					tooltip = "[GetViewHistoryTooltip]"
+				}
+				
+				blockoverride "button_close" {
+					onclick = "[HoldingView.Close]"
+				}
+			}
+		}
+		
+		### MAIN OCR CONTENT VBOX ###
+		vbox = {
+			layoutpolicy_vertical = expanding
+			name = "ocr_window_content"
+			using = ocr_margins
+			using = ocr
+			background = { using = Background_Area_Border_Solid }
+			
+			error_button = {
+				layoutpolicy_horizontal = expanding
+			}
+			
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				
+				blockoverride "scrollbox_content" {
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+						
+						##################################################
+						### COMMIT 4B/4: COUNTY STATS & HOLDER ###
+						##################################################
+						
+						### COUNTY HEADER ###
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							spacing = 3
+							margin = { 5 5 }
+							
+							text_label_left = {
+								text = "County: [HoldingView.GetCountyTitle.GetNameNoTooltip]"
+								layoutpolicy_horizontal = expanding
+							}
+							
+							text_label_left = {
+								datacontext = "[HoldingView.GetCountyTitle.GetHolder]"
+								text = "Ruler: [Character.GetNameNoTooltip], [Character.GetPrimaryTitle.GetNameNoTooltip]"
+								layoutpolicy_horizontal = expanding
+							}
+							
+							divider_light = {
+								layoutpolicy_horizontal = expanding
+							}
+						}
+						
+						### COUNTY STATS SECTION ###
+						vbox = {
+							name = "county_stats_ocr"
+							layoutpolicy_horizontal = expanding
+							spacing = 5
+							margin = { 5 5 }
+							
+							### CONTROL LEVEL ###
+							text_label_left = {
+								text = "County Control Level: [County.GetControl|0]%"
+								tooltip = "COUNTY_CONTROL_DESC"
+							}
+							
+							### DEVELOPMENT LEVEL ###
+							text_label_left = {
+								text = "Development: [County.GetDevelopmentLevel|0], Progress: +[County.GetDevelopmentProgress|1]"
+								tooltip = "COUNTY_DEVELOPMENT_DESC"
+							}
+							
+							### CULTURAL ACCEPTANCE ###
+							text_label_left = {
+								text = "Cultural Acceptance: [County.GetCultureAcceptance|0]%"
+							}
+							
+							### RELIGIOUS ACCEPTANCE ###
+							text_label_left = {
+								text = "Faith: [County.GetFaith.GetNameNoTooltip]"
+							}
+							
+							divider_light = {
+								layoutpolicy_horizontal = expanding
+							}
+						}
+						
+						##################################################
+						### COMMIT 4C/4: HOLDINGS NAVIGATION ###
+						##################################################
+						
+						### HOLDINGS NAVIGATION SECTION ###
+						vbox = {
+							name = "holding_navigation_ocr"
+							layoutpolicy_horizontal = expanding
+							spacing = 5
+							margin = { 5 5 }
+							
+							text_label_left = {
+								text = "Holdings in [HoldingView.GetCountyTitle.GetNameNoTooltip]:"
+								layoutpolicy_horizontal = expanding
+							}
+							
+							### HOLDINGS LIST ###
+							vbox = {
+								datamodel = "[County.GetProvinces]"
+								layoutpolicy_horizontal = expanding
+								spacing = 3
+								
+								item = {
+									button_text = {
+										datacontext = "[Province.GetHolding]"
+										layoutpolicy_horizontal = expanding
+										onclick = "[OpenGameViewData('holding_view', Province.Self)]"
+										shortcut = "next"
+										enabled = "[Not(Holding.IsEmpty)]"
+										visible = "[Not(Holding.IsEmpty)]"
+										
+										blockoverride "text" {
+											text = "[Holding.GetNameNoTooltip]"
+										}
+										
+										blockoverride "extra" {
+											text_single = {
+												raw_text = "([Holding.GetType.GetName])"
+											}
+											
+											text_single = {
+												visible = "[Province.HasConstructions]"
+												raw_text = "- Building in progress"
+											}
+										}
+										
+										tooltip = "[Holding.GetType.GetName] of [Province.GetName]"
+									}
+								}
+							}
+							
+							divider_light = {
+								layoutpolicy_horizontal = expanding
+							}
+						}
+						
+						##################################################
+						### COMMIT 4D/4: BUILDINGS & INFRASTRUCTURE ###
+						##################################################
+						
+						### BUILDINGS SECTION ###
+						vbox = {
+							name = "buildings_ocr"
+							layoutpolicy_horizontal = expanding
+							spacing = 5
+							margin = { 5 5 }
+							
+							text_label_left = {
+								text = "Buildings in [Holding.GetNameNoTooltip]:"
+								layoutpolicy_horizontal = expanding
+							}
+							
+							### BUILDINGS LIST ###
+							vbox = {
+								datamodel = "[HoldingView.GetBuildings]"
+								layoutpolicy_horizontal = expanding
+								spacing = 3
+								
+								item = {
+									### COMPLETED BUILDINGS ###
+									vbox = {
+										visible = "[GUIBuildingItem.HasLevel]"
+										layoutpolicy_horizontal = expanding
+										spacing = 2
+										
+										text_label_left = {
+											visible = "[Not(GUIBuildingItem.IsConstructing)]"
+											text = "Building: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip], Level: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetLevel]"
+											layoutpolicy_horizontal = expanding
+										}
+										
+										### CONSTRUCTION IN PROGRESS ###
+										hbox = {
+											visible = "[GUIBuildingItem.IsConstructing]"
+											layoutpolicy_horizontal = expanding
+											spacing = 5
+											
+											text_single = {
+												text = "Under Construction: [GUIBuildingItem.GetCurrentOrConstrucingBuilding.GetNameNoTooltip]"
+												layoutpolicy_horizontal = expanding
+											}
+											
+											text_single = {
+												text = "[Multiply_CFixedPoint(GUIBuildingItem.GetConstructingProgress, '(CFixedPoint)100')|0]% completed"
+											}
+											
+											tooltip = "BUILDING_CONSTRUCTION_PROGRESS_TOOLTIP"
+										}
+									}
+									
+									### EMPTY BUILDING SLOTS ###
+									button_text = {
+										visible = "[And(GUIBuildingItem.IsBuildNewIconShown, Not(GUIBuildingItem.HasLevel))]"
+										layoutpolicy_horizontal = expanding
+										onclick = "[GUIBuildingItem.OnClick]"
+										enabled = "[GUIBuildingItem.IsBuildingButtonEnabled]"
+										
+										blockoverride "text" {
+											text = "Empty Slot Available - Press Enter to build"
+										}
+										
+										tooltip = "[GUIBuildingItem.GetTooltip]"
+									}
+								}
+							}
+							
+							### BUILD NEW BUILDING BUTTON ###
+							button_text = {
+								visible = "[HoldingView.HasEmptyBuildingSlot]"
+								layoutpolicy_horizontal = expanding
+								onclick = "[HoldingView.OpenBuildingConstructionView]"
+								enabled = "[HoldingView.CanBuildNewBuilding]"
+								
+								blockoverride "text" {
+									text = "Construct New Building"
+								}
+								
+								tooltip = "BUILD_NEW_BUILDING_TOOLTIP"
+							}
+							
+							divider_light = {
+								layoutpolicy_horizontal = expanding
+							}
+						}
+						
+						### PROVINCE AND TITLE INFO ###
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							spacing = 3
+							margin = { 5 5 }
+							
+							text_label_left = {
+								text = "Province: [Province.GetName]"
+							}
+							
+							text_label_left = {
+								visible = "[Province.HasActiveSiege]"
+								text = "SIEGE IN PROGRESS"
+								default_format = "#high"
+							}
+							
+							text_label_left = {
+								visible = "[HoldingView.GetCountyTitle.IsOccupied]"
+								text = "COUNTY OCCUPIED"
+								default_format = "#high"
+							}
+							
+							divider_light = {
+								layoutpolicy_horizontal = expanding
+							}
+						}
+						
+						### HOLDING ACTIONS ###
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							spacing = 3
+							margin = { 5 5 }
+							
+							text_label_left = {
+								text = "Available Actions:"
+								layoutpolicy_horizontal = expanding
+							}
+							
+							### GRANT HOLDING ###
+							button_text = {
+								visible = "[HoldingView.CanGrantTitle]"
+								layoutpolicy_horizontal = expanding
+								onclick = "[HoldingView.OpenGrantTitleView]"
+								enabled = "[HoldingView.CanGrantTitle]"
+								
+								blockoverride "text" {
+									text = "Grant Holding"
+								}
+								
+								tooltip = "GRANT_TITLE_TOOLTIP"
+							}
+							
+							### MOVE REALM CAPITAL ###
+							button_text = {
+								visible = "[HoldingView.CanMoveRealmCapital]"
+								layoutpolicy_horizontal = expanding
+								onclick = "[HoldingView.MoveRealmCapital]"
+								enabled = "[HoldingView.CanMoveRealmCapital]"
+								
+								blockoverride "text" {
+									text = "Move Realm Capital"
+								}
+								
+								tooltip = "MOVE_REALM_CAPITAL_TOOLTIP"
+							}
+							
+							### CONVERT HOLDING TYPE ###
+							button_text = {
+								visible = "[HoldingView.CanConvertHolding]"
+								layoutpolicy_horizontal = expanding
+								onclick = "[HoldingView.OpenConvertHoldingView]"
+								enabled = "[HoldingView.CanConvertHolding]"
+								
+								blockoverride "text" {
+									text = "Convert Holding Type"
+								}
+								
+								tooltip = "CONVERT_HOLDING_TOOLTIP"
+							}
+							
+							divider_light = {
+								layoutpolicy_horizontal = expanding
+							}
+						}
+						
+						### ADJACENT COUNTIES ###
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							spacing = 3
+							margin = { 5 5 }
+							
+							text_label_left = {
+								text = "Adjacent Counties:"
+								layoutpolicy_horizontal = expanding
+							}
+							
+							text_label_left = {
+								text = "Use Z/X to navigate adjacent counties"
+								layoutpolicy_horizontal = expanding
+							}
+							
+							### ADJACENT COUNTIES LIST ###
+							vbox = {
+								datamodel = "[Province.MakeScope.GetList('adjacent_counties')]"
+								layoutpolicy_horizontal = expanding
+								spacing = 2
+								
+								item = {
+									button_text = {
+										datacontext = "[Scope.Title]"
+										layoutpolicy_horizontal = expanding
+										onclick = "[OpenGameViewData('holding_view', Title.GetProvince.Self)]"
+										
+										blockoverride "text" {
+											text = "[Title.GetBaseNameNoTierNoTooltip]"
+										}
+										
+										blockoverride "extra" {
+											text_single = {
+												datacontext = "[Title.GetHolder]"
+												visible = "[Not(ObjectsEqual(Character.Self, GetPlayer))]"
+												raw_text = "held by [Character.GetFirstNameNoTooltip]"
+											}
+											
+											text_single = {
+												visible = "[ObjectsEqual(Title.GetHolder, GetPlayer)]"
+												raw_text = "your county"
+											}
+										}
+										
+										tooltip = "[Title.GetHolder.GetFirstNameNoTooltip]'s [Title.GetBaseNameNoTierNoTooltip]"
+									}
+								}
+							}
+						}
+						
+						expand = {}
+					}
+				}
+			}
+		}
+	}
 
 
 
