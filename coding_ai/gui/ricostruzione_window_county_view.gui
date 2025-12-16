@@ -82,6 +82,7 @@ window = {
 		on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
 		on_finish = "[Clear('county_tabs')]"
 		on_finish = "[Clear('holding_tabs')]"
+		on_finish = "[Clear('ocr_section')]"
 		on_finish = "[ClickAdd('last_view', GetPlayer, Province)]"
 		on_finish = "[Clear('hide_grant_titles')]"
 		
@@ -132,9 +133,10 @@ window = {
 		parentanchor = bottom|left
 		alwaystransparent = yes
 		
-		# Initialize default section on show
+		# Initialize default section on show (clear first to avoid stale state)
 		state = {
 			name = _show
+			on_start = "[GetVariableSystem.Clear('ocr_section')]"
 			on_start = "[GetVariableSystem.Set('ocr_section', 'overview')]"
 		}
 		
