@@ -996,6 +996,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 								size = { 0 30 }
 								onclick = "[GetVariableSystem.Set('ocr_section', 'buildable')]"
+								onclick = "[HoldingView.OpenBuildingConstructionView]"
 								shortcut = "map_mode_7"
 								
 								hbox = {
@@ -3404,6 +3405,182 @@ window = {
 													onclick = "[HoldingView.CloseSubwindows]"
 													text = "CONSTRUCT"
 													using = tooltip_es
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					
+					##############################################
+					# WIDGET OCR (Modalità NON VEDENTE)
+					##############################################
+					
+					vbox = {
+						visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+						name = "ocr_tracks_content"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						alwaystransparent = no
+						margin = { 10 10 }
+						margin_bottom = 15
+						using = Window_Background_Subwindow
+						
+						header_pattern = {
+							layoutpolicy_horizontal = expanding
+							
+							blockoverride "header_text" {
+								text = "[HoldingView.GetTracksViewLabel]"
+								using = Font_Size_Medium
+							}
+							
+							blockoverride "button_close" {
+								onclick = "[HoldingView.CloseSubwindows]"
+							}
+						}
+						
+						vbox = {
+							spacing = 8
+							margin = { 10 10 }
+							layoutpolicy_vertical = expanding
+							
+							text_single = {
+								name = "prompt"
+								layoutpolicy_horizontal = shrinking
+								text = "[HoldingView.GetTracksViewPrompt]"
+								margin_bottom = 10
+							}
+							
+							text_single = {
+								name = "no_potential_buildings"
+								layoutpolicy_horizontal = shrinking
+								visible = "[IsDataModelEmpty(HoldingView.GetPotentialBuildings)]"
+								text = "NO_POTENTIAL_BUILDINGS_WARNING"
+								margin_bottom = 15
+							}
+							
+							scrollbox = {
+								name = "buildable_list"
+								visible = "[Not(IsDataModelEmpty(HoldingView.GetPotentialBuildings))]"
+								size = { 0 350 }
+								autoresizescrollarea = yes
+								
+								blockoverride "scrollbox_content" {
+									datamodel = "[HoldingView.GetPotentialBuildings]"
+									spacing = 12
+									setparentsizetominimum = yes
+									
+									item = {
+										vbox = {
+											layoutpolicy_horizontal = expanding
+											spacing = 8
+											margin = { 5 5 }
+											background = {
+												using = Background_Area_Light
+												margin = { 3 3 }
+											}
+											
+											# Building name and icon
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												spacing = 10
+												margin = { 5 5 }
+												
+												icon = {
+													size = { 35 35 }
+													texture = "[GUIPotentialBuildingItem.GetBuilding.GetTypeIcon]"
+												}
+												
+												text_single = {
+													text = "[GUIPotentialBuildingItem.GetBuilding.GetTypeName]"
+													layoutpolicy_horizontal = expanding
+													align = left
+													using = Font_Size_Medium
+												}
+												
+												expand = {}
+											}
+											
+											# Costs
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												spacing = 10
+												margin_left = 10
+												
+												text_single = {
+													datacontext = "[GUIPotentialBuildingItem.GetGoldCost]"
+													visible = "[GUIPotentialBuildingItem.HasGoldCost]"
+													text = "[ValueBreakdown.GetValue] Gold"
+													tooltipvisible = "[ValueBreakdown.HasTooltip]"
+													tooltipwidget = {
+														widget_value_breakdown_tooltip = {}
+													}
+													using = Font_Size_Small
+												}
+												
+												text_single = {
+													datacontext = "[GUIPotentialBuildingItem.GetPrestigeCost]"
+													visible = "[GUIPotentialBuildingItem.HasPrestigeCost]"
+													text = "[ValueBreakdown.GetValue] Prestige"
+													tooltipvisible = "[ValueBreakdown.HasTooltip]"
+													tooltipwidget = {
+														widget_value_breakdown_tooltip = {}
+													}
+													using = Font_Size_Small
+												}
+												
+												text_single = {
+													datacontext = "[GUIPotentialBuildingItem.GetPietyCost]"
+													visible = "[GUIPotentialBuildingItem.HasPietyCost]"
+													text = "[ValueBreakdown.GetValue] Piety"
+													tooltipvisible = "[ValueBreakdown.HasTooltip]"
+													tooltipwidget = {
+														widget_value_breakdown_tooltip = {}
+													}
+													using = Font_Size_Small
+												}
+												
+												text_single = {
+													datacontext = "[GUIPotentialBuildingItem.GetConstructionTime]"
+													text = "[ValueBreakdown.GetValue]"
+													tooltipvisible = "[ValueBreakdown.HasTooltip]"
+													tooltipwidget = {
+														widget_value_breakdown_tooltip = {}
+													}
+													using = Font_Size_Small
+												}
+												
+												expand = {}
+											}
+											
+											# Action buttons
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												spacing = 10
+												margin = { 5 5 }
+												
+												button_standard = {
+													text = "Details (D)"
+													size = { 120 30 }
+													onclick = "[GUIPotentialBuildingItem.ShowDetails]"
+													tooltip = "View building details and effects"
+													using = Font_Size_Small
+													shortcut = "mapmode_house_secondary"
+												}
+												
+												button_standard = {
+													text = "Construct (Enter)"
+													layoutpolicy_horizontal = expanding
+													size = { 0 30 }
+													enabled = "[GUIPotentialBuildingItem.CanConstruct]"
+													tooltip = "[GUIPotentialBuildingItem.GetTooltip]"
+													onclick = "[GUIPotentialBuildingItem.Construct]"
+													onclick = "[HoldingView.CloseSubwindows]"
+													using = tooltip_es
+													using = Font_Size_Small
+													shortcut = "confirm"
 												}
 											}
 										}
