@@ -1,0 +1,394 @@
+### ============================================
+### DUAL MODE IMPLEMENTATION GUIDE
+### File: window_county_view.gui
+### Purpose: Add OCR/Vanilla mode toggle system
+### ============================================
+
+### INSTRUCTION FOR GITHUB COPILOT:
+### This file contains the implementation guide for adding dual-mode support
+### to window_county_view.gui. Follow the tasks sequentially.
+### DO NOT modify existing OCR logic - only wrap it in containers.
+
+### ============================================
+### TASK 1: ADD TOGGLE SYSTEM
+### Location: After state blocks, before first widget (around line 70)
+### ============================================
+
+### INSERT THIS CODE AFTER: state = { name = _hide ... }
+### AND BEFORE: widget = { size = { 0 0 } scissor = yes
+
+### ============================================
+### DUAL MODE TOGGLE SYSTEM - START
+### ============================================
+
+# Invisible hotkey button to toggle between OCR and Vanilla modes
+button = {
+	size = { 0 0 }
+	visible = no
+	shortcut = "toggle_beta"  # Shift+F11
+	onclick = "[GetVariableSystem.Toggle('vanilla_mode')]"
+	tooltip = "Toggle between OCR mode (text-based for screen readers) and Vanilla mode (graphical interface). Current: [Select_CString(GetVariableSystem.Exists('vanilla_mode'), 'Vanilla', 'OCR')]"
+}
+
+# State to initialize OCR mode as default on window open
+state = {
+	name = dual_mode_initialization
+	trigger_on_create = yes
+	on_start = "[GetVariableSystem.Clear('vanilla_mode')]"
+	on_start = "[GetVariableSystem.Set('ocr_mode_active', 'true')]"
+}
+
+# Optional: State to handle mode transitions
+state = {
+	name = mode_toggle
+	on_start = "[PdxGuiTriggerAllAnimations('mode_switch')]"
+}
+
+### ============================================
+### DUAL MODE TOGGLE SYSTEM - END
+### ============================================
+
+### ============================================
+### TASK 2A: WRAP OCR CONTENT - OPENING
+### Location: After error_button, before first content vbox (around line 115)
+### ============================================
+
+### INSERT THIS CODE AFTER:
+###     error_button = {
+###         layoutpolicy_horizontal = expanding
+###     }
+### AND BEFORE:
+###     vbox = {
+###         layoutpolicy_horizontal = expanding
+###         layoutpolicy_vertical = expanding
+###         visible = "[GetScriptedGui('is_land').IsShown( GuiScope.SetRoot( Province.MakeScope ).End )]"
+
+### ============================================
+### OCR MODE CONTAINER - START
+### This container wraps ALL existing OCR content
+### Visible ONLY when vanilla_mode is NOT set (default)
+### ============================================
+
+container = {
+	name = "ocr_mode_container"
+	visible = "[Not(GetVariableSystem.Exists('vanilla_mode'))]"
+	
+	state = {
+		name = mode_switch
+		using = Animation_FadeIn_Quick
+	}
+	
+	# Optional: Mode indicator for debugging
+	widget = {
+		size = { 150 30 }
+		position = { 10 10 }
+		parentanchor = top|left
+		visible = "[GetVariableSystem.Exists('ocr_mode_debug')]"
+		
+		background = {
+			using = Background_Area_Dark
+			alpha = 0.7
+			margin = { 5 2 }
+		}
+		
+		text_single = {
+			parentanchor = center
+			text = "OCR MODE ACTIVE"
+			default_format = "#high"
+			fontsize = 12
+		}
+	}
+	
+	### ============================================
+	### ALL EXISTING OCR CONTENT GOES BELOW THIS LINE
+	### DO NOT MODIFY OCR CODE - JUST ADD ONE INDENT LEVEL
+	### ============================================
+
+### NOTE: The existing vbox with visible="[GetScriptedGui('is_land')...]" becomes a child of this container
+### All content from BLOCCO 1/10 through BLOCCO 10/10 should be indented by ONE TAB
+
+### ============================================
+### TASK 2B: WRAP OCR CONTENT - CLOSING
+### Location: End of OCR content, in BLOCCO 10/10, before final vbox closure
+### ============================================
+
+### FIND THE END OF YOUR OCR CONTENT (around end of file):
+###                 } # Fine scrollbox
+###             } # Fine vbox is_land
+### INSERT CLOSING BRACKET HERE:
+
+	} # Fine vbox is_land (existing)
+	
+} # Fine container ocr_mode_container
+
+### ============================================
+### OCR MODE CONTAINER - END
+### ============================================
+
+### ============================================
+### TASK 3: ADD VANILLA MODE CONTAINER (PLACEHOLDER)
+### Location: Immediately after OCR container closing (TASK 2B)
+### ============================================
+
+### INSERT THIS CODE AFTER the closing of ocr_mode_container
+### AND BEFORE the final closing of vbox window_content
+
+### ============================================
+### VANILLA MODE CONTAINER - START
+### Placeholder for future graphical implementation
+### Visible ONLY when vanilla_mode IS set
+### ============================================
+
+container = {
+	name = "vanilla_mode_container"
+	visible = "[GetVariableSystem.Exists('vanilla_mode')]"
+	
+	state = {
+		name = mode_switch
+		using = Animation_FadeIn_Quick
+	}
+	
+	# Placeholder UI - Replace this with actual vanilla implementation later
+	vbox = {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		margin = { 50 50 }
+		spacing = 30
+		
+		# Spacer
+		expand = {}
+		
+		# Header
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 10
+			
+			text_label_center = {
+				text = "VANILLA MODE"
+				default_format = "#high"
+				fontsize = 32
+			}
+			
+			widget = {
+				size = { 200 3 }
+				parentanchor = hcenter
+				background = {
+					using = Background_Area_Border
+				}
+			}
+		}
+		
+		# Info message
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 20
+			margin = { 50 20 }
+			
+			text_multi = {
+				layoutpolicy_horizontal = expanding
+				autoresize = yes
+				max_width = 700
+				align = center
+				default_format = "#weak"
+				fontsize = 18
+				text = "Graphical (Vanilla) mode is currently under development.\n\nThis mode will display the original CK3 county view interface with:"
+			}
+			
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 8
+				margin_left = 100
+				
+				text_single = {
+					text = "• Visual portraits and character icons"
+					default_format = "#weak"
+					fontsize = 16
+				}
+				
+				text_single = {
+					text = "• Graphical building representations"
+					default_format = "#weak"
+					fontsize = 16
+				}
+				
+				text_single = {
+					text = "• Interactive tooltips and hover effects"
+					default_format = "#weak"
+					fontsize = 16
+				}
+				
+				text_single = {
+					text = "• Original CK3 UI styling and animations"
+					default_format = "#weak"
+					fontsize = 16
+				}
+			}
+		}
+		
+		# Spacer
+		expand = {}
+		
+		# Instructions
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 10
+			
+			widget = {
+				size = { 400 2 }
+				parentanchor = hcenter
+				background = {
+					using = Background_Area_Border
+					alpha = 0.3
+				}
+			}
+			
+			text_single = {
+				parentanchor = hcenter
+				text = "Press [Shift+F11] to return to OCR mode"
+				default_format = "#I"
+				fontsize = 20
+			}
+			
+			text_single = {
+				parentanchor = hcenter
+				text = "(Text-based interface for screen readers)"
+				default_format = "#weak"
+				fontsize = 14
+			}
+		}
+		
+		# Spacer
+		expand = {}
+		
+		# Debug info (visible only with debug flag)
+		container = {
+			visible = "[GetVariableSystem.Exists('ocr_mode_debug')]"
+			
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				margin = { 20 10 }
+				spacing = 5
+				
+				background = {
+					using = Background_Area_Dark
+					alpha = 0.5
+					margin = { 10 5 }
+				}
+				
+				text_single = {
+					text = "DEBUG INFO"
+					default_format = "#high"
+					fontsize = 12
+				}
+				
+				text_single = {
+					text = "vanilla_mode variable: SET"
+					default_format = "#weak"
+					fontsize = 10
+				}
+				
+				text_single = {
+					text = "Toggle: Shift+F11 (toggle_beta)"
+					default_format = "#weak"
+					fontsize = 10
+				}
+			}
+		}
+	}
+}
+
+### ============================================
+### VANILLA MODE CONTAINER - END
+### ============================================
+
+### ============================================
+### IMPLEMENTATION COMPLETE
+### ============================================
+
+### FINAL STRUCTURE SHOULD BE:
+### window = {
+###     ... states ...
+###     
+###     [TASK 1] button + states (toggle system)
+###     
+###     widget (window controls)
+###     
+###     vbox window_content {
+###         error_button
+###         
+###         [TASK 2A] container ocr_mode_container {
+###             ... all existing OCR content (BLOCCO 1-10) ...
+###         [TASK 2B] } # end ocr container
+###         
+###         [TASK 3] container vanilla_mode_container {
+###             ... placeholder UI ...
+###         } # end vanilla container
+###         
+###     } # end vbox window_content
+### } # end window
+
+### ============================================
+### TESTING CHECKLIST
+### ============================================
+
+### Test 1: Default Behavior
+### - Open county view → Should show OCR mode by default
+### - Verify all OCR buttons work (E, H, T, A shortcuts)
+### - Verify scrollbox navigation works
+
+### Test 2: Toggle to Vanilla
+### - Press Shift+F11 → Should show "VANILLA MODE" placeholder
+### - Verify OCR content is hidden
+### - Check error.log for any GUI errors
+
+### Test 3: Toggle back to OCR
+### - Press Shift+F11 again → Should return to OCR mode
+### - Verify all functionality restored
+### - Test multiple counties
+
+### Test 4: Performance
+### - Open/close 10 different counties
+### - Toggle mode multiple times
+### - Verify FPS remains stable
+### - Check memory usage
+
+### ============================================
+### NOTES FOR FUTURE VANILLA IMPLEMENTATION
+### ============================================
+
+### When implementing vanilla mode:
+### 1. Replace the placeholder vbox in vanilla_mode_container
+### 2. Copy original CK3 county view GUI code
+### 3. Add portraits, icons, and graphical elements
+### 4. Maintain same datacontext structure as OCR mode
+### 5. Test both modes independently
+### 6. Consider adding transition animations
+
+### Suggested vanilla content structure:
+### vbox = {
+###     hbox { # Header with title, portrait, CoA }
+###     hbox { # Main content: buildings grid, stats, etc. }
+###     hbox { # Footer with actions buttons }
+### }
+
+### ============================================
+### DEBUGGING TIPS
+### ============================================
+
+### To enable debug mode:
+### In-game console: set_variable ocr_mode_debug true
+### This will show mode indicators in top-left corner
+
+### To manually switch modes:
+### set_variable vanilla_mode true   # Force vanilla
+### clear_variable vanilla_mode      # Force OCR
+
+### Common issues:
+### - Bracket mismatch → Check indentation carefully
+### - Container not visible → Check visible conditions
+### - Toggle not working → Verify shortcut definition
+### - Content overlap → Ensure only one container visible at a time
+
+### ============================================
+### END OF IMPLEMENTATION GUIDE
+### ============================================
