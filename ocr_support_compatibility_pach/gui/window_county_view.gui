@@ -65,6 +65,32 @@ window = {
 		using = Animation_FadeOut_BottomLeft
 	}
 
+	### ============================================
+	### DUAL MODE TOGGLE - Inizio
+	### ============================================
+
+	# Hotkey invisibile per switchare tra OCR e Vanilla mode
+	button = {
+		size = { 0 0 }
+		visible = no
+		shortcut = "toggle_beta"  # Shift+F11
+		onclick = "[GetVariableSystem.Toggle('vanilla_mode')]"
+		tooltip = "Toggle between OCR mode (for screen readers) and Vanilla mode (graphical)"
+	}
+
+	# State per notificare il cambio modalità
+	state = {
+		name = mode_changed
+		trigger_on_create = yes
+		on_start = "[GetVariableSystem.Set('ocr_mode', 'true')]"
+	}
+
+	### ============================================
+	### DUAL MODE TOGGLE - Fine
+	### ============================================
+
+
+
 	widget = {
 		size = { 0 0 }
 		scissor = yes
@@ -118,10 +144,8 @@ window = {
 
 ### ============================================
 ### BLOCCO 1/10 - FINE
-### PROSSIMO: BLOCCO 2 - Scrollbox Content Inizio
-### Incolla questo blocco in un file vuoto
-### Poi aggiungi BLOCCO 2 SOTTO (senza gap)
 ### ============================================
+
 
 
 ### ============================================
@@ -410,8 +434,6 @@ window = {
 
 ### ============================================
 ### BLOCCO 2/10 - FINE
-### PROSSIMO: BLOCCO 3 - County Info + Holder
-### Continua ESATTAMENTE sotto questo punto
 ### ============================================
 
 ### ============================================
@@ -723,8 +745,6 @@ window = {
 
 ### ============================================
 ### BLOCCO 3/10 - FINE
-### PROSSIMO: BLOCCO 4 - Distance + Building Info
-### Continua ESATTAMENTE sotto questo punto
 ### ============================================
 
 
@@ -1114,8 +1134,6 @@ window = {
 
 ### ============================================
 ### BLOCCO 4/10 - FINE
-### PROSSIMO: BLOCCO 5 - Holding Tab + Buildings
-### Continua ESATTAMENTE sotto questo punto
 ### ============================================
 
 
@@ -1610,8 +1628,6 @@ window = {
 
 ### ============================================
 ### BLOCCO 5/10 - FINE
-### PROSSIMO: BLOCCO 6 - Holder Info + Buildings Display
-### Continua ESATTAMENTE sotto questo punto
 ### ============================================
 
 
@@ -2113,8 +2129,6 @@ window = {
 
 ### ============================================
 ### BLOCCO 6/10 - FINE
-### PROSSIMO: BLOCCO 7 - County Info Tab + Tasks
-### Continua ESATTAMENTE sotto questo punto
 ### ============================================
 
 
@@ -2631,8 +2645,6 @@ window = {
 
 ### ============================================
 ### BLOCCO 7/10 - FINE
-### PROSSIMO: BLOCCO 8 - Available Tasks + Navigation
-### Continua ESATTAMENTE sotto questo punto
 ### ============================================
 
 
@@ -3124,8 +3136,6 @@ window = {
 
 ### ============================================
 ### BLOCCO 8/10 - FINE
-### PROSSIMO: BLOCCO 9 - Adjacent Counties Display
-### Continua ESATTAMENTE sotto questo punto
 ### ============================================
 
 
@@ -3593,8 +3603,6 @@ window = {
 
 ### ============================================
 ### BLOCCO 9/10 - FINE
-### PROSSIMO: BLOCCO 10 - Secondary Windows + Types
-### Continua ESATTAMENTE sotto questo punto
 ### ULTIMA SEZIONE!
 ### ============================================
 
@@ -4477,13 +4485,13 @@ window = {
 								size = { 35 35 }
 								raw_text = "HOLDING_SELECTION_VIEW_WRONG_HOLDING_TYPE"
 								alwaystransparent = yes
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+							} 
+						} 
+					} 
+				} 
+			} 
+		} 
+	} 
 
 	holding_type_selection_view_old = {}
 }
