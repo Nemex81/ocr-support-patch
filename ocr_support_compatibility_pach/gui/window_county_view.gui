@@ -138,7 +138,7 @@ window = {
 
 		container = {
 			name = "ocr_mode_container"
-			visible = "[Not(GetVariableSystem.Exists('vanilla_mode'))]"
+			visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 			
 			state = {
 				name = mode_switch
@@ -5054,7 +5054,7 @@ window = {
 
 	container = {
 		name = "vanilla_mode_container"
-		visible = "[GetVariableSystem.Exists('vanilla_mode')]"
+		visible = "[GetVariableSystem.Exists('ocr')]"
 		
 		state = {
 			name = mode_switch
