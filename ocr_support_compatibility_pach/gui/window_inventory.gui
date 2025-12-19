@@ -404,9 +404,9 @@ window = {
 								name = "artifact_sorting"
 								visible = "[Not( VariableSystem.Exists( 'claims' ) )]"
 								layoutpolicy_horizontal = expanding
-
+		
 								text_single = {
-									raw_text = "Sort by"
+									raw_text = "Srot by"
 								}
 		
 								dropdown_menu_standard = {
