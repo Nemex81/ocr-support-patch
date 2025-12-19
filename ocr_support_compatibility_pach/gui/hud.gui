@@ -2279,6 +2279,7 @@ widget = {
 			name = _show
 			using = Animation_Curve_Default
 			duration = 0.15
+			#position = {-50 -650 }
 			position = {0 0 }
 			alpha = 1
 		}
@@ -2310,27 +2311,27 @@ widget = {
 
 	# pulsante icona inventario
 	widget = {
-		visible = "[And(GetPlayer.IsValid, Not(IsPauseMenuShown) )]"
-		size = { 95 95 }
-
+		size = { 60 60 }
+		
 		button_open_inventory = {
 			name = "open_inventory_tutorial_uses_this"
 			using = tooltip_ne
-			size = { 95 95 }
-			position = { 50 600}
-			datacontext = "[GetPlayer]"
+			position = { 55 555 }
+			size = { 60 60 }
+			datacontext = GetPlayer
+			
 			blockoverride "highlight_icon_size" {
-				size = { 50 50 }
+				size = { 40 40 }
+			}
+			
+			widget_new_artifacts = {
+				position = { 6 2 }
+				parentanchor = bottom_right
+				visible = "[Or(GreaterThan_int32(LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory('inventory'), '(int32)0'), And(Not(GetPlayer.HasRoyalCourt), GreaterThan_int32(LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory('court'), '(int32)0')))]"
 			}
 		}
-
-		widget_new_artifacts = {
-			#position = { 10 2 }
-			position = { 50 500}
-			parentanchor = bottom|right
-			visible = "[Or( GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'inventory' ), '(int32)0' ), And( Not( GetPlayer.HasRoyalCourt ), GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' ) ) )]"
-		}
 	}
+
 
 	# ocr
 	empty_screen = {

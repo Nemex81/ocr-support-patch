@@ -5571,15 +5571,18 @@ window = {
 
 window = {
 	name = "holding_tracks_view_ocr"
+	alwaystransparent = yes
 	size = { 100% 100% }
+	visible = yes
 	movable = no
 	layer = top
+
 	datamodel = "[HoldingView.GetPotentialBuildings]"
 	datacontext = "[HoldingView.GetHolder]"
 	datacontext = "[HoldingView.GetProvince]"
 	datacontext = "[HoldingView.GetHolding]"
 	datacontext = "[Province.GetCounty]"
-	alwaystransparent = yes
+	datacontext = "[GetVariableSystem]"
 
 	window_ocr = {
 
@@ -5594,10 +5597,11 @@ window = {
 					text = "[HoldingView.GetTracksViewLabel]"
 				}
 
-				blockoverride "button_close"
-				{
-					onclick = "[HoldingView.CloseSubwindows]"
-				}
+			blockoverride "button_close" {
+				onclick = "[HoldingView.CloseSubwindows]"
+				onclick = "[GetVariableSystem.Clear('show_tracks_ocr')]"  # ✅ AGGIUNGI
+			}
+
 			}
 		}
 		blockoverride "ocr_content" {
@@ -6335,6 +6339,7 @@ window = {
 
 }
 
+# versione originale vanilla per normo vedenti
 window = {
 	name = "holding_tracks_view"
 	size = { 100% 100% }
