@@ -1,6 +1,7 @@
 window = {
 	name = "inventory_view"
 	widgetid = "inventory_view"
+	size = { 100% 100% }
 	visible = "[And( InventoryView.IsVisible, Not(IsGameViewOpen('barbershop')) )]"
 	layer = windows_layer
 	movable = no
@@ -14,14 +15,13 @@ window = {
 		using = Animation_FadeIn_Standard
 		on_start = "[GetVariableSystem.Clear( 'court_artifacts' )]"
 		on_start = "[GetVariableSystem.Clear( 'claims' )]"
-		on_start = "[GetVariableSystem.Clear( 'artifact_filters' )]"
 	}
 
 	state = {
 		name = _hide
 		using = Animation_FadeOut_Standard
 		on_finish = "[AccessLocalPlayerCachedData.AccessNewArtifacts.ClearNewArtifactsOfCategory( 'inventory' )]"
-		on_finish = "[GetVariableSystem.Clear( 'artifact_filters' )]"
+		on_finish = "[Clear('artifact_filters')]"
 	}
 
 	widget = {
