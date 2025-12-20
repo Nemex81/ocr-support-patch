@@ -25,1605 +25,1603 @@ window = {
 		on_finish = "[GetVariableSystem.Clear( 'artifact_filters' )]"
 	}
 
-	# modalità non vedenti
+	######################################################
+	# MODALITÀ NON VEDENTI (OCR)
+	# Contenuto ripristinato da window_inventory_ocr_support_originale.md
+	######################################################
 	widget = {
 		name = "inventory_view_ocr"
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		size = { 100% 100% }
-		#transparent = yes
 
-			vbox = {
-				#using = fullscreen_window
-				parentanchor = bottom|left
-				#using = base_ocr_window
-				using = ocr_margins
-				using = ocr
-				using = Window_Background_No_Edge
+		vbox = {
+			using = fullscreen_window
+			using = ocr_margins
+			using = ocr
+			using = Window_Background_No_Edge
 
-				header_pattern = {
+			header_pattern = {
+				layoutpolicy_horizontal = expanding
+
+				blockoverride "header_text"
+				{
+					text = ""
+				}
+
+				blockoverride "button_close"
+				{
+					onclick = "[InventoryView.Close]"
+				}
+
+				flowcontainer = {
 					layoutpolicy_horizontal = expanding
-		
-					blockoverride "header_text"
-					{
-						text = ""
+					ignoreinvisible = yes
+					visible = "[Not(GetVariableSystem.Exists('all_artifacts'))]"
+
+					button_text = {
+						blockoverride "text" {
+							raw_text = "INVENTORY_TITLE"
+						}
+						blockoverride "extra" {
+							text_single = {
+								margin_left = -3
+								raw_text = ","
+							}
+
+							text_single = {
+								raw_text = "[Inventory.GetNumOfArtifactInCategory( 'inventory' )] artifacts,"
+								datacontext = "[InventoryView.GetArtifactClaimsList]"
+							}
+						}
+
+						onclick = "[GetVariableSystem.Clear('claims')]"
+						onclick = "[GetVariableSystem.Clear('court_artifacts')]"
+						onclick = "[GetVariableSystem.Clear('all_artifacts')]"
 					}
-		
-					blockoverride "button_close"
-					{
-						onclick = "[InventoryView.Close]"
-					}
-		
-					flowcontainer = {
+
+					button_text = {
 						layoutpolicy_horizontal = expanding
-						ignoreinvisible = yes
-						visible = "[Not(GetVariableSystem.Exists('all_artifacts'))]"
-		
-						button_text = {
-						    blockoverride "text" {
-					        raw_text = "INVENTORY_TITLE"
-						    }
-							blockoverride "extra" {
-								text_single = {
-									margin_left = -3
-									raw_text = ","
-								}
-		
-								text_single = {
-									raw_text = "[Inventory.GetNumOfArtifactInCategory( 'inventory' )] artifacts,"
-									datacontext = "[InventoryView.GetArtifactClaimsList]"
-								}
+						visible = "[Not(Character.HasRoyalCourt)]"
+						datacontext = "[AccessLocalPlayerCachedData.AccessNewArtifacts]"
+						blockoverride "pre" {
+							text_single = {
+								visible = "[GreaterThan_int32( InventoryView.GetNumCourtArtifacts, '(int32)0' )]"
+								text = "[InventoryView.GetNumCourtArtifacts]"
 							}
-		
-							onclick = "[GetVariableSystem.Clear('claims')]"
-							onclick = "[GetVariableSystem.Clear('court_artifacts')]"
-							onclick = "[GetVariableSystem.Clear('all_artifacts')]"
 						}
-		
-						button_text = {
-							layoutpolicy_horizontal = expanding
-							visible = "[Not(Character.HasRoyalCourt)]"
-							datacontext = "[AccessLocalPlayerCachedData.AccessNewArtifacts]"
-							blockoverride "pre" {
-								text_single = {
-									visible = "[GreaterThan_int32( InventoryView.GetNumCourtArtifacts, '(int32)0' )]"
-									text = "[InventoryView.GetNumCourtArtifacts]"
-								}
-							}
-							blockoverride "text" {
-								raw_text = "Court Artifacts, tab 4."
-							}
-							blockoverride "extra" {
-								text_single = {
-									visible = "[Is('court_artifacts')]"
-									raw_text = "selected."
-								}
-							}
-							shortcut = speed_4
-							onclick = "[GetVariableSystem.Clear('claims')]"
-							onclick = "[VariableSystem.Set( 'court_artifacts', 'yes' )]"
-							onclick  = "[Clear('all_artifacts')]"
+						blockoverride "text" {
+							raw_text = "Court Artifacts, tab 4."
 						}
-		
-						button_text = {
-							layoutpolicy_horizontal = expanding
-							visible = "[Character.HasRoyalCourt]"
-							datacontext = "[AccessLocalPlayerCachedData.AccessNewArtifacts]"
-							blockoverride "pre" {
-								text_single = {
-									visible = "[GreaterThan_int32( InventoryView.GetNumCourtArtifacts, '(int32)0' )]"
-									text = "[InventoryView.GetNumCourtArtifacts]"
-								}
+						blockoverride "extra" {
+							text_single = {
+								visible = "[Is('court_artifacts')]"
+								raw_text = "selected."
 							}
-							blockoverride "text" {
-								raw_text = "Court Artifacts, control Q."
-							}
-							shortcut = map_mode_5
-							# onclick = "[VariableSystem.Set( 'artifacts_tab', 'artifacts' )]"
-							onclick = "[GetVariableSystem.Set('royal_details', 'artifacts')]"
-							onclick = "[Character.OpenRoyalCourtView( 'throne' )]"
-		
-							onclick = "[InventoryView.Close]"
-							onclick = "[LocalPlayerNewArtifacts.ClearNewArtifactsOfCategory( 'court' )]"
 						}
-		
-						button_text = {
-							datacontext = "[InventoryView.GetArtifactClaimsList]"
-							visible = "[DataModelHasItems(ArtifactClaimsList.GetClaims)]"
-							blockoverride "text" {
-								raw_text = "[GetDataModelSize(ArtifactClaimsList.GetClaims)] artifact claims, C."
-							}
-							shortcut = character_finder
-							onclick = "[VariableSystem.Set( 'claims', 'yes' )]"
-							onclick = "[VariableSystem.Clear( 'court_artifacts' )]"
-							onclick = "[GetVariableSystem.Clear('all_artifacts')]"
-						}
-		
-						button = {
-							visible = "[Is('claims')]"
-							shortcut = character_finder
-							using = close_window_ocr
-							onclick = "[Clear('claims')]"
-						}
-		
-						button_text = {
-							# visible = "[Isnt('artifact_filters')]"
-							datacontext = "[InventoryView.GetArtifactClaimsList]"
-							blockoverride "text" {
-								raw_text = "All existing artifacts, L."
-							}
-							shortcut = explore_legends
-							onclick = "[GetVariableSystem.Clear('claims')]"
-							onclick = "[VariableSystem.Clear( 'court_artifacts' )]"
-							onclick = "[GetVariableSystem.Set('all_artifacts', 'yes')]"
-							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-						}
+						shortcut = speed_4
+						onclick = "[GetVariableSystem.Clear('claims')]"
+						onclick = "[VariableSystem.Set( 'court_artifacts', 'yes' )]"
+						onclick  = "[Clear('all_artifacts')]"
 					}
-		
-					flowcontainer = {
-						ignoreinvisible = yes
-						visible = "[Is('all_artifacts')]"
-		
-						button_text = {
-							visible = "[GetVariableSystem.Exists('all_artifacts')]"
-							layoutpolicy_horizontal = expanding
-							blockoverride "text" {
-								raw_text = "[GetDataModelSize(GetPlayer.MakeScope.GetList('all_artifacts'))]"
-							}
-							blockoverride "extra" {
-								text_single = {
-									raw_text = "headgears."
-									visible = "[GetScriptedGui('filter_artifacts_helmet').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								}
-								text_single = {
-									raw_text = "regalia."
-									visible = "[GetScriptedGui('filter_artifacts_regalia').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								}
-								text_single = {
-									raw_text = "armor."
-									visible = "[GetScriptedGui('filter_artifacts_armor').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								}
-								text_single = {
-									raw_text = "weapons."
-									visible = "[GetScriptedGui('filter_artifacts_primary_armament').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								}
-								text_single = {
-									raw_text = "trinkets."
-									visible = "[GetScriptedGui('filter_artifacts_miscellaneous').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								}
-		
-								text_single = {
-									raw_text = "artifacts."
-									visible = "[GetScriptedGui('filter_artifacts_all').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								}
-							}
-							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-							shortcut = map_mode_11
-		
-							datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
-							datacontext = "[GetScriptedGui('all_artifacts_page')]"
-							using = sgui_click_reset
-		
-							button = {
-								using = close_window_ocr
-								shortcut = explore_legends
-								onclick = "[GetVariableSystem.Clear('all_artifacts')]"
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						visible = "[Character.HasRoyalCourt]"
+						datacontext = "[AccessLocalPlayerCachedData.AccessNewArtifacts]"
+						blockoverride "pre" {
+							text_single = {
+								visible = "[GreaterThan_int32( InventoryView.GetNumCourtArtifacts, '(int32)0' )]"
+								text = "[InventoryView.GetNumCourtArtifacts]"
 							}
 						}
-		
-						button_text = {
-							onclick = "[GetScriptedGui('filter_artifacts_all').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-							blockoverride "text" {
-								raw_text = "Show All, Control F."
-							}
-							shortcut = map_mode_15
-							visible = "[Not(GetScriptedGui('filter_artifacts_all').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ))]"
-							datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
-							datacontext = "[GetScriptedGui('all_artifacts_page')]"
-							using = sgui_click_reset
+						blockoverride "text" {
+							raw_text = "Court Artifacts, control Q."
 						}
-		
-						button_text = {
-							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-							shortcut = map_mode_11
-		
-							datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
-							datacontext = "[GetScriptedGui('all_artifacts_page')]"
-							using = sgui_click_reset
-		
-							blockoverride "text" {
-								raw_text = "Refresh list, hotkey Shift E. Close with Escape."
-							}
+						shortcut = map_mode_5
+						# onclick = "[VariableSystem.Set( 'artifacts_tab', 'artifacts' )]"
+						onclick = "[GetVariableSystem.Set('royal_details', 'artifacts')]"
+						onclick = "[Character.OpenRoyalCourtView( 'throne' )]"
+
+						onclick = "[InventoryView.Close]"
+						onclick = "[LocalPlayerNewArtifacts.ClearNewArtifactsOfCategory( 'court' )]"
+					}
+
+					button_text = {
+						datacontext = "[InventoryView.GetArtifactClaimsList]"
+						visible = "[DataModelHasItems(ArtifactClaimsList.GetClaims)]"
+						blockoverride "text" {
+							raw_text = "[GetDataModelSize(ArtifactClaimsList.GetClaims)] artifact claims, C."
 						}
+						shortcut = character_finder
+						onclick = "[VariableSystem.Set( 'claims', 'yes' )]"
+						onclick = "[VariableSystem.Clear( 'court_artifacts' )]"
+						onclick = "[GetVariableSystem.Clear('all_artifacts')]"
+					}
+
+					button = {
+						visible = "[Is('claims')]"
+						shortcut = character_finder
+						using = close_window_ocr
+						onclick = "[Clear('claims')]"
+					}
+
+					button_text = {
+						# visible = "[Isnt('artifact_filters')]"
+						datacontext = "[InventoryView.GetArtifactClaimsList]"
+						blockoverride "text" {
+							raw_text = "All existing artifacts, L."
+						}
+						shortcut = explore_legends
+						onclick = "[GetVariableSystem.Clear('claims')]"
+						onclick = "[VariableSystem.Clear( 'court_artifacts' )]"
+						onclick = "[GetVariableSystem.Set('all_artifacts', 'yes')]"
+						onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
 					}
 				}
-		
-				vbox = {
-					layoutpolicy_horizontal = expanding
-					layoutpolicy_vertical = expanding
-		
-					error_button = {
-						layoutpolicy_horizontal = expanding
-					}
-		
-					# right side is other artifacts and claims
-					vbox = {
-						name = "right_side"
-						layoutpolicy_vertical = expanding
-						layoutpolicy_horizontal = expanding
-						visible = "[Not(GetVariableSystem.Exists('all_artifacts'))]"
-		
-						# button_standard = {
-						# 	text = "INVENTORY_TAB_CLAIMS_HIS_HER_MY"
-						# 	enabled = "[And( DataModelHasItems( ArtifactClaimsList.GetClaims ), Not( InventoryView.HasSelectedSlot ) )]"
-						# 	tooltip = "[SelectLocalization( DataModelHasItems( ArtifactClaimsList.GetClaims ), 'INVENTORY_TAB_CLAIMS_TOOLTIP', 'NO_ARTIFACT_CLAIMS' )]"
-						# }
-		
-		
-						hbox = {
-							name = "claims_top_bar"
-							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
-							layoutpolicy_horizontal = expanding
-		
-							button = {
-								using = close_window_ocr
-								onclick = "[GetVariableSystem.Clear('claims')]"
-							}
-						}
-		
-						vbox = {
-							name = "equip_artifacts_top_bar"
-							layoutpolicy_horizontal = expanding
-		
-							hbox = {
-								layoutpolicy_horizontal = expanding
-								spacing = 3
-								button_text = {
-									visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
-									shortcut = army_split_half
-									blockoverride "text" {
-										raw_text = "Filters, hotkey F."
-									}
-									onclick = "[GetVariableSystem.Toggle('artifact_filters')]"
-								}
-		
-								button_text = {
-									shortcut = map_mode_1
-									blockoverride "text" {
-										raw_text = "[Select_CString(GetVariableSystem.Exists('artifact_effects'), 'Show', 'Hide')] effects, hotkey E."
-									}
-									onclick = "[GetVariableSystem.Toggle('artifact_effects')]"
-								}
-		
-								button_text = {
-									shortcut = mapmode_house_secondary
-									blockoverride "text" {
-										raw_text = "[Select_CString(GetVariableSystem.Exists('artifact_desc'), 'Hide', 'Show')] descriptions, Shift D."
-									}
-									onclick = "[GetVariableSystem.Toggle('artifact_desc')]"
-								}
-		
-								text_single = {
-									raw_text = "Click an artifact to equip or unequip."
-									align = left
-									visible = "[And(InventoryView.GetCharacter.IsLocalPlayer, Not(VariableSystem.Exists( 'claims' )))]"
-								}
-		
-								expand = { }
-							}
-		
-							hbox = {
-								visible = "[GetVariableSystem.Exists('artifact_filters')]"
-								layoutpolicy_horizontal = expanding
-		
-								hbox = {
-									name = "artifact_slot_tabs"
-									visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
-									datamodel = "[InventoryView.GetUniqueInventorySlotTypes]"
-		
-									button_text = {
-								    blockoverride "text" {
-							        raw_text = "All [Inventory.GetNumOfArtifactInCategory( 'inventory' )] artifacts"
-								    }
-										blockoverride "extra" {
-											text_single = {
-												raw_text = ", Selected"
-												visible = "[And(Not( InventoryView.HasSelectedSlot ), Isnt('court_artifacts'))]"
-												align = left
-											}
-											dot = { }
-										}
-										onclick = "[InventoryView.ClearSelectedSlot]"
-									}
-		
-									item = {
-										button_text = {
-											shortcuts_list = {
-												blockoverride "click" {
-													onclick = "[InventoryView.OnClickSlotTypeTab( InventorySlotType.Self )]"
-												}
-											}
-											blockoverride "num" {
-												visible = "[LessThan_int32(PdxGuiWidget.GetIndexInDataModel, '(int32)5')]"
-											}
-									    blockoverride "text" {
-									        raw_text = "[InventorySlotType.GetName]"
-									    }
-											blockoverride "extra" {
-												text_single = {
-													raw_text = ", [LocalPlayerNewArtifacts.GetNumNewArtifactsOfSlot( InventorySlotType.GetSlotTypeString )]"
-													visible = "[And( InventoryView.GetCharacter.IsLocalPlayer, GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfSlot( InventorySlotType.GetSlotTypeString ), '(int32)0' ) )]"
-												}
-												text_single = {
-													raw_text = ", Selected"
-													align = left
-													visible = "[InventoryView.SelectedSlotHasType( InventorySlotType.Self )]"
-												}
-												dot = { }
-											}
-											datacontext = "[AccessLocalPlayerCachedData.AccessNewArtifacts]"
-											datacontext = "[Inventory.GetSlot('crown')]"
-											onclick = "[InventoryView.OnClickSlotTypeTab( InventorySlotType.Self )]"
-											visible = "[InventorySlotType.IsInventoryType]"
-										}
-									}
-								}
-		
-								expand = { }
-							}
-							button_text = {
-								layoutpolicy_horizontal = expanding
-								shortcut = map_mode_11
-							    blockoverride "text" {
-							        raw_text = "[AddTextIf(GetVariableSystem.Exists('equipped'), 'Don\'t ')]Show only equipped, Shift E."
-							    }
-								visible = "[Not(GetVariableSystem.Exists('claims'))]"
-								onclick = "[GetVariableSystem.Toggle('equipped')]"
-							}
-						}
-		
-						vbox = {
-							name = "court_artifacts_top_bar"
-							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'court_artifacts' ) )]"
-							layoutpolicy_horizontal = expanding
-							margin = { 20 0 }
-							spacing = 5
-		
-		
-							hbox = {
-								layoutpolicy_horizontal = expanding
-		
-								text_multi_wide = {
-									layoutpolicy_horizontal = expanding
-									datacontext = "[InventoryView.GetCharacter]"
-									text = "CHARACTER_WITHOUT_ROYAL_COURT_COURT_ARTIFACT_TAB"
-								}
-		
-								expand = { }
-							}
-						}
-		
-						hbox = {
-							visible = "[GetVariableSystem.Exists('artifact_filters')]"
-							layoutpolicy_horizontal = expanding
-		
-							hbox = {
-								name = "artifact_sorting"
-								visible = "[Not( VariableSystem.Exists( 'claims' ) )]"
-								layoutpolicy_horizontal = expanding
-		
-								text_single = {
-									raw_text = "Srot by"
-								}
-		
-								dropdown_menu_standard = {
-									name = "sort_artifacts"
-		
-									blockoverride "dropdown_properties"
-									{
-										datamodel = "[InventoryView.GetArtifactSortOptions]"
-										onselectionchanged = "[InventoryView.SortArtifacts]"
-										selectedindex = "[InventoryView.GetArtifactSortOptionsIndex]"
-									}
-		
-									blockoverride "dropdown_active_item_properties"
-									{
-										text = "[Localize( CString.GetString )]"
-										margin_top = 5
-										margin_left = 3
-									}
-		
-									blockoverride "dropdown_item_properties"
-									{
-										text = "[Localize( CString.GetString )]"
-									}
-								}
-		
-								button_text = {
-									blockoverride "text" {
-										raw_text = "[Select_CString(InventoryView.IsArtifactSortOrderDescending, 'In descending', 'In ascending')] order."
-									}
-									onclick = "[InventoryView.ToggleArtifactSortOrder]"
-								}
-		
-								expand = { }
-							}
-						}
-		
-						hbox = { # claims sorting
-							name = "claim_sorting"
-							visible = "[VariableSystem.Exists( 'claims' )]"
-							layoutpolicy_horizontal = expanding
-		
-							datacontext = "[InventoryView.GetArtifactClaimsList]"
-		
-							dropdown_menu_standard = {
-								name = "sort_claims"
-		
-								blockoverride "dropdown_properties"
-								{
-									datamodel = "[ArtifactClaimsList.GetSortOptions]"
-									onselectionchanged = "[ArtifactClaimsList.SortClaims]"
-									selectedindex = "[ArtifactClaimsList.GetSortOptionsIndex]"
-								}
-		
-								blockoverride "dropdown_active_item_properties"
-								{
-									raw_text = "Sort by [Localize( CString.GetString )]."
-								}
-		
-								blockoverride "dropdown_item_properties"
-								{
-									raw_text = "[Localize( CString.GetString )]."
-								}
-							}
-		
-							button_text = {
-								blockoverride "text" {
-									raw_text = "[Select_CString(ArtifactClaimsList.IsSortOrderDescending, 'In descending', 'In ascending')] order."
-								}
-								onclick = "[ArtifactClaimsList.ToggleSortOrder]"
-							}
-		
-							expand = { }
-						}
-		
-						scrollbox = { # court artifacts
-							name = "court_artifacts"
-							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'court_artifacts' ) )]"
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-		
-							blockoverride "scrollbox_content" {
-								vbox = {
-									name = "artifacts_list"
-									datamodel = "[InventoryView.GetSortedArtifacts]"
-									layoutpolicy_horizontal = expanding
-		
-									item = {
-										widget_artifact_entry_ocr = {
-											layoutpolicy_horizontal = expanding
-											visible = "[Artifact.IsCourtArtifact]"
-											datacontext = "[InventoryView.GetCharacter.GetInventory]"
-											datacontext = "[InventoryView.GetSelectedSlot]"
-		
-											blockoverride "background_button_overrides"
-											{
-												alwaystransparent = yes
-												enabled = no
-											}
-		
-											blockoverride "portrait" {
-												expand = { minimumsize = { 0 0 } }
-											}
-										}
-									}
-								}
-							}
-		
-							blockoverride "scrollbox_empty"
-							{
-								visible = "[IsDataModelEmpty( InventoryView.GetSortedArtifacts )]"
-								text = "CHARACTER_HAS_NO_ARTIFACTS"
-							}
-						}
-		
-						scrollbox = { # artifact claims
-							name = "artifact_claims"
-							datacontext = "[InventoryView.GetArtifactClaimsList]"
-							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-		
-							blockoverride "scrollbox_content" {
-								vbox = {
-									name = "artifacts_list"
-									datamodel = "[ArtifactClaimsList.GetClaims]"
-									layoutpolicy_horizontal = expanding
-		
-									item = {
-										artifact_claim_ocr = {
-											layoutpolicy_horizontal = expanding
-											datacontext = "[ArtifactClaim.GetArtifact]"
-											datacontext = "[InventoryView.GetCharacter]"
-										}
-									}
-								}
-							}
-		
-							blockoverride "scrollbox_empty"
-							{
-								visible = "[IsDataModelEmpty( ArtifactClaimsList.GetClaims )]"
-								text = "CHARACTER_HAS_NO_CLAIMED_ARTIFACTS"
-							}
-						}
-		
-						scrollbox = { # artifact list
-							name = "artifacts"
-							visible = "[And( Not( VariableSystem.Exists( 'court_artifacts' ) ), Not( VariableSystem.Exists( 'claims' ) ))]"
-							layoutpolicy_vertical = expanding
-							layoutpolicy_horizontal = expanding
-		
-							blockoverride "scrollbox_content" {
-								vbox = {
-									name = "equippable_artifacts_list"
-									datamodel = "[InventoryView.GetSortedArtifacts]"
-									layoutpolicy_horizontal = expanding
-									spacing = 3
-		
-									text_single = {
-										visible = "[GreaterThan_int32(PdxGuiWidget.CountVisibleChildren, '(int32)1')]"
-										layoutpolicy_horizontal = expanding
-										raw_text = "[Subtract_int32(PdxGuiWidget.AccessParent.CountVisibleChildren, '(int32)1')] new artifacts:"
-									}
-		
-									item = {
-										widget_artifact_entry_ocr = {
-											name = "new_artifacts"
-											layoutpolicy_horizontal = expanding
-											datacontext = "[InventoryView.GetCharacter.GetInventory]"
-											datacontext = "[InventoryView.GetSelectedSlot]"
-											datacontext = "[InventoryView.GetSelectedSlot.GetType]"
-		
-											visible = "[And(And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) ), LocalPlayerNewArtifacts.IsNewArtifact( Artifact.Self ))]"
-		
-											using = tooltip_es
-		
-											blockoverride "background_button_overrides"
-											{
-												onclick = "[InventoryView.OnClickArtifact( Artifact.Self )]"
-												enabled = "[InventoryView.GetCharacter.IsLocalPlayer]"
-												down = "[Inventory.IsEquipped( Artifact.Self )]"
-											}
-		
-											blockoverride "portrait" {
-												expand = { minimumsize = { 0 0 } }
-											}
-										}
-									}
-								}
-		
-								vbox = {
-									datamodel = "[InventoryView.GetSortedArtifacts]"
-									layoutpolicy_horizontal = expanding
-									spacing = 3
-		
-									item = {
-										widget_artifact_entry_ocr = {
-											layoutpolicy_horizontal = expanding
-											datacontext = "[InventoryView.GetCharacter.GetInventory]"
-											datacontext = "[InventoryView.GetSelectedSlot]"
-											datacontext = "[InventoryView.GetSelectedSlot.GetType]"
-		
-											visible = "[And(And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) ), Not(LocalPlayerNewArtifacts.IsNewArtifact( Artifact.Self )))]"
-		
-											using = tooltip_es
-		
-											blockoverride "background_button_overrides"
-											{
-												onclick = "[InventoryView.OnClickArtifact( Artifact.Self )]"
-												enabled = "[InventoryView.GetCharacter.IsLocalPlayer]"
-												down = "[Inventory.IsEquipped( Artifact.Self )]"
-											}
-		
-											blockoverride "portrait" {
-												expand = { minimumsize = { 0 0 } }
-											}
-										}
-									}
-								}
-							}
-		
-							blockoverride "scrollbox_empty"
-							{
-								visible = "[Or( Not( Inventory.HasAnyInventoryArtifact ), And( InventoryView.HasSelectedSlot, Not( Inventory.HasArtifactsOfSlotType( InventoryView.GetSelectedSlot.GetType ) ) ) )]"
-								text = "CHARACTER_HAS_NO_ARTIFACTS"
-								layoutpolicy_horizontal = expanding
-							}
-						}
-		
-						vbox = {
-							layoutpolicy_horizontal = expanding
-							visible = "[Not(GetVariableSystem.Exists('claims'))]"
-		
-							char_name = {
-								layoutpolicy_horizontal = expanding
-								datacontext = "[InventoryView.GetCharacter.GetCharacterEmployedAs( 'antiquarian_court_position' )]"
-								visible = "[Character.IsValid]"
-								blockoverride "text" {
-									alwaystransparent = yes
-									raw_text = "[GetCourtPositionType( 'antiquarian_court_position' ).GetName]: [Character.GetNameNoTooltip]."
-								}
-							}
-		
-							button_text = {
-								layoutpolicy_horizontal = expanding
-								visible = "[And(InventoryView.GetCharacter.IsLocalPlayer, Not(Character.IsValid))]"
-								blockoverride "text" {
-									text = "PORTRAIT_NO_ANTIQUARIAN"
-								}
-								datacontext = "[InventoryView.GetCharacter.GetCharacterEmployedAs( 'antiquarian_court_position' )]"
-								onclick = "[ShowAppointCourtPositionIfNoEmployee( InventoryView.GetCharacter.GetID, 'antiquarian_court_position' )]"
-							}
-		
-							button_text = {
-								layoutpolicy_horizontal = expanding
-								blockoverride "text" {
-									raw_text = "[Decision.GetTitleForPlayer]. Enter."
-								}
-								name = "commission_decision"
-								datacontext = "[GetDecisionWithKey('commission_artifact_decision')]"
-								visible = "[And( Character.IsLocalPlayer, Decision.IsShownForPlayer )]"
-								# onclick = "[InventoryView.Close]"
-								onclick = "[OpenGameViewData( 'decision_detail', Decision.Self )]"
-								shortcut = confirm
-							}
-						}
-		
-					}
-		
-					vbox = {
-						layoutpolicy_horizontal = expanding
-						layoutpolicy_vertical = expanding
-		
+
+				flowcontainer = {
+					ignoreinvisible = yes
+					visible = "[Is('all_artifacts')]"
+
+					button_text = {
 						visible = "[GetVariableSystem.Exists('all_artifacts')]"
-		
-						vbox = {
-							visible = "[Not(GetVariableSystem.Exists('all_artifacts_filters'))]"
-							layoutpolicy_horizontal = expanding
-							button_text = {
-								layoutpolicy_horizontal = expanding
-								blockoverride "text" {
-									raw_text = "Sorted by [Select_CString(GetScriptedGui('sort_rarity').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'rarity', 'distance')]. Sort by [Select_CString(GetScriptedGui('sort_rarity').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'distance', 'rarity')]."
-								}
-								onclick = "[GetScriptedGui('sort_rarity').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-		
-								datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
-							  datacontext = "[GetScriptedGui('all_artifacts_page')]"
-								using = sgui_click_reset
+						layoutpolicy_horizontal = expanding
+						blockoverride "text" {
+							raw_text = "[GetDataModelSize(GetPlayer.MakeScope.GetList('all_artifacts'))]"
+						}
+						blockoverride "extra" {
+							text_single = {
+								raw_text = "headgears."
+								visible = "[GetScriptedGui('filter_artifacts_helmet').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
 							}
-		
-							hbox = {
-								layoutpolicy_horizontal = expanding
-		
-								spacing = 1
-		
-								text_single = {
-									raw_text = "Filter by type, use number keys:"
-								}
-		
-								button_text = {
-									onclick = "[GetScriptedGui('filter_artifacts_helmet').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									shortcut = speed_1
-		
-								    blockoverride "text" {
-								        raw_text = "Headgear 1"
-								    }
-									blockoverride "extra" {
-										text_single = {
-											visible = "[GetScriptedGui('filter_artifacts_helmet').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-											raw_text = ", Selected"
-											align = left
-										}
-										dot = { }
-									}
-								}
-		
-								button_text = {
-									onclick = "[GetScriptedGui('filter_artifacts_regalia').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									shortcut = speed_2
-		
-								    blockoverride "text" {
-								        raw_text = "Regalia 2"
-								    }
-									blockoverride "extra" {
-										text_single = {
-											visible = "[GetScriptedGui('filter_artifacts_regalia').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-											raw_text = ", Selected"
-											align = left
-										}
-										dot = { }
-									}
-								}
-		
-								button_text = {
-									onclick = "[GetScriptedGui('filter_artifacts_primary_armament').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									shortcut = speed_3
-		
-								    blockoverride "text" {
-								        raw_text = "Weapons 3"
-								    }
-									blockoverride "extra" {
-										text_single = {
-											visible = "[GetScriptedGui('filter_artifacts_primary_armament').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-											raw_text = ", Selected"
-											align = left
-										}
-										dot = { }
-									}
-								}
-		
-								button_text = {
-									onclick = "[GetScriptedGui('filter_artifacts_armor').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									shortcut = speed_4
-		
-								    blockoverride "text" {
-								        raw_text = "Armor 4"
-								    }
-									blockoverride "extra" {
-										text_single = {
-											visible = "[GetScriptedGui('filter_artifacts_armor').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-											raw_text = ", Selected"
-											align = left
-										}
-										dot = { }
-									}
-								}
-		
-								button_text = {
-									onclick = "[GetScriptedGui('filter_artifacts_miscellaneous').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-									shortcut = speed_5
-		
-								    blockoverride "text" {
-								        raw_text = "Trinkets 5"
-								    }
-									blockoverride "extra" {
-										text_single = {
-											visible = "[GetScriptedGui('filter_artifacts_miscellaneous').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-											raw_text = ", Selected"
-											align = left
-										}
-										dot = { }
-									}
-								}
-		
-								expand = { }
+							text_single = {
+								raw_text = "regalia."
+								visible = "[GetScriptedGui('filter_artifacts_regalia').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							}
+							text_single = {
+								raw_text = "armor."
+								visible = "[GetScriptedGui('filter_artifacts_armor').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							}
+							text_single = {
+								raw_text = "weapons."
+								visible = "[GetScriptedGui('filter_artifacts_primary_armament').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							}
+							text_single = {
+								raw_text = "trinkets."
+								visible = "[GetScriptedGui('filter_artifacts_miscellaneous').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							}
+
+							text_single = {
+								raw_text = "artifacts."
+								visible = "[GetScriptedGui('filter_artifacts_all').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
 							}
 						}
-		
-						hbox = {
-							layoutpolicy_horizontal = expanding
-		
-							visible = no#"[GetVariableSystem.Exists('all_artifacts_filters')]"
-							button = {
-								onclick = "[GetScriptedGui('filter_artifacts_all').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								shortcut = decrease_speed_2
-								visible = "[Not(GetScriptedGui('filter_artifacts_all').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ))]"
-							}
-		
-							button_text = {
-								onclick = "[GetScriptedGui('filter_artifacts_helmet').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								shortcut = speed_1
-							}
-		
-							button_text = {
-								onclick = "[GetScriptedGui('filter_artifacts_regalia').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								shortcut = speed_2
-							}
-		
-							button_text = {
-								onclick = "[GetScriptedGui('filter_artifacts_primary_armament').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								shortcut = speed_3
-							}
-		
-							button_text = {
-								onclick = "[GetScriptedGui('filter_artifacts_armor').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								shortcut = speed_4
-							}
-		
-							button_text = {
-								onclick = "[GetScriptedGui('filter_artifacts_miscellaneous').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								shortcut = speed_5
-							}
-		
-							expand = { }
+						onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						shortcut = map_mode_11
+
+						datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
+						datacontext = "[GetScriptedGui('all_artifacts_page')]"
+						using = sgui_click_reset
+
+						button = {
+							using = close_window_ocr
+							shortcut = explore_legends
+							onclick = "[GetVariableSystem.Clear('all_artifacts')]"
 						}
-		
-						# button_text = {
-						# 	layoutpolicy_horizontal = expanding
-						# 	blockoverride "text" {
-						# 		raw_text = "[Select_CString(GetVariableSystem.Exists('all_artifacts_filters'), 'Show', 'Hide')] filters, Shift D."
-						# 	}
-						# 	onclick = "[GetVariableSystem.Toggle('all_artifacts_filters')]"
-						# 	shortcut = mapmode_house_secondary
-						# }
-		
-						scrollbox = {
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-							blockoverride "scrollbox_margins" {
-								margin_top = 20
-							}
-		
-							blockoverride "scrollbox_content" {
-		
-								vbox_paged_list = {
-									blockoverride "page_index" {
-										datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
-									}
-								  datacontext = "[GetScriptedGui('all_artifacts_page')]"
-		
-								  blockoverride "full_datamodel" {
-								    datamodel = "[GetPlayer.MakeScope.GetList('all_artifacts')]"
-								  }
-								  blockoverride "vbox_contents" {
-		
-										fixedgridbox = {
-											addcolumn = 600
-											addrow = 45
-											layoutpolicy_horizontal = expanding
-											# layoutpolicy_vertical = expanding
-		
-											datamodel = "[PageModelGlobal(GetPlayer.MakeScope.GetList('all_artifacts'))]"
-		
-											item = {
-												widget = {
-													size = { 600 42 }
-													vbox = {
-														layoutpolicy_horizontal = expanding
-														spacing = -6
-														button_text = {
-															blockoverride "bg" { }
-															layoutpolicy_horizontal = expanding
-															datacontext = "[Scope.Artifact]"
-															onclick = "[ToggleGameViewData( 'artifact_details', Artifact.GetID )]"
-															blockoverride "pre" {
-																page_index = {}
-															}
-															blockoverride "text" {
-																raw_text = "[Artifact.GetNameNoTooltip], [AddTextIf(Artifact.IsUnique, 'Unique ')][Artifact.GetRarityAndType]."
-															}
-														}
-														char_name = {
-															blockoverride "bg" { }
-															layoutpolicy_horizontal = expanding
-															datacontext = "[Scope.Artifact.GetOwner]"
-															blockoverride "extra" {
-																text_single = {
-																	raw_text = "[Character.GetRelationToString( GetPlayer )]."
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-								  }
-								}
-							}
+					}
+
+					button_text = {
+						onclick = "[GetScriptedGui('filter_artifacts_all').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						blockoverride "text" {
+							raw_text = "Show All, Control F."
 						}
-		
-						expand = { }
+						shortcut = map_mode_15
+						visible = "[Not(GetScriptedGui('filter_artifacts_all').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ))]"
+						datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
+						datacontext = "[GetScriptedGui('all_artifacts_page')]"
+						using = sgui_click_reset
+					}
+
+					button_text = {
+						onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						shortcut = map_mode_11
+
+						datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
+						datacontext = "[GetScriptedGui('all_artifacts_page')]"
+						using = sgui_click_reset
+
+						blockoverride "text" {
+							raw_text = "Refresh list, hotkey Shift E. Close with Escape."
+						}
 					}
 				}
 			}
-		
-	}
 
-	# modalità normo vedenti
-	widget = {
-		name = "inventory_view_vanilla"
-		visible = "[GetVariableSystem.Exists('ocr')]"
-			size = { 1222 840 }
-			layer = middle
-		
-			position = { 260 45 }
-		
-			using = Window_Movable
-			using = Window_Background
-			using = Window_Decoration_Spike
-		
-		
-		
-		
 			vbox = {
-				using = Window_Margins
-		
-				header_pattern = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				error_button = {
 					layoutpolicy_horizontal = expanding
-		
-					blockoverride "header_text"
-					{
-						text = "INVENTORY_TITLE"
-					}
-		
-					blockoverride "button_close"
-					{
-						onclick = "[InventoryView.Close]"
-					}
 				}
-		
-				hbox = {
-					layoutpolicy_horizontal = expanding
+
+				# right side is other artifacts and claims
+				vbox = {
+					name = "right_side"
 					layoutpolicy_vertical = expanding
-		
-					###LEFT SIDE
-					widget = {
-						name = "left side"
-						layoutpolicy_vertical = expanding
-						size = { 510 0 }
-		
-						background = {
-							texture = "gfx/interface/icons/inventory/character_paperdoll.dds"
-							fittype = centercrop
-							alpha = 0.6
-							margin_bottom = -100
-							margin_left = -10
-							margin_right = -10
-							margin_top = 20
-						}
-		
-						widget = {
-							name = "equipped_inventory_artifacts_top_bar"
-							layoutpolicy_horizontal = expanding
-							position = { 150 0 }
-							allow_outside = yes
-		
-							text_label_center = {
-								layoutpolicy_horizontal = expanding
-								align = center|nobaseline
-								text = "INVENTORY_EQUIPPED_ARTIFACTS_HEADER"
-								margin = { 0 2 }
-							}
-						}
-		
-						widget = {
-							name = "antiquarian"
-							position = { 20 0 }
-							allow_outside = yes
-							visible = "[Not( IsLandlessAdventurer( InventoryView.GetCharacter ) )]"
-		
-							vbox = {
-								parentanchor = top
-								alwaystransparent = yes
-		
-								portrait_head_small = {
-									name = "antiquarian_portrait"
-		
-									blockoverride "portrait_button"
-									{
-										onclick = "[ShowAppointCourtPositionIfNoEmployee( InventoryView.GetCharacter.GetID, 'antiquarian_court_position' )]"
-										enabled = "[InventoryView.GetCharacter.IsLocalPlayer]"
-		
-										icon_flat_standard_gold = {
-											visible = "[And( InventoryView.GetCharacter.IsLocalPlayer, Not( InventoryView.GetCharacter.GetCharacterEmployedAs( 'antiquarian_court_position' ).IsValid ) )]"
-											parentanchor = center
-											size = { 30 30 }
-		
-											texture = "gfx/interface/icons/flat_icons/plus.dds"
-										}	
-									}
-		
-									blockoverride "portrait_button_no_character_text"
-									{
-										text = "[SelectLocalization( InventoryView.GetCharacter.IsLocalPlayer,'PORTRAIT_NO_ANTIQUARIAN','CHARACTER_TOOLTIP_NO_PORTRAIT')]"
-									}
-								}
-		
-								text_single = {
-									text = "[GetCourtPositionType( 'antiquarian_court_position' ).GetName]"
-								}
-							}
-						}
-		
-						widget_inventory_slot = {
-							name = "head_slot"
-							parentanchor = top|hcenter
-							position = { 0 40 }
-						}
-		
-						widget_inventory_slot = {
-							name = "journal_slot"
-							parentanchor = top|right
-							position = { 0 40 }
-						}
-		
-						widget_inventory_slot = {
-							name = "regalia_slot"
-							parentanchor = vcenter|right
-							position = { 0 -50 }
-						}
-		
-						widget_inventory_slot = {
-							name = "weapon_slot"
-							parentanchor = vcenter|left
-							position = { 0 -50 }
-						}
-		
-						widget_inventory_slot = {
-							name = "armor_slot"
-							parentanchor = center
-							position = { 0 -50 }
-						}
-		
-						widget = {
-							name = "trinket_widget_hight"
-							parentanchor = bottom|hcenter
-							position = { 0 -120 }
-							allow_outside = yes
-		
-							widget_inventory_slot = {
-								name = "trinket_1_slot"
-								parentanchor = bottom|hcenter
-								position = { -185 0 }
-							}
-		
-							widget_inventory_slot = {
-								name = "trinket_2_slot"
-								parentanchor = bottom|hcenter
-								position = { -62 0 }
-							}
-		
-							widget_inventory_slot = {
-								name = "trinket_3_slot"
-								parentanchor = bottom|hcenter
-								position = { 62 0 }
-							}
-		
-							widget_inventory_slot = {
-								name = "trinket_4_slot"
-								parentanchor = bottom|hcenter
-								position = { 185 0 }
-							}
-						}
-		
-						widget = {
-							parentanchor = bottom|hcenter
-							position = { 0 -12 }
-							size = { 510 100 }
-							allow_outside = yes
-		
-							vbox = {
-								hbox = {
-									spacing = 10
-		
-									button_standard = {
-										visible = "[Not( Character.HasRoyalCourt )]"
-										text = "INVENTORY_TAB_COURT_ARTIFACTS"
-		
-										tooltip = "[SelectLocalization( Inventory.HasAnyCourtArtifact, 'INVENTORY_TAB_COURT_ARTIFACTS_TOOLTIP', 'NO_COURT_ARTIFACTS' )]"
-										using = tooltip_se
-		
-										onclick = "[VariableSystem.Toggle( 'court_artifacts' )]"
-										onclick = "[VariableSystem.Clear( 'claims' )]"
-										onclick = "[InventoryView.ClearSelectedSlot]"
-										onclick = "[LocalPlayerNewArtifacts.ClearNewArtifactsOfCategory( 'court' )]"
-		
-										down = "[VariableSystem.Exists( 'court_artifacts' )]"
-		
-										button_round = {
-											size = { 20 20 }
-											parentanchor = top|right
-											visible = "[GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' )]"
-											text = "[LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' )]"
-										}
-									}
-		
-									button_standard = {
-										visible = "[Character.HasRoyalCourt]"
-										text = "ROYAL_COURT"
-		
-										tooltip = "INVENTORY_COURT_ARTIFACTS_BUTTON_TOOLTIP"
-										using = tooltip_se
-		
-										onclick = "[VariableSystem.Set( 'artifacts_tab', 'artifacts' )]"
-										onclick = "[Character.OpenRoyalCourtView( 'artifacts' )]"
-		
-										onclick = "[InventoryView.Close]"
-										onclick = "[LocalPlayerNewArtifacts.ClearNewArtifactsOfCategory( 'court' )]"
-		
-										button_round = {
-											visible = "[GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' )]"
-											parentanchor = vcenter|right
-											size = { 20 20 }
-											position = { -5 0 }
-											text = "[LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' )]"
-										}
-									}
-		
-									button_standard = {
-										text = "INVENTORY_TAB_CLAIMS_HIS_HER_MY"
-										enabled = "[And( DataModelHasItems( ArtifactClaimsList.GetClaims ), Not( InventoryView.HasSelectedSlot ) )]"
-										tooltip = "[SelectLocalization( DataModelHasItems( ArtifactClaimsList.GetClaims ), 'INVENTORY_TAB_CLAIMS_TOOLTIP', 'NO_ARTIFACT_CLAIMS' )]"
-										using = tooltip_se
-										onclick = "[VariableSystem.Toggle( 'claims' )]"
-										onclick = "[VariableSystem.Clear( 'court_artifacts' )]"
-										down = "[VariableSystem.Exists( 'claims' )]"
-		
-										text_single = {
-											min_width = 30
-											margin_right = 10
-											parentanchor = vcenter|right
-		
-											autoresize = no
-											align = center|nobaseline
-											text = "[GetDataModelSize(ArtifactClaimsList.GetClaims)]"
-											default_format = "#clickable"
-										}						
-									}
-								}
-		
-								button_standard = {
-									name = "commission_decision"
-									visible = "[And( Character.IsLocalPlayer, Decision.IsShownForPlayer )]"
-									size = { 350 45 }
-		
-									onclick = "[InventoryView.Close]"
-									onclick = "[OpenGameViewData( 'decision_detail', Decision.Self )]"
-		
-									widget = {
-										parentanchor = center
-										size = { 346 41 }
-										scissor = yes
-		
-										icon = {
-											name = "illustration"
-											visible = "[Decision.IsPossibleForPlayer]"
-											parentanchor = right|vcenter
-		
-											alpha = 0.7
-											position = { 30 0 }
-											size = { 250 100 }
-											mirror = horizontal
-		
-											block "decision_texture_icon" {
-												texture = "[Decision.GetPicture( GetPlayer.Self )]"
-											}
-		
-											modify_texture = {
-												texture = "gfx/interface/component_masks/mask_fade_horizontal_extended.dds"
-												blend_mode = alphamultiply
-											}
-										}
-		
-										highlight_icon = {
-											visible = "[Not(Decision.IsPossibleForPlayer)]"
-											parentanchor = right|vcenter
-		
-											alpha = 0.7
-											size = { 250 100 }
-											mirror = horizontal
-											effectname = "GreyedOut"
-											tintcolor = { 0.6 0.6 0.6 0.7 }
-		
-											block "decision_texture_highlight" {
-												texture = "[Decision.GetPicture( GetPlayer.Self )]"
-											}
-		
-											modify_texture = {
-												texture = "gfx/interface/component_masks/mask_fade_horizontal_extended.dds"
-												blend_mode = alphamultiply
-											}
-										}
-		
-										icon = {
-											parentanchor = center
-											size = { 346 41 }
-		
-											texture = "gfx/interface/component_tiles/tile_vignette_3px.dds"
-											spriteType = Corneredtiled
-											spriteborder = { 5 5 }
-										}
-									}
-		
-									hbox = {
-										margin = { 20 0 }
-										margin_right = 10
-		
-										text_single = {
-											name = "title"
-											visible = "[Decision.IsPossibleForPlayer]"
-											text = "[Decision.GetTitleForPlayer]"
-											layoutpolicy_horizontal = growing
-		
-											align = nobaseline
-											default_format = "#clickable"
-										}
-		
-										text_single = {
-											name = "title2"
-											visible = "[Not(Decision.IsPossibleForPlayer)]"
-											layoutpolicy_horizontal = growing
-											text = "[Decision.GetTitleForPlayer]"
-		
-											align = nobaseline
-											block "default_format" {
-												default_format = "#low"
-											}
-										}
-		
-										highlight_icon = {
-											name = "not_possible"
-											visible = "[Not(Decision.IsPossibleForPlayer)]"
-											size = { 30 30 }
-											texture = "gfx/interface/icons/symbols/icon_cross.dds"
-		
-										}
-									}
-								}
-							}
-						}
-					}
-		
-					divider = {
-						layoutpolicy_vertical = expanding
-					}
-		
-					# right side is other artifacts and claims
-					vbox = {
-						name = "right_side"
-						layoutpolicy_vertical = expanding
+					layoutpolicy_horizontal = expanding
+					visible = "[Not(GetVariableSystem.Exists('all_artifacts'))]"
+
+					# button_standard = {
+					# 	text = "INVENTORY_TAB_CLAIMS_HIS_HER_MY"
+					# 	enabled = "[And( DataModelHasItems( ArtifactClaimsList.GetClaims ), Not( InventoryView.HasSelectedSlot ) )]"
+					# 	tooltip = "[SelectLocalization( DataModelHasItems( ArtifactClaimsList.GetClaims ), 'INVENTORY_TAB_CLAIMS_TOOLTIP', 'NO_ARTIFACT_CLAIMS' )]"
+					# }
+
+
+					hbox = {
+						name = "claims_top_bar"
+						visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
 						layoutpolicy_horizontal = expanding
-		
-						vbox = {
-							name = "equip_artifacts_top_bar"
-							visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
+
+						button = {
+							using = close_window_ocr
+							onclick = "[GetVariableSystem.Clear('claims')]"
+						}
+					}
+
+					vbox = {
+						name = "equip_artifacts_top_bar"
+						layoutpolicy_horizontal = expanding
+
+						hbox = {
 							layoutpolicy_horizontal = expanding
-							margin_top = 10
-		
-							text_label_center = {
-								layoutpolicy_horizontal = expanding
-								align = center
-								text = "SELECT_ARTIFACT"
-								max_width = 440
+							spacing = 3
+							button_text = {
+								visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
+								shortcut = army_split_half
+								blockoverride "text" {
+									raw_text = "Filters, hotkey F."
+								}
+								onclick = "[GetVariableSystem.Toggle('artifact_filters')]"
 							}
-		
+
+							button_text = {
+								shortcut = map_mode_1
+								blockoverride "text" {
+									raw_text = "[Select_CString(GetVariableSystem.Exists('artifact_effects'), 'Show', 'Hide')] effects, hotkey E."
+								}
+								onclick = "[GetVariableSystem.Toggle('artifact_effects')]"
+							}
+
+							button_text = {
+								shortcut = mapmode_house_secondary
+								blockoverride "text" {
+									raw_text = "[Select_CString(GetVariableSystem.Exists('artifact_desc'), 'Hide', 'Show')] descriptions, Shift D."
+								}
+								onclick = "[GetVariableSystem.Toggle('artifact_desc')]"
+							}
+
+							text_single = {
+								raw_text = "Click an artifact to equip or unequip."
+								align = left
+								visible = "[And(InventoryView.GetCharacter.IsLocalPlayer, Not(VariableSystem.Exists( 'claims' )))]"
+							}
+
+							expand = { }
+						}
+
+						hbox = {
+							visible = "[GetVariableSystem.Exists('artifact_filters')]"
+							layoutpolicy_horizontal = expanding
+
 							hbox = {
 								name = "artifact_slot_tabs"
 								visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
 								datamodel = "[InventoryView.GetUniqueInventorySlotTypes]"
-								layoutpolicy_horizontal = expanding
-								margin_top = 10
-		
-								button_tab = { # Show all artifacts tab
-									size = { 110 42 }
-		
-									onclick = "[InventoryView.ClearSelectedSlot]"
-									down = "[Not( InventoryView.HasSelectedSlot )]"
-		
-									tooltip = ARTIFACT_SORTING_TAB_ALL_TOOLTIP
-									using = tooltip_above
-		
-									hbox = {
-										margin = { 10 0 }
-		
-										text_single = {
-											layoutpolicy_horizontal = expanding
-											align = center
-											text = "ARTIFACT_SORTING_ALL_BUTTON"
-										}
-		
-										text_single = {
-											min_width = 30
-											align = center
-											text = "[Inventory.GetNumOfArtifactInCategory( 'inventory' )]"
-										}
+
+								button_text = {
+									blockoverride "text" {
+										raw_text = "All [Inventory.GetNumOfArtifactInCategory( 'inventory' )] artifacts"
 									}
+									blockoverride "extra" {
+										text_single = {
+											raw_text = ", Selected"
+											visible = "[And(Not( InventoryView.HasSelectedSlot ), Isnt('court_artifacts'))]"
+											align = left
+										}
+										dot = { }
+									}
+									onclick = "[InventoryView.ClearSelectedSlot]"
 								}
-		
+
 								item = {
-									widget_inventory_slot_tab = {
-										name = "artifact_slot_type"
+									button_text = {
+										shortcuts_list = {
+											blockoverride "click" {
+												onclick = "[InventoryView.OnClickSlotTypeTab( InventorySlotType.Self )]"
+											}
+										}
+										blockoverride "num" {
+											visible = "[LessThan_int32(PdxGuiWidget.GetIndexInDataModel, '(int32)5')]"
+										}
+										blockoverride "text" {
+											raw_text = "[InventorySlotType.GetName]"
+										}
+										blockoverride "extra" {
+											text_single = {
+												raw_text = ", [LocalPlayerNewArtifacts.GetNumNewArtifactsOfSlot( InventorySlotType.GetSlotTypeString )]"
+												visible = "[And( InventoryView.GetCharacter.IsLocalPlayer, GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfSlot( InventorySlotType.GetSlotTypeString ), '(int32)0' ) )]"
+											}
+											text_single = {
+												raw_text = ", Selected"
+												align = left
+												visible = "[InventoryView.SelectedSlotHasType( InventorySlotType.Self )]"
+											}
+											dot = { }
+										}
+										datacontext = "[AccessLocalPlayerCachedData.AccessNewArtifacts]"
+										datacontext = "[Inventory.GetSlot('crown')]"
+										onclick = "[InventoryView.OnClickSlotTypeTab( InventorySlotType.Self )]"
 										visible = "[InventorySlotType.IsInventoryType]"
 									}
 								}
 							}
+
+							expand = { }
 						}
-		
-						vbox = {
-							name = "court_artifacts_top_bar"
-							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'court_artifacts' ) )]"
+						button_text = {
 							layoutpolicy_horizontal = expanding
-							margin = { 20 0 }
-							margin_top = 10
-							margin_bottom = 5
-							spacing = 5
-		
-							text_label_center = {
-								layoutpolicy_horizontal = expanding
-								align = center
-								text = "[court_artifacts|E]"
-								max_width = 440
+							shortcut = map_mode_11
+							blockoverride "text" {
+								raw_text = "[AddTextIf(GetVariableSystem.Exists('equipped'), 'Don\'t ')]Show only equipped, Shift E."
 							}
-		
-							text_multi = {
-								layoutpolicy_horizontal = expanding
-								text = "CHARACTER_WITHOUT_ROYAL_COURT_COURT_ARTIFACT_TAB"
-								autoresize = yes
-								align = center 
-								default_format = "#weak"
-								max_width = 520
-							}
+							visible = "[Not(GetVariableSystem.Exists('claims'))]"
+							onclick = "[GetVariableSystem.Toggle('equipped')]"
 						}
-		
+					}
+
+					vbox = {
+						name = "court_artifacts_top_bar"
+						visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'court_artifacts' ) )]"
+						layoutpolicy_horizontal = expanding
+						margin = { 20 0 }
+						spacing = 5
+
+
 						hbox = {
-							name = "claims_top_bar"
-							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
 							layoutpolicy_horizontal = expanding
-		
-							margin_top = 10
-		
-							text_label_center = {
+
+							text_multi_wide = {
 								layoutpolicy_horizontal = expanding
-								align = center
-								text = "[artifact_claims|E]"
-								max_width = 440
+								datacontext = "[InventoryView.GetCharacter]"
+								text = "CHARACTER_WITHOUT_ROYAL_COURT_COURT_ARTIFACT_TAB"
 							}
+
+							expand = { }
 						}
-		
-						hbox = { # artifact sorting
+					}
+
+					hbox = {
+						visible = "[GetVariableSystem.Exists('artifact_filters')]"
+						layoutpolicy_horizontal = expanding
+
+						hbox = {
 							name = "artifact_sorting"
 							visible = "[Not( VariableSystem.Exists( 'claims' ) )]"
 							layoutpolicy_horizontal = expanding
-							margin = { 10 5 }
-							spacing = 5
-		
-							button_standard = {
-								name = "sort_order"
-								size = { 25 25 }
-								tooltip = "ARTIFACT_SORT_ORDER_TOOLTIP"
-								using = tooltip_ne
-								onclick = "[InventoryView.ToggleArtifactSortOrder]"
-		
-								button_icon = {
-									size = { 25 25 }
-									texture = "gfx/interface/icons/flat_icons/sort_icon.dds"
-									framesize = { 66 66 }
-									frame = "[BoolTo2And1(InventoryView.IsArtifactSortOrderDescending)]"
-		
-									alwaystransparent = yes
-		
-									blockoverride "button_frames"
-									{
-										effectname = "NoHighlight"
-									}
-								}
+
+							text_single = {
+								raw_text = "Srot by"
 							}
-		
+
 							dropdown_menu_standard = {
 								name = "sort_artifacts"
-		
+
 								blockoverride "dropdown_properties"
 								{
 									datamodel = "[InventoryView.GetArtifactSortOptions]"
 									onselectionchanged = "[InventoryView.SortArtifacts]"
 									selectedindex = "[InventoryView.GetArtifactSortOptionsIndex]"
 								}
-		
+
 								blockoverride "dropdown_active_item_properties"
 								{
 									text = "[Localize( CString.GetString )]"
+									margin_top = 5
+									margin_left = 3
 								}
-		
+
 								blockoverride "dropdown_item_properties"
 								{
 									text = "[Localize( CString.GetString )]"
 								}
 							}
-		
-							expand = {}
-						}
-		
-						hbox = { # claims sorting
-							name = "claim_sorting"
-							visible = "[VariableSystem.Exists( 'claims' )]"
-							layoutpolicy_horizontal = expanding
-							margin = { 10 5 }
-							spacing = 5
-		
-		
-							button_standard = {
-								name = "sort_order"
-								size = { 25 25 }
-								tooltip = "ARTIFACT_CLAIM_SORT_ORDER_TOOLTIP"
-								using = tooltip_ne
-								onclick = "[ArtifactClaimsList.ToggleSortOrder]"
-		
-								button_icon = {
-									size = { 25 25 }
-									texture = "gfx/interface/icons/flat_icons/sort_icon.dds"
-									framesize = { 66 66 }
-									frame = "[BoolTo2And1( ArtifactClaimsList.IsSortOrderDescending )]"
-		
-									alwaystransparent = yes
-		
-									blockoverride "button_frames"
-									{
-										effectname = "NoHighlight"
-									}
+
+							button_text = {
+								blockoverride "text" {
+									raw_text = "[Select_CString(InventoryView.IsArtifactSortOrderDescending, 'In descending', 'In ascending')] order."
 								}
+								onclick = "[InventoryView.ToggleArtifactSortOrder]"
 							}
-		
-							dropdown_menu_standard = {
-								name = "sort_claims"
-		
-								blockoverride "dropdown_properties"
-								{
-									datamodel = "[ArtifactClaimsList.GetSortOptions]"
-									onselectionchanged = "[ArtifactClaimsList.SortClaims]"
-									selectedindex = "[ArtifactClaimsList.GetSortOptionsIndex]"
-								}
-		
-								blockoverride "dropdown_active_item_properties"
-								{
-									text = "[Localize( CString.GetString )]"
-								}
-		
-								blockoverride "dropdown_item_properties"
-								{
-									text = "[Localize( CString.GetString )]"
-								}
-							}
-		
-							expand = {}
+
+							expand = { }
 						}
-		
-						scrollbox = { # court artifacts
-							name = "court_artifacts"
-							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'court_artifacts' ) )]"
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-		
-							blockoverride "scrollbox_content" {
-								vbox = {
-									name = "artifacts_list"
-									datamodel = "[InventoryView.GetSortedArtifacts]"
-									layoutpolicy_horizontal = expanding
-									spacing = 6
-		
-									item = {
-										widget_artifact_entry = {
-											visible = "[Artifact.IsCourtArtifact]"
-		
-											blockoverride "background_button_overrides"
-											{
-												alwaystransparent = yes
-												enabled = no
-											}
-		
-											blockoverride "portrait" {
-												expand = { minimumsize = { 0 0 } }
-											}
+					}
+
+					hbox = { # claims sorting
+						name = "claim_sorting"
+						visible = "[VariableSystem.Exists( 'claims' )]"
+						layoutpolicy_horizontal = expanding
+
+						datacontext = "[InventoryView.GetArtifactClaimsList]"
+
+						dropdown_menu_standard = {
+							name = "sort_claims"
+
+							blockoverride "dropdown_properties"
+							{
+								datamodel = "[ArtifactClaimsList.GetSortOptions]"
+								onselectionchanged = "[ArtifactClaimsList.SortClaims]"
+								selectedindex = "[ArtifactClaimsList.GetSortOptionsIndex]"
+							}
+
+							blockoverride "dropdown_active_item_properties"
+							{
+								raw_text = "Sort by [Localize( CString.GetString )]."
+							}
+
+							blockoverride "dropdown_item_properties"
+							{
+								raw_text = "[Localize( CString.GetString )]."
+							}
+						}
+
+						button_text = {
+							blockoverride "text" {
+								raw_text = "[Select_CString(ArtifactClaimsList.IsSortOrderDescending, 'In descending', 'In ascending')] order."
+							}
+							onclick = "[ArtifactClaimsList.ToggleSortOrder]"
+						}
+
+						expand = { }
+					}
+
+					scrollbox = { # court artifacts
+						name = "court_artifacts"
+						visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'court_artifacts' ) )]"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						blockoverride "scrollbox_content" {
+							vbox = {
+								name = "artifacts_list"
+								datamodel = "[InventoryView.GetSortedArtifacts]"
+								layoutpolicy_horizontal = expanding
+
+								item = {
+									widget_artifact_entry_ocr = {
+										layoutpolicy_horizontal = expanding
+										visible = "[Artifact.IsCourtArtifact]"
+										datacontext = "[InventoryView.GetCharacter.GetInventory]"
+										datacontext = "[InventoryView.GetSelectedSlot]"
+
+										blockoverride "background_button_overrides"
+										{
+											alwaystransparent = yes
+											enabled = no
+										}
+
+										blockoverride "portrait" {
+											expand = { minimumsize = { 0 0 } }
 										}
 									}
 								}
 							}
-		
-							blockoverride "scrollbox_empty"
-							{
-								visible = "[IsDataModelEmpty( InventoryView.GetSortedArtifacts )]"
-								text = "CHARACTER_HAS_NO_ARTIFACTS"
+						}
+
+						blockoverride "scrollbox_empty"
+						{
+							visible = "[IsDataModelEmpty( InventoryView.GetSortedArtifacts )]"
+							text = "CHARACTER_HAS_NO_ARTIFACTS"
+						}
+					}
+
+					scrollbox = { # artifact claims
+						name = "artifact_claims"
+						datacontext = "[InventoryView.GetArtifactClaimsList]"
+						visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						blockoverride "scrollbox_content" {
+							vbox = {
+								name = "artifacts_list"
+								datamodel = "[ArtifactClaimsList.GetClaims]"
+								layoutpolicy_horizontal = expanding
+
+								item = {
+									artifact_claim_ocr = {
+										layoutpolicy_horizontal = expanding
+										datacontext = "[ArtifactClaim.GetArtifact]"
+										datacontext = "[InventoryView.GetCharacter]"
+									}
+								}
 							}
 						}
-		
-						scrollbox = { # artifact claims
-							name = "artifact_claims"
-							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-		
-							blockoverride "scrollbox_content" {
-								fixedgridbox = {
-									name = "artifacts_list"
-									datamodel = "[ArtifactClaimsList.GetClaims]"
-									addcolumn = 570
-									addrow = 122
-		
-									item = {
-										artifact_claim = {
+
+						blockoverride "scrollbox_empty"
+						{
+							visible = "[IsDataModelEmpty( ArtifactClaimsList.GetClaims )]"
+							text = "CHARACTER_HAS_NO_CLAIMED_ARTIFACTS"
+						}
+					}
+
+					scrollbox = { # artifact list
+						name = "artifacts"
+						visible = "[And( Not( VariableSystem.Exists( 'court_artifacts' ) ), Not( VariableSystem.Exists( 'claims' ) ))]"
+						layoutpolicy_vertical = expanding
+						layoutpolicy_horizontal = expanding
+
+						blockoverride "scrollbox_content" {
+							vbox = {
+								name = "equippable_artifacts_list"
+								datamodel = "[InventoryView.GetSortedArtifacts]"
+								layoutpolicy_horizontal = expanding
+								spacing = 3
+
+								text_single = {
+									visible = "[GreaterThan_int32(PdxGuiWidget.CountVisibleChildren, '(int32)1')]"
+									layoutpolicy_horizontal = expanding
+									raw_text = "[Subtract_int32(PdxGuiWidget.AccessParent.CountVisibleChildren, '(int32)1')] new artifacts:"
+								}
+
+								item = {
+									widget_artifact_entry_ocr = {
+										name = "new_artifacts"
+										layoutpolicy_horizontal = expanding
+										datacontext = "[InventoryView.GetCharacter.GetInventory]"
+										datacontext = "[InventoryView.GetSelectedSlot]"
+										datacontext = "[InventoryView.GetSelectedSlot.GetType]"
+
+										visible = "[And(And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) ), LocalPlayerNewArtifacts.IsNewArtifact( Artifact.Self ))]"
+
+										using = tooltip_es
+
+										blockoverride "background_button_overrides"
+										{
+											onclick = "[InventoryView.OnClickArtifact( Artifact.Self )]"
+											enabled = "[InventoryView.GetCharacter.IsLocalPlayer]"
+											down = "[Inventory.IsEquipped( Artifact.Self )]"
+										}
+
+										blockoverride "portrait" {
+											expand = { minimumsize = { 0 0 } }
 										}
 									}
 								}
 							}
-		
-							blockoverride "scrollbox_empty"
-							{
-								visible = "[IsDataModelEmpty( ArtifactClaimsList.GetClaims )]"
-								text = "CHARACTER_HAS_NO_CLAIMED_ARTIFACTS"
+
+							vbox = {
+								datamodel = "[InventoryView.GetSortedArtifacts]"
+								layoutpolicy_horizontal = expanding
+								spacing = 3
+
+								item = {
+									widget_artifact_entry_ocr = {
+										layoutpolicy_horizontal = expanding
+										datacontext = "[InventoryView.GetCharacter.GetInventory]"
+										datacontext = "[InventoryView.GetSelectedSlot]"
+										datacontext = "[InventoryView.GetSelectedSlot.GetType]"
+
+										visible = "[And(And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) ), Not(LocalPlayerNewArtifacts.IsNewArtifact( Artifact.Self )))]"
+
+										using = tooltip_es
+
+										blockoverride "background_button_overrides"
+										{
+											onclick = "[InventoryView.OnClickArtifact( Artifact.Self )]"
+											enabled = "[InventoryView.GetCharacter.IsLocalPlayer]"
+											down = "[Inventory.IsEquipped( Artifact.Self )]"
+										}
+
+										blockoverride "portrait" {
+											expand = { minimumsize = { 0 0 } }
+										}
+									}
+								}
 							}
 						}
-		
-						scrollbox = { # artifact list
-							name = "artifacts"
-							visible = "[And( Not( VariableSystem.Exists( 'court_artifacts' ) ), Not( VariableSystem.Exists( 'claims' ) ))]"
-							layoutpolicy_vertical = expanding
+
+						blockoverride "scrollbox_empty"
+						{
+							visible = "[Or( Not( Inventory.HasAnyInventoryArtifact ), And( InventoryView.HasSelectedSlot, Not( Inventory.HasArtifactsOfSlotType( InventoryView.GetSelectedSlot.GetType ) ) ) )]"
+							text = "CHARACTER_HAS_NO_ARTIFACTS"
 							layoutpolicy_horizontal = expanding
-		
-							blockoverride "scrollbox_content" {
-								vbox = {
-									name = "equippable_artifacts_list"
-									datamodel = "[InventoryView.GetSortedArtifacts]"
-									layoutpolicy_horizontal = expanding
-									spacing = 8
-		
-									item = {
-										widget_artifact_entry = {
-		
-											visible = "[And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) )]"
-		
-		
-											tooltipwidget = {
-												artifact_tooltip = {
-													blockoverride "extra_information"
-													{
-														hbox = {
-															layoutpolicy_horizontal = expanding
-		
-															text_multi = {
-																visible = "[InventoryView.GetCharacter.IsLocalPlayer]"
-																text = "[InventoryView.GetArtifactOnClickTooltip( Artifact.Self )]"
-																max_width = 500
-																autoresize = yes
-																using = Font_Size_Small
+						}
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[Not(GetVariableSystem.Exists('claims'))]"
+
+						char_name = {
+							layoutpolicy_horizontal = expanding
+							datacontext = "[InventoryView.GetCharacter.GetCharacterEmployedAs( 'antiquarian_court_position' )]"
+							visible = "[Character.IsValid]"
+							blockoverride "text" {
+								alwaystransparent = yes
+								raw_text = "[GetCourtPositionType( 'antiquarian_court_position' ).GetName]: [Character.GetNameNoTooltip]."
+							}
+						}
+
+						button_text = {
+							layoutpolicy_horizontal = expanding
+							visible = "[And(InventoryView.GetCharacter.IsLocalPlayer, Not(Character.IsValid))]"
+							blockoverride "text" {
+								text = "PORTRAIT_NO_ANTIQUARIAN"
+							}
+							datacontext = "[InventoryView.GetCharacter.GetCharacterEmployedAs( 'antiquarian_court_position' )]"
+							onclick = "[ShowAppointCourtPositionIfNoEmployee( InventoryView.GetCharacter.GetID, 'antiquarian_court_position' )]"
+						}
+
+						button_text = {
+							layoutpolicy_horizontal = expanding
+							blockoverride "text" {
+								raw_text = "[Decision.GetTitleForPlayer]. Enter."
+							}
+							name = "commission_decision"
+							datacontext = "[GetDecisionWithKey('commission_artifact_decision')]"
+							visible = "[And( Character.IsLocalPlayer, Decision.IsShownForPlayer )]"
+							# onclick = "[InventoryView.Close]"
+							onclick = "[OpenGameViewData( 'decision_detail', Decision.Self )]"
+							shortcut = confirm
+						}
+					}
+
+				}
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					visible = "[GetVariableSystem.Exists('all_artifacts')]"
+
+					vbox = {
+						visible = "[Not(GetVariableSystem.Exists('all_artifacts_filters'))]"
+						layoutpolicy_horizontal = expanding
+						button_text = {
+							layoutpolicy_horizontal = expanding
+							blockoverride "text" {
+								raw_text = "Sorted by [Select_CString(GetScriptedGui('sort_rarity').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'rarity', 'distance')]. Sort by [Select_CString(GetScriptedGui('sort_rarity').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'distance', 'rarity')]."
+							}
+							onclick = "[GetScriptedGui('sort_rarity').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+
+							datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
+							datacontext = "[GetScriptedGui('all_artifacts_page')]"
+							using = sgui_click_reset
+						}
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							spacing = 1
+
+							text_single = {
+								raw_text = "Filter by type, use number keys:"
+							}
+
+							button_text = {
+								onclick = "[GetScriptedGui('filter_artifacts_helmet').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								shortcut = speed_1
+
+								blockoverride "text" {
+									raw_text = "Headgear 1"
+								}
+								blockoverride "extra" {
+									text_single = {
+										visible = "[GetScriptedGui('filter_artifacts_helmet').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+										raw_text = ", Selected"
+										align = left
+									}
+									dot = { }
+								}
+							}
+
+							button_text = {
+								onclick = "[GetScriptedGui('filter_artifacts_regalia').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								shortcut = speed_2
+
+								blockoverride "text" {
+									raw_text = "Regalia 2"
+								}
+								blockoverride "extra" {
+									text_single = {
+										visible = "[GetScriptedGui('filter_artifacts_regalia').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+										raw_text = ", Selected"
+										align = left
+									}
+									dot = { }
+								}
+							}
+
+							button_text = {
+								onclick = "[GetScriptedGui('filter_artifacts_primary_armament').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								shortcut = speed_3
+
+								blockoverride "text" {
+									raw_text = "Weapons 3"
+								}
+								blockoverride "extra" {
+									text_single = {
+										visible = "[GetScriptedGui('filter_artifacts_primary_armament').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+										raw_text = ", Selected"
+										align = left
+									}
+									dot = { }
+								}
+							}
+
+							button_text = {
+								onclick = "[GetScriptedGui('filter_artifacts_armor').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								shortcut = speed_4
+
+								blockoverride "text" {
+									raw_text = "Armor 4"
+								}
+								blockoverride "extra" {
+									text_single = {
+										visible = "[GetScriptedGui('filter_artifacts_armor').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+										raw_text = ", Selected"
+										align = left
+									}
+									dot = { }
+								}
+							}
+
+							button_text = {
+								onclick = "[GetScriptedGui('filter_artifacts_miscellaneous').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								shortcut = speed_5
+
+								blockoverride "text" {
+									raw_text = "Trinkets 5"
+								}
+								blockoverride "extra" {
+									text_single = {
+										visible = "[GetScriptedGui('filter_artifacts_miscellaneous').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+										raw_text = ", Selected"
+										align = left
+									}
+									dot = { }
+								}
+							}
+
+							expand = { }
+						}
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+
+						visible = no#"[GetVariableSystem.Exists('all_artifacts_filters')]"
+						button = {
+							onclick = "[GetScriptedGui('filter_artifacts_all').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							shortcut = decrease_speed_2
+							visible = "[Not(GetScriptedGui('filter_artifacts_all').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ))]"
+						}
+
+						button_text = {
+							onclick = "[GetScriptedGui('filter_artifacts_helmet').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							shortcut = speed_1
+						}
+
+						button_text = {
+							onclick = "[GetScriptedGui('filter_artifacts_regalia').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							shortcut = speed_2
+						}
+
+						button_text = {
+							onclick = "[GetScriptedGui('filter_artifacts_primary_armament').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							shortcut = speed_3
+						}
+
+						button_text = {
+							onclick = "[GetScriptedGui('filter_artifacts_armor').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							shortcut = speed_4
+						}
+
+						button_text = {
+							onclick = "[GetScriptedGui('filter_artifacts_miscellaneous').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							onclick = "[GetScriptedGui('artifacts_list').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							shortcut = speed_5
+						}
+
+						expand = { }
+					}
+
+					# button_text = {
+					# 	layoutpolicy_horizontal = expanding
+					# 	blockoverride "text" {
+					# 		raw_text = "[Select_CString(GetVariableSystem.Exists('all_artifacts_filters'), 'Show', 'Hide')] filters, Shift D."
+					# 	}
+					# 	onclick = "[GetVariableSystem.Toggle('all_artifacts_filters')]"
+					# 	shortcut = mapmode_house_secondary
+					# }
+
+					scrollbox = {
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+						blockoverride "scrollbox_margins" {
+							margin_top = 20
+						}
+
+						blockoverride "scrollbox_content" {
+
+							vbox_paged_list = {
+								blockoverride "page_index" {
+									datacontext = "[GetPlayer.MakeScope.Var('all_artifacts_page')]"
+								}
+								datacontext = "[GetScriptedGui('all_artifacts_page')]"
+
+								blockoverride "full_datamodel" {
+									datamodel = "[GetPlayer.MakeScope.GetList('all_artifacts')]"
+								}
+								blockoverride "vbox_contents" {
+
+									fixedgridbox = {
+										addcolumn = 600
+										addrow = 45
+										layoutpolicy_horizontal = expanding
+										# layoutpolicy_vertical = expanding
+
+										datamodel = "[PageModelGlobal(GetPlayer.MakeScope.GetList('all_artifacts'))]"
+
+										item = {
+											widget = {
+												size = { 600 42 }
+												vbox = {
+													layoutpolicy_horizontal = expanding
+													spacing = -6
+													button_text = {
+														blockoverride "bg" { }
+														layoutpolicy_horizontal = expanding
+														datacontext = "[Scope.Artifact]"
+														onclick = "[ToggleGameViewData( 'artifact_details', Artifact.GetID )]"
+														blockoverride "pre" {
+															page_index = {}
+														}
+														blockoverride "text" {
+															raw_text = "[Artifact.GetNameNoTooltip], [AddTextIf(Artifact.IsUnique, 'Unique ')][Artifact.GetRarityAndType]."
+														}
+													}
+													char_name = {
+														blockoverride "bg" { }
+														layoutpolicy_horizontal = expanding
+														datacontext = "[Scope.Artifact.GetOwner]"
+														blockoverride "extra" {
+															text_single = {
+																raw_text = "[Character.GetRelationToString( GetPlayer )]."
 															}
-		
-															expand = {}
 														}
 													}
 												}
 											}
-		
-											using = tooltip_es
-		
-											blockoverride "background_button_overrides"
-											{
-												onclick = "[InventoryView.OnClickArtifact( Artifact.Self )]"
-												enabled = "[InventoryView.GetCharacter.IsLocalPlayer]"
-												down = "[Inventory.IsEquipped( Artifact.Self )]"
-											}
-		
-											blockoverride "portrait" {
-												expand = { minimumsize = { 0 0 } }
-											}
 										}
 									}
 								}
 							}
-		
-							blockoverride "scrollbox_empty"
-							{
-								visible = "[Or( Not( Inventory.HasAnyInventoryArtifact ), And( InventoryView.HasSelectedSlot, Not( Inventory.HasArtifactsOfSlotType( InventoryView.GetSelectedSlot.GetType ) ) ) )]"
-								text = "CHARACTER_HAS_NO_ARTIFACTS"
+						}
+					}
+
+					expand = { }
+				}
+			}
+		}
+	}
+
+	######################################################
+	# MODALITÀ NORMO VEDENTI (VANILLA)
+	# Mantenuta identica al file corrente
+	######################################################
+	widget = {
+		name = "inventory_view_vanilla"
+		visible = "[GetVariableSystem.Exists('ocr')]"
+		size = { 1222 840 }
+		layer = middle
+
+		position = { 260 45 }
+
+		using = Window_Movable
+		using = Window_Background
+		using = Window_Decoration_Spike
+
+		vbox = {
+			using = Window_Margins
+
+			header_pattern = {
+				layoutpolicy_horizontal = expanding
+
+				blockoverride "header_text"
+				{
+					text = "INVENTORY_TITLE"
+				}
+
+				blockoverride "button_close"
+				{
+					onclick = "[InventoryView.Close]"
+				}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				###LEFT SIDE
+				widget = {
+					name = "left side"
+					layoutpolicy_vertical = expanding
+					size = { 510 0 }
+
+					background = {
+						texture = "gfx/interface/icons/inventory/character_paperdoll.dds"
+						fittype = centercrop
+						alpha = 0.6
+						margin_bottom = -100
+						margin_left = -10
+						margin_right = -10
+						margin_top = 20
+					}
+
+					widget = {
+						name = "equipped_inventory_artifacts_top_bar"
+						layoutpolicy_horizontal = expanding
+						position = { 150 0 }
+						allow_outside = yes
+
+						text_label_center = {
+							layoutpolicy_horizontal = expanding
+							align = center|nobaseline
+							text = "INVENTORY_EQUIPPED_ARTIFACTS_HEADER"
+							margin = { 0 2 }
+						}
+					}
+
+					widget = {
+						name = "antiquarian"
+						position = { 20 0 }
+						allow_outside = yes
+						visible = "[Not( IsLandlessAdventurer( InventoryView.GetCharacter ) )]"
+
+						vbox = {
+							parentanchor = top
+							alwaystransparent = yes
+
+							portrait_head_small = {
+								name = "antiquarian_portrait"
+
+								blockoverride "portrait_button"
+								{
+									onclick = "[ShowAppointCourtPositionIfNoEmployee( InventoryView.GetCharacter.GetID, 'antiquarian_court_position' )]"
+									enabled = "[InventoryView.GetCharacter.IsLocalPlayer]"
+
+									icon_flat_standard_gold = {
+										visible = "[And( InventoryView.GetCharacter.IsLocalPlayer, Not( InventoryView.GetCharacter.GetCharacterEmployedAs( 'antiquarian_court_position' ).IsValid ) )]"
+										parentanchor = center
+										size = { 30 30 }
+
+										texture = "gfx/interface/icons/flat_icons/plus.dds"
+									}	
+								}
+
+								blockoverride "portrait_button_no_character_text"
+								{
+									text = "[SelectLocalization( InventoryView.GetCharacter.IsLocalPlayer,'PORTRAIT_NO_ANTIQUARIAN','CHARACTER_TOOLTIP_NO_PORTRAIT')]"
+								}
 							}
+
+							text_single = {
+								text = "[GetCourtPositionType( 'antiquarian_court_position' ).GetName]"
+							}
+						}
+					}
+
+					widget_inventory_slot = {
+						name = "head_slot"
+						parentanchor = top|hcenter
+						position = { 0 40 }
+					}
+
+					widget_inventory_slot = {
+						name = "journal_slot"
+						parentanchor = top|right
+						position = { 0 40 }
+					}
+
+					widget_inventory_slot = {
+						name = "regalia_slot"
+						parentanchor = vcenter|right
+						position = { 0 -50 }
+					}
+
+					widget_inventory_slot = {
+						name = "weapon_slot"
+						parentanchor = vcenter|left
+						position = { 0 -50 }
+					}
+
+					widget_inventory_slot = {
+						name = "armor_slot"
+						parentanchor = center
+						position = { 0 -50 }
+					}
+
+					widget = {
+						name = "trinket_widget_hight"
+						parentanchor = bottom|hcenter
+						position = { 0 -120 }
+						allow_outside = yes
+
+						widget_inventory_slot = {
+							name = "trinket_1_slot"
+							parentanchor = bottom|hcenter
+							position = { -185 0 }
+						}
+
+						widget_inventory_slot = {
+							name = "trinket_2_slot"
+							parentanchor = bottom|hcenter
+							position = { -62 0 }
+						}
+
+						widget_inventory_slot = {
+							name = "trinket_3_slot"
+							parentanchor = bottom|hcenter
+							position = { 62 0 }
+						}
+
+						widget_inventory_slot = {
+							name = "trinket_4_slot"
+							parentanchor = bottom|hcenter
+							position = { 185 0 }
+						}
+					}
+
+					widget = {
+						parentanchor = bottom|hcenter
+						position = { 0 -12 }
+						size = { 510 100 }
+						allow_outside = yes
+
+						vbox = {
+							hbox = {
+								spacing = 10
+
+								button_standard = {
+									visible = "[Not( Character.HasRoyalCourt )]"
+									text = "INVENTORY_TAB_COURT_ARTIFACTS"
+
+									tooltip = "[SelectLocalization( Inventory.HasAnyCourtArtifact, 'INVENTORY_TAB_COURT_ARTIFACTS_TOOLTIP', 'NO_COURT_ARTIFACTS' )]"
+									using = tooltip_se
+
+									onclick = "[VariableSystem.Toggle( 'court_artifacts' )]"
+									onclick = "[VariableSystem.Clear( 'claims' )]"
+									onclick = "[InventoryView.ClearSelectedSlot]"
+									onclick = "[LocalPlayerNewArtifacts.ClearNewArtifactsOfCategory( 'court' )]"
+
+									down = "[VariableSystem.Exists( 'court_artifacts' )]"
+
+									button_round = {
+										size = { 20 20 }
+										parentanchor = top|right
+										visible = "[GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' )]"
+										text = "[LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' )]"
+									}
+								}
+
+								button_standard = {
+									visible = "[Character.HasRoyalCourt]"
+									text = "ROYAL_COURT"
+
+									tooltip = "INVENTORY_COURT_ARTIFACTS_BUTTON_TOOLTIP"
+									using = tooltip_se
+
+									onclick = "[VariableSystem.Set( 'artifacts_tab', 'artifacts' )]"
+									onclick = "[Character.OpenRoyalCourtView( 'artifacts' )]"
+
+									onclick = "[InventoryView.Close]"
+									onclick = "[LocalPlayerNewArtifacts.ClearNewArtifactsOfCategory( 'court' )]"
+
+									button_round = {
+										visible = "[GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' )]"
+										parentanchor = vcenter|right
+										size = { 20 20 }
+										position = { -5 0 }
+										text = "[LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' )]"
+									}
+								}
+
+								button_standard = {
+									text = "INVENTORY_TAB_CLAIMS_HIS_HER_MY"
+									enabled = "[And( DataModelHasItems( ArtifactClaimsList.GetClaims ), Not( InventoryView.HasSelectedSlot ) )]"
+									tooltip = "[SelectLocalization( DataModelHasItems( ArtifactClaimsList.GetClaims ), 'INVENTORY_TAB_CLAIMS_TOOLTIP', 'NO_ARTIFACT_CLAIMS' )]"
+									using = tooltip_se
+									onclick = "[VariableSystem.Toggle( 'claims' )]"
+									onclick = "[VariableSystem.Clear( 'court_artifacts' )]"
+									down = "[VariableSystem.Exists( 'claims' )]"
+
+									text_single = {
+										min_width = 30
+										margin_right = 10
+										parentanchor = vcenter|right
+
+										autoresize = no
+										align = center|nobaseline
+										text = "[GetDataModelSize(ArtifactClaimsList.GetClaims)]"
+										default_format = "#clickable"
+									}						
+								}
+							}
+
+							button_standard = {
+								name = "commission_decision"
+								visible = "[And( Character.IsLocalPlayer, Decision.IsShownForPlayer )]"
+								size = { 350 45 }
+
+								onclick = "[InventoryView.Close]"
+								onclick = "[OpenGameViewData( 'decision_detail', Decision.Self )]"
+
+								widget = {
+									parentanchor = center
+									size = { 346 41 }
+									scissor = yes
+
+									icon = {
+										name = "illustration"
+										visible = "[Decision.IsPossibleForPlayer]"
+										parentanchor = right|vcenter
+
+										alpha = 0.7
+										position = { 30 0 }
+										size = { 250 100 }
+										mirror = horizontal
+
+										block "decision_texture_icon" {
+											texture = "[Decision.GetPicture( GetPlayer.Self )]"
+										}
+
+										modify_texture = {
+											texture = "gfx/interface/component_masks/mask_fade_horizontal_extended.dds"
+											blend_mode = alphamultiply
+										}
+									}
+
+									highlight_icon = {
+										visible = "[Not(Decision.IsPossibleForPlayer)]"
+										parentanchor = right|vcenter
+
+										alpha = 0.7
+										size = { 250 100 }
+										mirror = horizontal
+										effectname = "GreyedOut"
+										tintcolor = { 0.6 0.6 0.6 0.7 }
+
+										block "decision_texture_highlight" {
+											texture = "[Decision.GetPicture( GetPlayer.Self )]"
+										}
+
+										modify_texture = {
+											texture = "gfx/interface/component_masks/mask_fade_horizontal_extended.dds"
+											blend_mode = alphamultiply
+										}
+									}
+
+									icon = {
+										parentanchor = center
+										size = { 346 41 }
+
+										texture = "gfx/interface/component_tiles/tile_vignette_3px.dds"
+										spriteType = Corneredtiled
+										spriteborder = { 5 5 }
+									}
+								}
+
+								hbox = {
+									margin = { 20 0 }
+									margin_right = 10
+
+									text_single = {
+										name = "title"
+										visible = "[Decision.IsPossibleForPlayer]"
+										text = "[Decision.GetTitleForPlayer]"
+										layoutpolicy_horizontal = growing
+
+										align = nobaseline
+										default_format = "#clickable"
+									}
+
+									text_single = {
+										name = "title2"
+										visible = "[Not(Decision.IsPossibleForPlayer)]"
+										layoutpolicy_horizontal = growing
+										text = "[Decision.GetTitleForPlayer]"
+
+										align = nobaseline
+										block "default_format" {
+											default_format = "#low"
+										}
+									}
+
+									highlight_icon = {
+										name = "not_possible"
+										visible = "[Not(Decision.IsPossibleForPlayer)]"
+										size = { 30 30 }
+										texture = "gfx/interface/icons/symbols/icon_cross.dds"
+
+									}
+								}
+							}
+						}
+					}
+				}
+
+				divider = {
+					layoutpolicy_vertical = expanding
+				}
+
+				# right side is other artifacts and claims
+				vbox = {
+					name = "right_side"
+					layoutpolicy_vertical = expanding
+					layoutpolicy_horizontal = expanding
+
+					vbox = {
+						name = "equip_artifacts_top_bar"
+						visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
+						layoutpolicy_horizontal = expanding
+						margin_top = 10
+
+						text_label_center = {
+							layoutpolicy_horizontal = expanding
+							align = center
+							text = "SELECT_ARTIFACT"
+							max_width = 440
+						}
+
+						hbox = {
+							name = "artifact_slot_tabs"
+							visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
+							datamodel = "[InventoryView.GetUniqueInventorySlotTypes]"
+							layoutpolicy_horizontal = expanding
+							margin_top = 10
+
+							button_tab = { # Show all artifacts tab
+								size = { 110 42 }
+
+								onclick = "[InventoryView.ClearSelectedSlot]"
+								down = "[Not( InventoryView.HasSelectedSlot )]"
+
+								tooltip = ARTIFACT_SORTING_TAB_ALL_TOOLTIP
+								using = tooltip_above
+
+								hbox = {
+									margin = { 10 0 }
+
+									text_single = {
+										layoutpolicy_horizontal = expanding
+										align = center
+										text = "ARTIFACT_SORTING_ALL_BUTTON"
+									}
+
+									text_single = {
+										min_width = 30
+										align = center
+										text = "[Inventory.GetNumOfArtifactInCategory( 'inventory' )]"
+									}
+								}
+							}
+
+							item = {
+								widget_inventory_slot_tab = {
+									name = "artifact_slot_type"
+									visible = "[InventorySlotType.IsInventoryType]"
+								}
+							}
+						}
+					}
+
+					vbox = {
+						name = "court_artifacts_top_bar"
+						visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'court_artifacts' ) )]"
+						layoutpolicy_horizontal = expanding
+						margin = { 20 0 }
+						margin_top = 10
+						margin_bottom = 5
+						spacing = 5
+
+						text_label_center = {
+							layoutpolicy_horizontal = expanding
+							align = center
+							text = "[court_artifacts|E]"
+							max_width = 440
+						}
+
+						text_multi = {
+							layoutpolicy_horizontal = expanding
+							text = "CHARACTER_WITHOUT_ROYAL_COURT_COURT_ARTIFACT_TAB"
+							autoresize = yes
+							align = center 
+							default_format = "#weak"
+							max_width = 520
+						}
+					}
+
+					hbox = {
+						name = "claims_top_bar"
+						visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
+						layoutpolicy_horizontal = expanding
+
+						margin_top = 10
+
+						text_label_center = {
+							layoutpolicy_horizontal = expanding
+							align = center
+							text = "[artifact_claims|E]"
+							max_width = 440
+						}
+					}
+
+					hbox = { # artifact sorting
+						name = "artifact_sorting"
+						visible = "[Not( VariableSystem.Exists( 'claims' ) )]"
+						layoutpolicy_horizontal = expanding
+						margin = { 10 5 }
+						spacing = 5
+
+						button_standard = {
+							name = "sort_order"
+							size = { 25 25 }
+							tooltip = "ARTIFACT_SORT_ORDER_TOOLTIP"
+							using = tooltip_ne
+							onclick = "[InventoryView.ToggleArtifactSortOrder]"
+
+							button_icon = {
+								size = { 25 25 }
+								texture = "gfx/interface/icons/flat_icons/sort_icon.dds"
+								framesize = { 66 66 }
+								frame = "[BoolTo2And1(InventoryView.IsArtifactSortOrderDescending)]"
+
+								alwaystransparent = yes
+
+								blockoverride "button_frames"
+								{
+									effectname = "NoHighlight"
+								}
+							}
+						}
+
+						dropdown_menu_standard = {
+							name = "sort_artifacts"
+
+							blockoverride "dropdown_properties"
+							{
+								datamodel = "[InventoryView.GetArtifactSortOptions]"
+								onselectionchanged = "[InventoryView.SortArtifacts]"
+								selectedindex = "[InventoryView.GetArtifactSortOptionsIndex]"
+							}
+
+							blockoverride "dropdown_active_item_properties"
+							{
+								text = "[Localize( CString.GetString )]"
+							}
+
+							blockoverride "dropdown_item_properties"
+							{
+								text = "[Localize( CString.GetString )]"
+							}
+						}
+
+						expand = {}
+					}
+
+					hbox = { # claims sorting
+						name = "claim_sorting"
+						visible = "[VariableSystem.Exists( 'claims' )]"
+						layoutpolicy_horizontal = expanding
+						margin = { 10 5 }
+						spacing = 5
+
+
+						button_standard = {
+							name = "sort_order"
+							size = { 25 25 }
+							tooltip = "ARTIFACT_CLAIM_SORT_ORDER_TOOLTIP"
+							using = tooltip_ne
+							onclick = "[ArtifactClaimsList.ToggleSortOrder]"
+
+							button_icon = {
+								size = { 25 25 }
+								texture = "gfx/interface/icons/flat_icons/sort_icon.dds"
+								framesize = { 66 66 }
+								frame = "[BoolTo2And1( ArtifactClaimsList.IsSortOrderDescending )]"
+
+								alwaystransparent = yes
+
+								blockoverride "button_frames"
+								{
+									effectname = "NoHighlight"
+								}
+							}
+						}
+
+						dropdown_menu_standard = {
+							name = "sort_claims"
+
+							blockoverride "dropdown_properties"
+							{
+								datamodel = "[ArtifactClaimsList.GetSortOptions]"
+								onselectionchanged = "[ArtifactClaimsList.SortClaims]"
+								selectedindex = "[ArtifactClaimsList.GetSortOptionsIndex]"
+							}
+
+							blockoverride "dropdown_active_item_properties"
+							{
+								text = "[Localize( CString.GetString )]"
+							}
+
+							blockoverride "dropdown_item_properties"
+							{
+								text = "[Localize( CString.GetString )]"
+							}
+						}
+
+						expand = {}
+					}
+
+					scrollbox = { # court artifacts
+						name = "court_artifacts"
+						visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'court_artifacts' ) )]"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						blockoverride "scrollbox_content" {
+							vbox = {
+								name = "artifacts_list"
+								datamodel = "[InventoryView.GetSortedArtifacts]"
+								layoutpolicy_horizontal = expanding
+								spacing = 6
+
+								item = {
+									widget_artifact_entry = {
+										visible = "[Artifact.IsCourtArtifact]"
+
+										blockoverride "background_button_overrides"
+										{
+											alwaystransparent = yes
+											enabled = no
+										}
+
+										blockoverride "portrait" {
+											expand = { minimumsize = { 0 0 } }
+										}
+									}
+								}
+							}
+						}
+
+						blockoverride "scrollbox_empty"
+						{
+							visible = "[IsDataModelEmpty( InventoryView.GetSortedArtifacts )]"
+							text = "CHARACTER_HAS_NO_ARTIFACTS"
+						}
+					}
+
+					scrollbox = { # artifact claims
+						name = "artifact_claims"
+						visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
+
+						blockoverride "scrollbox_content" {
+							fixedgridbox = {
+								name = "artifacts_list"
+								datamodel = "[ArtifactClaimsList.GetClaims]"
+								addcolumn = 570
+								addrow = 122
+
+								item = {
+									artifact_claim = {
+									}
+								}
+							}
+						}
+
+						blockoverride "scrollbox_empty"
+						{
+							visible = "[IsDataModelEmpty( ArtifactClaimsList.GetClaims )]"
+							text = "CHARACTER_HAS_NO_CLAIMED_ARTIFACTS"
+						}
+					}
+
+					scrollbox = { # artifact list
+						name = "artifacts"
+						visible = "[And( Not( VariableSystem.Exists( 'court_artifacts' ) ), Not( VariableSystem.Exists( 'claims' ) ))]"
+						layoutpolicy_vertical = expanding
+						layoutpolicy_horizontal = expanding
+
+						blockoverride "scrollbox_content" {
+							vbox = {
+								name = "equippable_artifacts_list"
+								datamodel = "[InventoryView.GetSortedArtifacts]"
+								layoutpolicy_horizontal = expanding
+								spacing = 8
+
+								item = {
+									widget_artifact_entry = {
+
+										visible = "[And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) )]"
+
+
+										tooltipwidget = {
+											artifact_tooltip = {
+												blockoverride "extra_information"
+												{
+													hbox = {
+														layoutpolicy_horizontal = expanding
+
+														text_multi = {
+															visible = "[InventoryView.GetCharacter.IsLocalPlayer]"
+															text = "[InventoryView.GetArtifactOnClickTooltip( Artifact.Self )]"
+															max_width = 500
+															autoresize = yes
+															using = Font_Size_Small
+														}
+
+														expand = {}
+													}
+												}
+											}
+										}
+
+										using = tooltip_es
+
+										blockoverride "background_button_overrides"
+										{
+											onclick = "[InventoryView.OnClickArtifact( Artifact.Self )]"
+											enabled = "[InventoryView.GetCharacter.IsLocalPlayer]"
+											down = "[Inventory.IsEquipped( Artifact.Self )]"
+										}
+
+										blockoverride "portrait" {
+											expand = { minimumsize = { 0 0 } }
+										}
+									}
+								}
+							}
+						}
+
+						blockoverride "scrollbox_empty"
+						{
+							visible = "[Or( Not( Inventory.HasAnyInventoryArtifact ), And( InventoryView.HasSelectedSlot, Not( Inventory.HasArtifactsOfSlotType( InventoryView.GetSelectedSlot.GetType ) ) ) )]"
+							text = "CHARACTER_HAS_NO_ARTIFACTS"
 						}
 					}
 				}
 			}
 		}
-		
 	}
+
 }
 
 types InventoryViewTypes
