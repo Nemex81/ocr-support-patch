@@ -984,6 +984,7 @@ window = {
 							allow_outside = yes
 		
 							text_label_center = {
+								datacontext = "[InventoryView.GetCharacter]"
 								layoutpolicy_horizontal = expanding
 								align = center|nobaseline
 								text = "INVENTORY_EQUIPPED_ARTIFACTS_HEADER"
@@ -1003,6 +1004,7 @@ window = {
 		
 								portrait_head_small = {
 									name = "antiquarian_portrait"
+									datacontext = "[InventoryView.GetCharacter.GetCharacterEmployedAs( 'antiquarian_court_position' )]"
 		
 									blockoverride "portrait_button"
 									{
@@ -1032,30 +1034,35 @@ window = {
 		
 						widget_inventory_slot = {
 							name = "head_slot"
+							datacontext = "[Inventory.GetSlot('crown')]"
 							parentanchor = top|hcenter
 							position = { 0 40 }
 						}
 		
 						widget_inventory_slot = {
 							name = "journal_slot"
+							datacontext = "[Inventory.GetSlot('journal')]"
 							parentanchor = top|right
 							position = { 0 40 }
 						}
 		
 						widget_inventory_slot = {
 							name = "regalia_slot"
+							datacontext = "[Inventory.GetSlot('regalia')]"
 							parentanchor = vcenter|right
 							position = { 0 -50 }
 						}
 		
 						widget_inventory_slot = {
 							name = "weapon_slot"
+							datacontext = "[Inventory.GetSlot('weapon')]"
 							parentanchor = vcenter|left
 							position = { 0 -50 }
 						}
 		
 						widget_inventory_slot = {
 							name = "armor_slot"
+							datacontext = "[Inventory.GetSlot('armor')]"
 							parentanchor = center
 							position = { 0 -50 }
 						}
@@ -1068,24 +1075,28 @@ window = {
 		
 							widget_inventory_slot = {
 								name = "trinket_1_slot"
+								datacontext = "[Inventory.GetSlot('trinket_1')]"
 								parentanchor = bottom|hcenter
 								position = { -185 0 }
 							}
 		
 							widget_inventory_slot = {
 								name = "trinket_2_slot"
+								datacontext = "[Inventory.GetSlot('trinket_2')]"
 								parentanchor = bottom|hcenter
 								position = { -62 0 }
 							}
 		
 							widget_inventory_slot = {
 								name = "trinket_3_slot"
+								datacontext = "[Inventory.GetSlot('trinket_3')]"
 								parentanchor = bottom|hcenter
 								position = { 62 0 }
 							}
 		
 							widget_inventory_slot = {
 								name = "trinket_4_slot"
+								datacontext = "[Inventory.GetSlot('trinket_4')]"
 								parentanchor = bottom|hcenter
 								position = { 185 0 }
 							}
@@ -1102,6 +1113,7 @@ window = {
 									spacing = 10
 		
 									button_standard = {
+										datacontext = "[AccessLocalPlayerCachedData.AccessNewArtifacts]"
 										visible = "[Not( Character.HasRoyalCourt )]"
 										text = "INVENTORY_TAB_COURT_ARTIFACTS"
 		
@@ -1124,6 +1136,7 @@ window = {
 									}
 		
 									button_standard = {
+										datacontext = "[AccessLocalPlayerCachedData.AccessNewArtifacts]"
 										visible = "[Character.HasRoyalCourt]"
 										text = "ROYAL_COURT"
 		
@@ -1146,6 +1159,7 @@ window = {
 									}
 		
 									button_standard = {
+										datacontext = "[InventoryView.GetArtifactClaimsList]"
 										text = "INVENTORY_TAB_CLAIMS_HIS_HER_MY"
 										enabled = "[And( DataModelHasItems( ArtifactClaimsList.GetClaims ), Not( InventoryView.HasSelectedSlot ) )]"
 										tooltip = "[SelectLocalization( DataModelHasItems( ArtifactClaimsList.GetClaims ), 'INVENTORY_TAB_CLAIMS_TOOLTIP', 'NO_ARTIFACT_CLAIMS' )]"
@@ -1169,6 +1183,7 @@ window = {
 		
 								button_standard = {
 									name = "commission_decision"
+									datacontext = "[GetDecisionWithKey('commission_artifact_decision')]"
 									visible = "[And( Character.IsLocalPlayer, Decision.IsShownForPlayer )]"
 									size = { 350 45 }
 		
@@ -1328,6 +1343,7 @@ window = {
 								item = {
 									widget_inventory_slot_tab = {
 										name = "artifact_slot_type"
+										datacontext = "[Inventory.GetSlot('crown')]"
 										visible = "[InventorySlotType.IsInventoryType]"
 									}
 								}
@@ -1351,6 +1367,7 @@ window = {
 							}
 		
 							text_multi = {
+								datacontext = "[InventoryView.GetCharacter]"
 								layoutpolicy_horizontal = expanding
 								text = "CHARACTER_WITHOUT_ROYAL_COURT_COURT_ARTIFACT_TAB"
 								autoresize = yes
@@ -1435,6 +1452,7 @@ window = {
 							margin = { 10 5 }
 							spacing = 5
 		
+							datacontext = "[InventoryView.GetArtifactClaimsList]"
 		
 							button_standard = {
 								name = "sort_order"
@@ -1498,6 +1516,8 @@ window = {
 									item = {
 										widget_artifact_entry = {
 											visible = "[Artifact.IsCourtArtifact]"
+											datacontext = "[InventoryView.GetCharacter.GetInventory]"
+											datacontext = "[InventoryView.GetSelectedSlot]"
 		
 											blockoverride "background_button_overrides"
 											{
@@ -1522,6 +1542,7 @@ window = {
 		
 						scrollbox = { # artifact claims
 							name = "artifact_claims"
+							datacontext = "[InventoryView.GetArtifactClaimsList]"
 							visible = "[And( Not( InventoryView.HasSelectedSlot ), VariableSystem.Exists( 'claims' ) )]"
 							layoutpolicy_horizontal = expanding
 							layoutpolicy_vertical = expanding
@@ -1535,6 +1556,8 @@ window = {
 		
 									item = {
 										artifact_claim = {
+											datacontext = "[ArtifactClaim.GetArtifact]"
+											datacontext = "[InventoryView.GetCharacter]"
 										}
 									}
 								}
@@ -1562,6 +1585,9 @@ window = {
 		
 									item = {
 										widget_artifact_entry = {
+											datacontext = "[InventoryView.GetCharacter.GetInventory]"
+											datacontext = "[InventoryView.GetSelectedSlot]"
+											datacontext = "[InventoryView.GetSelectedSlot.GetType]"
 		
 											visible = "[And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) )]"
 		
@@ -1613,7 +1639,9 @@ window = {
 					}
 				}
 			}
-		}
+		
+	}
+	}
 		
 	}
 }
