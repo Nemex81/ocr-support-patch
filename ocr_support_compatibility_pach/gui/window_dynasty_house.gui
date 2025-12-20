@@ -1,5 +1,5 @@
 ### DYNASTY HOUSE WINDOW
-	window = {
+window = {
 	name = "dynasty_house_view"
 	widgetid = "dynasty_house_view"
 	datacontext = "[GetVariableSystem]"
@@ -2741,7 +2741,7 @@
 
 											text_single = {
 												layoutpolicy_horizontal = expanding
-												text = HOUSE_LIST_HEAD
+												text = "HOUSE_LIST_HEAD"
 												max_width = 365
 												fontsize_min = 14
 												align = nobaseline
