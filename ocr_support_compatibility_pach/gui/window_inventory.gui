@@ -574,11 +574,12 @@ window = {
 										widget_artifact_entry_ocr = {
 											name = "new_artifacts"
 											layoutpolicy_horizontal = expanding
+											datacontext = "[InventoryView.GetCharacter]"
 											datacontext = "[InventoryView.GetCharacter.GetInventory]"
 											datacontext = "[InventoryView.GetSelectedSlot]"
 											datacontext = "[InventoryView.GetSelectedSlot.GetType]"
-		
-											visible = "[And(And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) ), LocalPlayerNewArtifacts.IsNewArtifact( Artifact.Self ))]"
+
+											visible = "[And( Artifact.IsInventoryArtifact, Or( Not(InventoryView.HasSelectedSlot), And( InventoryView.HasSelectedSlot, InventorySlot.CanHoldArtifact( Artifact.Self ) ) ), LocalPlayerNewArtifacts.IsNewArtifact( Artifact.Self ))]"
 		
 											using = tooltip_es
 		
@@ -604,11 +605,12 @@ window = {
 									item = {
 										widget_artifact_entry_ocr = {
 											layoutpolicy_horizontal = expanding
+											datacontext = "[InventoryView.GetCharacter]"
 											datacontext = "[InventoryView.GetCharacter.GetInventory]"
 											datacontext = "[InventoryView.GetSelectedSlot]"
 											datacontext = "[InventoryView.GetSelectedSlot.GetType]"
-		
-											visible = "[And(And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) ), Not(LocalPlayerNewArtifacts.IsNewArtifact( Artifact.Self )))]"
+
+											visible = "[And( Artifact.IsInventoryArtifact, Or( Not(InventoryView.HasSelectedSlot), And( InventoryView.HasSelectedSlot, InventorySlot.CanHoldArtifact( Artifact.Self ) ) ), Not(LocalPlayerNewArtifacts.IsNewArtifact( Artifact.Self )))]"
 		
 											using = tooltip_es
 		
@@ -1585,11 +1587,12 @@ window = {
 		
 									item = {
 										widget_artifact_entry = {
+											datacontext = "[InventoryView.GetCharacter]"
 											datacontext = "[InventoryView.GetCharacter.GetInventory]"
 											datacontext = "[InventoryView.GetSelectedSlot]"
 											datacontext = "[InventoryView.GetSelectedSlot.GetType]"
-		
-											visible = "[And( Artifact.IsInventoryArtifact, Or(  Not( InventoryView.HasSelectedSlot ), InventorySlot.CanHoldArtifact( Artifact.Self ) ) )]"
+
+											visible = "[And( Artifact.IsInventoryArtifact, Or( Not(InventoryView.HasSelectedSlot), And( InventoryView.HasSelectedSlot, InventorySlot.CanHoldArtifact( Artifact.Self ) ) ) )]"
 		
 		
 											tooltipwidget = {
