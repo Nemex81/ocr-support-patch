@@ -31,20 +31,24 @@ window = {
 		on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
 	}
 
-	widget = {
-		name = "ocr_dynasty_house_view"
-		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+	# =========================================================
+	# MODALITÀ NON VEDENTI (OCR) - toggle: assenza variabile 'ocr'
+	# =========================================================
+window_ocr = {
 		layoutpolicy_horizontal = expanding
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		blockoverride "ocr_header" {
 
 			button = {
 				using = close_window_ocr
+				shortcut = "close_window"
 				onclick = "[Clear('dynasty_view_expand')]"
 				visible = "[Is('dynasty_view_expand')]"
 			}
 
 			button = {
 				using = close_window_ocr
+				shortcut = "close_window"
 				visible = "[Isnt('dynasty_view_expand')]"
 				onclick = "[DynastyHouseView.Close]"
 				onclick = "[DynastyHouseView.CloseMembersWindow]"
@@ -121,8 +125,8 @@ window = {
 
 		blockoverride "ocr_content" {
 			vbox = {
-				name = "dynasty_house"
-				widgetid = "dynasty_house"
+				name = "dynasty_house_ocr"
+				widgetid = "dynasty_house_ocr"
 				layoutpolicy_horizontal = expanding
 
 				### HOUSE ###
@@ -1119,7 +1123,9 @@ window = {
 			}
 		}
 	}
-
+	# =========================================================
+	# MODALITÀ NORMO VEDENTI (VANILLA) - toggle: variabile 'ocr' presente
+	# =========================================================
 	widget = {
 		name = "vanilla_dynasty_house_view"
 		visible = "[GetVariableSystem.Exists('ocr')]"
@@ -1244,6 +1250,7 @@ window = {
 
 									blockoverride "button_close"
 									{
+										shortcut = "close_window"
 										onclick = "[DynastyHouseView.Close]"
 										onclick = "[DynastyHouseView.CloseMembersWindow]"
 									}
@@ -2644,6 +2651,7 @@ window = {
 
 				blockoverride "button_close"
 				{
+					shortcut = "close_window"
 					onclick = "[GetVariableSystem.Set( 'dynasty_view_expand', 'none' )]"
 				}
 			}
