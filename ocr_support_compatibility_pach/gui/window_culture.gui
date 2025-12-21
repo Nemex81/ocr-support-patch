@@ -5,8 +5,11 @@
 window = {
 	name = "culture_window"
 	widgetid = "culture_window"
+	size = { 100% 100% }
+	alwaystransparent = yes
 	datacontext = "[CultureWindow.GetCulture]"
 	datacontext = "[Culture.GetReformation]"
+	datacontext = "[GetVariableSystem]"
 	layer = windows_layer
 	movable = no
 
@@ -16,6 +19,7 @@ window = {
 		name = _show
 		using = Animation_FadeIn_Quick
 		using = Sound_WindowShow_Standard
+		using = WindowPositionMainTab
 
 		position = { 0 0 }
 		on_start = "[GetVariableSystem.Set( 'culture_tab', 'early' )]"
@@ -35,6 +39,7 @@ window = {
 		name = _hide
 		using = Animation_FadeOut_Quick
 		using = Sound_WindowHide_Standard
+		using = WindowPositionMainTabHide
 		on_finish = "[Click('clear_last_view')]"
 
 		position = { -90 0 }
@@ -42,7 +47,11 @@ window = {
 	}
 	# Variable 'ocr' drives mode selection: not set => OCR accessible layout, set => full vanilla visuals
 	window_ocr = {
+		name = "ocr_mode_content"
+		parentanchor = top|left
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		using = WindowSizeMainTab
+		using = WindowPositionMainTab
 		blockoverride "ocr_header" {
 			header_pattern = {
 				layoutpolicy_horizontal = expanding
@@ -1482,8 +1491,12 @@ window = {
 
 	# When 'ocr' is set we intentionally render the full vanilla visuals instead of the OCR layout
 	margin_widget = {
+		name = "normal_mode_content"
+		parentanchor = top|right
 		visible = "[GetVariableSystem.Exists('ocr')]"
 		size = { 100% 100% }
+		using = WindowSizeMainTab
+		using = WindowPositionMainTab
 
 		vbox = {
 			using = Window_Margins_Sidebar
