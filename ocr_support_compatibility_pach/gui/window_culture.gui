@@ -589,10 +589,11 @@ window = {
 							onclick = "[ClickAdd('culture_characters_list', GetPlayer, Culture)]"
 							blockoverride "text" {
 								raw_text = "[Select_CString(GetPlayer.MakeScope.Var('culture_characters_sorting').IsSet, 'Sorted by distance, sort by size', 'Sorted by size, sort by distance')], T."
-							}
-						}
+		}
 
-					}
+		expand = {}
+	}
+}
 					# }
 					#
 					# flowcontainer = {
@@ -1482,7 +1483,10 @@ window = {
 	# When 'ocr' is set we intentionally render the full vanilla visuals instead of the OCR layout
 	margin_widget = {
 		visible = "[GetVariableSystem.Exists('ocr')]"
-		using = Window_Margins_Sidebar
+		size = { 100% 100% }
+
+		vbox = {
+			using = Window_Margins_Sidebar
 
 		header_pattern = {
 			layoutpolicy_horizontal = expanding
