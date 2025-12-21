@@ -933,7 +933,7 @@ window = {
 
 									margin_top = 3
 
-									progressbar_reform = {
+									progressbar_reform_ocr = {
 
 										blockoverride "progressbar_reform_size"
 										{
@@ -1316,7 +1316,7 @@ window = {
 												datamodel = "[GuiCultureEraGroup.GetInnovations]"
 
 												item = {
-													flowcontainer_innovation = {
+													flowcontainer_innovation_ocr = {
 														visible = "[Or(Isnt('hide_discovered'), And(Is('hide_discovered'), Not(CultureInnovation.IsActive)))]"
 													}
 												}
@@ -2810,6 +2810,15 @@ types OCR {
 			}
 		}
 	}
+
+	type progressbar_reform_ocr = progressbar_standard
+	{
+		block "progressbar_reform_size" { }
+
+		min = 0
+		max = 100
+		value = "[CultureReformation.GetProgress]"
+	}
 }
 
 types CultureWindow
@@ -3109,7 +3118,7 @@ types OCR {
 					align = left
 				}
 
-				progressbar_reform = {
+				progressbar_reform_ocr = {
 
 					blockoverride "progressbar_reform_size"
 					{
@@ -3124,7 +3133,7 @@ types OCR {
 		}
 	}
 
-	type flowcontainer_innovation = flowcontainer {
+	type flowcontainer_innovation_ocr = flowcontainer {
 		datacontext = "[GuiCultureInnovation.GetCultureInnovation]"
 		direction = horizontal
 
