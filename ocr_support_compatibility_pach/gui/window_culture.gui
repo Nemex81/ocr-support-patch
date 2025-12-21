@@ -40,6 +40,7 @@ window = {
 		position = { -90 0 }
 		on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
 	}
+	# Variable 'ocr' drives mode selection: not set => OCR accessible layout, set => full vanilla visuals
 	window_ocr = {
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		blockoverride "ocr_header" {
@@ -54,7 +55,6 @@ window = {
 				blockoverride "button_close"
 				{
 					onclick = "[CultureWindow.Close]"
-					# shortcut = "innovations_window"
 				}
 
 				blockoverride "button_back"
@@ -87,10 +87,6 @@ window = {
 						visible = "[Not(ObjectsEqual(Culture.Self, GetPlayer.GetCulture))]"
 						raw_text = "[Culture.GetAcceptance( GetPlayer.GetCulture )|%/0V],"
 					}
-					# text_single = {
-					# 	visible = "[Has('culture_view_tabs', 'overview')]"
-					# 	raw_text = "[Culture.GetPlayerRelationString]."
-					# }
 					text_single = {
 						raw_text = "[Get('culture_view_tabs')] tab,"
 					}
@@ -100,7 +96,6 @@ window = {
 
 		blockoverride "ocr_content" {
 			vbox = {
-				visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
 
@@ -242,8 +237,6 @@ window = {
 						}
 					}
 
-					vbox_locr_culture_desc = {}
-
 					hbox = {
 						layoutpolicy_horizontal = expanding
 						spacing = -8
@@ -382,12 +375,6 @@ window = {
 									raw_text = "H."
 								}
 							}
-							# blockoverride "extra" {
-							# 	comma = {}
-							# 	text_single = {
-							# 		raw_text = "not accessible yet"
-							# 	}
-							# }
 							tooltip = "HYBRIDIZE_CULTURE_TOOLTIP"
 							name = "hybridize_tutorial_uses_this"
 							using = agot_show_hybridize_culture
@@ -454,12 +441,6 @@ window = {
 								raw_text = "Shift D."
 							}
 						}
-						# blockoverride "extra" {
-						# 	comma = {}
-						# 	text_single = {
-						# 		raw_text = "not accessible yet."
-						# 	}
-						# }
 						tooltip = "DIVERGE_CULTURE_TOOLTIP"
 						using = tooltip_nw
 
@@ -583,55 +564,6 @@ window = {
 
 					visible = "[Has('culture_view_tabs', 'rulers')]"
 
-					# flowcontainer = {
-					# 	ignoreinvisible = yes
-					# 	layoutpolicy_horizontal = expanding
-					# 	visible = "[Isnt('culture_followers_sort')]"
-					#
-					# 	button_text = {
-					# 		shortcut = army_split_half
-					# 		onclick = "[GetScriptedGui('culture_followers_filter').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-					# 		onclick = "[GetScriptedGui('culture_followers').Execute( GuiScope.SetRoot( Culture.MakeScope ).AddScope('player', GetPlayer.MakeScope ).End )]"
-					# 		blockoverride "pre" {
-					# 			text_single = {
-					# 				raw_text = "[GetDataModelSize(CultureWindow.GetCulture.MakeScope.GetList('followers'))] [CultureWindow.GetCulture.GetAdjectiveNoTooltip] [Select_CString(GetPlayer.MakeScope.Var('culture_followers_filter').IsSet, 'followers', 'rulers')],"
-					# 			}
-					# 		}
-					# 		blockoverride "text" {
-					# 			raw_text = "show [Select_CString(GetPlayer.MakeScope.Var('culture_followers_filter').IsSet, 'rulers only', 'all followers')], F."
-					# 		}
-					# 	}
-					# }
-					#
-					# flowcontainer = {
-					# 	ignoreinvisible = yes
-					# 	visible = "[Isnt('culture_followers_sort')]"
-					#
-					# 	layoutpolicy_horizontal = expanding
-					#
-					# 	button_text = {
-					# 		shortcut = map_mode_2
-					# 		onclick = "[Set('culture_followers_sort', 'yes')]"
-					# 		blockoverride "text" {
-					# 			raw_text = "Sorted by:"
-					# 		}
-					# 		blockoverride "extra" {
-					# 			text_single = {
-					# 				visible = "[Not(GetPlayer.MakeScope.Var('culture_followers_sort').IsSet)]"
-					# 				raw_text = "realm size,"
-					# 			}
-					# 			text_single = {
-					# 				visible = "[GetPlayer.MakeScope.Var('culture_followers_sort').IsSet]"
-					# 				raw_text = "[GetPlayer.MakeScope.Var('culture_followers_sort').GetFlagName],"
-					# 			}
-					#
-					# 			text_single = {
-					# 				raw_text = "T."
-					# 			}
-					# 		}
-					# 	}
-					#
-
 					flowcontainer = {
 						ignoreinvisible = yes
 						spacing = 3
@@ -699,7 +631,6 @@ window = {
 						addrow = 20
 						addcolumn = 690
 						datamodel = "[Culture.MakeScope.GetList('culture_characters')]"
-						# visible = "[Isnt('culture_followers_sort')]"
 
 						item = {
 							button_text = {
@@ -723,35 +654,6 @@ window = {
 								}
 								blockoverride "extra" {
 									, = {}
-									flowcontainer = {
-										ignoreinvisible = yes
-										spacing = 3
-										visible = no#"[GetPlayer.MakeScope.Var('culture_followers_sort').IsSet]"
-
-										text_single = {
-											visible = "[EqualTo_string(GetPlayer.MakeScope.Var('culture_followers_sort').GetFlagName, 'piety')]"
-											raw_text = "[Character.GetPiety] piety."
-										}
-										text_single = {
-											visible = "[EqualTo_string(GetPlayer.MakeScope.Var('culture_followers_sort').GetFlagName, 'devotion')]"
-											raw_text = "[GetPietyLevelName(Character.GetPietyLevel)]."
-										}
-										text_single = {
-											visible = "[EqualTo_string(GetPlayer.MakeScope.Var('culture_followers_sort').GetFlagName, 'strength')]"
-											raw_text = "[Character.GetMilitaryStrengthText] men,"
-										}
-										text_single = {
-											visible = "[EqualTo_string(GetPlayer.MakeScope.Var('culture_followers_sort').GetFlagName, 'sins')]"
-											raw_text = "[Character.MakeScope.ScriptValue('num_of_sins')] sins,"
-										}
-										text_single = {
-											visible = "[EqualTo_string(GetPlayer.MakeScope.Var('culture_followers_sort').GetFlagName, 'virtues')]"
-											raw_text = "[Character.MakeScope.ScriptValue('num_of_virtues')] virtues,"
-										}
-										text_single = {
-											raw_text = "[Character.RealmSize] counties,"
-										}
-									}
 									# text_single = {
 									# 	raw_text = "[Character.GetTitleAsNameNoTooltip]"
 									# }
@@ -1183,7 +1085,7 @@ window = {
 
 								vbox = {
 									datamodel = "[CultureWindow.GetCultureTraditions]"
-	                visible = "[CultureWindow.IsInReformationMode]"
+									visible = "[CultureWindow.IsInReformationMode]"
 									layoutpolicy_horizontal = expanding
 
 									item = {
@@ -1577,6 +1479,7 @@ window = {
 		}
 	}
 
+	# When 'ocr' is set we intentionally render the full vanilla visuals instead of the OCR layout
 	margin_widget = {
 		visible = "[GetVariableSystem.Exists('ocr')]"
 		using = Window_Margins_Sidebar
@@ -1592,7 +1495,6 @@ window = {
 			blockoverride "button_close"
 			{
 				onclick = "[CultureWindow.Close]"
-				# shortcut = "innovations_window"
 			}
 
 			blockoverride "button_back"
@@ -1796,9 +1698,9 @@ window = {
 							datacontext = "[Culture.GetMartial]"
 							layoutpolicy_horizontal = expanding
 
- 							# Only show Martial if culture affects martial customs,
- 							# which is only the case if we are able to modify
- 							# the culture pillars.
+							# Only show Martial if culture affects martial customs,
+							# which is only the case if we are able to modify
+							# the culture pillars.
 							visible = "[HasDlcFeature( 'diverge_culture' )]"
 
 							spacing = 10
@@ -2849,8 +2751,6 @@ window = {
 		expand = {}
 	}
 
-	window_culture_old = {}
-
 }
 
 ######################################################
@@ -3321,7 +3221,6 @@ types CultureShared
 		highlight_icon = {
 			name = "icon"
 			alpha = 0.3
-			using = vanilla
 			block "icon_size" {
 				size = { 592 130 }
 			}
