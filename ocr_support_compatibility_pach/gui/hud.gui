@@ -2266,9 +2266,11 @@ widget = {
 
 	using = Animation_ShowHide_Quick
 
-	# vanilla bottom left, immagine personaggio
 	old_hud = {}
 
+
+
+	# vanilla bottom left, immagine personaggio
 	container = {
 		datacontext = "[GetPlayer]"
 		visible = "[And(GetPlayer.IsValid, Not(IsPauseMenuShown) )]"
@@ -2309,29 +2311,200 @@ widget = {
 		}
 	}
 
-	# pulsante icona inventario
-	widget = {
-		#visible = "[Isnt('ocr')]"       # mostra solo in modalità normovedente
-		visible = "[And(GetPlayer.IsValid, Not(IsPauseMenuShown) )]"
-		position = { 55 555 }
-		size = { 55 55 }
 
-		button_open_inventory = {
-			name = "open_inventory_tutorial_uses_this"
-			using = tooltip_ne
-			size = { 55 55 }
-			datacontext = "[GetPlayer]"
-			blockoverride "highlight_icon_size" {
-				size = { 40 40 }
+
+
+	######################################################
+	### ICONE BOTTOM-LEFT UNIFICATE (Funzionanti e Testate)
+	######################################################
+	widget = {
+		name = "bottom_left_icons_container_final"
+		visible = "[And(GetPlayer.IsValid, Not(IsPauseMenuShown))]"
+		parentanchor = bottom|left
+		size = { 300 400 } 
+		position = { 0 0 }
+		
+		# Contesto globale fondamentale
+		datacontext = "[GetPlayer]"
+
+		### 1. INVENTARIO (Funzionante)
+		widget = {
+			position = { 5 5 }
+			size = { 40 40 }
+			
+			button_open_inventory = {
+				name = "open_inventory_button"
+				size = { 55 55 }
+				datacontext = "[GetPlayer]"
+				using = tooltip_ne
+				blockoverride "highlight_icon_size" {
+					size = { 40 40 }
+				}
+			}
+
+			widget_new_artifacts = {
+				position = { 6 2 }
+				parentanchor = bottom|right
+				visible = "[Or( GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'inventory' ), '(int32)0' ), And( Not( GetPlayer.HasRoyalCourt ), GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' ) ) )]"
 			}
 		}
 
-		widget_new_artifacts = {
-			position = { 6 2 }
-			parentanchor = bottom|right
-			visible = "[Or( GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'inventory' ), '(int32)0' ), And( Not( GetPlayer.HasRoyalCourt ), GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' ) ) )]"
+		### 2. STILE DI VITA (Lifestyle)
+		widget = {
+			position = { 5 50 }
+			size = { 40 40 }
+			
+			# Questo contesto rende disponibile "Lifestyle" (l'oggetto)
+			datacontext = "[GetPlayer.GetLifestyle]"
+
+			button_normal = {
+				name = "lifestyle_button"
+				visible = "[GetPlayer.IsAdult]"
+
+				tooltip = "PLAYER_LIFESTYLE_TOOLTIP"
+				using = tooltip_ne
+
+				onclick = "[OpenGameViewData( 'lifestyle', GetPlayer.GetID )]"
+				size = { 56 56 }
+
+				icon_round_button_base = {}
+
+				icon = {
+					name = "progress_frame"
+					texture = "gfx/interface/progressbars/action_progress_frame.dds"
+					size = { 100% 100% }
+					alpha = 0.5
+				}
+
+				highlight_icon_lifestyle_focus = {
+					name = "tutorial_highlight_lifestyle_HUD_button"
+					texture = "[GetPlayer.GetFocus.GetIcon]"
+					alwaystransparent = yes
+					size = { 100% 100% }
+
+					modify_texture = {
+						texture = "gfx/interface/icons/focuses/hud_icon_mask.dds"
+						blend_mode = alphamultiply
+					}
+				}
+				
+				# Icona Stile Attivo
+				icon = {
+					visible = "[Lifestyle.IsValid]" # Usa 'Lifestyle' dal datacontext
+					texture = "[Lifestyle.GetIcon]"
+					size = { 38 38 }
+					parentanchor = center
+					framesize = { 160 160 }
+				}
+				
+				# Icona Nessuno Stile
+				icon = {
+					visible = "[Not(Lifestyle.IsValid)]"
+					texture = "gfx/interface/icons/lifestyle/no_lifestyle_selected.dds"
+					size = { 38 38 }
+					parentanchor = center
+				}
+				
+				icon = {
+					texture = "gfx/interface/buttons/button_lifestyles_frame.dds"
+					size = { 100% 100% }
+				}
+			}
 		}
+
+		### 3. FEDE (Standalone - Funzionante)
+		widget = {
+			name = "hud_icon_faith_standalone"
+			visible = "[And(GetPlayer.IsValid, Not(IsPauseMenuShown))]"
+			parentanchor = bottom|left
+			position = { 10 -150 }
+			size = { 45 45 }
+			
+			datacontext = "[GetPlayer.GetFaith]"
+
+			button_normal = {
+				name = "faith_button_manual"
+				size = { 45 45 }
+				onclick = "[OpenGameViewData( 'faith', Faith.GetID )]"
+				
+				using = tooltip_es
+				tooltipwidget = { faith_tooltip_click = {} }
+
+				icon = { texture = "gfx/interface/skinned/button_hud_character_sidebar.dds" size = { 100% 100% } }
+				icon = {
+					texture = "[Faith.GetIcon]"
+					size = { 34 34 }
+					parentanchor = center
+					glow = { color = { 0 0 0 0.8 } glow_radius = 3 using = Glow_Standard }
+				}
+			}
+		}
+
+		### 4. CULTURA (Standalone - Funzionante)
+		widget = {
+			name = "hud_icon_culture_standalone"
+			visible = "[And(GetPlayer.IsValid, Not(IsPauseMenuShown))]"
+			parentanchor = bottom|left
+			position = { 10 -200 }
+			size = { 45 45 }
+			
+			datacontext = "[GetPlayer.GetCulture]"
+
+			button_normal = {
+				name = "culture_button_manual"
+				size = { 45 45 }
+				onclick = "[OpenGameViewData( 'culture_window', Culture.GetID )]"
+				
+				using = tooltip_es
+				tooltipwidget = { culture_tooltip_click = {} }
+
+				icon = { texture = "gfx/interface/skinned/button_hud_character_sidebar.dds" size = { 100% 100% } }
+				icon = {
+					texture = "gfx/interface/icons/icon_culture.dds"
+					size = { 34 34 }
+					parentanchor = center
+					glow = { color = { 0 0 0 0.8 } glow_radius = 3 using = Glow_Standard }
+				}
+			}
+		}
+
+		### 5. CASATA (Standalone - Funzionante)
+		widget = {
+			name = "hud_icon_house_standalone"
+			visible = "[And(GetPlayer.IsValid, Not(IsPauseMenuShown))]"
+			parentanchor = bottom|left
+			position = { 10 -250 }
+			size = { 45 45 }
+			
+			datacontext = "[GetPlayer.GetHouse]"
+
+			button_normal = {
+				name = "house_button_manual"
+				size = { 45 45 }
+				onclick = "[DefaultOnHouseCoatOfArmsClick(DynastyHouse.GetID)]"
+				
+				using = tooltip_es
+				tooltipwidget = { using = dynasty_house_tooltip }
+
+				icon = { texture = "gfx/interface/skinned/button_hud_character_sidebar.dds" size = { 100% 100% } }
+				
+				coa_house_tiny = {
+					parentanchor = center
+					scale = 0.85
+					blockoverride "coa_button" { alwaystransparent = yes }
+					blockoverride "coa_tooltip" {}
+				}
+			}
+		}
+
+
 	}
+
+
+
+
+
+
 
 
 	# ocr
