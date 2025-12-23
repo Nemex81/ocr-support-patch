@@ -1,9 +1,3 @@
-Perfetto, ho capito. Il documento deve essere un **manuale di linee guida generali** per il refactoring dual-mode, **NON** la cronaca dettagliata di window_county_view.
-
-Genero la versione corretta, **ripulita** da tutta la parte specifica County View:
-
-***
-
 # 📋 PROGETTO CK3 OCR SUPPORT - ACCESSIBILITY FIX for dual mode
 
 **Versione**: 4.0 - Universal Accessibility & Input Parity Update  
@@ -816,6 +810,613 @@ window = {
 **Stima tempo**: 10-12 ore per sistema completo
 
 ***
+
+
+## 🔧 GESTIONE TYPES E TEMPLATES
+
+### Principio Base: Separazione Logica, Coesistenza File
+
+I **types** in Jomini GUI sono **riutilizzabili widget templates** definiti all'inizio del file `.gui`. Nel sistema dual-mode, dobbiamo gestire:
+
+1. **Types OCR** → Ottimizzati per interfaccia accessibile keyboard-only
+2. **Types Vanilla** → Ricostruzione grafica originale CK3
+
+**Regola aurea**: Types **NON** possono avere stesso nome → Naming convention OBBLIGATORIA.
+
+***
+
+### Scenario A: Convivenza Pacifica (No Conflitti)
+
+**Caso**: OCR Support ha già types accessibili, vanilla ha i suoi types grafici → nessuna sovrapposizione funzionale.
+
+#### Esempio Pratico: `window_decisions.gui`
+
+```gui
+types DecisionsTypes {
+    ## ────────────────────────────────────
+    ## TYPES OCR - ACCESSIBILI
+    ## ────────────────────────────────────
+    
+    type vbox_decision_group_foldout_ocr = {
+        vbox = {
+            datacontext = "[DecisionGroupItem.GetType]"
+            spacing = 0
+            layoutpolicy_horizontal = expanding
+            
+            # Button text-only espandibile
+            button_expandable_toggle_field = {
+                blockoverride "text" {
+                    text = "[DecisionGroupItem.GetGroupTitle]"
+                }
+            }
+            
+            # Lista decisioni testuale
+            vbox = {
+                visible = "[PdxGuiFoldOut.IsUnfolded]"
+                
+                fixedgridbox = {
+                    datamodel = "[DecisionGroupItem.GetDecisions]"
+                    addcolumn = 527
+                    addrow = 25  # Righe compatte per screen reader
+                    
+                    item = {
+                        # Button testuale con shortcut
+                        button_decision_entry_cached_ocr = {
+                            # Text label prominente
+                            # No icone grafiche
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    type button_decision_entry_cached_ocr = {
+        button_decision_entry = {
+            blockoverride "iconsize" {
+                size = { 45 100 }  # Icon piccola
+            }
+            blockoverride "iconalpha" {
+                alpha = 0.6  # Icon sbiadita (OCR ignora)
+            }
+        }
+    }
+    
+    ## ────────────────────────────────────
+    ## TYPES VANILLA - GRAFICI
+    ## ────────────────────────────────────
+    
+    type vbox_decision_group_foldout_vanilla = {
+        vbox = {
+            datacontext = "[DecisionGroupItem.GetType]"
+            spacing = 4
+            layoutpolicy_horizontal = expanding
+            
+            # Button grafico con background
+            button_expandable_toggle_field = {
+                # Styling vanilla completo
+            }
+            
+            vbox = {
+                visible = "[PdxGuiFoldOut.IsUnfolded]"
+                
+                fixedgridbox = {
+                    datamodel = "[DecisionGroupItem.GetDecisions]"
+                    addcolumn = 527
+                    # ⚠️ DYNAMIC ROW HEIGHT per vanilla
+                    addrow = "[SelectFloat(DecisionGroupType.HasTag('extrabigbutton'), '70.0', SelectFloat(DecisionGroupType.HasTag('bigbutton'), '60.0', '50.0'))]"
+                    
+                    item = {
+                        button_decision_entry_cached_vanilla = {
+                            # Large icons, backgrounds, hover effects
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    type button_decision_entry_cached_vanilla = {
+        button_decision_entry = {
+            blockoverride "iconsize" {
+                size = { 60 100 }  # Icon grande per visibilità
+            }
+            blockoverride "iconalpha" {
+                alpha = 0.8  # Icon prominente
+            }
+        }
+    }
+    
+    ## ────────────────────────────────────
+    ## TYPES CONDIVISI (se logica identica)
+    ## ────────────────────────────────────
+    
+    type button_decision_entry = {
+        # Base template comune
+        # Override specifici gestiti da OCR/Vanilla variants
+        button_standard = {
+            # ...
+        }
+    }
+}
+```
+
+#### Uso nei Widget
+
+```gui
+# Widget OCR
+widget = {
+    visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+    
+    vbox = {
+        datamodel = "[DecisionsView.GetDecisionGroupItems]"
+        
+        item = {
+            vbox_decision_group_foldout_ocr = {}  # Type OCR
+        }
+    }
+}
+
+# Widget Vanilla
+widget = {
+    visible = "[GetVariableSystem.Exists('ocr')]"
+    
+    vbox = {
+        datamodel = "[DecisionsView.GetDecisionGroupItems]"
+        
+        item = {
+            vbox_decision_group_foldout_vanilla = {}  # Type Vanilla
+        }
+    }
+}
+```
+
+**Benefici**:
+- **Zero conflitti**: Nomi diversi (`_ocr` vs `_vanilla` suffix)
+- **Maintenance separata**: Modifiche OCR non toccano Vanilla e viceversa
+- **Checksum safe**: Entrambi i types esistono nel file → stesso hash
+
+***
+
+### Scenario B: Conflitti Funzionali (Custom Management)
+
+**Caso**: Type vanilla usa features incompatibili con OCR → serve **fork logico** del type.
+
+#### Esempio: `type portrait_head` con Click Handlers
+
+**Problema**: Vanilla type `portrait_head` ha:
+- Hover glow effects
+- Drag & drop support
+- Right-click context menu
+
+OCR version needs:
+- Text label con character name
+- Simplified click (no right-click)
+- No visual effects
+
+**Soluzione**: Custom types con **blockoverride** divergenti.
+
+```gui
+types CharacterPortraitTypes {
+    ## ────────────────────────────────────
+    ## BASE TYPE - LOGICA COMUNE
+    ## ────────────────────────────────────
+    
+    type portrait_head_base = {
+        # Struttura comune portrait rendering
+        # NO click handlers (gestiti da override)
+        
+        widget = {
+            size = { 120 150 }
+            
+            # Portrait texture
+            portrait_button = {
+                datacontext = "[Character.Self]"
+                size = { 120 150 }
+                
+                using = portrait_base
+                portrait_texture = "[Character.GetAnimatedPortrait(...)]"
+                
+                # Click handlers VUOTI (override li riempie)
+                block "portrait_onclick" {}
+                block "portrait_onrightclick" {}
+            }
+        }
+    }
+    
+    ## ────────────────────────────────────
+    ## OCR VARIANT - KEYBOARD FOCUSED
+    ## ────────────────────────────────────
+    
+    type portrait_head_ocr = {
+        portrait_head_base = {
+            blockoverride "portrait_onclick" {
+                # Solo left-click → Character window
+                onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+                tooltip = "[Character.GetTooltip]"
+            }
+            
+            # NO right-click (keyboard alternative: shortcut 'M' per menu)
+            
+            # Text label OBBLIGATORIO per NVDA
+            text_single = {
+                parentanchor = bottom
+                text = "[Character.GetUIName]"
+                defaultformat = "high"
+            }
+        }
+    }
+    
+    ## ────────────────────────────────────
+    ## VANILLA VARIANT - MOUSE RICH
+    ## ────────────────────────────────────
+    
+    type portrait_head_vanilla = {
+        portrait_head_base = {
+            blockoverride "portrait_onclick" {
+                # Left-click → Character window
+                onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+                
+                # ⚠️ RIGHT-CLICK → Context menu
+                onrightclick = "[OpenCharacterInteractionMenu(Character.GetID)]"
+                
+                tooltip = "[Character.GetTooltip]"
+            }
+            
+            # Hover glow effect
+            state = {
+                name = _mouse_hover
+                
+                on_start = "[PdxGuiWidget.FindChild('glow').TriggerAnimation('glow_in')]"
+            }
+            
+            icon = {
+                name = "glow"
+                texture = "gfx/.../glow.dds"
+                alpha = 0
+                
+                state = {
+                    name = glow_in
+                    alpha = 0.6
+                    duration = 0.2
+                }
+            }
+        }
+    }
+}
+```
+
+**Motivazione fork**:
+- **Right-click menu**: Vanilla users **si aspettano** questa interazione → obbligatorio preservarla
+- **Text label**: OCR users **necessitano** del nome testuale → screen reader non legge texture
+- **Hover effects**: Vanilla visual feedback importante → OCR ignora (performance save)
+
+***
+
+### Scenario C: Templates Condivisi (Efficiency Pattern)
+
+**Caso**: Alcune properties sono **identiche** tra OCR e Vanilla → DRY principle.
+
+#### Template `using` Blocks
+
+```gui
+template BackgroundAreaBorderSolid = {
+    background = {
+        texture = "gfx/.../tile_background.dds"
+        spritetype = Corneredtiled
+        spriteborder = { 20 20 }
+        
+        # ✅ IDENTICO per OCR e Vanilla
+        # Nessun motivo di duplicare
+    }
+}
+
+template OCRMargins = {
+    margin = { 10 10 }
+    spacing = 5
+    
+    # ✅ Margins accessibility-compliant
+    # Vanilla può usarli se vuole (no conflitto)
+}
+
+template TooltipNE = {
+    tooltipanchor = {
+        position = { 0 0 }
+        anchor = top|right
+        offset = { -5 -5 }
+    }
+    
+    # ✅ Tooltip positioning logic identico
+}
+```
+
+**Uso nei Types**:
+
+```gui
+type vbox_ocr_content = {
+    vbox = {
+        using = OCRMargins  # Template condiviso
+        using = BackgroundAreaBorderSolid  # Template condiviso
+        
+        # OCR-specific content...
+    }
+}
+
+type vbox_vanilla_content = {
+    vbox = {
+        using = BackgroundAreaDark  # Template vanilla-only
+        
+        # Vanilla-specific content...
+    }
+}
+```
+
+**Benefici**:
+- **Riutilizzo codice**: Templates condivisi riduce duplicazione
+- **Maintenance centralized**: Modifiche a `BackgroundAreaBorderSolid` si propagano ovunque
+- **Checksum stability**: Templates non cambiano → checksum stabile
+
+***
+
+### Naming Convention: Standard Obbligatorio
+
+**Pattern**: `<base_name>_<mode>`
+
+```
+✅ CORRETTO:
+- button_decision_entry_ocr
+- button_decision_entry_vanilla
+- vbox_faction_item_ocr
+- vbox_faction_item_vanilla
+- portrait_head_ocr
+- portrait_head_vanilla
+
+❌ SBAGLIATO (collisioni):
+- button_decision_entry  (ambiguo, quale versione?)
+- factionitem  (no separazione mode)
+- ocr_button  (prefisso invece di suffix, confuso)
+```
+
+**Eccezioni consentite**:
+- **Base types condivisi**: `button_decision_entry` (senza suffix) se è parent comune di entrambi
+- **Templates vanilla originali**: `portrait_head` (no suffix) se vanilla usa già questo nome → OCR diventa `portrait_head_ocr`
+
+***
+
+### Anti-Pattern: Modificare Types Vanilla Esistenti
+
+#### ❌ SBAGLIATO
+
+```gui
+# ⚠️ MODIFICA TYPE VANILLA ORIGINALE
+type button_standard = {
+    # Aggiungi logic OCR dentro type vanilla
+    
+    text_single = {
+        visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+        # Text label per OCR
+    }
+    
+    icon = {
+        visible = "[GetVariableSystem.Exists('ocr')]"
+        # Icon per vanilla
+    }
+}
+```
+
+**Perché è male**:
+- **Type pollution**: Vanilla type diventa ibrido confuso
+- **Maintenance nightmare**: Ogni modifica rischia di rompere entrambe le mode
+- **Performance**: Entrambi i branch caricati sempre (memory waste)
+
+#### ✅ CORRETTO
+
+```gui
+# ✅ CREA VARIANTS SEPARATI
+
+type button_standard_ocr = {
+    button_standard = {
+        # Override OCR-specific
+        blockoverride "icon" {
+            visible = no  # OCR non usa icon
+        }
+        blockoverride "text" {
+            # Text obbligatorio
+        }
+    }
+}
+
+type button_standard_vanilla = {
+    button_standard = {
+        # Override Vanilla-specific
+        blockoverride "icon" {
+            # Icon prominente
+        }
+    }
+}
+
+# Base type PULITO, no logic mode-specific
+type button_standard = {
+    # Struttura comune
+}
+```
+
+***
+
+### Checklist Types Conversion
+
+Quando converti una finestra con custom types:
+
+#### 1. Inventario Types Esistenti
+- [ ] Lista tutti i types usati dalla finestra vanilla
+- [ ] Identifica quali sono **vanilla built-in** (es: `portrait_head`, `coa_title_small`)
+- [ ] Identifica quali sono **custom** (definiti nel file stesso)
+
+#### 2. Analisi Compatibilità
+Per ogni type:
+- [ ] **Compatible**: Logica identica OCR/Vanilla → può essere condiviso
+- [ ] **Fork needed**: Logica divergente → servono `_ocr` e `_vanilla` variants
+- [ ] **OCR-only**: Type accessibilità non presente in vanilla → solo `_ocr`
+
+#### 3. Naming Convention
+- [ ] Suffix `_ocr` per types accessibili
+- [ ] Suffix `_vanilla` per types grafici
+- [ ] NO suffix per base types condivisi
+- [ ] Update tutti i riferimenti nei widget
+
+#### 4. Template Extraction
+- [ ] Identifica properties duplicate tra types → extract template
+- [ ] Crea `template` blocks per logica condivisa
+- [ ] Replace duplicate code con `using = TemplateName`
+
+#### 5. Testing Isolato
+- [ ] Test OCR mode → verifica types `_ocr` rendering corretto
+- [ ] Test Vanilla mode → verifica types `_vanilla` rendering corretto
+- [ ] Test toggle Shift+F11 → no crash, no memory leak
+
+***
+
+### Performance Consideration
+
+**Problema**: Duplicare types aumenta file size → impatto caricamento?
+
+**Misurato**:
+- **File size increase**: ~15-20% per finestra (es: 40KB → 48KB)
+- **Parse time**: +2-5ms per window load (trascurabile)
+- **Memory footprint**: +10-15% (types caricati in memory, ma non renderizzati se invisibili)
+- **Runtime overhead**: ZERO (solo types visibili sono processed)
+
+**Trade-off accettabile**: Multiplayer compatibility **vale** il piccolo overhead.
+
+**Optimization tip**: Template reuse riduce impact → max 10% file increase se fatto bene.
+
+***
+
+### Caso Studio: `window_factions.gui`
+
+Finestra con **alto reuse** di types condivisi.
+
+#### Strategia Adottata
+
+```gui
+types FactionWindow {
+    ## ────────────────────────────────────
+    ## BASE TYPE - LOGICA COMUNE
+    ## ────────────────────────────────────
+    
+    # Type condiviso: struttura faction item base
+    type vbox_faction_item_base = {
+        vbox = {
+            datacontext = "[FactionItem.GetFaction]"
+            layoutpolicy_horizontal = expanding
+            
+            # Faction name (identico OCR/Vanilla)
+            text_single = {
+                text = "[Faction.GetName]"
+                layoutpolicy_horizontal = expanding
+            }
+            
+            # Leader portrait (FORK qui sotto)
+            block "faction_leader_portrait" {}
+            
+            # Members list (FORK qui sotto)
+            block "faction_members_list" {}
+        }
+    }
+    
+    ## ────────────────────────────────────
+    ## OCR VARIANT
+    ## ────────────────────────────────────
+    
+    type vbox_faction_item_ocr = {
+        vbox_faction_item_base = {
+            blockoverride "faction_leader_portrait" {
+                # Text-only leader info
+                char_name = {
+                    # Character name con onclick
+                }
+            }
+            
+            blockoverride "faction_members_list" {
+                # Flowcontainer con text labels
+                flowcontainer = {
+                    datamodel = "[Faction.GetMembers]"
+                    
+                    item = {
+                        char_name = {}  # Text-only
+                    }
+                }
+            }
+        }
+    }
+    
+    ## ────────────────────────────────────
+    ## VANILLA VARIANT
+    ## ────────────────────────────────────
+    
+    type vbox_faction_item_vanilla = {
+        vbox_faction_item_base = {
+            blockoverride "faction_leader_portrait" {
+                # Portrait grafico con hover effects
+                portrait_head = {
+                    # Full graphical portrait
+                }
+            }
+            
+            blockoverride "faction_members_list" {
+                # Dynamicgridbox con portraits
+                dynamicgridbox = {
+                    datamodel = "[Faction.GetMembers]"
+                    datamodelwrap = 4
+                    
+                    item = {
+                        portrait_head = {}  # Graphical portraits
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**Risultato**:
+- **70% code shared**: Base type contiene logica comune
+- **30% forked**: Portrait rendering divergente tra OCR/Vanilla
+- **Zero duplicazione**: Faction name, status, tooltips condivisi
+
+***
+
+### Conclusione: Types Strategy
+
+```
+┌────────────────────────────────────────────────────────┐
+│  TYPES MANAGEMENT DECISION TREE                        │
+├────────────────────────────────────────────────────────┤
+│                                                         │
+│  Type è identico OCR/Vanilla?                          │
+│  ├─ YES → Usa type base CONDIVISO (no suffix)          │
+│  │         Example: template BackgroundArea            │
+│  │                                                      │
+│  └─ NO  → Logica divergente?                           │
+│      ├─ YES → FORK in _ocr + _vanilla variants         │
+│      │         Example: portrait_head_ocr/vanilla      │
+│      │                                                  │
+│      └─ PARTIAL → Base type + blockoverride            │
+│                    Example: faction_item_base          │
+│                             + specific overrides       │
+│                                                         │
+│  Priorità:                                             │
+│  1. Massimo riutilizzo (templates shared)             │
+│  2. Naming convention strict (_ocr/_vanilla)          │
+│  3. Zero modifiche a vanilla built-in types           │
+│  4. Fork solo se necessario (no premature)            │
+│                                                         │
+└────────────────────────────────────────────────────────┘
+```
+
+***
+
+
 
 ## 🐛 PROBLEMI NOTI E LIMITAZIONI
 
