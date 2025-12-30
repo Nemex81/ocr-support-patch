@@ -1,222 +1,496 @@
+gui = {
 
-@max_height_before_scrolling = 920
+    ########################################################################
+    # Character Interaction Menu Window - Dual Mode (OCR / Vanilla)
+    # Toggle: GetVariableSystem.Existsocr
+    # - ocr NOT exists => OCR mode (blind)
+    # - ocr exists     => Vanilla mode (sighted)
+    ########################################################################
 
-#adjustment to make scrollbar appear as if outside window
-@scrollbar_outside_tweak = 15 
-@scrollbar_outside_tweak_negative = -15
-@scrollbar_outside_tweak_negative_plus_8 = -7
+    # --- Constants from vanilla file (keep as-is to preserve layout feel) ---
+    @maxheightbeforescrolling = 920
+    @scrollbaroutsidetweak = 15
+    @scrollbaroutsidetweaknegative = -15
+    @scrollbaroutsidetweaknegativeplus8 = -7
 
-#### THE WINDOW
 
-window = {
-	gfxtype = windowgfx
-	name = "character_interaction_menu_window"
-	widgetid = "character_interaction_menu_window"
-	movable = no
+    window = {
+        gfxtype = windowgfx
+        name = characterinteractionmenuwindow
+        widgetid = characterinteractionmenuwindow
 
-	#this is the offset from the character portrait
-	position = { 420 70 }
-	alwaystransparent = yes
-	layer = top
-	allow_outside = yes
+        movable = no
+        position = { 420 70 }   # vanilla offset from portrait
+        alwaystransparent = yes
+        layer = top
+        allowoutside = yes
+        visibleatcreation = no
 
-	# widget_anchor is set dynamically by code
-	using = Animation_ShowHide_Quick
+        # Core toggle scope variable available everywhere
+        datacontext = GetVariableSystem
 
-	# Not shown to the player, but is used by the hotkey system
-	button_normal = {
-		name = "button_close"
-		size = { 0 0 }
-		onclick = "[CharacterInteractionMenuWindow.Close]"
-		shortcut = "close_window"
-	}
+        # Prefer vanilla show/hide animation for both modes (safe)
+        state = {
+            name = show
+            using = AnimationShowHideQuick
+        }
 
-	container = {
-		alwaystransparent = yes
-		resizeparent = yes
-		allow_outside = yes
+        state = {
+            name = hide
+            # Keep OCR Support cleanup hooks (safe for both modes)
+            onfinish = "Setfavoriteinteraction = yes"
+            onfinish = "Clearfilteredactions"
+            onfinish = "Clearactioncategory"
+        }
 
-		flowcontainer = {
-			alwaystransparent = no
-			direction = vertical
-			ignoreinvisible = yes
+        # Close button (exists in both modes; in OCR mode it is hidden/handled by ocr template)
+        buttonnormal = {
+            name = buttonclose
+            size = { 0 0 }
+            onclick = CharacterInteractionMenuWindow.Close
+            shortcut = closewindow
+        }
 
-			background = {
-				texture = "gfx/interface/component_tiles/interaction_menu_bg.dds"
-				spriteType = Corneredtiled
-				spriteborder = { 11 11 }
-				spriteborder_top = 49
-				margin = { 8 14 }
-				margin_right = @scrollbar_outside_tweak_negative_plus_8
-				
-				modify_texture = {
-					name = "overlay"
-					texture = "gfx/interface/component_overlay/overlay_window.dds"
-					blend_mode = overlay
-				}
-			}
 
-			widget = {
-				datacontext = "[CharacterInteractionMenuWindow.GetCharacter]"
-				size = { 317 32 }
-				name = "character_info"
+        ####################################################################
+        # OCR MODE (blind users) - active when NOT Existsocr
+        ####################################################################
+        widget = {
+            name = ocrmodecontent
+            visible = NotGetVariableSystem.Existsocr
 
-				hbox = {
-					margin = { 10 0 }
-					margin_bottom = 4
+            # Use OCR Support common styling blocks
+            using = ocrwindow
+            parentanchor = topleft
 
-					text_single = {
-						name = "character_name"
-						visible = "[Not(Character.IsLocalPlayer)]"
-						layoutpolicy_horizontal = expanding
-						text = "[Character.GetNameNoTooltip|U]"
-						default_format = "#Bold;high"
-						align = nobaseline
-						autoresize = no
-					}
+            # We keep it linear, keyboard-first
+            using = ocrmargins
 
-					text_single = {
-						name = "character_name_me"
-						visible = "[Character.IsLocalPlayer]"
-						layoutpolicy_horizontal = expanding
-						text = "FRAME_RELATION_ME"
-						align = nobaseline
-						autoresize = no
-					}
+            flowcontainer = {
+                name = ocrcontent
+                layoutpolicy_horizontal = expanding
+                direction = vertical
+                ignoreinvisible = yes
+                allowoutside = yes
 
-					expand = {}
+                # Character context
+                datacontext = CharacterInteractionMenuWindow.GetCharacter
 
-					hbox = {
-						button_pin = {
-							name = "button_pin"
-							visible = "[Not(Character.IsPinned)]"
-							onclick = "[Character.ToggleCharacterPinned]"
-							size = { 25 25 }
+                # Header line
+                flowcontainer = {
+                    ignoreinvisible = yes
+                    direction = vertical
+                    visible = Or( Not( CharacterInteractionMenuWindow.AreMoreInteractionsVisisble ), Isactioncategory )
 
-							tooltip = "PIN_TT"
-							using = tooltip_se
-						}
+                    # Main info line
+                    widget = {
+                        datacontext = CharacterInteractionMenuWindow.GetCharacter
+                        size = { 100 25 }
+                        name = characterinfo
 
-						button_barbershop = {
-							name = "customize_portrait"
-							visible = "[Character.CanCustomizePortrait]"
-							onclick = "[Character.OnCustomizePortrait]"
-							onclick = "[CharacterInteractionMenuWindow.Close]"
-							size = { 25 25 }
+                        # Text-first click target (OCR)
+                        buttontext = {
+                            using = charclick
+                            layoutpolicy_horizontal = expanding
 
-							tooltip = "CV_CUSTOMIZE_PORTRAIT"
-							using = tooltip_ne
-						}
+                            blockoverride = {
+                                extra = {
+                                    spacing = 3
 
-						button_edit_text = {
-							name = "button_rename"
-							datacontext = "[GetScriptedGui( 'rename_character_after_birth' )]"
-							visible = "[Character.CanCharacterBeRenamed]"
-							onclick = "[ScriptedGui.Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'child', Character.MakeScope ).End  )]"
-							size = { 25 25 }
+                                    textsingle = { rawtext = "Interact with" }
+                                    textsingle = {
+                                        visible = And( Not( Character.IsLocalPlayer ), Isocr )
+                                        rawtext = Character.GetFirstNameNoTooltip
+                                    }
+                                    textsingle = {
+                                        visible = And( Not( Character.IsLocalPlayer ), Isntocr )
+                                        rawtext = Character.GetUINameNoTooltip
+                                    }
+                                    textsingle = {
+                                        visible = Character.IsLocalPlayer
+                                        rawtext = "yourself."
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-							tooltip = "RENAME_CHARACTER" 
-							using = tooltip_ne
-						}
-						
-						button_go_to_my_location = {
-							name = "button_go_to_my_location"
-							onclick = "[Character.PanCameraTo]"
-							size = { 25 25 }
+                    # Pin
+                    flowcontainer = {
+                        ignoreinvisible = yes
+                        direction = vertical
+                        visible = Isntfilteredactions
 
-							tooltip = "GOTO_CHARACTER"
-							using = tooltip_ne
-						}
-					}
-				}
-			}
+                        buttontext = {
+                            name = buttonpin
+                            shortcut = mapmodeempiressecondary
+                            onclick = Character.ToggleCharacterPinned
+                            using = tooltipse
 
-			widget = {
-				size = { 317 40 }
-				visible = [CharacterInteractionMenuWindow.OutsideDiplomaticRange]
-				tooltip = OUT_OF_DIPLOMACY_RANGE_TOOLTIP
+                            blockoverride = {
+                                text = {
+                                    rawtext = "AddTextIf(Character.IsPinned, Unpin, Pin) SelectCString(Character.IsPinned, from, to) outliner, hotkey O."
+                                }
+                            }
+                        }
 
-				text_label_center = {
-					name = "label"
-					parentanchor = center
-					position = { 0 3 }
-					text = OUT_OF_DIPLOMACY_RANGE
-				}
-			}
+                        # Debug tooltip (OCR keeps it as text)
+                        widget = {
+                            size = { 500 23 }
+                            scissor = yes
+                            visible = InDebugMode
+                            textsingle = {
+                                marginleft = 5
+                                rawtext = Character.GetDebugTooltip
+                            }
+                        }
 
-			text_multi = {
-				datacontext = "[CharacterInteractionMenuWindow.GetCharacter]"
-				visible = "[CharacterInteractionMenuWindow.IsFiltered]"
-				parentanchor = hcenter
+                        # Rename (IMPORTANT: remove CloseGameView spam; just close menu)
+                        buttontext = {
+                            name = buttonrename
+                            datacontext = GetScriptedGui( renamecharacterafterbirth )
+                            visible = Character.CanCharacterBeRenamed
+                            onclick = "ScriptedGui.Execute = { GuiScope.SetRoot = GetPlayer.MakeScope .AddScope = { child = Character.MakeScope } .End }"
+                            onclick = CharacterInteractionMenuWindow.Close
+                            using = tooltipne
 
-				text =  "[CharacterInteractionMenuWindow.GetFilterDescription]"
-				align = center
-				autoresize = yes
-				max_width = 280
-				min_width = 280
-				
-				margin = { 0 10 } 
-				margin_right = @scrollbar_outside_tweak 
-			}
-			
-			
-			scrollarea = {
-				autoresizescrollarea = yes
-				scrollbarpolicy_horizontal = always_off
-				maximumsize = { -1 @max_height_before_scrolling }
+                            blockoverride = { text = { rawtext = "Rename." } }
+                        }
+                    }
 
-				scrollbar_vertical = {
-					using = Scrollbar_Vertical
-				}
+                    # Outside range warning (keep)
+                    textsingle = {
+                        visible = CharacterInteractionMenuWindow.OutsideDiplomaticRange
+                        tooltip = OUTOFDIPLOMACYRANGETOOLTIP
+                        rawtext = OUTOFDIPLOMACYRANGE
+                    }
+                }
 
-				scrollwidget = {
-					flowcontainer = {
-						# name used in code
-						name = "category_interaction_list" 
+                # Filter controls (OCR)
+                flowcontainer = {
+                    name = flowagotdragonactions
+                    ignoreinvisible = yes
+                    direction = vertical
+                    using = ocr
 
-						datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
-						direction = vertical
-						ignoreinvisible = yes
-						margin_right = @scrollbar_outside_tweak 
+                    button = {
+                        shortcut = goback
+                        visible = NotGetVariableSystem.Existsactioncategory
+                        clicksound = yes
+                    }
 
-						item = {
-							flowcontainer_category_group = {}
-						}
-					}
-				}
-			}			
-		}
+                    button = {
+                        visible = GetVariableSystem.Existsactioncategory
+                        clicksound = yes
+                        shortcut = armysplithalf
+                    }
 
-		### MORE INTERACTIONS
-		container = {
-			alwaystransparent = no
-			visible = "[CharacterInteractionMenuWindow.AreMoreInteractionsVisisble]"
-			name = "more_interactions_container"
+                    buttontext = {
+                        visible = And( NotGetVariableSystem.Existsactioncategory, Isntfilteredactions )
+                        onclick = GetVariableSystem.Setactioncategory( yes )
+                        shortcut = armysplithalf
+                        blockoverride = { text = { rawtext = "Filter by category, F." } }
+                    }
 
-			container = {
-				#this is used in code as an offset to its position
-				position = { -5 30 } 
+                    buttontext = {
+                        visible = GetVariableSystem.Existsactioncategory
+                        onclick = GetVariableSystem.Clearactioncategory
+                        shortcut = goback
+                        blockoverride = { text = { rawtext = "Filtered, GetVariableSystem.Getactioncategory. Go back, B." } }
+                    }
+                }
 
-				background = {
-					texture = "gfx/interface/component_tiles/interaction_menu_more_bg.dds"
-					spriteType = Corneredtiled
-					spriteborder = { 11 11 }
-					margin = { 8 8 }
-					shaderfile = "gfx/FX/pdxgui_default.shader"
+                # OCR hints
+                flowcontainer = {
+                    ignoreinvisible = yes
+                    direction = vertical
+                    visible = Isntfilteredactions
 
-					modify_texture = {
-						name = "overlay"
-						texture = "gfx/interface/component_overlay/overlay_window.dds"
-						spriteType = Corneredstretched
-						spriteborder = { 0 0 }
-						blend_mode = overlay
-					}
-				}
+                    textsingle = {
+                        visible = Isntfavoriteinteraction
+                        rawtext = "See tooltips for more information."
+                    }
+                    textsingle = {
+                        visible = Isntfavoriteinteraction
+                        rawtext = "Right-click to favorite an action, updates when reopened."
+                    }
+                }
 
-				dynamicgridbox_interaction_list = {
-					datamodel = "[CharacterInteractionMenuWindow.GetMoreInteractions]"
-				}
-			}
-		}
-	}
+                # Main list (OCR)
+                flowcontainer = {
+                    name = categoryinteractionlist
+                    datamodel = CharacterInteractionMenuWindow.GetCategoryItems
+                    direction = vertical
+                    ignoreinvisible = yes
+
+                    # Category groups (OCR types)
+                    item = {
+                        flowcontainer = {
+                            using = flowcontainercategorygroupocr
+                            direction = vertical
+                            ignoreinvisible = yes
+                            visible = Isntfilteredactions
+                        }
+                    }
+                }
+
+                # More interactions (OCR list)
+                container = {
+                    name = moreinteractionscontainer
+                    visible = CharacterInteractionMenuWindow.AreMoreInteractionsVisisble
+                    ignoreinvisible = yes
+
+                    position = { -5 30 }
+                    background = {
+                        using = vanilla
+                        texture = "gfx/interface/component_tiles/interactionmenubg.dds"
+                        spriteType = Corneredtiled
+                        spriteborder = { 11 11 }
+                        spritebordertop = 49
+                        margin = { 15 12 }
+                        marginbottom = 8
+                        marginright = 5
+                        modifytexture = {
+                            name = overlay
+                            texture = "gfx/interface/component_overlay/overlay_window.dds"
+                            blendmode = overlay
+                        }
+                    }
+
+                    dynamicgridboxinteractionlistocr = {
+                        datamodel = CharacterInteractionMenuWindow.GetMoreInteractions
+                    }
+                }
+
+                # OCR extras (optional buttons from OCR Support)
+                flowcontainer = {
+                    ignoreinvisible = yes
+                    direction = vertical
+                    visible = NotGetVariableSystem.Existsactioncategory
+
+                    buttontext = {
+                        blockoverride = { text = { rawtext = "Open memories." } }
+                        align = left
+                        blockoverride = { dot = {} }
+                        datacontext = Character
+                        onclick = ToggleGameViewData( memories, Character.GetID )
+                    }
+
+                    buttontext = {
+                        name = customizeportrait
+                        visible = Character.CanCustomizePortrait
+                        onclick = Character.OnCustomizePortrait
+                        onclick = CharacterInteractionMenuWindow.Close
+                        using = tooltipne
+                        blockoverride = { text = { rawtext = "Open barbershop." } }
+                    }
+
+                    # Keep OCR Support setting toggle, but only as UI element; no CloseGameView
+                    buttontext = {
+                        visible = And( GetPlayer.IsValid, Isntocr )
+                        blockoverride = { text = { rawtext = "Close character window when opening interactions." } }
+
+                        blockoverride = {
+                            pre = {
+                                spacing = 3
+                                textsingle = {
+                                    rawtext = "SelectCString(GetScriptedGui(closeinteractions).IsShown, Checked, Unchecked),"
+                                }
+                            }
+                        }
+
+                        onclick = "GetScriptedGui(closeinteractions).Execute = { GuiScope.SetRoot = GetPlayer.MakeScope .End }"
+                    }
+                }
+            }
+        }
+
+
+        ####################################################################
+        # VANILLA MODE (sighted users) - active when Existsocr
+        ####################################################################
+        widget = {
+            name = normalmodecontent
+            visible = GetVariableSystem.Existsocr
+
+            # Mirror vanilla layout container
+            alwaystransparent = yes
+            resizeparent = yes
+            allowoutside = yes
+
+            flowcontainer = {
+                alwaystransparent = no
+                direction = vertical
+                ignoreinvisible = yes
+
+                background = {
+                    texture = "gfx/interface/component_tiles/interactionmenubg.dds"
+                    spriteType = Corneredtiled
+                    spriteborder = { 11 11 }
+                    spritebordertop = 49
+                    margin = { 8 14 }
+                    marginright = @scrollbaroutsidetweaknegativeplus8
+                    modifytexture = {
+                        name = overlay
+                        texture = "gfx/interface/component_overlay/overlay_window.dds"
+                        blendmode = overlay
+                    }
+                }
+
+                # Header
+                widget = {
+                    datacontext = CharacterInteractionMenuWindow.GetCharacter
+                    size = { 317 32 }
+                    name = characterinfo
+
+                    hbox = {
+                        margin = { 10 0 }
+                        marginbottom = 4
+
+                        textsingle = {
+                            name = charactername
+                            visible = NotCharacter.IsLocalPlayer
+                            layoutpolicy_horizontal = expanding
+                            text = Character.GetNameNoTooltipU
+                            defaultformat = Boldhigh
+                            align = nobaseline
+                            autoresize = no
+                        }
+
+                        textsingle = {
+                            name = characternameme
+                            visible = Character.IsLocalPlayer
+                            layoutpolicy_horizontal = expanding
+                            text = FRAMERELATIONME
+                            align = nobaseline
+                            autoresize = no
+                        }
+
+                        expand = {}
+
+                        # Pin
+                        buttonpin = {
+                            name = buttonpin
+                            visible = NotCharacter.IsPinned
+                            onclick = Character.ToggleCharacterPinned
+                            size = { 25 25 }
+                            tooltip = PINTT
+                            using = tooltipse
+                        }
+
+                        # Barbershop
+                        buttonbarbershop = {
+                            name = customizeportrait
+                            visible = Character.CanCustomizePortrait
+                            onclick = Character.OnCustomizePortrait
+                            onclick = CharacterInteractionMenuWindow.Close
+                            size = { 25 25 }
+                            tooltip = CVCUSTOMIZEPORTRAIT
+                            using = tooltipne
+                        }
+
+                        # Rename
+                        buttonedittext = {
+                            name = buttonrename
+                            datacontext = GetScriptedGui( renamecharacterafterbirth )
+                            visible = Character.CanCharacterBeRenamed
+                            onclick = "ScriptedGui.Execute = { GuiScope.SetRoot = GetPlayer.MakeScope .AddScope = { child = Character.MakeScope } .End }"
+                            size = { 25 25 }
+                            tooltip = RENAMECHARACTER
+                            using = tooltipne
+                        }
+
+                        # Go to location
+                        buttongotomylocation = {
+                            name = buttongotomylocation
+                            onclick = Character.PanCameraTo
+                            size = { 25 25 }
+                            tooltip = GOTOCHARACTER
+                            using = tooltipne
+                        }
+                    }
+                }
+
+                # Outside range warning
+                widget = {
+                    size = { 317 40 }
+                    visible = CharacterInteractionMenuWindow.OutsideDiplomaticRange
+                    tooltip = OUTOFDIPLOMACYRANGETOOLTIP
+
+                    textlabelcenter = {
+                        name = label
+                        parentanchor = center
+                        position = { 0 3 }
+                        text = OUTOFDIPLOMACYRANGE
+                    }
+                }
+
+                # Filter description
+                textmulti = {
+                    datacontext = CharacterInteractionMenuWindow.GetCharacter
+                    visible = CharacterInteractionMenuWindow.IsFiltered
+                    parentanchor = hcenter
+                    text = CharacterInteractionMenuWindow.GetFilterDescription
+                    align = center
+                    autoresize = yes
+                    maxwidth = 280
+                    minwidth = 280
+                    margin = { 0 10 }
+                    marginright = @scrollbaroutsidetweak
+                }
+
+                # Scrollable interactions list (vanilla)
+                scrollarea = {
+                    autoresizescrollarea = yes
+                    scrollbarpolicy_horizontal = alwaysoff
+                    maximumsize = { -1 @maxheightbeforescrolling }
+
+                    scrollbarvertical = {
+                        using = ScrollbarVertical
+                        scrollwidget = flowcontainer
+                    }
+
+                    flowcontainer = {
+                        name = categoryinteractionlist
+                        datamodel = CharacterInteractionMenuWindow.GetCategoryItems
+                        direction = vertical
+                        ignoreinvisible = yes
+                        marginright = @scrollbaroutsidetweak
+
+                        item = {
+                            flowcontainercategorygroup = { }
+                        }
+                    }
+                }
+
+                # More interactions container (vanilla)
+                container = {
+                    alwaystransparent = no
+                    visible = CharacterInteractionMenuWindow.AreMoreInteractionsVisisble
+                    name = moreinteractionscontainer
+                    position = { -5 30 }
+
+                    background = {
+                        texture = "gfx/interface/component_tiles/interactionmenumorebg.dds"
+                        spriteType = Corneredtiled
+                        spriteborder = { 11 11 }
+                        margin = { 8 8 }
+                        shaderfile = "gfx/FX/pdxgui_default.shader"
+
+                        modifytexture = {
+                            name = overlay
+                            texture = "gfx/interface/component_overlay/overlay_window.dds"
+                            spriteType = Corneredstretched
+                            spriteborder = { 0 0 }
+                            blendmode = overlay
+                        }
+                    }
+
+                    dynamicgridboxinteractionlist = {
+                        datamodel = CharacterInteractionMenuWindow.GetMoreInteractions
+                    }
+                }
+            }
+        }
+    }
 }
