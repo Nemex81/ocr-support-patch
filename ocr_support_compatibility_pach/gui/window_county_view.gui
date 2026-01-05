@@ -6362,6 +6362,10 @@ window = {
 
 	alwaystransparent = yes
 
+	container = {
+		name = "vanilla_building_subwindows_root"
+		visible = "[GetVariableSystem.Exists('ocr')]"
+
 	hbox = {
 		expand = {
 			max_width = 610
@@ -7392,6 +7396,8 @@ window = {
 
 		expand = {}
 	}
+
+	expand = {}
 }
 
 
@@ -7410,6 +7416,10 @@ window = {
 
 	using = Window_Background_Subwindow
 	allow_outside = yes
+
+	container = {
+		name = "vanilla_holding_type_selection_root"
+		visible = "[GetVariableSystem.Exists('ocr')]"
 
 	vbox = {
 		using = ocr
@@ -7511,6 +7521,7 @@ window = {
 	} 
 
 	holding_type_selection_view_old = {}
+	}
 }
 
 ######################################################
