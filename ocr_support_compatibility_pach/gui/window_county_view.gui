@@ -5565,779 +5565,6 @@ window = {
 ### Secondary Windows + Types + Chiusura
 ### ============================================
 
-######################################################
-########### CONSTRUCT NEW BUILDING WINDOW ############
-######################################################
-
-window = {
-	name = "holding_tracks_view_ocr"
-	alwaystransparent = yes
-	size = { 100% 100% }
-	visible = yes
-	movable = no
-	layer = top
-
-	datamodel = "[HoldingView.GetPotentialBuildings]"
-	datacontext = "[HoldingView.GetHolder]"
-	datacontext = "[HoldingView.GetProvince]"
-	datacontext = "[HoldingView.GetHolding]"
-	datacontext = "[Province.GetCounty]"
-	datacontext = "[GetVariableSystem]"
-
-	window_ocr = {
-
-		blockoverride "ocr_header" {
-
-			header_text = {
-
-				layoutpolicy_horizontal = expanding
-
-				blockoverride "header_text"
-				{
-					text = "[HoldingView.GetTracksViewLabel]"
-				}
-
-			blockoverride "button_close" {
-				onclick = "[HoldingView.CloseSubwindows]"
-				onclick = "[GetVariableSystem.Clear('show_tracks_ocr')]"  # ✅ AGGIUNGI
-			}
-
-			}
-		}
-		blockoverride "ocr_content" {
-			vbox = {
-				layoutpolicy_horizontal = expanding
-
-				vbox = {
-					layoutpolicy_horizontal = expanding
-
-					## New Building
-					vbox = {
-						visible = "[Not(HoldingView.IsSelectingBuildingToConstruct)]"
-						layoutpolicy_horizontal = expanding
-
-						building_in_vassal_warning_hbox = { }
-
-						text_single = {
-							layoutpolicy_horizontal = expanding
-							raw_text = "[GetDataModelSize(HoldingView.GetPotentialBuildings)] options:"
-						}
-
-						text_single = {
-							layoutpolicy_horizontal = expanding
-							name = "prompt"
-							text = "[HoldingView.GetTracksViewPrompt]"
-							margin_bottom = 10
-						}
-
-						text_single = {
-							visible = "[IsDataModelEmpty(HoldingView.GetPotentialBuildings)]"
-							layoutpolicy_horizontal = expanding
-							name = "no_potential_buildings_text"
-							text = "NO_POTENTIAL_BUILDINGS_WARNING"
-							margin_bottom = 10
-						}
-
-						## Construct New Building
-						vbox = {
-							visible = "[Not(IsDataModelEmpty(HoldingView.GetPotentialBuildings))]"
-							layoutpolicy_horizontal = expanding
-
-							vbox = {
-								#visible = "[Not(HoldingView.IsSelectingBuildingToConstruct)]"
-								layoutpolicy_horizontal = expanding
-								name = "tracks_grid"
-								datamodel = "[HoldingView.GetPotentialBuildings]"
-								datacontext = "[HoldingView.GetProvince]"
-								datacontext = "[HoldingView.GetProvince.GetCounty.GetCulture]"
-
-								text_single = {
-									raw_text = "Selecting a building will start construction, without a preview!"
-									layoutpolicy_horizontal = expanding
-									visible = "[EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT'))]"
-								}
-
-								item = {
-									vbox = {
-										layoutpolicy_horizontal = expanding
-
-										button_select_building_ocr = {
-											visible = "[Not(EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT')))]"
-											blockoverride "click" {
-												onclick = "[GUIPotentialBuildingItem.ShowDetails]"
-											}
-											blockoverride "preview" {
-												raw_text = "Preview."
-											}
-										}
-
-										button_select_building_ocr = {
-											visible = "[EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT'))]"
-											blockoverride "click" {
-												enabled = "[GUIPotentialBuildingItem.CanConstruct]"
-												onclick = "[GUIPotentialBuildingItem.Construct]"
-											}
-											blockoverride "preview" {
-												raw_text = "Construct."
-											}
-										}
-
-										hbox = {
-											name = "dynamic_content"
-											layoutpolicy_horizontal = expanding
-											margin = {5 5}
-											visible = no
-
-											vbox = {
-												spacing = 8
-
-												hbox = {
-													layoutpolicy_horizontal = expanding
-													margin_left = 10
-
-													text_label_left = {
-														layoutpolicy_horizontal = expanding
-														datacontext = "[GUIPotentialBuildingItem.GetBuilding]"
-														text = CV_BUILDING_LEVEL_AND_NAME
-														autoresize = no
-													}
-												}
-
-												text_multi = {
-													layoutpolicy_horizontal = expanding
-													layoutpolicy_vertical = expanding
-													autoresize = yes
-													max_width = 330
-													min_width = 330
-													text = "[GUIPotentialBuildingItem.GetBuilding.GetEffectDescriptionAtProvince( Character.Self, Province.Self )]"
-													margin = { 15 10 }
-
-													background = {
-														using = Background_Frame
-													}
-												}
-											}
-
-											text_multi = {
-												layoutpolicy_horizontal = expanding
-												layoutpolicy_vertical = expanding
-												margin = {5 0}
-												margin_top = 30
-												text = "[GUIPotentialBuildingItem.GetBuilding.GetTypeDescription]"
-												default_format = "#F"
-												autoresize = yes
-												max_width = 280
-												min_width = 280
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-
-					vbox = {
-						layoutpolicy_horizontal = expanding
-						vbox = {
-							visible = "[HoldingView.IsSelectingBuildingToConstruct]"
-							layoutpolicy_horizontal = expanding
-							alwaystransparent = no
-
-							## Upgrade Building
-							vbox = {
-								name = "upgrade"
-								datacontext = "[HoldingView.GetTrack]"
-								layoutpolicy_horizontal = expanding
-
-								vbox = {
-									datacontext = "[HoldingView.GetTrack]"
-									visible = "[GUITrackItem.IsConstructing]"
-									layoutpolicy_horizontal = expanding
-									margin_bottom = 5
-									text_single = {
-										layoutpolicy_horizontal = expanding
-										text = "HOLDING_VIEW_IN_PROGRESS"
-									}
-
-									hbox = {
-										spacing = 3
-										layoutpolicy_horizontal = expanding
-
-										button_text = {
-											shortcut = increase_speed_2
-											blockoverride "text" {
-												raw_text = "Abort construction, X."
-											}
-											blockoverride "extra" {
-												text_single = {
-													raw_text = " Disabled."
-													visible = "[Not(GUITrackItem.CanCancel)]"
-												}
-											}
-											visible = "[GUITrackItem.CanShowCancel]"
-											enabled = "[GUITrackItem.CanCancel]"
-											onclick = "[GUITrackItem.Cancel]"
-											tooltip = "[GUITrackItem.GetCancelTooltip]"
-										}
-
-										text_single = {
-											raw_text = "[GUITrackItem.GetConstructTimeLeft]."
-										}
-										expand = {}
-									}
-								}
-
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									spacing = 10
-
-									hbox = {
-										layoutpolicy_horizontal = expanding
-
-										text_single = {
-											raw_text = "[GUITrackItem.GetSelectedBuilding.GetName], [GUITrackItem.GetSelectedBuilding.GetTypeName] Type."
-										}
-
-										building_in_vassal_warning_hbox = {
-										}
-
-										expand = { }
-									}
-
-									buttons_window_control = {
-										blockoverride "button_close"
-										{
-											onclick = "[HoldingView.CloseSubwindows]"
-										}
-									}
-								}
-
-								vbox = {
-									layoutpolicy_horizontal = expanding
-									spacing = 5
-
-									vbox = {
-										layoutpolicy_horizontal = expanding
-										visible = "[Not(GUITrackItem.IsConstructing)]"
-										margin_bottom = 10
-										button_primary_text = {
-											layoutpolicy_horizontal = expanding
-											blockoverride "text" {
-												raw_text = "[SelectLocalization(EqualTo_int32(GUITrackItem.GetNextBuilding.GetLevel, '(int32)1'),'CONSTRUCT','UPGRADE')]"
-											}
-											blockoverride "disabled" {
-												visible = "[Not(GUITrackItem.CanConstructNextBuilding)]"
-												tooltip = "[GUITrackItem.GetNextBuildingTooltip]"
-
-											}
-											blockoverride "hotkey" {
-												visible = "[GUITrackItem.CanConstructNextBuilding]"
-											}
-											onclick = "[GUITrackItem.OnClick]"
-											enabled = "[GUITrackItem.CanConstructNextBuilding]"
-											visible = "[GUITrackItem.HasNextBuilding]"
-										}
-										hbox = {
-											layoutpolicy_horizontal = expanding
-											visible = "[GUITrackItem.HasNextBuilding]"
-											spacing = 3
-
-											text_single = {
-												raw_text = "Cost:"
-											}
-
-											hbox = {
-												spacing = 3
-												hbox = {
-													datacontext = "[GUITrackItem.GetNextGoldCost]"
-													visible = "[GUITrackItem.HasNextGoldCost]"
-													spacing = 3
-													text_single = {
-														raw_text = "[ValueBreakdown.GetValue],"
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-													text_single = {
-														visible = "[LessThan_CFixedPoint(GetPlayer.GetGold, ValueBreakdown.GetFixedPointValue)]"
-														raw_text = "need [Subtract_CFixedPoint(ValueBreakdown.GetFixedPointValue, GetPlayer.GetGold)|0] more."
-													}
-												}
-
-												hbox = {
-													spacing = 3
-													datacontext = "[GUITrackItem.GetNextPrestigeCost]"
-													visible = "[GUITrackItem.HasNextPrestigeCost]"
-
-													text_single = {
-														raw_text = "[ValueBreakdown.GetValue],"
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-
-													text_single = {
-														visible = "[LessThan_CFixedPoint(GetPlayer.GetPrestige, ValueBreakdown.GetFixedPointValue)]"
-														raw_text = "need [Subtract_CFixedPoint(ValueBreakdown.GetFixedPointValue, GetPlayer.GetPrestige)|0] more."
-													}
-												}
-
-
-												hbox = {
-													layoutpolicy_horizontal = expanding
-													datacontext = "[GUITrackItem.GetNextPietyCost]"
-													visible = "[GUITrackItem.HasNextPietyCost]"
-													spacing = 3
-
-													text_single = {
-														raw_text = "[ValueBreakdown.GetValue],"
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-
-													text_single = {
-														visible = "[LessThan_CFixedPoint(GetPlayer.GetPiety, ValueBreakdown.GetFixedPointValue)]"
-														raw_text = "need [Subtract_CFixedPoint(ValueBreakdown.GetFixedPointValue, GetPlayer.GetPiety)|0] more."
-													}
-
-													expand = { }
-												}
-
-												text_single = {
-													margin_top = 2
-													layoutpolicy_horizontal = expanding
-													datacontext = "[GUITrackItem.GetNextConstructionTime]"
-													raw_text = "Will take [ValueBreakdown.GetValue]."
-													tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-													tooltipwidget = {
-														widget_value_breakdown_tooltip = { }
-													}
-												}
-											}
-
-											expand = { }
-										}
-
-										button_text = {
-											layoutpolicy_horizontal = expanding
-											name = "back_button"
-											blockoverride "text" {
-												raw_text = "Go back, B."
-											}
-											visible = "[And(EqualTo_int32(GUITrackItem.GetNextBuilding.GetLevel,'(int32)1'), Not(GUITrackItem.IsConstructing))]"
-											onclick = "[GUITrackItem.GoBack]"
-											oversound = "event:/SFX/UI/Generic/sfx_ui_generic_pointer_over"
-											clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_close"
-											shortcut = "go_back"
-										}
-
-										button_text = {
-											layoutpolicy_horizontal = expanding
-											shortcut = increase_speed_2
-											blockoverride "text" {
-												raw_text = "Replace building, X."
-											}
-											onclick = "[GUITrackItem.Replace]"
-											visible = "[And(GUITrackItem.IsCurrentBuildingSelected, GUITrackItem.CanReplace)]"
-										}
-
-										expand = { }
-									}
-
-									vbox = {
-										layoutpolicy_horizontal = expanding
-										visible = "[And(And(GUITrackItem.HasNextBuilding, Not(GUITrackItem.IsNextBuildingSelected)), GUITrackItem.IsCurrentBuildingSelected)]"
-										datacontext = "[GUITrackItem.GetNextBuilding]"
-
-										text_single = {
-											layoutpolicy_horizontal = expanding
-											raw_text = "Will upgrade to [Building.GetNameNoTooltip]."
-										}
-
-										hbox = {
-											layoutpolicy_horizontal = expanding
-
-											text_multi = {
-												datacontext = "[HoldingView.GetProvince.GetCounty.GetCulture]"
-												layoutpolicy_horizontal = expanding
-												autoresize = yes
-												max_width = 700
-												min_width = 330
-												raw_text = "Effects on [Building.GetEffectDescriptionAtProvince( Character.Self, HoldingView.GetProvince)]"
-											}
-
-											expand = {}
-										}
-
-										hbox = {
-											layoutpolicy_horizontal = expanding
-
-											text_multi = {
-												visible = "[Not(GetVariableSystem.Exists('hide_building_desc'))]"
-												layoutpolicy_horizontal = expanding
-												autoresize = yes
-												max_width = 700
-												min_width = 330
-												raw_text = "[Building.GetDescription]."
-											}
-
-											expand = {}
-										}
-
-
-										vbox = {
-											visible = "[And(And(GreaterThan_int32(GUITrackItem.GetSelectedBuilding.GetLevel,GUITrackItem.GetCurrentBuilding.GetLevel),GreaterThan_int32(GUITrackItem.GetSelectedBuilding.GetLevel,'(int32)1')), Not(GUITrackItem.IsNextBuildingSelected))]"
-											layoutpolicy_horizontal = expanding
-											margin_left = 10
-											margin_bottom = 5
-
-											text_label_left = {
-												layoutpolicy_horizontal = expanding
-												text = "UPGRADE_COST"
-											}
-
-											hbox = {
-												layoutpolicy_horizontal = expanding
-												spacing = 10
-
-												hbox = {
-													spacing = 10
-
-													text_single = {
-														datacontext = "[GUITrackItem.GetSelectedGoldCost]"
-														visible = "[GUITrackItem.HasSelectedGoldCost]"
-														text = "[ValueBreakdown.GetValue]"
-														align = left
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-
-														background = {
-															visible = "[LessThan_CFixedPoint(GetPlayer.GetGold, ValueBreakdown.GetFixedPointValue)]"
-															using = Status_Bad
-														}
-													}
-
-													text_single = {
-														datacontext = "[GUITrackItem.GetSelectedPrestigeCost]"
-														visible = "[GUITrackItem.HasSelectedPrestigeCost]"
-														text = "[ValueBreakdown.GetValue]"
-														align = left
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-
-													text_single = {
-														datacontext = "[GUITrackItem.GetSelectedPietyCost]"
-														visible = "[GUITrackItem.HasSelectedPietyCost]"
-														text = "[ValueBreakdown.GetValue]"
-														align = left
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-
-													text_single = {
-														datacontext = "[GUITrackItem.GetSelectedConstructionTime]"
-														raw_text = "[ValueBreakdown.GetValue]."
-														align = left
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-												}
-
-												expand = { }
-											}
-
-											text_single = {
-												raw_text = "Warning, can't construct. See tooltip."
-												tooltip = "[GUITrackItem.GetSelectedBuildingBlockReasons]"
-												visible = "[Not(GUITrackItem.CanConstructSelectedBuilding)]"
-												align = left
-												layoutpolicy_horizontal = expanding
-											}
-										}
-									}
-
-									vbox = {
-										layoutpolicy_horizontal = expanding
-										datacontext = "[GUITrackItem.GetSelectedBuilding]"
-
-										hbox = {
-											spacing = 3
-											layoutpolicy_horizontal = expanding
-
-											text_single = {
-												visible = "[GUITrackItem.IsCurrentBuildingSelected]"
-												raw_text = "Current building,"
-											}
-
-											text_single = {
-												visible = "[Not(GUITrackItem.IsCurrentBuildingSelected)]"
-												raw_text = "Previewing"
-											}
-
-											text_single = {
-												raw_text = "[Building.GetNameNoTooltip]"
-											}
-
-											expand = { }
-										}
-
-										hbox = {
-											layoutpolicy_horizontal = expanding
-
-											text_multi = {
-												datacontext = "[HoldingView.GetProvince.GetCounty.GetCulture]"
-												layoutpolicy_horizontal = expanding
-												autoresize = yes
-												max_width = 700
-												min_width = 330
-												raw_text = "Effects on [Building.GetEffectDescriptionAtProvince( Character.Self, HoldingView.GetProvince)]"
-											}
-
-											expand = {}
-										}
-
-										hbox = {
-											layoutpolicy_horizontal = expanding
-
-											text_multi = {
-												visible = "[Not(GetVariableSystem.Exists('hide_building_desc'))]"
-												layoutpolicy_horizontal = expanding
-												autoresize = yes
-												max_width = 700
-												min_width = 330
-												raw_text = "[Building.GetDescription]."
-											}
-
-											expand = {}
-										}
-
-
-										vbox = {
-											visible = "[And(And(GreaterThan_int32(GUITrackItem.GetSelectedBuilding.GetLevel,GUITrackItem.GetCurrentBuilding.GetLevel),GreaterThan_int32(GUITrackItem.GetSelectedBuilding.GetLevel,'(int32)1')), Not(GUITrackItem.IsNextBuildingSelected))]"
-											layoutpolicy_horizontal = expanding
-											margin_left = 10
-											margin_bottom = 5
-
-											text_label_left = {
-												layoutpolicy_horizontal = expanding
-												text = "UPGRADE_COST"
-											}
-
-											hbox = {
-												layoutpolicy_horizontal = expanding
-												spacing = 10
-
-												hbox = {
-													spacing = 10
-
-													text_single = {
-														datacontext = "[GUITrackItem.GetSelectedGoldCost]"
-														visible = "[GUITrackItem.HasSelectedGoldCost]"
-														text = "[ValueBreakdown.GetValue]"
-														align = left
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-
-													text_single = {
-														datacontext = "[GUITrackItem.GetSelectedPrestigeCost]"
-														visible = "[GUITrackItem.HasSelectedPrestigeCost]"
-														text = "[ValueBreakdown.GetValue]"
-														align = left
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-
-													text_single = {
-														datacontext = "[GUITrackItem.GetSelectedPietyCost]"
-														visible = "[GUITrackItem.HasSelectedPietyCost]"
-														text = "[ValueBreakdown.GetValue]"
-														align = left
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-
-													text_single = {
-														datacontext = "[GUITrackItem.GetSelectedConstructionTime]"
-														raw_text = "[ValueBreakdown.GetValue]."
-														align = left
-														tooltip_visible = "[ValueBreakdown.HasTooltip]"
-
-														tooltipwidget = {
-															widget_value_breakdown_tooltip = { }
-														}
-													}
-												}
-
-												expand = { }
-											}
-
-											text_single = {
-												raw_text = "Warning, can't construct. See tooltip."
-												tooltip = "[GUITrackItem.GetSelectedBuildingBlockReasons]"
-												visible = "[Not(GUITrackItem.CanConstructSelectedBuilding)]"
-												align = left
-												layoutpolicy_horizontal = expanding
-											}
-										}
-									}
-								}
-
-								button_text = {
-									layoutpolicy_horizontal = expanding
-									onclick = "[GetVariableSystem.Toggle('hide_building_desc')]"
-									blockoverride "text" {
-										raw_text = "[Select_CString(GetVariableSystem.Exists('hide_building_desc'), 'Show', 'Hide')] descriptions, Shift D."
-									}
-									shortcut = mapmode_house_secondary
-								}
-
-								text_single = {
-									raw_text = "All building levels:"
-									layoutpolicy_horizontal = expanding
-								}
-
-								vbox = {
-									layoutpolicy_horizontal = expanding
-									margin_bottom = 10
-
-									### PREVIOUS BUILDINGS
-									vbox = {
-										name = "level_track_previous"
-										datamodel = "[GUITrackItem.GetPreLevelItems]"
-										layoutpolicy_horizontal = expanding
-
-										item = {
-											button_text = {
-												layoutpolicy_horizontal = expanding
-												blockoverride "text" {
-													raw_text = "[BuildingLevelItem.GetBuilding.GetNameNoTooltip]"
-												}
-												blockoverride "extra" {
-													text_single = {
-														raw_text = ", selected"
-														visible = "[BuildingLevelItem.IsSelected]"
-														align = left
-													}
-												}
-												blockoverride "dot" { }
-												onclick = "[BuildingLevelItem.OnClick]"
-											}
-										}
-									}
-
-									### CURRENT BUILDING
-
-									button_text = {
-										layoutpolicy_horizontal = expanding
-										blockoverride "text" {
-											raw_text = "[GUITrackItem.GetCurrentBuilding.GetNameNoTooltip]"
-										}
-										blockoverride "extra" {
-											text_single = {
-												raw_text = ", selected"
-												visible = "[GUITrackItem.IsCurrentBuildingSelected]"
-												align = left
-											}
-										}
-										blockoverride "dot" { }
-										visible = "[GUITrackItem.HasCurrentBuilding]"
-										onclick = "[GUITrackItem.OnCurrentBuildingClick]"
-									}
-
-
-									### NEXT BUILDING
-
-									button_text = {
-										layoutpolicy_horizontal = expanding
-										blockoverride "text" {
-											raw_text = "[GUITrackItem.GetNextBuilding.GetNameNoTooltip]"
-										}
-										blockoverride "extra" {
-											text_single = {
-												raw_text = ", selected"
-												visible = "[GUITrackItem.IsNextBuildingSelected]"
-												align = left
-											}
-										}
-										blockoverride "dot" { }
-										visible = "[GUITrackItem.HasNextBuilding]"
-										onclick = "[GUITrackItem.OnNextBuildingClick]"
-									}
-
-									#Post Track
-									### LEVEL TRACK
-									vbox = {
-										layoutpolicy_horizontal = expanding
-										name = "level_track_next"
-										datamodel = "[GUITrackItem.GetPostLevelItems]"
-
-										item = {
-											button_text = {
-												layoutpolicy_horizontal = expanding
-												blockoverride "text" {
-													raw_text = "[BuildingLevelItem.GetBuilding.GetNameNoTooltip]"
-												}
-												blockoverride "extra" {
-													text_single = {
-														raw_text = ", selected"
-														visible = "[BuildingLevelItem.IsSelected]"
-														align = left
-													}
-												}
-												blockoverride "dot" { }
-												onclick = "[BuildingLevelItem.OnClick]"
-											}
-										}
-									}
-
-									expand = { }
-								}
-							}
-						}
-
-						expand = { }
-					}
-
-					expand = { }
-				}
-			}
-		}
-	}
-
-	holding_tracks_view_old = {}
-
-}
 
 # versione originale vanilla per normo vedenti
 window = {
@@ -6360,6 +5587,10 @@ window = {
 	}
 
 	alwaystransparent = yes
+
+	container = {
+		name = "vanilla_building_subwindows_root"
+		visible = "[GetVariableSystem.Exists('ocr')]"
 
 	hbox = {
 		expand = {
@@ -6498,10 +5729,11 @@ window = {
 																onclick = "[GUIPotentialBuildingItem.ShowDetails]"
 																tooltip = "CONSTRUCT_BUILDINGS_DETAILS_TT"
 																using = tooltip_es
-															}
+	}
 
-															expand = {}
-														}
+	expand = {}
+}
+
 													}
 
 													expand = {}
@@ -7391,6 +6623,348 @@ window = {
 
 		expand = {}
 	}
+
+}
+
+# OCR root merged into holding_tracks_view (formerly holding_tracks_view_ocr)
+container = {
+name = "ocr_building_subwindows_root"
+visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+datamodel = "[HoldingView.GetPotentialBuildings]"
+datacontext = "[HoldingView.GetHolder]"
+datacontext = "[HoldingView.GetProvince]"
+datacontext = "[HoldingView.GetHolding]"
+datacontext = "[Province.GetCounty]"
+datacontext = "[GetVariableSystem]"
+
+window_ocr = {
+name = "ocr_building_subwindows_root_content"
+
+blockoverride "ocr_header" {
+
+header_text = {
+
+layoutpolicy_horizontal = expanding
+
+blockoverride "header_text"
+{
+text = "[HoldingView.GetTracksViewLabel]"
+}
+
+blockoverride "button_close" {
+onclick = "[HoldingView.CloseSubwindows]"
+onclick = "[GetVariableSystem.Clear('show_tracks_ocr')]"  # ✅ AGGIUNGI
+}
+
+}
+}
+blockoverride "ocr_content" {
+vbox = {
+layoutpolicy_horizontal = expanding
+
+vbox = {
+layoutpolicy_horizontal = expanding
+
+## New Building
+vbox = {
+visible = "[Not(HoldingView.IsSelectingBuildingToConstruct)]"
+layoutpolicy_horizontal = expanding
+
+building_in_vassal_warning_hbox = { }
+
+text_single = {
+layoutpolicy_horizontal = expanding
+raw_text = "[GetDataModelSize(HoldingView.GetPotentialBuildings)] options:"
+}
+
+text_single = {
+layoutpolicy_horizontal = expanding
+name = "prompt_ocr"
+text = "[HoldingView.GetTracksViewPrompt]"
+margin_bottom = 10
+}
+
+text_single = {
+visible = "[IsDataModelEmpty(HoldingView.GetPotentialBuildings)]"
+layoutpolicy_horizontal = expanding
+name = "no_potential_buildings_text_ocr"
+text = "NO_POTENTIAL_BUILDINGS_WARNING"
+margin_bottom = 10
+}
+
+## Construct New Building
+vbox = {
+visible = "[Not(IsDataModelEmpty(HoldingView.GetPotentialBuildings))]"
+layoutpolicy_horizontal = expanding
+
+vbox = {
+layoutpolicy_horizontal = expanding
+name = "tracks_grid_ocr"
+datamodel = "[HoldingView.GetPotentialBuildings]"
+datacontext = "[HoldingView.GetProvince]"
+datacontext = "[HoldingView.GetProvince.GetCounty.GetCulture]"
+
+text_single = {
+raw_text = "Selecting a building will start construction, without a preview!"
+layoutpolicy_horizontal = expanding
+visible = "[EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT'))]"
+}
+
+item = {
+vbox = {
+layoutpolicy_horizontal = expanding
+
+button_select_building_ocr = {
+visible = "[Not(EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT')))]"
+blockoverride "click" {
+onclick = "[GUIPotentialBuildingItem.ShowDetails]"
+}
+blockoverride "preview" {
+raw_text = "Preview."
+}
+}
+
+button_select_building_ocr = {
+visible = "[EqualTo_string(HoldingView.GetTracksViewPrompt, Localize('REPLACE_BUILDING_PROMPT'))]"
+blockoverride "click" {
+enabled = "[GUIPotentialBuildingItem.CanConstruct]"
+onclick = "[GUIPotentialBuildingItem.Construct]"
+}
+blockoverride "preview" {
+raw_text = "Construct."
+}
+}
+
+hbox = {
+name = "dynamic_content_ocr"
+layoutpolicy_horizontal = expanding
+margin = {5 5}
+visible = no
+
+container = {
+layoutpolicy_horizontal = expanding
+layoutpolicy_vertical = expanding
+size = { 0 150 }
+margin = { 20 0 }
+visible = "[EqualTo_string(GUIPotentialBuildingItem.GetDynamicContentType, 'building_trees')]"
+using = building_tree
+datamodel = "[GUIPotentialBuildingItem.GetBuildingTree]"
+
+item = {
+using = building_tree_item
+}
+}
+
+}
+}
+}
+}
+}
+}
+
+vbox = {
+visible = "[HoldingView.IsSelectingBuildingToConstruct]"
+layoutpolicy_horizontal = expanding
+
+## Upgrade Building
+vbox = {
+name = "upgrade_ocr"
+datacontext = "[HoldingView.GetTrack]"
+layoutpolicy_horizontal = expanding
+
+margin_bottom = 10
+
+hbox = {
+layoutpolicy_horizontal = expanding
+margin = { 10 10 }
+spacing = 10
+
+text_single = {
+layoutpolicy_horizontal = expanding
+text = "[GUITrackItem.GetSelectedBuilding.GetTypeName]"
+using = Font_Size_Medium
+default_format = "#bold"
+}
+
+hbox = {
+layoutpolicy_horizontal = expanding
+layoutpolicy_vertical = expanding
+margin = { 0 5 }
+
+button_text = {
+layoutpolicy_horizontal = expanding
+layoutpolicy_vertical = expanding
+visible = "[GUITrackItem.CanChangeTrackUp]"
+text = "[GUITrackItem.GetTrackUp.GetName]"
+onclick = "[GUITrackItem.ChangeTrackUp]"
+}
+
+button_text = {
+layoutpolicy_horizontal = expanding
+layoutpolicy_vertical = expanding
+visible = "[GUITrackItem.CanChangeTrackDown]"
+text = "[GUITrackItem.GetTrackDown.GetName]"
+onclick = "[GUITrackItem.ChangeTrackDown]"
+}
+}
+}
+
+hbox = {
+layoutpolicy_horizontal = expanding
+layoutpolicy_vertical = expanding
+
+vbox = {
+layoutpolicy_horizontal = expanding
+margin_left = 10
+margin = { 5 5 }
+
+hbox = {
+layoutpolicy_horizontal = expanding
+spacing = 10
+
+button_text = {
+text = "PREVIEW"
+visible = "[GUITrackItem.HasNextBuilding]"
+onclick = "[GUITrackItem.Preview]"
+}
+
+button_text = {
+text = "BACK_LABEL"
+visible = "[And(EqualTo_int32(GUITrackItem.GetNextBuilding.GetLevel,'(int32)1'), Not(GUITrackItem.IsConstructing))]"
+onclick = "[GUITrackItem.GoBack]"
+}
+
+button_text = {
+text = "REPLACE"
+visible = "[And(GUITrackItem.IsCurrentBuildingSelected, GUITrackItem.CanReplace)]"
+onclick = "[GUITrackItem.Replace]"
+}
+}
+
+vbox = {
+visible = "[GUITrackItem.IsConstructing]"
+layoutpolicy_horizontal = expanding
+margin = { 0 15 }
+spacing = 10
+
+text_single = {
+text = "HOLDING_VIEW_IN_PROGRESS"
+margin = { 0 5 }
+}
+
+hbox = {
+spacing = 10
+
+progressbar_standard = {
+name = "construct_progressbar_ocr"
+layoutpolicy_horizontal = expanding
+layoutpolicy_vertical = expanding
+size = { 300 25 }
+alwaystransparent = yes
+value = "[GUITrackItem.GetConstructionProgress]"
+
+text_single = {
+parentanchor = center
+text = "[GUITrackItem.GetConstructTimeLeft]"
+default_format = "#high"
+align = nobaseline
+}
+}
+}
+}
+
+vbox = {
+visible = "[Not(GUITrackItem.IsConstructing)]"
+layoutpolicy_horizontal = expanding
+margin = { 10 10 }
+
+text_single = {
+layoutpolicy_horizontal = expanding
+text = "[GUITrackItem.GetNextBuilding.GetTypeName]"
+using = Font_Size_Big
+default_format = "#high"
+visible = "[GUITrackItem.HasNextBuilding]"
+}
+
+text_single = {
+layoutpolicy_horizontal = expanding
+text = "[GUITrackItem.GetNextBuilding.GetLevel]"
+default_format = "#high;bold"
+visible = "[GUITrackItem.HasNextBuilding]"
+}
+
+text_single = {
+layoutpolicy_horizontal = expanding
+text = "[GUITrackItem.GetNextConstructionTime]"
+visible = "[GUITrackItem.HasNextBuilding]"
+}
+
+vbox = {
+visible = "[GUITrackItem.HasNextGoldCost]"
+layoutpolicy_horizontal = expanding
+margin_bottom = 5
+margin_top = 5
+
+text_single = {
+datacontext = "[GUITrackItem.GetNextGoldCost]"
+text = "[ValueBreakdown.GetValue]"
+tooltip_visible = "[ValueBreakdown.HasTooltip]"
+tooltipwidget = {
+widget_value_breakdown_tooltip = {}
+}
+}
+}
+
+vbox = {
+visible = "[GUITrackItem.HasNextPrestigeCost]"
+layoutpolicy_horizontal = expanding
+margin_bottom = 5
+
+text_single = {
+datacontext = "[GUITrackItem.GetNextPrestigeCost]"
+text = "[ValueBreakdown.GetValue]"
+tooltip_visible = "[ValueBreakdown.HasTooltip]"
+tooltipwidget = {
+widget_value_breakdown_tooltip = {}
+}
+}
+}
+
+vbox = {
+visible = "[GUITrackItem.HasNextPietyCost]"
+layoutpolicy_horizontal = expanding
+margin_bottom = 5
+
+text_single = {
+datacontext = "[GUITrackItem.GetNextPietyCost]"
+text = "[ValueBreakdown.GetValue]"
+tooltip_visible = "[ValueBreakdown.HasTooltip]"
+tooltipwidget = {
+widget_value_breakdown_tooltip = {}
+}
+}
+}
+}
+
+button_primary = {
+onclick = "[GUITrackItem.OnClick]"
+onclick = "[HoldingView.CloseSubwindows]"
+
+tooltip = "[GUITrackItem.GetNextBuildingTooltip]"
+enabled = "[GUITrackItem.CanConstructNextBuilding]"
+visible = "[GUITrackItem.HasNextBuilding]"
+text = "[SelectLocalization(EqualTo_int32(GUITrackItem.GetNextBuilding.GetLevel, '(int32)1'),'CONSTRUCT','UPGRADE')]"
+}
+}
+}
+}
+}
+
+expand = {}
+}
+}
+}
+}
 }
 
 
@@ -7409,6 +6983,10 @@ window = {
 
 	using = Window_Background_Subwindow
 	allow_outside = yes
+
+	container = {
+		name = "vanilla_holding_type_selection_root"
+		visible = "[GetVariableSystem.Exists('ocr')]"
 
 	vbox = {
 		using = ocr
@@ -7508,6 +7086,113 @@ window = {
 			} 
 		} 
 	} 
+
+	}
+
+	container = {
+		name = "ocr_holding_type_selection_root"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+
+	vbox = {
+		using = ocr
+		set_parent_size_to_minimum = yes
+		margin = { 4 4 }
+		margin_bottom = 15
+		spacing = 15
+
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+			size = { 0 30 }
+
+			blockoverride "header_text"
+			{
+				text = "CREATE_NEW_HOLDING_HEADING"
+			}
+
+			blockoverride "button_close"
+			{
+				onclick = "[HoldingView.CloseHoldingConstruction]"
+			}
+		}
+
+		building_in_vassal_warning_hbox = { }
+
+		flowcontainer = {
+			name = "holding_types_ocr"
+			datamodel = "[HoldingView.GetHoldingTypeItems]"
+			layoutpolicy_horizontal = expanding
+			ignoreinvisible = yes
+			direction = vertical
+			spacing = 5
+			margin_left = 5
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+			    blockoverride "text" {
+			        raw_text = "[Select_CString(GetVariableSystem.Exists('hide_holding_desc'), 'Hide', 'Show')] descriptions, Shift D."
+			    }
+				shortcut = mapmode_house_secondary
+				onclick = "[GetVariableSystem.Toggle('hide_holding_desc')]"
+			}
+
+			item = {
+				button_standard = {
+					size = { 600 148 }
+					enabled = "[HoldingTypeItem.CanConstructBuilding]"
+					onclick = "[HoldingTypeItem.OnClick]"
+					datacontext = "[HoldingTypeItem.GetProvince]"
+
+					flowcontainer = {
+						ignoreinvisible = yes
+						direction = vertical
+						resizeparent = yes
+						margin = { 10 5 }
+						spacing = 5
+
+						button_text = {
+							tooltip = "[HoldingTypeItem.GetTooltip]"
+							alwaystransparent = yes
+
+						    blockoverride "text" {
+								raw_text = "Build [HoldingTypeItem.GetHoldingType.GetName]."
+						    }
+							blockoverride "disabled" {
+								visible = "[Not(HoldingTypeItem.CanConstructBuilding)]"
+							}
+							visible = "[Not(GetVariableSystem.Exists('hide_holding_desc'))]"
+						}
+
+						flowcontainer = {
+							ignoreinvisible = yes
+							direction = vertical
+							visible = "[GetVariableSystem.Exists('hide_holding_desc')]"
+
+							text_multi = {
+								raw_text = "[HoldingTypeItem.GetTooltip]."
+								max_width = 700
+								min_width = 700
+								autoresize = yes
+								alwaystransparent = yes
+							}
+
+							text_multi = {
+								name = "wrong_type_ocr"
+								max_width = 700
+								min_width = 700
+								autoresize = yes
+								visible = "[Not(HoldingTypeItem.IsValidForPlayer)]"
+								size = { 35 35 }
+								raw_text = "HOLDING_SELECTION_VIEW_WRONG_HOLDING_TYPE"
+								alwaystransparent = yes
+							} 
+						} 
+					} 
+				} 
+			} 
+		} 
+	} 
+
+	}
 
 	holding_type_selection_view_old = {}
 }
