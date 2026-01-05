@@ -6504,10 +6504,16 @@ window = {
 																onclick = "[GUIPotentialBuildingItem.ShowDetails]"
 																tooltip = "CONSTRUCT_BUILDINGS_DETAILS_TT"
 																using = tooltip_es
-															}
+	}
 
-															expand = {}
-														}
+	expand = {}
+}
+
+	# OCR placeholder root (content to be migrated from holding_tracks_view_ocr)
+	container = {
+		name = "ocr_building_subwindows_root"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+	}
 													}
 
 													expand = {}
