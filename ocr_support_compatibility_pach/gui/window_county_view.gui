@@ -5568,6 +5568,7 @@ window = {
 ######################################################
 ########### CONSTRUCT NEW BUILDING WINDOW ############
 ######################################################
+# TODO dual gating: applicare visible GetVariableSystem.Exists('ocr')/Not(...) per subwindow build/upgrade
 
 window = {
 	name = "holding_tracks_view_ocr"
