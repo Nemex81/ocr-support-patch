@@ -5586,6 +5586,8 @@ window = {
 	datacontext = "[GetVariableSystem]"
 
 	window_ocr = {
+		name = "ocr_building_subwindows_root"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 
 		blockoverride "ocr_header" {
 
@@ -7520,8 +7522,114 @@ window = {
 		} 
 	} 
 
-	holding_type_selection_view_old = {}
 	}
+
+	container = {
+		name = "ocr_holding_type_selection_root"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+
+	vbox = {
+		using = ocr
+		set_parent_size_to_minimum = yes
+		margin = { 4 4 }
+		margin_bottom = 15
+		spacing = 15
+
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+			size = { 0 30 }
+
+			blockoverride "header_text"
+			{
+				text = "CREATE_NEW_HOLDING_HEADING"
+			}
+
+			blockoverride "button_close"
+			{
+				onclick = "[HoldingView.CloseHoldingConstruction]"
+			}
+		}
+
+		building_in_vassal_warning_hbox = { }
+
+		flowcontainer = {
+			name = "holding_types_ocr"
+			datamodel = "[HoldingView.GetHoldingTypeItems]"
+			layoutpolicy_horizontal = expanding
+			ignoreinvisible = yes
+			direction = vertical
+			spacing = 5
+			margin_left = 5
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+			    blockoverride "text" {
+			        raw_text = "[Select_CString(GetVariableSystem.Exists('hide_holding_desc'), 'Hide', 'Show')] descriptions, Shift D."
+			    }
+				shortcut = mapmode_house_secondary
+				onclick = "[GetVariableSystem.Toggle('hide_holding_desc')]"
+			}
+
+			item = {
+				button_standard = {
+					size = { 600 148 }
+					enabled = "[HoldingTypeItem.CanConstructBuilding]"
+					onclick = "[HoldingTypeItem.OnClick]"
+					datacontext = "[HoldingTypeItem.GetProvince]"
+
+					flowcontainer = {
+						ignoreinvisible = yes
+						direction = vertical
+						resizeparent = yes
+						margin = { 10 5 }
+						spacing = 5
+
+						button_text = {
+							tooltip = "[HoldingTypeItem.GetTooltip]"
+							alwaystransparent = yes
+
+						    blockoverride "text" {
+								raw_text = "Build [HoldingTypeItem.GetHoldingType.GetName]."
+						    }
+							blockoverride "disabled" {
+								visible = "[Not(HoldingTypeItem.CanConstructBuilding)]"
+							}
+							visible = "[Not(GetVariableSystem.Exists('hide_holding_desc'))]"
+						}
+
+						flowcontainer = {
+							ignoreinvisible = yes
+							direction = vertical
+							visible = "[GetVariableSystem.Exists('hide_holding_desc')]"
+
+							text_multi = {
+								raw_text = "[HoldingTypeItem.GetTooltip]."
+								max_width = 700
+								min_width = 700
+								autoresize = yes
+								alwaystransparent = yes
+							}
+
+							text_multi = {
+								name = "wrong_type_ocr"
+								max_width = 700
+								min_width = 700
+								autoresize = yes
+								visible = "[Not(HoldingTypeItem.IsValidForPlayer)]"
+								size = { 35 35 }
+								raw_text = "HOLDING_SELECTION_VIEW_WRONG_HOLDING_TYPE"
+								alwaystransparent = yes
+							} 
+						} 
+					} 
+				} 
+			} 
+		} 
+	} 
+
+	}
+
+	holding_type_selection_view_old = {}
 }
 
 ######################################################
