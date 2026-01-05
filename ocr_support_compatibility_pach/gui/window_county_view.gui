@@ -5574,7 +5574,7 @@ window = {
 	name = "holding_tracks_view_ocr"
 	alwaystransparent = yes
 	size = { 100% 100% }
-	visible = yes
+	visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 	movable = no
 	layer = top
 
@@ -6348,6 +6348,7 @@ window = {
 	size = { 100% 100% }
 	movable = no
 	layer = top
+	visible = "[GetVariableSystem.Exists('ocr')]"
 	datacontext = "[HoldingView.GetHolder]"
 
 	state = {
