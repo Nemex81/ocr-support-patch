@@ -1915,8 +1915,8 @@ types OCR
 
 		button_text = {
 			layoutpolicy_horizontal = expanding
-			onclick = "[Toggle('counter_measures')]"
-			visible = "[Isnt('counter_measures')]"
+			onclick = "[Toggle('countermeasures')]"
+			visible = "[Isnt('countermeasures')]"
 			shortcut = character_finder
 			datacontext = "[IntrigueWindow.GetCurrentCountermeasure]"
 			blockoverride "extra" {
@@ -1979,14 +1979,14 @@ types OCR
 		vbox = {
 			layoutpolicy_horizontal = expanding
 
-			visible = "[Is('counter_measures')]"
+			visible = "[Is('countermeasures')]"
 			# Scheme Countermeasures heading
 
 			button_text = {
 				layoutpolicy_horizontal = expanding
 				shortcut = character_finder
 				using = close_window_ocr
-				onclick = "[Clear('counter_measures')]"
+				onclick = "[Clear('countermeasures')]"
 				blockoverride "extra" {
 					text_single = {
 						visible = "[Not(SchemeCountermeasureType.IsValid)]"
