@@ -5568,13 +5568,12 @@ window = {
 ######################################################
 ########### CONSTRUCT NEW BUILDING WINDOW ############
 ######################################################
-# TODO dual gating: applicare visible GetVariableSystem.Exists('ocr')/Not(...) per subwindow build/upgrade
 
 window = {
 	name = "holding_tracks_view_ocr"
 	alwaystransparent = yes
 	size = { 100% 100% }
-	visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+	visible = yes
 	movable = no
 	layer = top
 
@@ -6348,7 +6347,6 @@ window = {
 	size = { 100% 100% }
 	movable = no
 	layer = top
-	visible = "[GetVariableSystem.Exists('ocr')]"
 	datacontext = "[HoldingView.GetHolder]"
 
 	state = {
@@ -7400,7 +7398,6 @@ window = {
 		expand = {}
 	}
 
-	expand = {}
 }
 
 
