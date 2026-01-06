@@ -49,7 +49,7 @@ gui = {
 
 			state = {
 				name = "_show"
-				on_start = "[CloseGameView(AddTextIf(GetScriptedGui('close_interactions').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'character'))]"
+				on_start = "[If( GetScriptedGui('close_interactions').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), CloseGameView('character') )]"
 			}
 
 			blockoverride "ocr_margins" { }
@@ -88,7 +88,7 @@ gui = {
 										}
 										text_single = {
 											visible = "[And(Not(Character.IsLocalPlayer), Is('ocr'))]"
-											raw_text = "[Character.GetFirstNameNoTooltip]"
+											raw_text = "[Character.GetFirstNameNoTooltip]."
 										}
 										text_single = {
 											visible = "[And(Not(Character.IsLocalPlayer), Isnt('ocr'))]"
@@ -141,7 +141,6 @@ gui = {
 									visible = "[Character.CanCharacterBeRenamed]"
 									onclick = "[ScriptedGui.Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'child', Character.MakeScope ).End  )]"
 									onclick = "[CharacterInteractionMenuWindow.Close]"
-									onclick = "[CloseGameView('character')]"
 									using = tooltip_ne
 								}
 								text_single = {
@@ -163,12 +162,12 @@ gui = {
 							button = {
 								shortcut = go_back
 								visible = "[Not(GetVariableSystem.Exists('action_category'))]"
-								clicksound =""
+								clicksound = yes
 							}
 
 							button = {
 								visible = "[GetVariableSystem.Exists('action_category')]"
-								clicksound =""
+								clicksound = yes
 								shortcut = army_split_half
 							}
 
@@ -283,7 +282,7 @@ gui = {
 
 						button_text = {
 							blockoverride "text" {
-								raw_text = "Open memories"
+								raw_text = "Open memories."
 								align = left
 							}
 							blockoverride "dot" { }
@@ -296,6 +295,7 @@ gui = {
 							blockoverride "text" {
 								raw_text = "Open barbershop."
 							}
+							visible = "[Character.CanCustomizePortrait]"
 							onclick = "[Character.OnCustomizePortrait]"
 							onclick = "[CharacterInteractionMenuWindow.Close]"
 							using = tooltip_ne
@@ -459,39 +459,39 @@ gui = {
 				}
 				
 				
-				scrollarea = {
-					autoresizescrollarea = yes
-					scrollbarpolicy_horizontal = always_off
-					maximumsize = { -1 @max_height_before_scrolling }
+						scrollarea = {
+							autoresizescrollarea = yes
+							scrollbarpolicy_horizontal = always_off
+							maximumsize = { -1 @max_height_before_scrolling }
 
-					scrollbar_vertical = {
-						using = Scrollbar_Vertical
-					}
+							flowcontainer = {
+								name = "category_interaction_list" 
+								datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
+								direction = vertical
+								ignoreinvisible = yes
+								margin_right = @scrollbar_outside_tweak 
 
-					scrollwidget = {
-						flowcontainer = {
-							name = "category_interaction_list" 
-							datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
-							direction = vertical
-							ignoreinvisible = yes
-							margin_right = @scrollbar_outside_tweak 
+								item = {
+									flowcontainer_category_group = {}
+								}
+							}
 
-							item = {
-								flowcontainer_category_group = {}
+							scrollbar_vertical = {
+								using = Scrollbar_Vertical
+								scrollwidget = flowcontainer
 							}
 						}
 					}
-				}			
-			}
+				}
 
 			### MORE INTERACTIONS
 			container = {
 				alwaystransparent = no
-				visible = "[CharacterInteractionMenuWindow.AreMoreInteractionsVisisble]"
+				visible = "[And(CharacterInteractionMenuWindow.AreMoreInteractionsVisisble, GetVariableSystem.Exists('ocr'))]"
 				name = "more_interactions_container"
 
 				container = {
-					position = { -5 30 } 
+					position = { -5 30 }
 
 					background = {
 						texture = "gfx/interface/component_tiles/interaction_menu_more_bg.dds"
