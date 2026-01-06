@@ -510,6 +510,7 @@ gui = {
 
                         button_text = {
                             name = "customize_portrait"
+                            visible = "[Character.CanCustomizePortrait]"
                             blockoverride "text" {
                                 raw_text = "Open barbershop."
                             }
