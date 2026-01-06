@@ -5,20 +5,21 @@
 window = {
 	name = "intrigue_window"
 	widgetid = "intrigue_window"
-	movable = no
-	allow_outside = yes
-	
-	size = { 100% 100% }
+	parentanchor = top|right
 	layer = windows_layer
+	movable = no
+
+	using = Window_Size_MainTab
 
 	state = {
 		name = _show
 		using = Animation_FadeIn_Quick
 		using = Sound_WindowShow_Standard
-		on_start = "[GetVariableSystem.Set( 'intrigue_view_tabs', 'schemes' )]"
+		using = Window_Position_MainTab
+
+		on_start = "[IntrigueWindow.SetTab( 'schemes' )]"
 		on_start = "[GetVariableSystem.Set( 'secrets_show_all', 'true' )]"
 		on_start = "[GetVariableSystem.Set( 'own_scheme_expand', 'true' )]"
-		on_start = "[IntrigueWindow.SetTab('schemes')]"
 	}
 
 	state = {
@@ -26,312 +27,326 @@ window = {
 		using = Animation_FadeOut_Quick
 		using = Sound_WindowHide_Standard
 		using = Window_Position_MainTab_Hide
-		on_finish = "[Clear('countermeasures')]"
 	}
 
-	#################################################################
-	### MODALITÀ NON VEDENTE - BLIND / OCR MODE (default)         ###
-	#################################################################
-	widget = {
-		name = "ocr_mode_content"
-		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
-		using = ocr_window
-		parentanchor = top|left
-		using = Window_Position_MainTab
-		using = Window_Size_MainTab
+	margin_widget = {
+		size = { 100% 100% }
+		margin_top = 30
+		margin_bottom = 25
+		margin_right = 13
 
-		vbox = {
-			using = ocr_margins
-
-			header_pattern = {
-				size = { 0 30 }
-				scissor = yes
-				layoutpolicy_horizontal = expanding
-
-				blockoverride "header_text" {
-					text = "INTRIGUE_VIEW"
-				}
-
-				blockoverride "button_close" {
-					onclick = "[IntrigueWindow.Close]"
-				}
-
-				blockoverride "illustration_texture" {
-					texture = "gfx/interface/illustrations/window_headers/header_prison.dds"
-				}
-			}
-
-			error_button = {
-				layoutpolicy_horizontal = expanding
-			}
+		widget = {
+			size = { 100% 100% }
 
 			vbox = {
-				name = "tabs"
-				layoutpolicy_horizontal = expanding
-				margin_left = 1
+				using = Window_Margins
 
-				button_text = {
+				widget_header_with_picture = {
 					layoutpolicy_horizontal = expanding
-					onclick = "[GetVariableSystem.Set( 'intrigue_view_tabs', 'schemes' )]"
-					onclick = "[IntrigueWindow.SetTab('schemes')]"
-					enabled = "[Not(Has('intrigue_view_tabs','schemes'))]"
-					shortcut = action_list
+					size = { 0 140 }
 
-					blockoverride "text" {
-						raw_text = "[Localize('OPEN_SCHEMES_TAB')]"
+					## My Scheme Countermeasures
+					widget_scheme_countermeasures = {
+						parentanchor = bottom|hcenter
+						position = { 0 -5 }
 					}
 
-					blockoverride "extra" {
-						text_single = { raw_text = "tab," }
-						text_single = {
-							raw_text = "[Select_CString(GetVariableSystem.HasValue('intrigue_view_tabs','schemes'),'selected.','')]"
-							hotkey = "Tab"
-						}
+					### Illustration size
+					blockoverride "size" {
+						size = { 100% 156 }
+					}
+
+					blockoverride "header_text"
+					{
+						text = "INTRIGUE_VIEW"
+					}
+
+					blockoverride "button_close"
+					{
+						onclick = "[IntrigueWindow.Close]"
+					}
+
+					blockoverride "illustration_texture"
+					{
+						texture = "gfx/interface/illustrations/window_headers/header_prison.dds"
 					}
 				}
 
-				button_text = {
+				hbox = {
+					name = "tabs"
 					layoutpolicy_horizontal = expanding
-					onclick = "[IntrigueWindow.SetTab('hooks_and_secrets')]"
-					onclick = "[GetVariableSystem.Set( 'intrigue_view_tabs', 'hooks_and_secrets' )]"
-					enabled = "[Not(Has('intrigue_view_tabs','hooks_and_secrets'))]"
-					shortcut = action_list
+					margin_left = 1
 
-					blockoverride "text" {
-						raw_text = "[Localize('OPEN_HOOKS_AND_SECRETS_TAB')]"
+					button_tab = {
+						name = "open_scheme_tab"
+						layoutpolicy_horizontal = expanding
+
+						text = "OPEN_SCHEMES_TAB"
+						default_format = "#low"
+						onclick = "[IntrigueWindow.SetTab( 'schemes' )]"
+						down = "[IntrigueWindow.IsTabShown( 'schemes' )]"
+
+						using = tooltip_above
 					}
 
-					blockoverride "extra" {
-						text_single = { raw_text = "tab," }
-						text_single = {
-							raw_text = "[Select_CString(GetVariableSystem.HasValue('intrigue_view_tabs','hooks_and_secrets'),'selected.','')]"
-							hotkey = "Tab"
-						}
+					button_tab = {
+						name = "open_hooks_and_secrets_tab"
+						layoutpolicy_horizontal = expanding
+
+						text = "OPEN_HOOKS_AND_SECRETS_TAB"
+						default_format = "#low"
+						onclick = "[IntrigueWindow.SetTab( 'hooks_and_secrets' )]"
+						down = "[IntrigueWindow.IsTabShown( 'hooks_and_secrets' )]"
+
+						using = tooltip_above
 					}
 				}
-			}
 
-			button_agot_spies = {}
-			widget_scheme_countermeasures_ocr = {}
-
-			vbox = {
-				layoutpolicy_horizontal = expanding
-				layoutpolicy_vertical = expanding
-
-				scrollbox = {
-					name = "schemes"
-					visible = "[GetVariableSystem.HasValue('intrigue_view_tabs','schemes')]"
+				vbox = {
 					layoutpolicy_horizontal = expanding
 					layoutpolicy_vertical = expanding
 
-					blockoverride "scrollbox_content" {
-						vbox = {
-							name = "my_own_schemes"
-							widgetid = "my_own_schemes"
-							layoutpolicy_horizontal = expanding
-							spacing = 10
+					### SCHEMES
+					scrollbox = {
+						name = "schemes"
+						visible = "[IntrigueWindow.IsTabShown( 'schemes' )]"
+						layoutpolicy_horizontal = expanding
+						layoutpolicy_vertical = expanding
 
-							button_text = {
-								layoutpolicy_horizontal = expanding
-								onclick = "[SetOrToggle('focused_scheme','yes')]"
-								shortcut = "map_mode_11"
+						state = {
+							name = _show
+							using = Animation_FadeIn_Quick
+						}
 
-								blockoverride "extra" {
-									text_single = {
-										raw_text = "[Select_CString(Hasnt('focused_scheme','yes'),'Collapse','Expand')]"
-									}
-									text_single = {
-										raw_text = "all schemes,"
-										hotkey = "Shift E."
-									}
-								}
+						state = {
+							name = _hide
+							alpha = 0
+						}
+
+						background = {
+							texture = "gfx/interface/skinned/illustrations/council/bg_council_spymaster.dds"
+							margin = { -5 0 }
+							fittype = end
+							alpha = 0.3
+
+							modify_texture = {
+								texture = "gfx/interface/component_masks/mask_fade_vertical.dds"
+								blend_mode = alphamultiply
+								mirror = vertical
 							}
+						}
 
-							button_checked_text = {
-								layoutpolicy_horizontal = expanding
-								blockoverride "text" {
-									raw_text = "SCHEME_WINDOW_AUTO_ASSIGN_AGENTS"
-								}
-								blockoverride "visible" {
-									visible = "[Not(IntrigueWindow.IsAutoAssigningAgents)]"
-								}
-								onclick = "[IntrigueWindow.ToggleAutoAssigningAgents]"
-								blockoverride "dot" {
-									tooltip = "SCHEME_WINDOW_AUTO_ASSIGN_AGENTS_TOOLTIP"
-								}
-							}
-
-							# --- CONTRACT SCHEMES (OCR) ---
+						blockoverride "scrollbox_content"
+						{
+							## My Schemes
 							vbox = {
-								name = "my_contract_schemes"
-								visible = "[SkillSchemeGroup.HasSchemes]"
-								datacontext = "[IntrigueWindow.GetContractSchemes]"
+								name = "my_own_schemes"
+								widgetid = "my_own_schemes"
 								layoutpolicy_horizontal = expanding
-
-								text_single = {
-									layoutpolicy_horizontal = expanding
-									raw_text = "contract_schemes[E]."
-								}
+								spacing = 10
 
 								vbox = {
-									name = "my_own_contract_schemes"
+									name = "my_contract_schemes"
 									visible = "[SkillSchemeGroup.HasSchemes]"
-									datamodel = "[SkillSchemeGroup.GetSchemes]"
+									datacontext = "[IntrigueWindow.GetContractSchemes]"
 									layoutpolicy_horizontal = expanding
 
-									item = {
-										vbox = {
-											layoutpolicy_horizontal = expanding
-											datacontext = "[SchemeItem.GetScheme]" 
+									text_label_center = {
+										layoutpolicy_horizontal = expanding
+										text = "[contract_schemes|E]"
+									}
 
-											text_single = {
-												layoutpolicy_horizontal = expanding
-												raw_text = "[Scheme.GetSuccessChance|0]% Chance, [Scheme.GetFullActionName], [Scheme.GetProgressBar|%0], [Scheme.GetTargetCharacter.GetOpinionOf(GetPlayer)|=] opinion."
-											}
+									vbox = {
+										name = "my_own_contract_schemes"
+										visible = "[SkillSchemeGroup.HasSchemes]"
+										datamodel = "[SkillSchemeGroup.GetSchemes]"
+										layoutpolicy_horizontal = expanding
 
-											widget_own_scheme_item_ocr = {
+										item = {
+											widget_own_scheme_item = {
 												layoutpolicy_horizontal = expanding
 											}
 										}
 									}
-								}
-							}
-
-							# --- HOSTILE SCHEMES (OCR) ---
-							vbox = {
-								datacontext = "[IntrigueWindow.GetHostileSchemes]"
-								layoutpolicy_horizontal = expanding
-
-								text_single = {
-									layoutpolicy_horizontal = expanding
-									raw_text = "[GetDataModelSize(SkillSchemeGroup.GetSchemes)] hostile_schemes[E]."
 								}
 
 								vbox = {
 									name = "my_hostile_schemes"
-									visible = "[SkillSchemeGroup.HasSchemes]"
-									datamodel = "[SkillSchemeGroup.GetSchemes]"
+									datacontext = "[IntrigueWindow.GetHostileSchemes]"
 									layoutpolicy_horizontal = expanding
 
-									item = {
-										vbox = {
-											layoutpolicy_horizontal = expanding
-											datacontext = "[SchemeItem.GetScheme]"
+									text_label_center = {
+										layoutpolicy_horizontal = expanding
+										text = "[hostile_schemes|E]"
+									}
 
-											text_single = {
-												layoutpolicy_horizontal = expanding
-												raw_text = "[Scheme.GetSuccessChance|0]% Chance, [Scheme.GetFullActionName], [Scheme.GetProgressBar|%0]."
-											}
+									vbox = {
+										name = "my_own_hostile_schemes"
+										visible = "[SkillSchemeGroup.HasSchemes]"
+										datamodel = "[SkillSchemeGroup.GetSchemes]"
+										layoutpolicy_horizontal = expanding
 
-											widget_own_scheme_item_ocr = {
+										item = {
+											widget_own_scheme_item = {
 												layoutpolicy_horizontal = expanding
 											}
 										}
 									}
-								}
 
-								text_multi_wide = {
-									name = "no_own_schemes"
-									visible = "[Not(SkillSchemeGroup.HasSchemes)]"
-									layoutpolicy_horizontal = expanding
-									raw_text = "[Localize('SCHEME_WINDOW_NOT_OWNED_SCHEMES')]."
-								}
-							}
+									text_multi = {
+										name = "no_own_hostile_schemes"
+										visible = "[Not(SkillSchemeGroup.HasSchemes)]"
+										layoutpolicy_horizontal = expanding
+										minimumsize = { 0 110  }
 
-							# --- PERSONAL SCHEMES (OCR) ---
-							vbox = {
-								name = "my_personal_schemes"
-								datacontext = "[IntrigueWindow.GetPersonalSchemes]"
-								layoutpolicy_horizontal = expanding
+										text = "SCHEME_WINDOW_NOT_OWNED_SCHEMES"
+										default_format = "#low;italic"
+										align = center
 
-								text_single = {
-									layoutpolicy_horizontal = expanding
-									raw_text = "personal_schemes[E]"
+										background = {
+											using = Background_Area
+										}
+									}
 								}
 
 								vbox = {
-									name = "personal_list"
-									visible = "[SkillSchemeGroup.HasSchemes]"
-									datamodel = "[SkillSchemeGroup.GetSchemes]"
+									name = "my_personal_schemes"
+									datacontext = "[IntrigueWindow.GetPersonalSchemes]"
 									layoutpolicy_horizontal = expanding
 
-									item = {
-										vbox = {
-											layoutpolicy_horizontal = expanding
-											datacontext = "[SchemeItem.GetScheme]"
+									text_label_center = {
+										layoutpolicy_horizontal = expanding
+										text = "[personal_schemes|E]"
+									}
 
-											text_single = {
-												layoutpolicy_horizontal = expanding
-												raw_text = "[Scheme.GetSuccessChance|0]% Chance, [Scheme.GetFullActionName], [Scheme.GetProgressBar|%0], [Scheme.GetTargetCharacter.GetOpinionOf(GetPlayer)|=] opinion."
-											}
+									vbox = {
+										name = "my_own_personal_schemes"
+										visible = "[SkillSchemeGroup.HasSchemes]"
+										datamodel = "[SkillSchemeGroup.GetSchemes]"
+										layoutpolicy_horizontal = expanding
 
-											widget_own_scheme_item_ocr = {
+										item = {
+											widget_own_scheme_item = {
 												layoutpolicy_horizontal = expanding
 											}
 										}
 									}
-								}
 
-								text_multi_wide = {
-									name = "no_own_schemes"
-									visible = "[Not(SkillSchemeGroup.HasSchemes)]"
-									layoutpolicy_horizontal = expanding
-									raw_text = "[Localize('SCHEME_WINDOW_NOT_OWNED_SCHEMES')]."
-								}
-							}
+									text_multi = {
+										name = "no_own_personal_schemes"
+										visible = "[Not(SkillSchemeGroup.HasSchemes)]"
+										layoutpolicy_horizontal = expanding
+										minimumsize = { 0 110  }
 
-							# --- POLITICAL SCHEMES (OCR) ---
-							vbox = {
-								name = "my_political_schemes"
-								datacontext = "[IntrigueWindow.GetPoliticalSchemes]"
-								visible = "[GetPlayer.GetTopLiege.GetGovernment.HasRule('administrative')]"
-								layoutpolicy_horizontal = expanding
+										text = "SCHEME_WINDOW_NOT_OWNED_SCHEMES"
+										default_format = "#low;italic"
+										align = center
 
-								text_single = {
-									layoutpolicy_horizontal = expanding
-									text = "political_schemes[E]"
+										background = {
+											using = Background_Area
+										}
+									}
 								}
 
 								vbox = {
-									name = "my_own_political_schemes"
-									visible = "[SkillSchemeGroup.HasSchemes]"
-									datamodel = "[SkillSchemeGroup.GetSchemes]"
+									name = "my_political_schemes"
+									datacontext = "[IntrigueWindow.GetPoliticalSchemes]"
+									visible = "[GetPlayer.GetTopLiege.GetGovernment.HasRule( 'administrative' )]"
 									layoutpolicy_horizontal = expanding
 
-									item = {
-										vbox = {
-											layoutpolicy_horizontal = expanding
-											datacontext = "[SchemeItem.GetScheme]"
+									text_label_center = {
+										layoutpolicy_horizontal = expanding
+										text = "[political_schemes|E]"
+									}
 
-											text_single = {
-												layoutpolicy_horizontal = expanding
-												raw_text = "[Scheme.GetSuccessChance|0]% Chance, [Scheme.GetFullActionName], [Scheme.GetProgressBar|%0]."
-											}
+									vbox = {
+										name = "my_own_political_schemes"
+										visible = "[SkillSchemeGroup.HasSchemes]"
+										datamodel = "[SkillSchemeGroup.GetSchemes]"
+										layoutpolicy_horizontal = expanding
 
-											widget_own_scheme_item_ocr = {
+										item = {
+											widget_own_scheme_item = {
 												layoutpolicy_horizontal = expanding
 											}
 										}
 									}
-								}
 
-								text_multi_wide = {
-									name = "no_own_political_schemes"
-									visible = "[Not(SkillSchemeGroup.HasSchemes)]"
-									layoutpolicy_horizontal = expanding
-									text = "SCHEME_WINDOW_NOT_OWNED_SCHEMES"
+									text_multi = {
+										name = "no_own_political_schemes"
+										visible = "[Not(SkillSchemeGroup.HasSchemes)]"
+										layoutpolicy_horizontal = expanding
+										minimumsize = { 0 110  }
+
+										text = "SCHEME_WINDOW_NOT_OWNED_SCHEMES"
+										default_format = "#low;italic"
+										align = center
+
+										background = {
+											using = Background_Area
+										}
+									}
 								}
 							}
 
+							## Known schemes
 							vbox = {
 								name = "discovered_schemes"
 								layoutpolicy_horizontal = expanding
 								margin_top = 10
 
-								text_single = {
-									name = "label"
+								# text_label_center = {
+								# 	name = "label"
+								# 	layoutpolicy_horizontal = expanding
+
+								# 	text = "SCHEME_WINDOW_KNOWN_SCHEMES_TITLE"
+
+								# 	icon = {
+								# 		name = "discovered_icon"
+								# 		position = { 5 -5 }
+								# 		size = { 35 35 }
+								# 		texture = "gfx/interface/icons/schemes/icon_discovered_scheme.dds"
+								# 	}
+								# }
+
+								hbox = {
 									layoutpolicy_horizontal = expanding
-									text = "SCHEME_WINDOW_KNOWN_SCHEMES_TITLE"
+
+									expand = {}
+
+									margin = { 0 -4 } #Uses a negative margin to make the header be the same height as regular text labels. Doesn't affect any of the content.
+									margin_right = 35 #Margin to offset the icon size
+
+									background = {
+										margin_left = 40
+										margin_right = 40
+
+										texture = "gfx/interface/component_tiles/tile_title_bg_01.dds"
+										spriteType = Corneredtiled
+										spriteborder = { 40 8 }
+										texture_density = 2
+
+										modify_texture = {
+											name = "mask"
+											texture = "gfx/interface/component_masks/mask_fade_horizontal_middle_thick.dds"
+											spriteType = Corneredstretched
+											spriteborder = { 0 0 }
+											blend_mode = alphamultiply
+										}
+									}
+
+									icon = {
+										name = "discovered_icon"
+										size = { 35 35 }
+										texture = "gfx/interface/icons/schemes/icon_discovered_scheme.dds"
+									}
+
+									text_single = {
+										text = "SCHEME_WINDOW_KNOWN_SCHEMES_TITLE"
+										align = nobaseline
+									}
+
+									expand = {}
 								}
 
 								vbox = {
@@ -341,883 +356,520 @@ window = {
 									layoutpolicy_horizontal = expanding
 
 									item = {
-										vbox_discovered_scheme_item_ocr = {
+										vbox_discovered_scheme_item = {
 											layoutpolicy_horizontal = expanding
 										}
 									}
 								}
 
-								text_multi_wide = {
+								text_multi = {
 									name = "no_own_schemes"
 									visible = "[Not(IntrigueWindow.HasKnownSchemes)]"
 									layoutpolicy_horizontal = expanding
-									raw_text = "[Localize('SCHEME_WINDOW_NOT_KNOWN_SCHEMES')]."
+									minimumsize = { 0 110  }
+
+									text = "SCHEME_WINDOW_NOT_KNOWN_SCHEMES"
+									default_format = "#low"
+									align = center
+
 									background = {
 										using = Background_Area
 									}
 								}
 							}
 						}
-
-						vbox_wok_intrigue_arranged_courtships = {}
-					}
-				}
-
-				# --- HOOKS AND SECRETS OCR (Invariato) ---
-				scrollbox = {
-					name = "hooks_and_secrets"
-					widgetid = "hooks_and_secrets"
-					visible = "[GetVariableSystem.HasValue('intrigue_view_tabs','hooks_and_secrets')]"
-					layoutpolicy_horizontal = expanding
-					layoutpolicy_vertical = expanding
-
-					state = {
-						name = _show
-						using = Animation_FadeIn_Quick
-					}
-					state = {
-						name = _hide
-						alpha = 0
 					}
 
-					blockoverride "scrollbox_content" {
+					## Autofill agent button
+					hbox = {
+						visible = "[IntrigueWindow.IsTabShown( 'schemes' )]"
+						layoutpolicy_horizontal = expanding
+						margin = { 10 10 }
 						spacing = 5
 
-						vbox = {
-							name = "my_hooks"
+						tooltip = "SCHEME_WINDOW_AUTO_ASSIGN_AGENTS_TOOLTIP"
+
+						divider = {
 							layoutpolicy_horizontal = expanding
-							spacing = 2
 
-							widget = {
-								size = { -1 24 }
-								layoutpolicy_horizontal = expanding
-
-								hbox = {
-									layoutpolicy_horizontal = expanding
-									spacing = 5
-									text_single = { raw_text = "You hold" }
-									text_single = { raw_text = "[IntrigueWindow.GetMyWeakHooksCount] weak and" }
-									text_single = { raw_text = "[IntrigueWindow.GetMyStrongHooksCount] strong hooks." }
-									expand = {}
-								}
-							}
-
-							vbox = {
-								layoutpolicy_horizontal = expanding
-								fixedgridbox = {
-									datamodel = "[IntrigueWindow.GetMyHooks]"
-									maxhorizontalslots = 1
-									addcolumn = 700
-									addrow = 22
-									item = {
-										button_text = {
-											blockoverride "text" { raw_text = "[Character.GetShortUINameNoTooltip]," }
-											blockoverride "extra" {
-												text_single = {
-													raw_text = "Strong."
-													align = left
-													visible = "[EqualTo_int32(Character.GetHookOrHookableSecretsFrame,'(int32)2')]"
-												}
-												text_single = {
-													raw_text = "Weak."
-													align = left
-													visible = "[EqualTo_int32(Character.GetHookOrHookableSecretsFrame,'(int32)1')]"
-												}
-											}
-											datacontext = "[IntrigueWindowHookItem.GetCharacter]"
-											using = char_click
-										}
-									}
-								}
-								text_multi_wide = {
-									visible = "[IsDataModelEmpty(IntrigueWindow.GetMyHooks)]"
-									layoutpolicy_horizontal = expanding
-									text = "MY_HOOKS_ARE_EMPTY"
-									background = { using = Background_Area }
-								}
+							modify_texture = {
+								texture = "gfx/interface/component_masks/mask_fade_horizontal_thick.dds"
+								blend_mode = alphamultiply
 							}
 						}
 
-						vbox = {
-							name = "secrets_known_to_me"
-							layoutpolicy_horizontal = expanding
-							button_text = {
-								layoutpolicy_horizontal = expanding
-								blockoverride "text" {
-									raw_text = "You know [GetDataModelSize(IntrigueWindow.GetSecretsKnownToMe)] secrets. [Select_CString(GetVariableSystem.Exists('secrets_show_all'),'Expanded','Collapsed')]."
-								}
-								onclick = "[GetVariableSystem.Toggle('secrets_show_all')]"
+						icon = {
+							size = { 30 30 }
+							texture = "gfx/interface/icons/message_feed/spy_master.dds"
+						}
+
+						button_checkbox_label = {
+							size = { 30 30 }
+							onclick = "[IntrigueWindow.ToggleAutoAssigningAgents]"
+
+							blockoverride "checkbox"
+							{
+								checked = "[IntrigueWindow.IsAutoAssigningAgents]"
 							}
-							vbox_secret_item_ocr = {
-								datamodel = "[IntrigueWindow.GetSecretsKnownToMe]"
-								layoutpolicy_horizontal = expanding
-								blockoverride "portrait" {
-									datacontext = "[IntrigueWindowSecretGroup.GetCharacter]"
-								}
+
+							blockoverride "text"
+							{
+								text = "SCHEME_WINDOW_AUTO_ASSIGN_AGENTS"
 							}
 						}
 
-						vbox = {
-							name = "hooks_on_me"
+						divider = {
 							layoutpolicy_horizontal = expanding
-							hbox = {
-								layoutpolicy_horizontal = expanding
-								text_single = { raw_text = "INTRIGUE_WINDOW_HOOKS_ON_ME_TITLE" }
-								text_single = { raw_text = ":" }
-								text_single = { raw_text = "[IntrigueWindow.GetWeakHooksOnMeCount] weak and" }
-								text_single = { raw_text = "[IntrigueWindow.GetStrongHooksOnMeCount] strong hooks." }
-								expand = {}
-							}
-							vbox = {
-								datamodel = "[IntrigueWindow.GetHooksOnMe]"
-								visible = "[DataModelHasItems(IntrigueWindow.GetHooksOnMe)]"
-								layoutpolicy_horizontal = expanding
-								spacing = 3
-								item = {
-									hbox = {
-										layoutpolicy_horizontal = expanding
-										datacontext = "[IntrigueWindowHookItem.GetHook]"
-										background = { using = Background_Area }
-										char_name = {
-											datacontext = "[IntrigueWindowHookItem.GetCharacter]"
-											text_single = { raw_text = "[Hook.GetHookStrengthState]" }
-											text_single = { raw_text = ", [Hook.GetName]," }
-											text_single = { raw_text = ":" }
-											text_single = {
-												visible = "[Hook.HasExpirationDate]"
-												raw_text = "for [Hook.GetExpirationDate.GetTimeDiffFromNow]."
-											}
-										}
-										expand = {}
-									}
-								}
-							}
-						}
 
-						vbox = {
-							name = "my_secrets"
-							layoutpolicy_horizontal = expanding
-							text_single = {
-								layoutpolicy_horizontal = expanding
-								raw_text = "INTRIGUE_WINDOW_MY_SECRETS_TITLE"
+							modify_texture = {
+								texture = "gfx/interface/component_masks/mask_fade_horizontal_thick.dds"
+								blend_mode = alphamultiply
+								mirror = horizontal
 							}
-							vbox = {
-								name = "my_secrets_grid"
-								datamodel = "[IntrigueWindow.GetMySecrets]"
-								visible = "[DataModelHasItems(IntrigueWindow.GetMySecrets)]"
-								layoutpolicy_horizontal = expanding
-								item = {
-									vbox = {
-										datacontext = "[IntrigueWindowSecretItem.GetSecret]"
-										visible = "[Secret.IsValid]"
-										layoutpolicy_horizontal = expanding
-										hbox = {
-											layoutpolicy_horizontal = expanding
-											margin_left = 10
-											spacing = 5
-											tooltip = "[Secret.GetTooltipDesc]"
-											background = {
-												using = Background_Area
-												modify_texture = {
-													texture = "gfx/interface/component_masks/mask_fade_horizontal_thick.dds"
-													blend_mode = alphamultiply
-													mirror = horizontal
-												}
-											}
-											icon = {
-												texture = "[Secret.GetType.GetIcon]"
-												size = { 30 30 }
-											}
-											text_multi_wide = {
-												layoutpolicy_horizontal = expanding
-												text = "INTRIGUE_WINDOW_SECRET_DESC"
-												align = nobaseline
-												autoresize = yes
-												max_width = 300
-											}
-											expand = {}
-										}
-										vbox_secret_item_ocr = {
-											visible = "[IntrigueWindowSecretItem.IsExpanded]"
-											datamodel = "[IntrigueWindowSecretItem.GetKnownBy]"
-											layoutpolicy_horizontal = expanding
-											blockoverride "portrait_context" {}
-										}
-									}
-								}
-							}
-							text_multi_wide = {
-								visible = "[IsDataModelEmpty(IntrigueWindow.GetMySecrets)]"
-								layoutpolicy_horizontal = expanding
-								raw_text = "[Localize('I_HAVE_NO_SECRETS')]."
-								background = { using = Background_Area }
-							}
-						}
-						vbox_spy_list = {}
-					}
-				}
-			}
-		}
-	}
-
-	#################################################################
-	### MODALITÀ NORMO VEDENTE - SIGHTED / VISUAL MODE           ###
-	#################################################################
-	widget = {
-		name = "normal_mode_content"
-		visible = "[GetVariableSystem.Exists('ocr')]"
-		parentanchor = top|right
-		using = Window_Size_MainTab
-
-		margin_widget = {
-			size = { 100% 100% }
-			margin_top = 30
-			margin_bottom = 25
-			margin_right = 13
-
-			widget = {
-				size = { 100% 100% }
-				using = Window_Background
-				using = Window_Decoration
-
-				vbox = {
-					using = Window_Margins
-					widget_header_with_picture = {
-						layoutpolicy_horizontal = expanding
-						size = { 0 140 }
-						widget_scheme_countermeasures = {
-							parentanchor = bottom|hcenter
-							position = { 0 -5 }
-						}
-						blockoverride "size" { size = { 100% 156 } }
-						blockoverride "header_text" { text = "INTRIGUE_VIEW" }
-						blockoverride "button_close" { onclick = "[IntrigueWindow.Close]" }
-						blockoverride "illustration_texture" { texture = "gfx/interface/illustrations/window_headers/header_prison.dds" }
-					}
-					hbox = {
-						name = "tabs"
-						layoutpolicy_horizontal = expanding
-						margin_left = 1
-						button_tab = {
-							name = "open_scheme_tab"
-							layoutpolicy_horizontal = expanding
-							text = "OPEN_SCHEMES_TAB"
-							default_format = "#low"
-							onclick = "[IntrigueWindow.SetTab('schemes')]"
-							down = "[IntrigueWindow.IsTabShown('schemes')]"
-							using = tooltip_above
-						}
-						button_tab = {
-							name = "open_hooks_and_secrets_tab"
-							layoutpolicy_horizontal = expanding
-							text = "OPEN_HOOKS_AND_SECRETS_TAB"
-							default_format = "#low"
-							onclick = "[IntrigueWindow.SetTab('hooks_and_secrets')]"
-							down = "[IntrigueWindow.IsTabShown('hooks_and_secrets')]"
-							using = tooltip_above
 						}
 					}
-					vbox = {
+
+					### HOOKS AND SECRETS
+					scrollbox = {
+						name = "hooks_and_secrets"
+						widgetid = "hooks_and_secrets"
+						visible = "[IntrigueWindow.IsTabShown( 'hooks_and_secrets' )]"
 						layoutpolicy_horizontal = expanding
 						layoutpolicy_vertical = expanding
-						scrollbox = {
-							name = "schemes"
-							visible = "[IntrigueWindow.IsTabShown('schemes')]"
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-							state = {
-								name = _show
-								using = Animation_FadeIn_Quick
-							}
-							state = {
-								name = _hide
-								alpha = 0
-							}
-							background = {
-								texture = "gfx/interface/skinned/illustrations/council_bg/council_spymaster.dds"
-								margin = { -5 0 }
-								fittype = end
-								alpha = 0.3
-								modify_texture = {
-									texture = "gfx/interface/component_masks/mask_fade_vertical.dds"
-									blend_mode = alphamultiply
-									mirror = vertical
-								}
-							}
-							blockoverride "scrollbox_content" {
-								vbox = {
-									name = "my_own_schemes"
-									widgetid = "my_own_schemes"
-									layoutpolicy_horizontal = expanding
-									spacing = 10
-									
-									# --- CONTRACT SCHEMES (VISUAL) ---
-									vbox = {
-										name = "my_contract_schemes"
-										visible = "[SkillSchemeGroup.HasSchemes]"
-										datacontext = "[IntrigueWindow.GetContractSchemes]"
-										layoutpolicy_horizontal = expanding
-										text_label_center = {
-											layoutpolicy_horizontal = expanding
-											text = "contract_schemes[E]"
-										}
-										vbox = {
-											name = "my_own_contract_schemes"
-											visible = "[SkillSchemeGroup.HasSchemes]"
-											datamodel = "[SkillSchemeGroup.GetSchemes]"
-											layoutpolicy_horizontal = expanding
-											item = { 
-												vbox = {
-													layoutpolicy_horizontal = expanding
-													datacontext = "[SchemeItem.GetScheme]"
-													# Testo riassuntivo per visuali
-													text_single = {
-														layoutpolicy_horizontal = expanding
-														raw_text = "[Scheme.GetSuccessChance|0]% Chance, [Scheme.GetFullActionName], [Scheme.GetProgressBar|%0], [Scheme.GetTargetCharacter.GetOpinionOf(GetPlayer)|=] opinion."
-														default_format = "#medium"
-														margin_left = 10
-													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
-												}
-											}
-										}
-									}
 
-									# --- HOSTILE SCHEMES (VISUAL) ---
-									vbox = {
-										name = "my_hostile_schemes"
-										datacontext = "[IntrigueWindow.GetHostileSchemes]"
-										layoutpolicy_horizontal = expanding
-										text_label_center = {
-											layoutpolicy_horizontal = expanding
-											text = "hostile_schemes[E]"
-										}
-										vbox = {
-											name = "my_own_hostile_schemes"
-											visible = "[SkillSchemeGroup.HasSchemes]"
-											datamodel = "[SkillSchemeGroup.GetSchemes]"
-											layoutpolicy_horizontal = expanding
-											item = { 
-												vbox = {
-													layoutpolicy_horizontal = expanding
-													datacontext = "[SchemeItem.GetScheme]"
-													# Testo riassuntivo
-													text_single = {
-														layoutpolicy_horizontal = expanding
-														raw_text = "[Scheme.GetSuccessChance|0]% Chance, [Scheme.GetFullActionName], [Scheme.GetProgressBar|%0]."
-														default_format = "#medium"
-														margin_left = 10
-													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
-												}
-											}
-										}
-										text_multi = {
-											name = "no_own_hostile_schemes"
-											visible = "[Not(SkillSchemeGroup.HasSchemes)]"
-											layoutpolicy_horizontal = expanding
-											minimumsize = { 0 110 }
-											text = "SCHEME_WINDOW_NOT_OWNED_SCHEMES"
-											default_format = "#low;italic"
-											align = center
-											background = { using = Background_Area }
-										}
-									}
+						state = {
+							name = _show
+							using = Animation_FadeIn_Quick
+						}
 
-									# --- PERSONAL SCHEMES (VISUAL) ---
-									vbox = {
-										name = "my_personal_schemes"
-										datacontext = "[IntrigueWindow.GetPersonalSchemes]"
-										layoutpolicy_horizontal = expanding
-										text_label_center = {
-											layoutpolicy_horizontal = expanding
-											text = "personal_schemes[E]"
-										}
-										vbox = {
-											name = "my_own_personal_schemes"
-											visible = "[SkillSchemeGroup.HasSchemes]"
-											datamodel = "[SkillSchemeGroup.GetSchemes]"
-											layoutpolicy_horizontal = expanding
-											item = { 
-												vbox = {
-													layoutpolicy_horizontal = expanding
-													datacontext = "[SchemeItem.GetScheme]"
-													# Testo riassuntivo (qui è particolarmente utile perché i widget vanilla spesso nascondono i dettagli)
-													text_single = {
-														layoutpolicy_horizontal = expanding
-														raw_text = "[Scheme.GetSuccessChance|0]% Chance, [Scheme.GetFullActionName], [Scheme.GetProgressBar|%0], [Scheme.GetTargetCharacter.GetOpinionOf(GetPlayer)|=] opinion."
-														default_format = "#medium"
-														margin_left = 10
-													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
-												}
-											}
-										}
-										text_multi = {
-											name = "no_own_personal_schemes"
-											visible = "[Not(SkillSchemeGroup.HasSchemes)]"
-											layoutpolicy_horizontal = expanding
-											minimumsize = { 0 110 }
-											text = "SCHEME_WINDOW_NOT_OWNED_SCHEMES"
-											default_format = "#low;italic"
-											align = center
-											background = { using = Background_Area }
-										}
-									}
+						state = {
+							name = _hide
+							alpha = 0
+						}
 
-									# --- POLITICAL SCHEMES (VISUAL) ---
-									vbox = {
-										name = "my_political_schemes"
-										datacontext = "[IntrigueWindow.GetPoliticalSchemes]"
-										visible = "[GetPlayer.GetTopLiege.GetGovernment.HasRule('administrative')]"
-										layoutpolicy_horizontal = expanding
-										text_label_center = {
-											layoutpolicy_horizontal = expanding
-											text = "political_schemes[E]"
-										}
-										vbox = {
-											name = "my_own_political_schemes"
-											visible = "[SkillSchemeGroup.HasSchemes]"
-											datamodel = "[SkillSchemeGroup.GetSchemes]"
-											layoutpolicy_horizontal = expanding
-											item = { 
-												vbox = {
-													layoutpolicy_horizontal = expanding
-													datacontext = "[SchemeItem.GetScheme]"
-													text_single = {
-														layoutpolicy_horizontal = expanding
-														raw_text = "[Scheme.GetSuccessChance|0]% Chance, [Scheme.GetFullActionName], [Scheme.GetProgressBar|%0]."
-														default_format = "#medium"
-														margin_left = 10
-													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
-												}
-											}
-										}
-										text_multi = {
-											name = "no_own_political_schemes"
-											visible = "[Not(SkillSchemeGroup.HasSchemes)]"
-											layoutpolicy_horizontal = expanding
-											minimumsize = { 0 110 }
-											text = "SCHEME_WINDOW_NOT_OWNED_SCHEMES"
-											default_format = "#low;italic"
-											align = center
-											background = { using = Background_Area }
-										}
-									}
-									vbox = {
-										name = "discovered_schemes"
-										layoutpolicy_horizontal = expanding
-										margin_top = 10
-										hbox = {
-											layoutpolicy_horizontal = expanding
-											expand = {}
-											margin = { 0 -4 }
-											margin_right = 35
-											background = {
-												margin_left = 40
-												margin_right = 40
-												texture = "gfx/interface/component_tiles/tile_title_bg_01.dds"
-												spriteType = Corneredtiled
-												spriteborder = { 40 8 }
-												texture_density = 2
-												modify_texture = {
-													name = "mask"
-													texture = "gfx/interface/component_masks/mask_fade_horizontal_middle_thick.dds"
-													spriteType = Corneredstretched
-													spriteborder = { 0 0 }
-													blend_mode = alphamultiply
-												}
-											}
-											icon = {
-												name = "discovered_icon"
-												size = { 35 35 }
-												texture = "gfx/interface/icons/schemes/icon_discovered_scheme.dds"
-											}
-											text_single = {
-												text = "SCHEME_WINDOW_KNOWN_SCHEMES_TITLE"
-												align = nobaseline
-											}
-											expand = {}
-										}
-										vbox = {
-											name = "known_schemes_grid"
-											visible = "[IntrigueWindow.HasKnownSchemes]"
-											datamodel = "[IntrigueWindow.GetKnownSchemes]"
-											layoutpolicy_horizontal = expanding
-											item = { vbox_discovered_scheme_item = { layoutpolicy_horizontal = expanding } }
-										}
-										text_multi = {
-											name = "no_own_schemes"
-											visible = "[Not(IntrigueWindow.HasKnownSchemes)]"
-											layoutpolicy_horizontal = expanding
-											minimumsize = { 0 110 }
-											text = "SCHEME_WINDOW_NOT_KNOWN_SCHEMES"
-											default_format = "#low"
-											align = center
-											background = { using = Background_Area }
-										}
-									}
-								}
-								vbox_wok_intrigue_arranged_courtships = {}
+						background = {
+							texture = "gfx/interface/illustrations/event_scenes/alley.dds"
+							fittype = end
+							alpha = 0.6
+
+							using = Mask_Rough_Edges
+
+							modify_texture = {
+								texture = "gfx/interface/component_masks/mask_fade_vertical.dds"
+								blend_mode = alphamultiply
+								mirror = vertical
 							}
 						}
-						hbox = {
-							visible = "[IntrigueWindow.IsTabShown('schemes')]"
-							layoutpolicy_horizontal = expanding
-							margin = { 10 10 }
-							spacing = 5
-							tooltip = "SCHEME_WINDOW_AUTO_ASSIGN_AGENTS_TOOLTIP"
-							divider = {
+
+						blockoverride "scrollbox_content"
+						{
+							spacing = 10
+
+							# My Hooks
+							vbox = {
+								name = "my_hooks"
 								layoutpolicy_horizontal = expanding
-								modify_texture = {
-									texture = "gfx/interface/component_masks/mask_fade_horizontal_thick.dds"
-									blend_mode = alphamultiply
-								}
-							}
-							icon = {
-								size = { 30 30 }
-								texture = "gfx/interface/icons/message_feed/spymaster.dds"
-							}
-							button_checkbox_label = {
-								size = { 30 30 }
-								onclick = "[IntrigueWindow.ToggleAutoAssigningAgents]"
-								blockoverride "checkbox" { checked = "[IntrigueWindow.IsAutoAssigningAgents]" }
-								blockoverride "text" { text = "SCHEME_WINDOW_AUTO_ASSIGN_AGENTS" }
-							}
-							divider = {
-								layoutpolicy_horizontal = expanding
-								modify_texture = {
-									texture = "gfx/interface/component_masks/mask_fade_horizontal_thick.dds"
-									blend_mode = alphamultiply
-									mirror = horizontal
-								}
-							}
-						}
-						scrollbox = {
-							name = "hooks_and_secrets"
-							widgetid = "hooks_and_secrets"
-							visible = "[IntrigueWindow.IsTabShown('hooks_and_secrets')]"
-							layoutpolicy_horizontal = expanding
-							layoutpolicy_vertical = expanding
-							state = {
-								name = _show
-								using = Animation_FadeIn_Quick
-							}
-							state = {
-								name = _hide
-								alpha = 0
-							}
-							background = {
-								texture = "gfx/interface/illustrations/event_scenes/alley.dds"
-								fittype = end
-								alpha = 0.6
-								using = Mask_Rough_Edges
-								modify_texture = {
-									texture = "gfx/interface/component_masks/mask_fade_vertical.dds"
-									blend_mode = alphamultiply
-									mirror = vertical
-								}
-							}
-							blockoverride "scrollbox_content" {
-								spacing = 10
-								vbox = {
-									name = "my_hooks"
+								spacing = 2
+
+								widget = {
+									size = { -1 24 }
 									layoutpolicy_horizontal = expanding
-									spacing = 2
-									widget = {
-										size = { -1 24 }
-										layoutpolicy_horizontal = expanding
-										hbox = {
-											text_label_center = {
-												layoutpolicy_horizontal = expanding
-												align = center
-												text = "INTRIGUE_WINDOW_MY_HOOKS_TITLE"
-											}
-											hbox = {
-												margin = { 10 0 }
-												spacing = 10
-												expand = {}
-												hbox = {
-													spacing = 4
-													tooltip = "INTRIGUE_WINDOW_WEAK_HOOKS_COUNT"
-													icon = {
-														size = { 14 14 }
-														texture = "gfx/interface/icons/portrait_hook_secret_small.dds"
-														framesize = { 28 28 }
-														frame = 1
-													}
-													text_single = { text = "[IntrigueWindow.GetMyWeakHooksCount]" }
-												}
-												hbox = {
-													spacing = 4
-													tooltip = "INTRIGUE_WINDOW_STRONG_HOOKS_COUNT"
-													icon = {
-														size = { 14 14 }
-														texture = "gfx/interface/icons/portrait_hook_secret_small.dds"
-														framesize = { 28 28 }
-														frame = 2
-													}
-													text_single = { text = "[IntrigueWindow.GetMyStrongHooksCount]" }
-												}
-												spacer = {}
-											}
-											hbox = {
-												button_expand = {
-													name = "show"
-													visible = "[GreaterThan_int32(GetDataModelSize(IntrigueWindow.GetMyHooks),'int32(4)')]"
-													frame = "[Select_int32( GetVariableSystem.Exists( 'hooks_expand' ), 'int32(2)', 'int32(1)' )]"
-													onclick = "[GetVariableSystem.Toggle( 'hooks_expand' )]"
-													using = tooltip_ws
-													tooltip = "EXPAND_FILTER"
-												}
-											}
-										}
-									}
+
 									hbox = {
-										layoutpolicy_horizontal = expanding
-										fixedgridbox = {
-											datamodel = "[IntrigueWindow.GetMyHooks]"
-											visible = "[And( GetVariableSystem.Exists( 'hooks_expand' ), DataModelHasItems(IntrigueWindow.GetMyHooks) )]"
-											flipdirection = yes
-											maxhorizontalslots = 4
-											datamodel_wrap = 4
-											addcolumn = 116
-											addrow = 120
-											item = { portrait_head = { datacontext = "[IntrigueWindowHookItem.GetCharacter]" } }
-										}
-										fixedgridbox = {
-											datamodel = "[IntrigueWindow.GetMyHooks]"
-											visible = "[And( Not( GetVariableSystem.Exists( 'hooks_expand' ) ), DataModelHasItems(IntrigueWindow.GetMyHooks) )]"
-											flipdirection = yes
-											maxhorizontalslots = 4
-											addcolumn = 116
-											addrow = 120
-											item = { portrait_head = { datacontext = "[IntrigueWindowHookItem.GetCharacter]" } }
-										}
-										expand = {}
-										text_single = {
-											visible = "[And( Not( GetVariableSystem.Exists( 'hooks_expand' ) ), GreaterThan_int32(GetDataModelSize(IntrigueWindow.GetMyHooks),'int32(4)') )]"
-											layoutpolicy_vertical = growing
+										text_label_center = {
 											layoutpolicy_horizontal = expanding
-											text = "[GetNumberAbove_int32(GetDataModelSize(IntrigueWindow.GetMyHooks),'int32(4)')]"
 											align = center
-											default_format = "#weak"
-											using = Font_Size_Medium
-										}
-										text_multi = {
-											visible = "[IsDataModelEmpty(IntrigueWindow.GetMyHooks)]"
-											layoutpolicy_horizontal = expanding
-											minimumsize = { 0 120 }
-											text = "MY_HOOKS_ARE_EMPTY"
-											align = center
-											background = { using = Background_Area }
+											text = "INTRIGUE_WINDOW_MY_HOOKS_TITLE"
 										}
 									}
-								}
-								vbox = {
-									name = "secrets_known_to_me"
-									layoutpolicy_horizontal = expanding
-									spacing = 2
-									widget = {
-										size = { -1 24 }
-										layoutpolicy_horizontal = expanding
-										hbox = {
-											text_label_center = {
-												layoutpolicy_horizontal = expanding
-												text = "INTRIGUE_WINDOW_SECRETS_KNOWN_TO_ME_TITLE"
-											}
-											hbox = {
-												expand = {}
-												hbox = {
-													margin_right = 15
-													spacing = 5
-													tooltip = "INTRIGUE_WINDOW_HOOKS_SHOW_ALL"
-													button_checkbox = {
-														name = "show_all_secrets"
-														onclick = "[GetVariableSystem.Toggle('secrets_show_all')]"
-														checked = "[GetVariableSystem.Exists('secrets_show_all')]"
-													}
-													icon = {
-														size = { 20 20 }
-														texture = "gfx/interface/icons/portrait_hook_secret.dds"
-														framesize = { 40 40 }
-														frame = 4
-													}
-												}
-											}
-										}
-									}
-									vbox_secret_item = {
-										datamodel = "[IntrigueWindow.GetSecretsKnownToMe]"
-										layoutpolicy_horizontal = expanding
-										blockoverride "portrait" {
-											datacontext = "[IntrigueWindowSecretGroup.GetCharacter]"
-										}
-									}
-									text_multi = {
-										visible = "[IsDataModelEmpty(IntrigueWindow.GetSecretsKnownToMe)]"
-										layoutpolicy_horizontal = expanding
-										minimumsize = { 0 120 }
-										text = "SECRETS_KNOWN_TO_ME_IS_EMPTY"
-										align = center
-										background = { using = Background_Area }
-									}
-								}
-								vbox = {
-									name = "hooks_on_me"
-									layoutpolicy_horizontal = expanding
-									spacing = 2
-									text_label_center = {
-										layoutpolicy_horizontal = expanding
-										align = center
-										text = "INTRIGUE_WINDOW_HOOKS_ON_ME_TITLE"
-									}
+
 									hbox = {
 										margin = { 10 0 }
 										spacing = 10
+
 										expand = {}
+
 										hbox = {
 											spacing = 4
 											tooltip = "INTRIGUE_WINDOW_WEAK_HOOKS_COUNT"
+
 											icon = {
 												size = { 14 14 }
-												texture = "gfx/interface/icons/portrait_hook_secret_small.dds"
+												texture = "gfx/interface/icons/portraits/hook_secret_small.dds"
 												framesize = { 28 28 }
 												frame = 1
 											}
-											text_single = { text = "[IntrigueWindow.GetWeakHooksOnMeCount]" }
+
+											text_single = {
+												text = "[IntrigueWindow.GetMyWeakHooksCount]"
+											}
 										}
+
 										hbox = {
 											spacing = 4
 											tooltip = "INTRIGUE_WINDOW_STRONG_HOOKS_COUNT"
+
 											icon = {
 												size = { 14 14 }
-												texture = "gfx/interface/icons/portrait_hook_secret_small.dds"
+												texture = "gfx/interface/icons/portraits/hook_secret_small.dds"
 												framesize = { 28 28 }
 												frame = 2
 											}
-											text_single = { text = "[IntrigueWindow.GetStrongHooksOnMeCount]" }
+
+											text_single = {
+												text = "[IntrigueWindow.GetMyStrongHooksCount]"
+											}
 										}
-									}
-									vbox = {
-										datamodel = "[IntrigueWindow.GetHooksOnMe]"
-										visible = "[DataModelHasItems(IntrigueWindow.GetHooksOnMe)]"
-										layoutpolicy_horizontal = expanding
-										spacing = 3
-										item = {
-											hbox = {
-												layoutpolicy_horizontal = expanding
-												datacontext = "[IntrigueWindowHookItem.GetHook]"
-												background = { using = Background_Area }
-												portrait_head_small = { datacontext = "[IntrigueWindowHookItem.GetCharacter]" }
-												vbox = {
-													layoutpolicy_horizontal = expanding
-													margin_left = 15
-													hbox = {
-														layoutpolicy_horizontal = expanding
-														icon = {
-															size = { 20 20 }
-															texture = "gfx/interface/icons/portrait_hook_secret.dds"
-															framesize = { 40 40 }
-															frame = "[Hook.GetHookFrame]"
-														}
-														text_single = {
-															layoutpolicy_horizontal = expanding
-															raw_text = "[Hook.GetHookStrengthState]"
-															align = nobaseline
-														}
-													}
-													hbox = {
-														layoutpolicy_horizontal = expanding
-														spacing = 5
-														text_single = { text = "[Hook.GetName]" }
-														text_single = {
-															layoutpolicy_horizontal = expanding
-															visible = "[Hook.HasExpirationDate]"
-															text = "INTRIGUE_WINDOW_HOOK_EXPIRATION"
-															default_format = "#low"
-															autoresize = no
-														}
-														expand = {}
-													}
-												}
-												expand = {}
+
+										spacer = {}
+
+										hbox = {
+
+											button_expand = {
+												name = "show"
+												visible = "[GreaterThan_int32(GetDataModelSize(IntrigueWindow.GetMyHooks), '(int32)4')]"
+												frame = "[Select_int32( GetVariableSystem.Exists( 'hooks_expand' ), '(int32)2', '(int32)1' )]"
+												onclick = "[GetVariableSystem.Toggle( 'hooks_expand' )]"
+
+												using = tooltip_ws
+												tooltip = "EXPAND_FILTER"
 											}
 										}
 									}
-									text_multi = {
-										visible = "[IsDataModelEmpty(IntrigueWindow.GetHooksOnMe)]"
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+
+									fixedgridbox = {
+										datamodel = "[IntrigueWindow.GetMyHooks]"
+										visible = "[And( GetVariableSystem.Exists( 'hooks_expand' ), DataModelHasItems( IntrigueWindow.GetMyHooks ) )]"
+										flipdirection = yes
+										maxhorizontalslots = 4
+										datamodel_wrap = 4
+
+										addcolumn = 116
+										addrow = 120
+
+										item = {
+											portrait_head = {
+												datacontext = "[IntrigueWindowHookItem.GetCharacter]"
+											}
+										}
+									}
+
+									fixedgridbox = {
+										datamodel = "[IntrigueWindow.GetMyHooks]"
+										visible = "[And( Not( GetVariableSystem.Exists( 'hooks_expand' ) ), DataModelHasItems( IntrigueWindow.GetMyHooks ) )]"
+										flipdirection = yes
+										maxhorizontalslots = 4
+
+										addcolumn = 116
+										addrow = 120
+
+										item = {
+											portrait_head = {
+												datacontext = "[IntrigueWindowHookItem.GetCharacter]"
+											}
+										}
+									}
+
+									expand = {}
+
+									text_single = {
+										visible = "[And( Not( GetVariableSystem.Exists( 'hooks_expand' ) ), GreaterThan_int32(GetDataModelSize(IntrigueWindow.GetMyHooks), '(int32)4') )]"
+										layoutpolicy_vertical = growing
 										layoutpolicy_horizontal = expanding
-										minimumsize = { 0 120 }
-										text = "NOBODY_HAS_HOOKS_ON_ME"
+
+										text = "[GetNumberAbove_int32(GetDataModelSize(IntrigueWindow.GetMyHooks), '(int32)4' )|=]"
 										align = center
-										background = { using = Background_Area }
+										default_format = "#weak"
+										using = Font_Size_Medium
 									}
 								}
-								vbox = {
-									name = "my_secrets"
+
+								text_multi = {
+									visible = "[IsDataModelEmpty( IntrigueWindow.GetMyHooks )]"
 									layoutpolicy_horizontal = expanding
-									spacing = 2
-									text_label_center = {
-										layoutpolicy_horizontal = expanding
-										text = "INTRIGUE_WINDOW_MY_SECRETS_TITLE"
+									minimumsize = { 0 120 }
+									text = "MY_HOOKS_ARE_EMPTY"
+									align = center
+
+									background = {
+										using = Background_Area
 									}
-									vbox = {
-										name = "my_secrets_grid"
-										datamodel = "[IntrigueWindow.GetMySecrets]"
-										visible = "[DataModelHasItems(IntrigueWindow.GetMySecrets)]"
-										layoutpolicy_horizontal = expanding
-										item = {
+								}
+							}
+
+							# Secrets known to me
+							vbox = {
+								name = "secrets_known_to_me"
+								layoutpolicy_horizontal = expanding
+								spacing = 2
+
+								widget = {
+									size = { -1 24 }
+									layoutpolicy_horizontal = expanding
+
+									hbox = {
+										text_label_center = {
+											layoutpolicy_horizontal = expanding
+											text = "INTRIGUE_WINDOW_SECRETS_KNOWN_TO_ME_TITLE"
+										}
+									}
+
+									hbox = {
+										expand = {}
+
+										hbox = {
+											margin_right = 15
+											spacing = 5
+											tooltip = "INTRIGUE_WINDOW_HOOK_SHOW_ALL"
+
+											button_checkbox = {
+												name = "show_all_secrets"
+												onclick = "[GetVariableSystem.Toggle( 'secrets_show_all' )]"
+												checked = "[GetVariableSystem.Exists( 'secrets_show_all' )]"
+											}
+
+											icon = {
+												size = { 20 20 }
+												texture = "gfx/interface/icons/portraits/hook_secret.dds"
+												framesize = { 40 40 }
+												frame = 4
+											}
+										}
+									}
+								}
+
+								vbox_secret_item = {
+									datamodel = "[IntrigueWindow.GetSecretsKnownToMe]"
+									layoutpolicy_horizontal = expanding
+
+									blockoverride "portrait"
+									{
+										datacontext = "[IntrigueWindowSecretGroup.GetCharacter]"
+									}
+								}
+
+								text_multi = {
+									visible = "[IsDataModelEmpty( IntrigueWindow.GetSecretsKnownToMe )]"
+									layoutpolicy_horizontal = expanding
+									minimumsize = { 0 120 }
+									text = "SECRETS_KNOWN_TO_ME_IS_EMPTY"
+									align = center
+
+									background = {
+										using = Background_Area
+									}
+								}
+							}
+
+							# Hooks on you
+							vbox = {
+								name = "hooks_on_me"
+								layoutpolicy_horizontal = expanding
+								spacing = 2
+
+								text_label_center = {
+									layoutpolicy_horizontal = expanding
+									align = center
+									text = "INTRIGUE_WINDOW_HOOKS_ON_ME_TITLE"
+
+									hbox = {
+										margin = { 10 0 }
+										spacing = 10
+
+										expand = {}
+
+										hbox = {
+											spacing = 4
+											tooltip = "INTRIGUE_WINDOW_WEAK_HOOKS_COUNT"
+
+											icon = {
+												size = { 14 14 }
+												texture = "gfx/interface/icons/portraits/hook_secret_small.dds"
+												framesize = { 28 28 }
+												frame = 1
+											}
+
+											text_single = {
+												text = "[IntrigueWindow.GetWeakHooksOnMeCount]"
+											}
+										}
+
+										hbox = {
+											spacing = 4
+											tooltip = "INTRIGUE_WINDOW_STRONG_HOOKS_COUNT"
+
+											icon = {
+												size = { 14 14 }
+												texture = "gfx/interface/icons/portraits/hook_secret_small.dds"
+												framesize = { 28 28 }
+												frame = 2
+											}
+
+											text_single = {
+												text = "[IntrigueWindow.GetStrongHooksOnMeCount]"
+											}
+										}
+									}
+								}
+
+								vbox = {
+									datamodel = "[IntrigueWindow.GetHooksOnMe]"
+									visible = "[DataModelHasItems( IntrigueWindow.GetHooksOnMe )]"
+									layoutpolicy_horizontal = expanding
+									spacing = 3
+
+									item = {
+										hbox = {
+											layoutpolicy_horizontal = expanding
+											datacontext = "[IntrigueWindowHookItem.GetHook]"
+
+											background = {
+												using = Background_Area
+											}
+
+											portrait_head_small = {
+												datacontext = "[IntrigueWindowHookItem.GetCharacter]"
+											}
+
 											vbox = {
-												datacontext = "[IntrigueWindowSecretItem.GetSecret]"
-												visible = "[Secret.IsValid]"
 												layoutpolicy_horizontal = expanding
+												margin_left = 15
+
 												hbox = {
 													layoutpolicy_horizontal = expanding
-													margin_left = 10
-													spacing = 5
-													tooltip = "[Secret.GetTooltipDesc]"
-													background = {
-														using = Background_Area
-														modify_texture = {
-															texture = "gfx/interface/component_masks/mask_fade_horizontal_thick.dds"
-															blend_mode = alphamultiply
-															mirror = horizontal
-														}
-													}
+
 													icon = {
-														texture = "[Secret.GetType.GetIcon]"
-														size = { 30 30 }
+														size = { 20 20 }
+														texture = "gfx/interface/icons/portraits/hook_secret.dds"
+														framesize = { 40 40 }
+														frame = "[Hook.GetHookFrame]"
 													}
-													text_multi_wide = {
+
+													text_single = {
 														layoutpolicy_horizontal = expanding
-														text = "INTRIGUE_WINDOW_SECRET_DESC"
+														raw_text = " [Hook.GetHookStrengthState]"
 														align = nobaseline
-														autoresize = yes
-														max_width = 300
 													}
+												}
+
+												hbox = {
+													layoutpolicy_horizontal = expanding
+													spacing = 5
+
+													text_single = {
+														text = "[Hook.GetName]"
+													}
+
+													text_single = {
+														layoutpolicy_horizontal = expanding
+														visible = "[Hook.HasExpirationDate]"
+														text = "INTRIGUE_WINDOW_HOOK_EXPIRATION"
+														default_format = "#low"
+														autoresize = no
+													}
+
 													expand = {}
 												}
-												vbox_secret_item = {
-													visible = "[IntrigueWindowSecretItem.IsExpanded]"
-													datamodel = "[IntrigueWindowSecretItem.GetKnownBy]"
+											}
+
+											expand = {}
+										}
+									}
+								}
+
+								text_multi = {
+									visible = "[IsDataModelEmpty( IntrigueWindow.GetHooksOnMe )]"
+									layoutpolicy_horizontal = expanding
+									minimumsize = { 0 120 }
+									text = "NOBODY_HAS_HOOKS_ON_ME"
+									align = center
+
+									background = {
+										using = Background_Area
+									}
+								}
+							}
+
+							# My secrets
+							vbox = {
+								name = "my_secrets"
+								layoutpolicy_horizontal = expanding
+								spacing = 2
+
+								text_label_center = {
+									layoutpolicy_horizontal = expanding
+									text = "INTRIGUE_WINDOW_MY_SECRETS_TITLE"
+								}
+
+								vbox = {
+									name = "my_secrets_grid"
+									datamodel = "[IntrigueWindow.GetMySecrets]"
+									visible = "[DataModelHasItems( IntrigueWindow.GetMySecrets )]"
+									layoutpolicy_horizontal = expanding
+
+									item = {
+										vbox = {
+											datacontext = "[IntrigueWindowSecretItem.GetSecret]"
+											visible = "[Secret.IsValid]"
+											layoutpolicy_horizontal = expanding
+
+
+											hbox = {
+												layoutpolicy_horizontal = expanding
+												margin_left = 10
+												spacing = 5
+
+												tooltip = "[Secret.GetTooltipDesc]"
+
+												background = {
+													using = Background_Area
+
+													modify_texture = {
+														texture = "gfx/interface/component_masks/mask_fade_horizontal_thick.dds"
+														blend_mode = alphamultiply
+														mirror = horizontal
+													}
+												}
+
+												icon = {
+													texture = "[Secret.GetType.GetIcon]"
+													size = { 30 30 }
+												}
+
+												text_multi = {
 													layoutpolicy_horizontal = expanding
-													blockoverride "portrait_context" {}
+													text = "INTRIGUE_WINDOW_SECRET_DESC"
+													align = nobaseline
+													max_width = 450
+												}
+
+												expand = {}
+											}
+
+											vbox_secret_item = {
+												visible = "[IntrigueWindowSecretItem.IsExpanded]"
+												datamodel = "[IntrigueWindowSecretItem.GetKnownBy]"
+												layoutpolicy_horizontal = expanding
+
+												blockoverride "portrait_context"
+												{
 												}
 											}
 										}
 									}
-									text_multi = {
-										visible = "[IsDataModelEmpty(IntrigueWindow.GetMySecrets)]"
-										layoutpolicy_horizontal = expanding
-										minimumsize = { 0 290 }
-										text = "I_HAVE_NO_SECRETS"
-										align = center
-										background = { using = Background_Area }
-									}
 								}
-								vbox_spy_list = {}
+
+								text_multi = {
+									visible = "[IsDataModelEmpty( IntrigueWindow.GetMySecrets )]"
+									layoutpolicy_horizontal = expanding
+									minimumsize = { 0 290 }
+									text = "I_HAVE_NO_SECRETS"
+									align = center
+								}
 							}
 						}
 					}
@@ -1225,19 +877,736 @@ window = {
 			}
 		}
 	}
-	
-	old_intrigue = {}
 }
 
 ######################################################
 ################ TYPES AND TEMPLATES #################
 ######################################################
-### IMPORTANTE: MANTIENI QUI SOTTO TUTTI I BLOCCHI ###
-### "types OCR" e "types IntrigueWindowTypes" che  ###
-### erano presenti nel tuo file originale da 68kb  ###
-######################################################
+
+types IntrigueWindow
+{
+	type widget_own_scheme_item = widget {
+		name = "my_own_scheme"
+		datacontext = "[SchemeItem.GetScheme]"
+
+		widget = {
+			visible = "[Scheme.IsExposed]"
+			parentanchor = bottom|hcenter
+			size = { 99% 92% }
+
+			icon = {
+				position = { 0 -5 }
+				size = { 100% 101% }
+				texture = "gfx/interface/colors/white.dds"
+				alpha = 0.3
+				using = Color_Red
+				using = Mask_Rough_Edges
+
+				shaderfile = "gfx/FX/pdxgui_repeat_texture.shader"
+
+				modify_texture = {
+					texture = "gfx/interface/component_masks/mask_vignette.dds"
+					blend_mode = alphamultiply
+				}
+
+				state = {
+					trigger_on_create = yes
+					name = a
+					next = b
+					alpha = 0.4
+					duration = 2
+					using = Animation_Curve_Default
+				}
+
+				state = {
+					name = b
+					next = a
+					alpha = 0.2
+					duration = 2.5
+					using = Animation_Curve_Default
+				}
+
+				modify_texture = {
+					name = "clouds"
+					texture = "gfx/interface/component_masks/mask_clouds.dds"
+					blend_mode = alphamultiply
+					spriteType = corneredtiled
+					texture_density = 1
+				}
+
+				state = {
+					name = mask_a
+					next = mask_b
+					trigger_on_create = yes
+
+					modify_texture = {
+						name = "clouds"
+						translate_uv = { 0 -1 }
+					}
+				}
+
+				state = {
+					name = mask_b
+					next = mask_a
+					duration = 40
+
+					modify_texture = {
+						name = "clouds"
+						translate_uv = { 0 1 }
+					}
+				}
+			}
+		}
+
+		vbox = {
+			set_parent_size_to_minimum = yes
+
+			background = {
+				using = Background_Area
+			}
+
+			background = {
+				using = Background_Frame
+
+				modify_texture = {
+					texture = "gfx/interface/component_masks/mask_fade_corner.dds"
+					blend_mode = alphamultiply
+					mirror = horizontal
+				}
+			}
+
+			hbox = {
+				name = "my_own_scheme_header"
+				layoutpolicy_horizontal = expanding
+
+				margin = { 0 5 }
+				margin_left = 20
+				margin_right = 5
+
+				background = {
+					texture = "gfx/interface/window_scheme/scheme_panel_header_banner.dds"
+					margin_top = -2
+					margin_bottom = -3
+				}
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+
+					icon = {
+						texture = "[Scheme.GetSchemeType.GetIcon]"
+						size = { 30 30 }
+						alwaystransparent = yes
+
+						tooltip = "SCHEME_WINDOW_TT_ITEM"
+
+						background = {
+							texture = "gfx/interface/window_scheme/scheme_panel_header_icon_bg.dds"
+							margin = { 13 13 }
+						}
+					}
+
+					text_single = {
+						text = "SCHEME_WINDOW_ITEM_NAME"
+						using = Font_Size_Medium
+						align = nobaseline
+						max_width = 480
+						margin_left = 15
+					}
+
+					icon = {
+						visible = "[Scheme.IsExposed]"
+						size = { 30 30 }
+						texture = "gfx/interface/icons/schemes/icon_discovered_scheme.dds"
+
+						tooltip = "SCHEME_WINDOW_EXPOSED_TOOLTIP"
+
+						glow = {
+							using = Color_Red
+							using = Glow_Standard
+							glow_radius = 3
+						}
+
+						state = {
+							trigger_on_create = yes
+
+							name = max_glow
+							next = min_glow
+							duration = 1
+							using = Animation_Curve_Default
+
+							glow_alpha = 0.8
+						}
+
+						state = {
+							name = min_glow
+							next = max_glow
+							duration = 1.6
+							using = Animation_Curve_Default
+
+							glow_alpha = 0.2
+						}
+					}
+
+					expand = {}
+				}
+
+				button_cancel = {
+					name = "cancel_button"
+					size = { 30 30 }
+
+					onclick = "[SchemeItem.OnCancelClick]"
+					enabled = "[SchemeItem.CanCancelScheme]"
+					tooltip = "[SchemeItem.GetCancelSchemeDescription]"
+				}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				margin = { 10 0 }
+				margin_top = 5
+				spacing = 5
+
+				widget = {
+					name = "scheme_target_portrait_and_countermeasure"
+					size = { 110 120 }
+
+					# Target
+					container = {
+						parentanchor = center
+
+						# Character Target
+						container = {
+							datacontext = "[Scheme.GetTargetCharacter]"
+							visible = "[Character.IsValid]"
+
+							portrait_head = {
+								datacontext = "[Scheme.GetTargetCharacter]"
+								using = tooltip_es
+
+								blockoverride "portrait_button"
+								{
+									tooltip = "SCHEME_WINDOW_SCHEME_TARGET"
+								}
+							}
+						}
+
+						# Title Target
+						container = {
+							datacontext = "[Scheme.GetTargetTitle]"
+							visible = "[Title.IsValid]"
+							parentanchor = center
+
+							coa_title_big = {
+								tooltip_visible = no
+								alwaystransparent = yes
+							}
+						}
+
+						# Faith Target
+						container = {
+							datacontext = "[Scheme.GetTargetFaith]"
+							visible = "[Faith.IsValid]"
+
+							icon = {
+								name = "faith_icon"
+								texture = "[Faith.GetIcon]"
+								size = { 100 100 }
+							}
+						}
+
+						# Culture Target
+						container = {
+							datacontext = "[Scheme.GetTargetCulture]"
+							visible = "[Culture.IsValid]"
+
+							text_single = {
+								text = "INTRIGUE_WINDOW_GETCULTURE"
+							}
+						}
+					}
+
+					widget = {
+						visible = "[Scheme.GetSchemeCountermeasureProtectingTarget().IsValid()]"
+						datacontext = "[Scheme.GetSchemeCountermeasureProtectingTarget()]"
+						parentanchor = top|left
+						size = { 30 30 }
+
+						tooltip = "SCHEME_COUNTERMEASURE_PROTECTING_TARGET"
+
+						background = {
+							using = Background_Area_ExtraDark
+							margin = { 2 2 }
+
+							modify_texture = {
+								texture = "gfx/interface/component_masks/mask_circle.dds"
+								blend_mode = alphamultiply
+							}
+						}
+
+						# The frame
+						icon = {
+							parentanchor = center
+							size = { 30 30 }
+							alwaystransparent = yes
+
+							texture = "gfx/interface/icons/scheme_countermeasure_types/frame_purple.dds"
+						}
+
+						# The countermeasure icon
+						icon = {
+							visible = "[SchemeCountermeasureType.IsValid]"
+							parentanchor = center
+							size = { 30 30 }
+							alwaystransparent = yes
+
+							texture = "[SchemeCountermeasureType.GetIcon]"
+						}
+					}
+				}
+
+				vbox  = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					widget = {
+						visible = "[Not(SchemeItem.GetScheme.GetSchemeType.IsBasic)]"
+						allow_outside = yes
+						layoutpolicy_horizontal = expanding
+						size = { 390 30 }
+
+						tooltip = "SCHEME_WINDOW_SUCCESS_TOOLTIP"
+
+						widget = {
+							name = "scheme_success_progressbar"
+							datacontext = "[SchemeItem.GetProgressLevels]"
+							parentanchor = right|vcenter
+							position = { -8 0 }
+							size = { 350 16 }
+							allow_outside = yes
+
+							icon = {
+								parentanchor = center
+								size = { 372 26 }
+								texture = "gfx/interface/window_scheme/scheme_success_progressbar_bg.dds"
+							}
+
+							hbox_complex_bar_progress_next = {
+								blockoverride "texture_decrease" {
+									texture = "gfx/interface/progressbars/progress_standard.dds"
+								}
+
+								blockoverride "texture_filled" {
+									texture = "gfx/interface/progressbars/progress_grandeur_increase.dds"
+								}
+							}
+
+							icon = {
+								name = "success_icon"
+								size = { 30 30 }
+								texture = "gfx/interface/icons/schemes/icon_scheme_success.dds"
+								position = { -32 -8}
+							}
+
+							hbox_complex_bar_levels = {
+								layoutpolicy_horizontal = expanding
+
+								blockoverride "marker" {
+									widget_level_marker = {
+										allow_outside = yes
+										scale = 0.80
+
+										blockoverride "visible_active" {
+											visible = "[EqualTo_CFixedPoint( Scheme.GetSuccessChance, ComplexBarItem.GetValue )]"
+										}
+
+										text_single = {
+											parentanchor = center
+
+											text = "[ComplexBarItem.GetValue|0%/]"
+											tooltip = "[SchemeItem.GetProgressLevelTooltips( PdxGuiWidget.GetIndexInDataModel )]"
+											align = nobaseline
+
+											using = Font_Size_Medium
+										}
+									}
+								}
+							}
+						}
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+
+							hbox = {
+								datacontext = "[SchemeItem.GetScheme]"
+								visible = "[Scheme.GetSchemeType.IsBasic]"
+								layoutpolicy_horizontal = expanding
+								spacing = 5
+
+								tooltip = "SCHEME_WINDOW_SUCCESS_BASIC_TOOLTIP"
+
+								icon = {
+									name = "success_icon"
+									size = { 30 30 }
+
+									texture = "gfx/interface/icons/schemes/icon_scheme_success.dds"
+								}
+
+								text_single = {
+									name = "success_chance"
+									text = "SCHEME_WINDOW_SUCCESS_CHANCE"
+									align = nobaseline
+									max_width = 310
+								}
+
+								expand = {}
+							}
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								spacing = 5
+
+								tooltip = "SCHEME_WINDOW_PROGRESS_INFO_BREAKDOWN"
+
+								icon = {
+									name = "speed_icon"
+									size = { 30 30 }
+
+									texture = "gfx/interface/icons/schemes/icon_scheme_speed.dds"
+								}
+
+								text_single = {
+									name = "speed"
+									visible = "[Scheme.IsUnfrozen]"
+									text = "[SelectLocalization(Scheme.GetSchemeType.IsBasic, 'SCHEME_WINDOW_PROGRESS_INFO_BASIC', 'SCHEME_WINDOW_PROGRESS_INFO')]"
+									align = nobaseline
+									max_width = 310
+								}
+
+								text_single = {
+									name = "scheme_frozen"
+									visible = "[Scheme.IsFrozen]"
+									text = "SCHEME_WINDOW_PROGRESS_FROZEN"
+									align = nobaseline
+									max_width = 310
+								}
+
+								expand = {}
+							}
+
+							hbox = {
+								visible = "[Scheme.IsSecret]"
+								layoutpolicy_horizontal = expanding
+								spacing = 5
+
+								tooltip = "SCHEME_WINDOW_SECRECY_TOOLTIP"
+
+								icon = {
+									name = "secrecy_icon"
+									size = { 30 30 }
+									texture = "gfx/interface/icons/schemes/icon_secrecy.dds"
+								}
+
+								text_single = {
+									name = "secrecy"
+									text = "SCHEME_WINDOW_SECRECY"
+									align = nobaseline
+									max_width = 310
+								}
+
+								expand = {}
+							}
+
+							hbox = {
+								visible = "[Scheme.IsSecret]"
+								layoutpolicy_horizontal = expanding
+								spacing = 5
+
+								icon = {
+									name = "breach_not_in_grace_period"
+									visible = "[LessThanOrEqualTo_CFixedPoint( Scheme.MakeScope.Var('secrecy_grace_period').GetValue, '(CFixedPoint)0' )]"
+									size = { 30 30 }
+									texture = "gfx/interface/icons/schemes/icon_scheme_breach.dds"
+								}
+
+								icon = {
+									name = "breach_in_grace_period"
+									visible = "[Not( LessThanOrEqualTo_CFixedPoint( Scheme.MakeScope.Var('secrecy_grace_period').GetValue, '(CFixedPoint)0' ))]"
+									size = { 30 30 }
+									texture = "gfx/interface/icons/schemes/icon_scheme_breach_grace_period.dds"
+								}
+
+								text_single = {
+									name = "breaches"
+									text = "SCHEME_WINDOW_BREACHES"
+									align = nobaseline
+									max_width = 310
+								}
+
+								expand = {}
+							}
+
+							text_multi = {
+								visible = "[And( Scheme.HasTaskContract, InDebugMode )]"
+								layoutpolicy_horizontal = expanding
+								raw_text= "#D Contract: [Scheme.GetTaskContract.GetNameNoTooltip]#!"
+							}
+
+							expand = {}
+
+							hbox = {
+								widget = {
+									visible = "[SchemeItem.GetScheme.GetSchemeType.IsBasic]"
+									size = { 384 0 }
+								}
+							}
+						}
+					}
+
+					expand = {}
+				}
+			}
+
+			spacer = {
+				visible = "[IsDataModelEmpty(Scheme.GetModifiers)]"
+				size = { 0 10 }
+			}
+
+			hbox = {
+				visible = "[Not( IsDataModelEmpty(Scheme.GetModifiers))]"
+				layoutpolicy_horizontal = expanding
+				margin_bottom = 5
+				margin_left = 10
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					margin = { 5 5 }
+					spacing = 5
+
+					background = {
+						using = Background_Area
+
+						modify_texture = {
+							texture = "gfx/interface/component_masks/mask_fade_horizontal_thick.dds"
+							blend_mode = alphamultiply
+							mirror = horizontal
+						}
+					}
+
+					text_single = {
+						text = "SCHEME_WINDOW_MODIFIERS"
+						align = nobaseline
+						margin_left = 10
+					}
+
+					fixedgridbox = {
+						datamodel = "[Scheme.GetModifiers]"
+						addcolumn = 30
+						addrow = 25
+						flipdirection = yes
+						datamodel_wrap = 10
+						maxhorizontalslots = 10
+						maxverticalslots = 1
+
+						item = {
+							widget = {
+								parentanchor = vcenter
+								size = { 25 25 }
+
+								datacontext = "[SchemeModifier.GetStaticModifier]"
+
+								icon = {
+									name = "scheme_modifier_icon"
+									size = { 100% 100% }
+									texture = "[SchemeModifier.GetIcon]"
+								}
+
+								tooltipwidget = {
+									static_modifier_tooltip = {
+
+										blockoverride "description_text_data"
+										{
+											text = "[SchemeModifier.GetDesc]"
+										}
+									}
+								}
+							}
+						}
+					}
+
+					expand = {}
+				}
+			}
+
+			button_standard = {
+				name = "open_scheme_prep"
+				visible = "[Not(SchemeItem.GetScheme.GetSchemeType.IsBasic)]"
+				size = { 490 44 }
+
+				onclick = "[PostCommand( SchemeItem.TriggerSchemeHudClick )]"
+				onrightclick = "[PostCommand( SchemeItem.TriggerSchemeHudClick )]"
+
+				tooltip = "SCHEME_WINDOW_OPEN_PREP_EXPLANATION_TT"
+
+				icon = {
+					parentanchor = vcenter
+					position = { 2 0 }
+					size = { 98 56 }
+					texture = "gfx/interface/window_scheme/scheme_opportunity_illustration.dds"
+					alpha = 0.6
+					scale = 0.7
+
+					modify_texture = {
+						texture = "gfx/interface/component_masks/mask_fade_horizontal_extended.dds"
+						blend_mode = alphamultiply
+					}
+				}
+
+				icon = {
+					parentanchor = center
+					size = { 99.3% 40 }
+
+					texture = "gfx/interface/component_tiles/tile_vignette_3px.dds"
+					spriteType = Corneredtiled
+					spriteborder = { 5 5 }
+				}
+
+				hbox = {
+					datacontext = "[SchemeItem.GetScheme]"
+					layoutpolicy_horizontal = expanding
+
+					text_single = {
+						alwaystransparent = yes
+						text = "SCHEME_WINDOW_OPEN_PREP_TT"
+						align = left|nobaseline
+						max_width = 480
+					}
+				}
+
+				widget = {
+					parentanchor = right|vcenter
+					position = { -10 0 }
+
+					hbox = {
+						widgetanchor = right|vcenter
+						parentanchor = center
+						layoutpolicy_horizontal = preferred
+
+						icon = {
+							size = { 30 30 }
+							texture = "gfx/interface/icons/schemes/icon_scheme_opportunity.dds"
+							visible = "[Not( SchemeHasExecutableAdvantages( Scheme ) )]"
+						}
+
+						icon = {
+							size = { 30 30 }
+							texture = "gfx/interface/icons/schemes/icon_scheme_opportunity.dds"
+							visible = "[SchemeHasExecutableAdvantages( Scheme )]"
+
+							glow = {
+								glow_radius = 3
+								using = Glow_Standard
+								using = Color_Green
+								alpha = 0
+							}
+
+							state = {
+								name = start_glow
+								next = a
+								duration = 3
+								glow_alpha = 0.3
+								trigger_on_create = yes
+							}
+
+							state = {
+								name = a
+								next = b
+								duration = 3
+								glow_alpha = 0.5
+							}
+
+							state = {
+								name = b
+								next = a
+								duration = 3
+								glow_alpha = 0.1
+							}
+						}
+
+						text_single = {
+							text = "[Scheme.GetAgentCharges]"
+							align = nobaseline|right
+						}
+					}
+				}
+			}
+
+			vbox = {
+				visible = "[Not(SchemeItem.GetScheme.GetSchemeType.IsBasic)]"
+				layoutpolicy_horizontal = expanding
+
+				margin = { 0 10 }
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					margin = { 15 0 }
+					margin_bottom = 5
+					spacing = 10
+
+					### MEMBERS BUTTONS
+					button_expandable_toggle_field = {
+						name = "my_own_scheme_buttons"
+						visible = "[Not(SchemeItem.GetScheme.GetSchemeType.IsBasic)]"
+						layoutpolicy_horizontal = expanding
+
+						enabled = "[SchemeItem.HasAgents]"
+
+						blockoverride "button_expand"
+						{
+							frame = "[SelectFrame( 'own_scheme_expand' )]"
+						}
+
+						blockoverride "onclick"
+						{
+							onclick = "[GetVariableSystem.Toggle( 'own_scheme_expand')]"
+						}
+
+						blockoverride "text"
+						{
+							text = "SCHEME_WINDOW_SHOW_MEMBERS"
+						}
 
 
+					}
+				}
+
+				### MEMBERS
+				vbox = {
+					name = "my_own_scheme_members"
+					visible = "[And(GetVariableSystem.Exists( 'own_scheme_expand' ), Not(SchemeItem.GetScheme.GetSchemeType.IsBasic))]"
+					layoutpolicy_horizontal = expanding
+					margin = { 10 0 }
+
+					fixedgridbox = {
+						name = "owner_member_grid"
+						datamodel = "[SchemeItem.GetAgentSlots]"
+						addcolumn = 100
+						addrow = 152
+						flipdirection = yes
+						datamodel_wrap = 5
+
+						item = {
+							widget_scheme_agent_slot_item = {}
+						}
+					}
+				}
+			}
+		}
+	}
+}
 
 types IntrigueWindowTypes
 {
@@ -1258,11 +1627,13 @@ types IntrigueWindowTypes
 			margin_bottom = 10
 
 			selectable_target_portrait_widget = {
-				blockoverride "empty_slot" {
+				blockoverride "empty_slot"
+				{
 					onclick = "[SchemeItem.ShowPotentialAgents(SchemeAgentSlotItem.Self)]"
 				}
 
-				blockoverride "filled_slot" {
+				blockoverride "filled_slot"
+				{
 					button_round = {
 
 						parentanchor = top|right
@@ -1404,6 +1775,7 @@ types IntrigueWindowTypes
 
 								onclick = "[CreateCommandPopup( IntrigueWindowCountermeasureItem.SetCountermeasure( IntrigueWindow.GetCharacter.Self ) )]"
 								alwaystransparent = "[And( IntrigueWindowCountermeasureItem.IsSelectable(), IntrigueWindowCountermeasureItem.IsActive )]"
+								#enabled = "[And( IntrigueWindowCountermeasureItem.IsSelectable(), Not( IntrigueWindowCountermeasureItem.IsActive ) )]"
 
 								# Frame
 								icon = {
@@ -1446,6 +1818,14 @@ types IntrigueWindowTypes
 									alwaystransparent = yes
 
 									texture = "[SchemeCountermeasureType.GetFrame]"
+								}
+
+								# AI debug info
+								text_single =  {
+									visible = "[InDebugMode]"
+									parentanchor = bottom|left
+									position = { 0 15 }
+									text = "INTRIGUE_WINDOW_SCHEME_COUNTERMEASURE_ITEM_AI_VALUE_LABLE"
 								}
 							}
 						}
@@ -1532,7 +1912,8 @@ types IntrigueWindowTypes
 
 					using = tooltip_es
 
-					blockoverride "portrait_button" {
+					blockoverride "portrait_button"
+					{
 						tooltip = "SCHEME_WINDOW_SCHEME_TARGET"
 					}
 				}
@@ -1770,13 +2151,17 @@ types IntrigueWindowTypes
 							datacontext = "[IntrigueWindowSecretGroup.GetFirstSecret.GetSecret]"
 							size = { 120 25 }
 							onclick = "[Character.OpenPlayerInteraction( 'expose_secret_interaction' )]"
+							#"[IntrigueWindow.ExposeSecret( Character.Self, 'blackmail_interaction', Secret.Self )]"
 							text = "INTRIGUE_WINDOW_SECRET_EXPOSE"
 
 							tooltip = "INTRIGUE_WINDOW_SECRET_EXPOSE_TT"
 							using = tooltip_se
 						}
+
+
 					}
 				}
+
 
 				expand = {}
 			}
