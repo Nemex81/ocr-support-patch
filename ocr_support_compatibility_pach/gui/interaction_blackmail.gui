@@ -1,0 +1,456 @@
+######################################################
+############## BLACKMAIL INTERACTION ################
+############## DUAL MODE: OCR + VANILLA #############
+######################################################
+# Conversion: Pattern A (Simple Swap)
+# OCR Mode: Text-based, keyboard-only navigation
+# Vanilla Mode: Graphical, full mouse interaction
+# Multiplayer: Checksum-compatible
+######################################################
+
+window = {
+	name = "blackmail_interaction_window"
+	datacontext = "[BlackmailInteractionWindow.GetCharacterInteractionConfirmationWindow]"
+	datacontext = "[GetVariableSystem]"
+	parentanchor = center
+	layer = middle
+
+	using = Window_Background
+	using = Window_Decoration_Spike
+
+	state = {
+		name = _show
+		using = Animation_FadeIn_Quick
+		using = Sound_WindowShow_Standard
+	}
+
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Quick
+		using = Sound_WindowHide_Standard
+	}
+
+	######################################################
+	### OCR MODE - BLIND USERS ACCESSIBLE INTERFACE ####
+	######################################################
+
+	widget = {
+		name = "ocr_blackmail_interaction_window"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		size = { 100% 100% }
+
+		vbox = {
+			using = Window_Margins
+			set_parent_size_to_minimum = yes
+			spacing = 10
+
+			### HEADER - Text-only title with close button
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+
+				text_single = {
+					name = "title_text"
+					layoutpolicy_horizontal = expanding
+					text = "[SelectLocalization( BlackmailInteractionWindow.IsBlackmail, 'blackmail_interaction', 'INTRIGUE_WINDOW_EXPOSE_TITLE' )]"
+					default_format = "#high"
+					using = Font_Size_Big
+					align = left|vcenter
+				}
+
+				button_standard = {
+					name = "close_button"
+					text = "CLOSE_LABEL"
+					onclick = "[BlackmailInteractionWindow.Close]"
+					shortcut = "escape"
+					tooltip = "CLOSE_TOOLTIP"
+				}
+			}
+
+			divider_light = {
+				layoutpolicy_horizontal = expanding
+			}
+
+			### TARGET CHARACTER INFO - Linear vertical layout
+			vbox = {
+				name = "target_info"
+				datacontext = "[CharacterInteractionConfirmationWindow.GetRecipient]"
+				layoutpolicy_horizontal = expanding
+				spacing = 5
+				margin = { 10 10 }
+
+				background = {
+					using = Background_Area
+				}
+
+				# Character name button (replaces portrait)
+				button_standard_text = {
+					name = "target_character_button"
+					layoutpolicy_horizontal = expanding
+					text = "[Character.GetUINameNoTooltip]"
+					onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+					tooltip = "[Character.GetTooltip]"
+					shortcut = "t"
+					visible = "[Character.IsValid]"
+					default_format = "#high"
+				}
+
+				# Description text
+				text_multi = {
+					name = "description_text"
+					layoutpolicy_horizontal = expanding
+					multiline = yes
+					autoresize = yes
+					max_width = 520
+					text = "[BlackmailInteractionWindow.GetDescription]"
+					align = left
+				}
+			}
+
+			divider_light = {
+				layoutpolicy_horizontal = expanding
+			}
+
+			### SECRETS LIST - Text-based linear selection
+			vbox = {
+				name = "secrets_section"
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				spacing = 5
+
+				# Section header
+				text_single = {
+					name = "secrets_header"
+					text = "BLACKMAIL_SELECT_SECRET"
+					default_format = "#high"
+					visible = "[BlackmailInteractionWindow.HasSecrets]"
+				}
+
+				# Scrollable secrets list
+				scrollbox = {
+					name = "secrets_scrollbox"
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					size = { 0 300 }
+					maximumsize = { -1 400 }
+
+					blockoverride "scrollbox_content" {
+						vbox = {
+							datamodel = "[BlackmailInteractionWindow.GetSecretItems]"
+							layoutpolicy_horizontal = expanding
+							spacing = 3
+
+							item = {
+								button_standard = {
+									name = "secret_item_button"
+									layoutpolicy_horizontal = expanding
+									size = { 0 35 }
+									onclick = "[BlackmailSecretItem.OnClick]"
+									down = "[BlackmailSecretItem.IsSelected]"
+									enabled = "[BlackmailSecretItem.IsEnabled]"
+									tooltip = "[BlackmailSecretItem.GetTooltip]"
+
+									# Text with hook type indicator
+									text_single = {
+										layoutpolicy_horizontal = expanding
+										margin = { 10 0 }
+										parentanchor = vcenter
+										align = left|vcenter
+										
+										# Concatenate secret name + hook type
+										text = "[Concatenate(BlackmailSecretItem.GetSecret.GetName, SelectLocalization(And(BlackmailInteractionWindow.IsBlackmail, BlackmailSecretItem.IsWeakHook), ' (Weak Hook)', SelectLocalization(And(BlackmailInteractionWindow.IsBlackmail, BlackmailSecretItem.IsStrongHook), ' (Strong Hook)', '')))]"
+									}
+								}
+							}
+						}
+					}
+
+					blockoverride "scrollbox_empty" {
+						text_single = {
+							text = "BLACKMAIL_NO_SECRETS"
+							margin = { 10 10 }
+						}
+					}
+				}
+
+				# Empty state (no secrets available)
+				text_single = {
+					name = "no_secrets_text"
+					text = "BLACKMAIL_NO_SECRETS"
+					visible = "[Not(BlackmailInteractionWindow.HasSecrets)]"
+					margin = { 10 10 }
+				}
+			}
+
+			divider_light = {
+				layoutpolicy_horizontal = expanding
+			}
+
+			### EFFECTS & ACCEPTANCE - Blackmail-specific feedback
+			vbox = {
+				name = "interaction_feedback"
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+				margin = { 0 5 }
+
+				vbox_character_interaction_effects = {
+					name = "effects_box"
+					datacontext = "[CharacterInteractionConfirmationWindow.GetEffectsDescription]"
+					visible = "[BlackmailInteractionWindow.IsBlackmail]"
+				}
+
+				hbox_character_interaction_acceptance = {
+					name = "acceptance_box"
+					visible = "[And( BlackmailInteractionWindow.IsBlackmail, CharacterInteractionConfirmationWindow.ShouldShowAnswer )]"
+					layoutpolicy_horizontal = expanding
+				}
+
+				text_multi_on_decline_summary = {
+					name = "decline_summary"
+					visible = "[BlackmailInteractionWindow.IsBlackmail]"
+				}
+			}
+
+			### SEND BUTTON - Primary action with keyboard shortcut
+			button_primary = {
+				name = "send_offer_button"
+				size = { 420 45 }
+				enabled = "[BlackmailInteractionWindow.CanSendOffer]"
+				onclick = "[BlackmailInteractionWindow.Send]"
+				
+				text = "[SelectLocalization( BlackmailInteractionWindow.IsBlackmail, CharacterInteractionConfirmationWindow.GetSendName, 'INTRIGUE_WINDOW_SECRET_EXPOSE' )]"
+				using = Font_Size_Medium
+
+				tooltip = "[BlackmailInteractionWindow.GetSendOfferTooltip]"
+				shortcut = "enter"
+			}
+
+			### HIDDEN NAVIGATION SHORTCUTS (keyboard-only)
+			hbox = {
+				name = "hidden_shortcuts"
+				visible = no
+				size = { 0 0 }
+
+				button_standard = {
+					name = "next_secret_shortcut"
+					shortcut = "x"
+					onclick = "[PdxGuiTriggerAllAnimations('secret_nav_next')]"
+				}
+
+				button_standard = {
+					name = "prev_secret_shortcut"
+					shortcut = "z"
+					onclick = "[PdxGuiTriggerAllAnimations('secret_nav_prev')]"
+				}
+			}
+		}
+	}
+
+	######################################################
+	### VANILLA MODE - SIGHTED USERS GRAPHICAL UI ######
+	######################################################
+
+	widget = {
+		name = "vanilla_blackmail_interaction_window"
+		visible = "[GetVariableSystem.Exists('ocr')]"
+		size = { 100% 100% }
+
+		vbox = {
+			using = Window_Margins
+			set_parent_size_to_minimum = yes
+
+			### HEADER - Vanilla graphical pattern with icon
+			header_pattern_interaction = {
+				layoutpolicy_horizontal = expanding
+
+				blockoverride "header_text" {
+					text = "[SelectLocalization( BlackmailInteractionWindow.IsBlackmail, 'blackmail_interaction', 'INTRIGUE_WINDOW_EXPOSE_TITLE' )]"
+				}
+
+				blockoverride "button_close" {
+					onclick = "[BlackmailInteractionWindow.Close]"
+				}
+
+				icon_character_interaction = {}
+			}
+
+			### PORTRAIT / INFO - Horizontal layout (vanilla style)
+			hbox = {
+				name = "portrait_and_info"
+				datacontext = "[CharacterInteractionConfirmationWindow.GetRecipient]"
+				layoutpolicy_horizontal = expanding
+				margin = { 10 5 }
+
+				background = {
+					using = Background_Area
+				}
+
+				# Description text (left side)
+				text_multi = {
+					name = "info_text"
+					multiline = yes
+					autoresize = yes
+					max_width = 250
+					text = "[BlackmailInteractionWindow.GetDescription]"
+					align = center
+				}
+
+				# Character portrait (right side) - FULL MOUSE INTERACTION
+				portrait_head = {
+					name = "target_portrait"
+					visible = "[Character.IsValid]"
+
+					blockoverride "portrait_transformation" {
+						portrait_scale = { -1 1 }
+						portrait_offset = { 1 0 }
+					}
+
+					# CRITICAL: Mouse input parity - left + right click
+					blockoverride "portrait_button" {
+						onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+						onrightclick = "[OpenCharacterInteractionMenu(Character.GetID)]"
+						tooltip = "[Character.GetTooltip]"
+					}
+
+					# Hover state for visual feedback
+					blockoverride "portrait_glow" {
+						state = {
+							name = _mouse_enter
+							start_sound = {
+								soundeffect = "event:/SFX/UI/Generic/sfx_ui_generic_pointer_over"
+							}
+						}
+					}
+				}
+			}
+
+			### SECRETS LIST - Vanilla graphical with icons
+			scrollbox = {
+				name = "secrets_list"
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				blockoverride "scrollbox_empty" {
+					text = "BLACKMAIL_NO_SECRETS"
+					visible = "[Not(BlackmailInteractionWindow.HasSecrets)]"
+				}
+
+				blockoverride "scrollbox_content" {
+					vbox = {
+						datamodel = "[BlackmailInteractionWindow.GetSecretItems]"
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+
+						item = {
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								spacing = 8
+
+								# Main secret button with icon
+								button_standard = {
+									name = "secret_button"
+									layoutpolicy_horizontal = expanding
+									tooltip = "[BlackmailSecretItem.GetTooltip]"
+									onclick = "[BlackmailSecretItem.OnClick]"
+									down = "[BlackmailSecretItem.IsSelected]"
+									enabled = "[BlackmailSecretItem.IsEnabled]"
+									text = "[BlackmailSecretItem.GetSecret.GetName]"
+
+									# Secret type icon (left side of button)
+									icon = {
+										name = "secret_icon"
+										size = { 26 26 }
+										parentanchor = vcenter
+										position = { 5 0 }
+										texture = "[BlackmailSecretItem.GetSecret.GetType.GetIcon]"
+									}
+
+									# Hover effect
+									state = {
+										name = _mouse_enter
+										start_sound = {
+											soundeffect = "event:/SFX/UI/Generic/sfx_ui_generic_pointer_over"
+										}
+									}
+								}
+
+								# Weak hook icon
+								icon = {
+									name = "weak_hook_icon"
+									size = { 26 26 }
+									texture = "gfx/interface/icons/portraits/hook_secret.dds"
+									framesize = { 40 40 }
+									frame = 1
+									visible = "[And( BlackmailInteractionWindow.IsBlackmail, BlackmailSecretItem.IsWeakHook )]"
+
+									datacontext = "[CharacterInteractionConfirmationWindow.GetRecipient]"
+									tooltip = "INTRIGUE_WINDOW_BLACKMAIL_WEAK_HOOK_TT"
+								}
+
+								# Strong hook icon
+								icon = {
+									name = "strong_hook_icon"
+									size = { 26 26 }
+									texture = "gfx/interface/icons/portraits/hook_secret.dds"
+									framesize = { 40 40 }
+									frame = 2
+									visible = "[And( BlackmailInteractionWindow.IsBlackmail, BlackmailSecretItem.IsStrongHook )]"
+
+									datacontext = "[CharacterInteractionConfirmationWindow.GetRecipient]"
+									tooltip = "INTRIGUE_WINDOW_BLACKMAIL_STRONG_HOOK_TT"
+								}
+							}
+						}
+					}
+				}
+			}
+
+			### EFFECTS, ACCEPTANCE, SEND BUTTON - Vanilla preserved
+			vbox = {
+				name = "interaction_actions"
+				layoutpolicy_horizontal = expanding
+				margin = { 0 10 }
+				margin_bottom = 15
+				spacing = 10
+
+				vbox_character_interaction_effects = {
+					name = "effects_display"
+					datacontext = "[CharacterInteractionConfirmationWindow.GetEffectsDescription]"
+					visible = "[BlackmailInteractionWindow.IsBlackmail]"
+				}
+
+				hbox_character_interaction_acceptance = {
+					name = "acceptance_display"
+					visible = "[And( BlackmailInteractionWindow.IsBlackmail, CharacterInteractionConfirmationWindow.ShouldShowAnswer )]"
+					layoutpolicy_horizontal = expanding
+				}
+
+				text_multi_on_decline_summary = {
+					name = "decline_summary_display"
+					visible = "[BlackmailInteractionWindow.IsBlackmail]"
+				}
+
+				### SEND BUTTON - Vanilla styling preserved
+				button_primary = {
+					name = "send_offer_button"
+					size = { 400 42 }
+					enabled = "[BlackmailInteractionWindow.CanSendOffer]"
+					onclick = "[BlackmailInteractionWindow.Send]"
+
+					text = "[SelectLocalization( BlackmailInteractionWindow.IsBlackmail, CharacterInteractionConfirmationWindow.GetSendName, 'INTRIGUE_WINDOW_SECRET_EXPOSE' )]"
+					using = Font_Size_Medium
+
+					tooltip = "[BlackmailInteractionWindow.GetSendOfferTooltip]"
+
+					# Hover sound effect
+					state = {
+						name = _mouse_enter
+						start_sound = {
+							soundeffect = "event:/SFX/UI/Generic/sfx_ui_generic_pointer_over_large"
+						}
+					}
+				}
+			}
+		}
+	}
+}
