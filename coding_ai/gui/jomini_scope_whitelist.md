@@ -6,10 +6,10 @@ Copilot NON deve usare scope non presenti qui senza verifica esplicita nel vanil
 ## Scope GUI principali verificati
 
 | Scope | Contesto | Note |
-|-------|---------|------|
+| ------- | --------- | ------ |
 | `GetPlayer` | globale | personaggio del giocatore |
 | `GetCharacter` | contesto personaggio | richiede scope parent corretto |
-| `GetTitle` | contesto titolo | richiede scope parent corretto |
+| `GetTitle` | contesto titolo | metodi verificati: `GetNameNoTooltip`, `GetNameNoTierNoTooltip`, `GetHolder` |
 | `GetFaith` | contesto fede | richiede scope parent corretto |
 | `GetCulture` | contesto cultura | richiede scope parent corretto |
 | `GetDynasty` | contesto dinastia | richiede scope parent corretto |
@@ -18,11 +18,36 @@ Copilot NON deve usare scope non presenti qui senza verifica esplicita nel vanil
 | `GetWar` | contesto guerra | richiede scope parent corretto |
 | `GetFaction` | contesto fazione | richiede scope parent corretto |
 | `GameRules` | globale | accesso alle game rules |
-| `ActivityWindow` | contesto finestra attività | metodi: `GetActivity`, `HasActiveEvent`, `GetCharacters` |
-| `Activity` | contesto attività | metodi: `IsComplete`, `GetType`, `GetCurrentPhase`, `GetTimeline` |
-| `ActivityPhase` | contesto fase attività | metodi: `GetKey`, `GetName`, `GetProgress` |
+| `ActivityWindow` | contesto finestra attività | metodi: `GetActivity`, `HasActiveEvent`, `GetCharacters`, `GetEventWindowInsert`, `GetCurrentPhaseGuestSubset`, `GetLastWeeklyPulseEffectData`, `GetIntentTooltip`, `Close` |
+| `Activity` | contesto attività | metodi: `IsComplete`, `GetType`, `GetCurrentPhase`, `GetTimeline`, `IsParticipant`, `GetLastWeeklyPulseAction`, `MakeScope` |
+| `ActivityType` | contesto tipo attività | metodi: `GetHeaderIcon`, `GetKey` |
+| `ActivityPhase` | contesto fase attività | metodi: `GetKey`, `GetName`, `GetProgress`, `GetLocation`, `GetPhase` |
+| `Character` | contesto personaggio attivo | metodi: `Self`, `GetInvolvedActivityIntent`, `GetCompletedIntents` |
 | `ActivityWindowCharacter` | contesto elenco personaggi | metodi: `GetCharacter`, `GetLabel` |
-| `ActivityIntent` | contesto intent attività | metodi: `GetName`, `GetType` |
+| `ActivityIntent` | contesto intent attività | metodi: `GetName`, `GetType`, `GetIcon` |
+| `GetVariableSystem` | contesto variabili GUI | metodi: `Exists`, `Toggle` |
+| `EventWindowViewInsert` | contesto header evento attività | metodi: `GetOpenEvent`, `HasOpenEvent`, `OnMouseEnterOption`, `OnMouseLeaveOption` |
+| `EventWindowData` | contesto dati evento attività | metodi: `GetDescription`, `GetOptions` |
+| `EventOption` | contesto opzioni evento | metodi: `GetText`, `GetTooltip`, `Select`, `IsValid`, `GetClickSound`, `OnEnter`, `OnLeave` |
+| `Province` | contesto provincia/location attività | metodi: `GetTitle`, `GetCounty`, `GetNameNoTooltip`, `PanCameraTo` |
+| `Holding` | contesto holding/location attività | metodi: `GetSpecialBuildingType` |
+| `SpecialBuildingType` | contesto edificio speciale | metodi: `GetTypeIcon` |
+| `PdxGuiWidget` | contesto widget GUI | metodo: `AccessSelf` |
+| `ActivityPulseEffect` | contesto popup weekly pulse attività | metodi: `IsValid`, `GetTitle`, `GetEffectText` |
+
+## Funzioni GUI verificate
+
+```jomini
+onclick = "[ToggleGameViewData( 'activity_log', Activity.Self )]"
+down = "[IsGameViewDataShown( 'activity_log', Activity.Self )]"
+visible = "[DataModelHasItems( ActivityWindow.GetCurrentPhaseGuestSubset( 'charioteers' ) )]"
+onclick = "[AddWatchWindow( Activity.MakeScope )]"
+```
+
+## Note specifiche verificate in window_activity.gui
+
+- `Activity.GetCurrentPhase.GetLocation.PanCameraTo` usato dal pulsante go-to del vanilla.
+- `Activity.GetCurrentPhase.GetLocation.GetHolding.GetSpecialBuildingType.GetTypeIcon` usato nel widget journey skill text del vanilla.
 
 ## Binding Dual Mode (obbligatori, non modificare)
 
