@@ -2,6 +2,7 @@
 mode: agent
 description: Analizza un errore Jomini dai log CK3 e propone fix
 tools: [read, search]
+model: ['GPT-5.2 Codex (copilot)', 'GPT-5.4 (copilot)']
 ---
 
 # Task: Debug Errore Jomini

@@ -2,6 +2,7 @@
 mode: agent
 description: Genera il container OCR per una sezione specifica di una finestra
 tools: [read, search]
+model: ['GPT-5.2 Codex (copilot)', 'GPT-5.1 Codex Max (copilot)', 'GPT-5.4 (copilot)']
 ---
 
 # Task: Genera Container OCR
