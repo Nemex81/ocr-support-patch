@@ -122,10 +122,411 @@ window = {
     container = {
         name = "vanilla_activity_window"
         visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
-        # COPY VANILLA CONTENT HERE FROM ../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_activity.gui
-        # TODO: Replace this comment with an exact, unmodified copy of the vanilla "window_activity.gui" content.
-        # Guidance: paste the full vanilla window contents inside this container block, preserving all original
-        # widget names, anchors and sizes. Do NOT change widget names or hierarchy.
+        window = {
+            name = "activity_window"
+            size = { 1390 750 }
+            layer = middle
+            parentanchor = center
+            allow_outside = yes
+
+            datacontext = "[GetPlayer]"
+            datacontext = "[GetVariableSystem]"
+            datacontext = "[ActivityWindow.GetActivity]"
+            datacontext = "[Activity.GetType]"
+
+            using = Window_Background
+            using = Window_Movable
+            using = Window_Decoration_Frontend_Flat_Bottom
+
+            state = {
+                name = _show
+                using = Animation_FadeIn_Standard
+                using = Sound_WindowShow_Standard
+                using = Sound_Panel_Popup_Snapshot
+                on_start = "[PdxGuiTriggerAllAnimations( 'activity_event_appear' )]"
+            }
+
+            state = {
+                name = _hide
+                using = Animation_FadeOut_Standard
+                using = Sound_WindowHide_Standard
+                on_start = "[PdxGuiWidget.FindChild( 'pulse_action_popup' ).Hide]"
+            }
+
+            # Background illustration
+            margin_widget = {
+                name = "background"
+                size = { 100% 100% }
+
+                background = {
+                    visible = "[Not( ActivityWindow.HasActiveEvent )]"
+                    texture = "[ActivityWindow.GetBackground.GetTexture]"
+                    fittype = centercrop
+                    using = Mask_Rough_Edges
+
+                    margin = { -40 -20 }
+                }
+            }
+
+            # Characters idle
+            vbox = {
+                name = "idle_character"
+
+                visible = "[Not( ActivityWindow.HasActiveEvent )]"
+                datacontext = "[ActivityWindow.GetBackground]"
+
+                expand = {}
+
+                widget = {
+                    size = { 1310 750 }
+                    scissor = yes
+
+                    hbox = {
+                        name = "idle_characters_ongoing"
+                        datamodel = "[ActivityWindow.GetCharacters]"
+                        visible = "[Not( Activity.IsComplete )]"
+                        layoutpolicy_vertical = expanding
+                        layoutpolicy_horizontal = expanding
+
+                        margin_top = 170
+
+                        item = {
+                            widget = {
+                                size = { 250 550 }
+
+                                allow_outside = no
+
+                                portrait_body = {
+                                    datacontext = "[ActivityWindowCharacter.GetCharacter]"
+                                    parentanchor = center
+
+                                    allow_outside = yes
+
+                                    blockoverride "portrait_texture"
+                                    {
+                                        size = { 700 530 }
+                                        portrait_texture = "[Character.GetAnimatedPortrait( ActivityWindowBackgroundData.GetEnvironment, ActivityWindowCharacter.GetCamera, ActivityWindowCharacter.GetAnimation, PdxGetWidgetScreenSize(PdxGuiWidget.Self))]"
+
+                                        using = tooltip_below
+                                        tooltip_widgetanchor = center
+                                    }
+
+                                    blockoverride "mask"
+                                    {
+                                        mask = "gfx/portraits/portrait_mask_event.dds"
+                                    }
+
+                                    blockoverride "status_icons" {}
+                                    blockoverride "coa" {}
+                                    blockoverride "opinion_box" {}
+
+                                    widget = {
+                                        parentanchor = bottom|hcenter
+                                        position = { 0 -40 }
+                                        size = { 200 85 }
+
+                                        vbox = {
+                                            layoutpolicy_vertical = expanding
+                                            parentanchor = bottom|hcenter
+
+                                            expand = {}
+
+                                            hbox = {
+                                                background = {
+                                                    using = Background_Area_ExtraDark
+
+                                                    alpha = 0.8
+                                                    margin = { 50 8 }
+
+                                                    modify_texture = {
+                                                        name = "mask"
+                                                        texture = "gfx/interface/component_masks/mask_fade_horizontal_middle_thick.dds"
+                                                        spriteType = Corneredstretched
+                                                        blend_mode = alphamultiply
+                                                    }
+                                                }
+
+                                                vbox = {
+                                                    layoutpolicy_vertical = expanding
+
+                                                    portrait_status_icons = {
+                                                        margin_top = 2
+                                                        scale = 0.85
+                                                    }
+
+                                                    expand = {}
+                                                }
+
+                                                text_single = {
+                                                    name = "label"
+
+                                                    text = "[ActivityWindowCharacter.GetLabel]"
+                                                    align = center|nobaseline
+                                                    max_width = 200
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    hbox = {
+                        name = "idle_characters_complete"
+                        datamodel = "[DataModelFirst( ActivityWindow.GetCharacters, '(int32)3' )]"
+                        visible = "[Activity.IsComplete]"
+                        layoutpolicy_vertical = expanding
+
+                        margin_top = 170
+                        margin_left = 400
+
+                        item = {
+                            widget = {
+                                size = { 280 580 }
+
+                                allow_outside = no
+
+                                portrait_body = {
+                                    datacontext = "[ActivityWindowCharacter.GetCharacter]"
+                                    parentanchor = center
+
+                                    allow_outside = yes
+
+                                    blockoverride "portrait_texture"
+                                    {
+                                        size = { 700 530 }
+                                        portrait_texture = "[Character.GetAnimatedPortrait( ActivityWindowBackgroundData.GetEnvironment, ActivityWindowCharacter.GetCamera, ActivityWindowCharacter.GetAnimation, PdxGetWidgetScreenSize(PdxGuiWidget.Self))]"
+
+                                        tooltip_offset = { -450 0 }
+                                    }
+
+                                    blockoverride "status_icons" {}
+                                    blockoverride "coa" {}
+                                    blockoverride "opinion_box" {}
+
+                                    vbox = {
+
+                                        expand = {}
+
+                                        hbox = {
+                                            background = {
+                                                using = Background_Area_Dark
+                                                margin_top = 5
+
+                                                modify_texture = {
+                                                    texture = "gfx/interface/component_masks/mask_fade_horizontal_middle_thick.dds"
+                                                    blend_mode = alphamultiply
+                                                    alpha = 0.3
+                                                }
+                                            }
+
+                                            vbox = {
+                                                layoutpolicy_vertical = expanding
+
+                                                portrait_status_icons = {
+                                                    margin_top = 5
+                                                    scale = 0.85
+                                                }
+
+                                                expand = {}
+                                            }
+
+                                            text_single = {
+                                                name = "label"
+                                                text = "[ActivityWindowCharacter.GetLabel]"
+                                                align = center
+                                                margin_bottom = 5
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            # Activity Events
+            widget = {
+                name = "activity_event_widgets"
+                visible = "[ActivityWindow.HasActiveEvent]"
+                size = { 100% 100% }
+
+                # Used for pivotal moments in Chariot Races which are not fullscreen
+                widget = {
+                    name = "widget_activity_pivotal_moment_event_window"
+                    parentanchor = center
+                    size = { 100% 95% }
+                    alwaystransparent = yes
+                }
+
+                activity_event_widget = {
+                    name = "activity_event"
+                    parentanchor = center
+                    size = { 100% 95% }
+                }
+            }
+
+            # Tour arrival event
+            widget = {
+                name = "activity_top_layer_event_widgets"
+                visible = "[ActivityWindow.HasActiveEvent]"
+                size = { 100% 100% }
+
+                activity_event_widget = {
+                    name = "tour_arrival_event"
+                    parentanchor = center
+                    size = { 100% 95% }
+
+                    blockoverride "characters_appear_delay"
+                    {
+                        delay = 1.8
+                    }
+
+                    blockoverride "text_appear_delay"
+                    {
+                        delay = 2.3
+                    }
+                }
+            }
+
+            # Conclusion
+            widget = {
+                name = "conclusion"
+                visible = "[Not( ActivityWindow.HasActiveEvent )]"
+                parentanchor = vcenter
+                position = { 22 -10 }
+                size = { 300 600 }
+
+                vbox_activity_conclusion = {
+                    name = "activity_conclusion"
+                    visible = "[Activity.IsComplete]"
+                    layoutpolicy_vertical = expanding
+
+                    margin_bottom = 5
+
+                    background = {
+                        using = Background_Area_ExtraDark
+                        margin_top = 5
+                        margin_bottom = 20
+                        margin_left = -15
+
+                        modify_texture = {
+                            texture = "gfx/interface/component_masks/mask_fade_vertical.dds"
+                            blend_mode = alphamultiply
+                            alpha = 0.3
+                        }
+                    }
+
+                    blockoverride "close_activity_onclick"
+                    {
+                        onclick = "[ActivityWindow.Close]"
+                    }
+                }
+            }
+
+            # Main Content
+            vbox = {
+                name = "main_content"
+                layoutpolicy_vertical = expanding
+                layoutpolicy_horizontal = expanding
+
+                margin_bottom = 20
+
+                expand = {
+                    visible = "[Not(ActivityWindow.HasActiveEvent)]"
+                }
+
+                expand = {}
+
+                # Bottom Bar
+                widget = {
+                    size = { 1328 140 }
+
+                    vbox = {
+                        name = "activity_content"
+                        layoutpolicy_horizontal = expanding
+                        layoutpolicy_vertical = expanding
+
+                        expand = {}
+
+                        vbox = {
+                            name = "bottom_bar"
+                            datacontext = "[GetPlayer]"
+                            layoutpolicy_horizontal = expanding
+                            spacing = 5
+
+                            hbox = {
+                                name = "ongoing_info"
+                                visible = "[And(Not( Activity.IsComplete ),Not(ActivityWindow.HasActiveEvent))]"
+                                layoutpolicy_horizontal = expanding
+
+                                background = {
+                                    texture = "gfx/interface/window_activities/activity_window_bg.dds"
+                                    margin = { 5 0 }
+                                    margin_top = 62
+                                    margin_bottom = 38
+
+                                    using = Mask_Rough_Edges
+                                }
+
+                                hbox_activity_progress = {
+                                    name = "activity_progress"
+                                    margin_left = 25
+                                    margin_bottom = 5
+                                }
+
+                                expand = {}
+
+                                hbox = {
+                                    name = "few_phases"
+                                    visible = "[LessThan_int32(Activity.GetPlannedPhasesCount, '(int32)9')]"
+                                    layoutpolicy_horizontal = expanding
+                                    layoutpolicy_vertical = expanding
+                                    margin_right = 20
+                                    spacing = 5
+
+                                    expand = {}
+
+                                    activity_phase_progress_timline_widget = {
+                                        name = "phase_progres_timeline_short"
+                                        size = { 750 55 }
+                                    }
+                                }
+
+                                hbox = {
+                                    name = "many_phases"
+                                    visible = "[GreaterThan_int32(Activity.GetPlannedPhasesCount, '(int32)8')]"
+                                    layoutpolicy_horizontal = expanding
+                                    layoutpolicy_vertical = expanding
+                                    margin_right = 20
+                                    spacing = 5
+
+                                    expand = {}
+
+                                    activity_phase_progress_timline_widget = {
+                                        name = "phase_progres_timeline_long"
+                                        size = { 770 55 }
+                                    }
+                                }
+                            }
+
+                            hbox = {
+                                layoutpolicy_horizontal = expanding
+                                margin = { 10 10 }
+
+                                background = {
+                                    using = Background_Area_Light
+                                    margin_top = 5
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     # === EVENT-LEVEL CONTAINERS ===
