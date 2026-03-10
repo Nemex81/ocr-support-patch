@@ -17,11 +17,13 @@ Il toggle è controllato dalla game_rule `ocr_accessibility_mode`, attivabile co
 ocr-support-patch/
 ├── .github/
 │   ├── copilot-instructions.md     ← questo file
-│   └── prompts/                    ← prompt riutilizzabili per Copilot
+│   ├── agents/                     ← definizioni agenti specializzati
+│   ├── instructions/               ← istruzioni attive per dominio
+│   ├── prompts/                    ← prompt riutilizzabili per Copilot
+│   └── resources/                  ← whitelist scope, pattern canonical, priority list
 ocr_support_compatibility_pach/
 │   └── gui/                        ← file .gui della mod (lavoro attivo)
-coding_ai/
-│   └── gui/                        ← note e riferimenti per Copilot
+coding_ai/                          ← documentazione storica (sola lettura)
 ```
 
 I file GUI vanilla di riferimento si trovano in:
@@ -120,8 +122,21 @@ I seguenti file sono stati convertiti e rappresentano il pattern canonical:
 - `window_intrigue.gui` — intrigo con schemi e agenti
 - `window_inventory.gui` — inventario con artefatti
 - `window_military.gui` — militare con tab eserciti
-- `window_council.gui` — consiglio
+- `window_my_realm.gui` — tab regno
+- `window_dynasty_house.gui` — dinastia/casata
+- `window_county_view.gui` — vista contea
+- `window_court.gui` — corte
+- `window_decisions.gui` — decisioni
+- `window_activity.gui` — attività
+- `window_activity_list.gui` — lista attività
+- `window_character_lifestyle.gui` — stile di vita
+- `window_factions.gui` — fazioni
 - `hud.gui` — HUD principale
+- `interaction_blackmail.gui` — interazione ricatto
+- `interaction_menu_window.gui` — menu interazioni
+- `interaction_interfere_in_war_notification.gui` — notifica guerra
+
+Lista aggiornata con priorità in `.github/resources/priority_list.md`.
 
 Prima di implementare una nuova finestra, **consulta sempre** un file già convertito come esempio.
 
@@ -203,7 +218,10 @@ Sequenza standard con handoff tra agenti:
 ## Istruzioni Specifiche per Dominio
 
 Attivate automaticamente per tipo di file:
-- `.github/instructions/gui-jomini.instructions.md` → attiva per `*.gui`
+- `.github/instructions/patch-boundaries.instructions.md` → attiva per tutti i file — confini operativi scrivibili
+- `.github/instructions/gui-jomini.instructions.md` → attiva per `*.gui` — widget, template, checklist
+- `.github/instructions/gui-jomini-scopes.instructions.md` → attiva per `*.gui` — regole scope (lista completa in `.github/resources/jomini_scope_whitelist.md`)
+- `.github/instructions/gui-conversion-progress.instructions.md` → attiva per `.github/**` — stato conversioni
 - `.github/instructions/localization-ocr.instructions.md` → attiva per `*.yml`
 
 ## Percorsi Repository di Riferimento
