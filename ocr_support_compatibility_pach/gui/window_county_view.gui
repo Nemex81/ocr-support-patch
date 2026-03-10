@@ -1956,12 +1956,11 @@ window = {
 												visible = "[LessThan_CFixedPoint(Scope.GetProvince.MakeScope.Var('order').GetValue, '(CFixedPoint)6')]"
 											}
 											text_single = {
-												raw_text = "T,"
-												visible = "[EqualTo_CFixedPoint(Scope.GetProvince.MakeScope.Var('order').GetValue, '(CFixedPoint)6')]"
-											}
-											text_single = {
-												raw_text = "Y,"
-												visible = "[EqualTo_CFixedPoint(Scope.GetProvince.MakeScope.Var('order').GetValue, '(CFixedPoint)7')]"
+											raw_text = "Y,"
+											visible = "[EqualTo_CFixedPoint(Scope.GetProvince.MakeScope.Var('order').GetValue, '(CFixedPoint)6')]"
+										}
+										text_single = {
+											raw_text = "U,"
 											}
 
 											text_single = {
