@@ -18,6 +18,11 @@ Copilot NON deve usare scope non presenti qui senza verifica esplicita nel vanil
 | `GetWar` | contesto guerra | richiede scope parent corretto |
 | `GetFaction` | contesto fazione | richiede scope parent corretto |
 | `GameRules` | globale | accesso alle game rules |
+| `ActivityWindow` | contesto finestra attività | metodi: `GetActivity`, `HasActiveEvent`, `GetCharacters` |
+| `Activity` | contesto attività | metodi: `IsComplete`, `GetType`, `GetCurrentPhase`, `GetTimeline` |
+| `ActivityPhase` | contesto fase attività | metodi: `GetKey`, `GetName`, `GetProgress` |
+| `ActivityWindowCharacter` | contesto elenco personaggi | metodi: `GetCharacter`, `GetLabel` |
+| `ActivityIntent` | contesto intent attività | metodi: `GetName`, `GetType` |
 
 ## Binding Dual Mode (obbligatori, non modificare)
 
