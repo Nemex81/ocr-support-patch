@@ -57,20 +57,20 @@ types NomeFinestra_types {
 window = {
     name = "nome_finestra"
 
-    # === BLOCCO OCR ===
+    # === BLOCCO OCR — modalità NON VEDENTE (variabile ocr assente) ===
     container = {
         name = "ocr_nome_container"
-        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"
+        visible = "[Not(GetVariableSystem.Exists('ocr'))]"
         # Solo: text_single, text_multi, flowcontainer, text_label, button con tooltip testuale
         # Font size minimo: 18 | Colore testo: #FFFFFF o #FFDD88
         # Struttura gerarchica con header testuali espliciti per ogni sezione
         # NESSUN widget grafico: niente icon, portrait, progressbar visivi
     }
 
-    # === BLOCCO VANILLA ===
+    # === BLOCCO VANILLA — modalità normo-vedente (variabile ocr presente) ===
     container = {
         name = "vanilla_nome_container"
-        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
+        visible = "[GetVariableSystem.Exists('ocr')]"
         # Layout grafico originale Paradox — identico al file vanilla CK3
         # NON modificare questa sezione salvo bugfix espliciti
     }
@@ -103,7 +103,7 @@ blockoverride "nome_block" {
     # in fondo al block aggiungere:
     container = {
         name = "ocr_nome_inline"
-        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"
+        visible = "[Not(GetVariableSystem.Exists('ocr'))]"
         # ...
     }
 }
@@ -169,17 +169,21 @@ Formato da aggiungere:
 
 ---
 
-## Nota sulle semantiche legacy della variabile `ocr`
+## Regola Toggle Visibilità — Meccanismo Primario
 
-Alcuni file storici (e mod upstream) usano `GetVariableSystem.Exists('ocr')` come meccanismo di toggle.
-Nel progetto il proprietario ha definito una semantica legacy INVERTITA per questa variabile:
+Il toggle di visibilità usa `GetVariableSystem.Exists('ocr')` come meccanismo **principale e unico**:
 
-- `GetVariableSystem.Exists('ocr') = true` => modalità NORMALE (vanilla)
-- `GetVariableSystem.Exists('ocr') = false` => modalità NON VEDENTE (OCR)
+- `GetVariableSystem.Exists('ocr') = true` (variabile presente) → modalità **NORMO-VEDENTE** (vanilla)
+- `GetVariableSystem.Exists('ocr') = false` (variabile assente) → modalità **NON VEDENTE** (OCR)
 
-Regole operative:
-- Preferire sempre `GameRules.GetRule('ocr_accessibility_mode')` per le nuove conversioni.
-- Se trovi `GetVariableSystem.Exists('ocr')`, trattalo secondo la mappatura legacy invertita e segnala il file per normalizzazione.
+```jomini
+# Container OCR attivo — modalità non vedente (variabile ocr assente)
+visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+# Container vanilla attivo — modalità normo-vedente (variabile ocr presente)
+visible = "[GetVariableSystem.Exists('ocr')]"
+```
+
+> ⚠️ `GameRules.GetRule('ocr_accessibility_mode')` è **deprecato** — non usarlo nelle nuove conversioni.
 
 
 ## Errori Comuni da Evitare
