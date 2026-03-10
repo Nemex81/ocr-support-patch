@@ -1,0 +1,75 @@
+{
+	"folders": [
+		{
+			"name": "🔧 OCR-Patch (tuo lavoro attivo)",
+			"path": "."
+		},
+		{
+			"name": "📖 OCR-Originale (Agamidae upstream)",
+			"path": "../CK3-OCR"
+		},
+		{
+			"name": "🎮 CK3-Vanilla (Paradox originale)",
+			"path": "../CK3-ORIGINAL-VERSION"
+		}
+	],
+	"settings": {
+		"github.copilot.chat.codeGeneration.useInstructionFiles": true,
+		"github.copilot.chat.codeGeneration.instructions": [
+			{
+				"file": ".github/copilot-instructions.md"
+			}
+		],
+		"github.copilot.chat.reviewSelection.instructions": [
+			{
+				"file": ".github/copilot-instructions.md"
+			}
+		],
+		"files.associations": {
+			"*.gui": "plaintext",
+			"*.mod": "plaintext"
+		},
+		"search.exclude": {
+			"**/.git": true,
+			"**/node_modules": true
+		},
+		"editor.wordWrap": "on",
+		"editor.fontSize": 14,
+		"files.encoding": "utf8"
+	},
+	"extensions": {
+		"recommendations": [
+			"github.copilot",
+			"github.copilot-chat"
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": []
+	},
+	"_readme": [
+		"=== CK3 MODDING WORKSPACE — OCR Support Patch ===",
+		"",
+		"Questo workspace multi-root punta a tre repository locali.",
+		"PREREQUISITO: clonare i tre repo nella stessa cartella padre.",
+		"",
+		"Struttura attesa su disco:",
+		"  <cartella_padre>/",
+		"  ├── ocr-support-patch/        ← questo repo (tuo lavoro)",
+		"  ├── CK3-OCR/                  ← clone di Agamidae/CK3-OCR",
+		"  └── CK3-ORIGINAL-VERSION/     ← clone di Nemex81/CK3-ORIGINAL-VERSION",
+		"",
+		"Comandi git per clonare i repo mancanti (eseguire nella cartella padre):",
+		"  git clone https://github.com/Agamidae/CK3-OCR.git",
+		"  git clone https://github.com/Nemex81/CK3-ORIGINAL-VERSION.git",
+		"",
+		"Come aprire il workspace:",
+		"  File > Open Workspace from File... > seleziona questo file",
+		"  oppure da terminale: code ck3_modding.code-workspace",
+		"",
+		"Con tutti e tre i repo attivi, @workspace di Copilot indicizza",
+		"tutti i file GUI contemporaneamente. Quando lavori su una finestra,",
+		"apri i tre file corrispondenti (patch / OCR / vanilla) e trascinali",
+		"nel pannello chat Copilot per il contesto diretto."
+	]
+}
