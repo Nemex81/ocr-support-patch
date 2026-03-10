@@ -3325,7 +3325,7 @@ window = {
 		background = { using = Background_Area_Border_Solid }
 		margin = { 10 10 }
 		position = { 0 0 }
-		
+
 		vbox = {
 			name = "window_content"
 			margin_right = 40
@@ -7424,28 +7424,6 @@ window = {
 			margin_bottom = 15
 			spacing = 15
 
-			text_single = {
-				raw_text = "OCR: holding type selection not implemented"
-			}
-
-			button_text = {
-				text = "CLOSE"
-				onclick = "[HoldingView.CloseHoldingConstruction]"
-			}
-		}
-	}
-
-	widget = {
-		name = "vanilla_holding_type_root"
-		visible = "[GetVariableSystem.Exists('ocr')]"
-
-		vbox = {
-			using = ocr
-			set_parent_size_to_minimum = yes
-			margin = { 4 4 }
-			margin_bottom = 15
-			spacing = 15
-
 			header_pattern = {
 				layoutpolicy_horizontal = expanding
 				size = { 0 30 }
@@ -7474,9 +7452,9 @@ window = {
 
 				button_text = {
 					layoutpolicy_horizontal = expanding
-				    blockoverride "text" {
-				        raw_text = "[Select_CString(GetVariableSystem.Exists('hide_holding_desc'), 'Hide', 'Show')] descriptions, Shift D."
-				    }
+					blockoverride "text" {
+						raw_text = "[Select_CString(GetVariableSystem.Exists('hide_holding_desc'), 'Hide', 'Show')] descriptions, Shift D."
+					}
 					shortcut = mapmode_house_secondary
 					onclick = "[GetVariableSystem.Toggle('hide_holding_desc')]"
 				}
@@ -7498,10 +7476,9 @@ window = {
 							button_text = {
 								tooltip = "[HoldingTypeItem.GetTooltip]"
 								alwaystransparent = yes
-
-							    blockoverride "text" {
+								blockoverride "text" {
 									raw_text = "Build [HoldingTypeItem.GetHoldingType.GetName]."
-							    }
+								}
 								blockoverride "disabled" {
 									visible = "[Not(HoldingTypeItem.CanConstructBuilding)]"
 								}
@@ -7530,13 +7507,103 @@ window = {
 									size = { 35 35 }
 									raw_text = "HOLDING_SELECTION_VIEW_WRONG_HOLDING_TYPE"
 									alwaystransparent = yes
-								} 
-							} 
-						} 
-					} 
-				} 
-			} 
-		} 
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	widget = {
+		name = "vanilla_holding_type_root"
+		visible = "[GetVariableSystem.Exists('ocr')]"
+
+		vbox = {
+			set_parent_size_to_minimum = yes
+			margin = { 4 4 }
+			margin_bottom = 15
+			spacing = 15
+
+			header_pattern = {
+				layoutpolicy_horizontal = expanding
+
+				blockoverride "header_text"
+				{
+					text = "CREATE_NEW_HOLDING_HEADING"
+				}
+
+				blockoverride "button_close"
+				{
+					onclick = "[HoldingView.CloseHoldingConstruction]"
+				}
+			}
+
+			building_in_vassal_warning_hbox = {}
+
+			hbox = {
+				name = "holding_types"
+				datamodel = "[HoldingView.GetHoldingTypeItems]"
+				layoutpolicy_horizontal = expanding
+				spacing = 10
+				margin = { 10 10 }
+
+				item = {
+					vbox = {
+						spacing = 5
+
+						button_standard = {
+							size = { 250 148 }
+							enabled = "[HoldingTypeItem.CanConstructBuilding]"
+							onclick = "[HoldingTypeItem.OnClick]"
+							tooltip = "[HoldingTypeItem.GetTooltip]"
+							datacontext = "[HoldingTypeItem.GetProvince]"
+
+							widget = {
+								scissor = yes
+								size = { 247 146 }
+
+								icon = {
+									visible = "[HoldingTypeItem.CanConstructBuilding]"
+									size = { 320 146 }
+									texture = "[HoldingTypeItem.GetBuilding.GetIllustration(Province.Self)]"
+									using = Mask_Rough_Edges
+									alpha = 0.7
+								}
+
+								highlight_icon = {
+									visible = "[Not(HoldingTypeItem.CanConstructBuilding)]"
+									size = { 320 146 }
+									texture = "[HoldingTypeItem.GetBuilding.GetIllustration(Province.Self)]"
+									effectname = "GreyedOut"
+									tintcolor = { 0.6 0.6 0.6 1 }
+									using = Mask_Rough_Edges
+								}
+							}
+
+							flowcontainer = {
+								parentanchor = bottom|right
+								ignoreinvisible = yes
+								margin = { 5 5 }
+
+								warning_icon = {
+									name = "wrong_type"
+									visible = "[Not(HoldingTypeItem.IsValidForPlayer)]"
+									size = { 35 35 }
+									tooltip = HOLDING_SELECTION_VIEW_WRONG_HOLDING_TYPE
+								}
+							}
+						}
+
+						text_label_center = {
+							layoutpolicy_horizontal = expanding
+							text = "[HoldingTypeItem.GetHoldingType.GetName]"
+						}
+					}
+				}
+			}
+		}
 	}
 
 	holding_type_selection_view_old = {}
