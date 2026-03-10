@@ -143,7 +143,7 @@ Prima di implementare una nuova finestra, **consulta sempre** un file già conve
 
 Ogni volta che un binding o uno scope viene verificato direttamente in un file vanilla
 (`../CK3 ORIGINAL VERSION/ck3origin/game/gui/`), **deve essere aggiunto immediatamente**
-a `coding_ai/gui/jomini_scope_whitelist.md` se non è già presente.
+a `.github/resources/jomini_scope_whitelist.md` se non è già presente.
 
 Questo vale per qualunque agente o sessione di lavoro. Non è opzionale.
 

@@ -57,14 +57,14 @@ coding_ai/
 ck3_modding.code-workspace           ← ESISTE, mantenere
 ```
 
-> ⚠️ ATTENZIONE: i file `coding_ai/gui/jomini_scope_whitelist.md`,
-> `coding_ai/gui/dual_mode_pattern_canonical.md` e `coding_ai/gui/priority_list.md`
-> NON esistono ancora. Vengono creati nella Fase 0.
+> ⚠️ ATTENZIONE: i file `.github/resources/jomini_scope_whitelist.md`,
+> `.github/resources/dual_mode_pattern_canonical.md` e `.github/resources/priority_list.md`
+> NON esistevano ancora al momento della stesura. Sono stati creati e spostati in `.github/resources/`.
 
 ### File da creare (obiettivo di questo piano):
 
 ```
-coding_ai/gui/                       ← CREARE (Fase 0)
+.github/resources/                   ← CREATA (Fase 0 → spostato da coding_ai/gui/)
 ├── jomini_scope_whitelist.md
 ├── dual_mode_pattern_canonical.md
 └── priority_list.md
@@ -88,12 +88,12 @@ coding_ai/gui/                       ← CREARE (Fase 0)
 
 ---
 
-## FASE 0 — Crea i File di Riferimento in `coding_ai/gui/`
+## FASE 0 — Crea i File di Riferimento in `.github/resources/`
 
 **Priorità**: PRIMA DI TUTTO. Gli agenti della Fase 3 li referenziano come obbligatori.
-**Azione**: CREARE la cartella `coding_ai/gui/` e i 3 file seguenti.
+**Azione**: CREARE la cartella `.github/resources/` e i 3 file seguenti.
 
-### 0a. `coding_ai/gui/jomini_scope_whitelist.md`
+### 0a. `.github/resources/jomini_scope_whitelist.md`
 
 ```markdown
 # Jomini Scope Whitelist — CK3 1.17.1
@@ -152,7 +152,7 @@ text = "[GetDate]"
 Ultimo aggiornamento: 2026-03-10
 ```
 
-### 0b. `coding_ai/gui/dual_mode_pattern_canonical.md`
+### 0b. `.github/resources/dual_mode_pattern_canonical.md`
 
 ```markdown
 # Pattern Canonical Dual Mode — CK3 1.17.1
@@ -244,7 +244,7 @@ window = {
 - [ ] Nessun scope non verificato nella whitelist
 ```
 
-### 0c. `coding_ai/gui/priority_list.md`
+### 0c. `.github/resources/priority_list.md`
 
 ```markdown
 # Priority List — Finestre da Convertire
@@ -495,8 +495,8 @@ Documento di progetto in italiano con:
 
 ## Riferimenti obbligatori
 
-- Pattern: `coding_ai/gui/dual_mode_pattern_canonical.md`
-- Scope verificati: `coding_ai/gui/jomini_scope_whitelist.md`
+- Pattern: `.github/resources/dual_mode_pattern_canonical.md`
+- Scope verificati: `.github/resources/jomini_scope_whitelist.md`
 
 ## Regole architetturali
 
@@ -545,8 +545,8 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
 ## Riferimenti obbligatori (leggere prima di ogni implementazione)
 
 - Istruzioni globali: `.github/copilot-instructions.md`
-- Pattern: `coding_ai/gui/dual_mode_pattern_canonical.md`
-- Scope: `coding_ai/gui/jomini_scope_whitelist.md`
+- Pattern: `.github/resources/dual_mode_pattern_canonical.md`
+- Scope: `.github/resources/jomini_scope_whitelist.md`
 
 ## Cosa NON fare
 
@@ -835,7 +835,7 @@ Non aggiungere chiavi non presenti in questa lista.
 ## Ordine di Esecuzione
 
 ```
-0. FASE 0  — Crea coding_ai/gui/ con 3 file di riferimento  ← PRIMA DI TUTTO
+0. FASE 0  — Crea .github/resources/ con 3 file di riferimento  ← PRIMA DI TUTTO
 1. FASE 1  — Modifica .github/copilot-instructions.md (append)
 2. FASE 2  — Correggi tool alias nei 3 prompt + crea aggiornamento-upstream.prompt.md
 3. FASE 3  — Crea .github/agents/ con 6 file .agent.md
@@ -852,7 +852,7 @@ Dopo ogni fase: confermare i file creati/modificati prima di procedere alla fase
 Struttura completa attesa dopo l'implementazione:
 
 ```
-coding_ai/gui/
+.github/resources/
 ├── jomini_scope_whitelist.md          ← NUOVO (Fase 0)
 ├── dual_mode_pattern_canonical.md     ← NUOVO (Fase 0)
 └── priority_list.md                   ← NUOVO (Fase 0)

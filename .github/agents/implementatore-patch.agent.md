@@ -28,18 +28,18 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
 4. Container OCR = segue il progetto dell'Architetto o il pattern canonical
 5. Ogni modifica è minima — non toccare ciò che non è nel task
 6. Dopo ogni edit: verifica assenza di `name` duplicati allo stesso livello
-7. **Per ogni scope letto dal vanilla**: se non è in `coding_ai/gui/jomini_scope_whitelist.md`, aggiungilo prima di procedere
+7. **Per ogni scope letto dal vanilla**: se non è in `.github/resources/jomini_scope_whitelist.md`, aggiungilo prima di procedere
 
 ## Riferimenti obbligatori (leggere prima di ogni implementazione)
 
 - Istruzioni globali: `.github/copilot-instructions.md`
-- Pattern: `coding_ai/gui/dual_mode_pattern_canonical.md`
-- Scope: `coding_ai/gui/jomini_scope_whitelist.md`
+- Pattern: `.github/resources/dual_mode_pattern_canonical.md`
+- Scope: `.github/resources/jomini_scope_whitelist.md`
 
 ## Cosa NON fare
 
 - Non modificare file fuori da `ocr_support_compatibility_pach/gui/`
-- Non toccare `coding_ai/`, `.github/`, `.vscode/`, `ck3_modding.code-workspace`
+- Non toccare `coding_ai/`, `.github/` (salvo `.github/resources/jomini_scope_whitelist.md` per aggiornamento scope), `.vscode/`, `ck3_modding.code-workspace`
 - Non inventare scope o binding non nella whitelist
 - Non "migliorare" il container vanilla
 

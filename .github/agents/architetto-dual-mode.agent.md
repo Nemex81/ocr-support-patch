@@ -32,8 +32,8 @@ Documento di progetto in italiano con:
 
 ## Riferimenti obbligatori
 
-- Pattern: `coding_ai/gui/dual_mode_pattern_canonical.md`
-- Scope verificati: `coding_ai/gui/jomini_scope_whitelist.md`
+- Pattern: `.github/resources/dual_mode_pattern_canonical.md`
+- Scope verificati: `.github/resources/jomini_scope_whitelist.md`
 
 ## Regole architetturali
 
@@ -44,7 +44,7 @@ Documento di progetto in italiano con:
 ## Aggiornamento Whitelist (obbligatorio)
 
 Se durante la verifica dei scope hai consultato un file vanilla e trovato un binding
-non ancora presente in `coding_ai/gui/jomini_scope_whitelist.md`:
+non ancora presente in `.github/resources/jomini_scope_whitelist.md`:
 1. Segnalalo nel documento di progetto con tag `[NUOVO SCOPE]`
 2. Aggiungi il binding alla whitelist con scope, contesto e note
 
