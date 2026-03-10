@@ -169,6 +169,19 @@ Formato da aggiungere:
 
 ---
 
+## Nota sulle semantiche legacy della variabile `ocr`
+
+Alcuni file storici (e mod upstream) usano `GetVariableSystem.Exists('ocr')` come meccanismo di toggle.
+Nel progetto il proprietario ha definito una semantica legacy INVERTITA per questa variabile:
+
+- `GetVariableSystem.Exists('ocr') = true` => modalità NORMALE (vanilla)
+- `GetVariableSystem.Exists('ocr') = false` => modalità NON VEDENTE (OCR)
+
+Regole operative:
+- Preferire sempre `GameRules.GetRule('ocr_accessibility_mode')` per le nuove conversioni.
+- Se trovi `GetVariableSystem.Exists('ocr')`, trattalo secondo la mappatura legacy invertita e segnala il file per normalizzazione.
+
+
 ## Errori Comuni da Evitare
 
 - ❌ Non usare `show_when` al posto di `visible`

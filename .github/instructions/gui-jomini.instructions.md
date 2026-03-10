@@ -42,6 +42,14 @@ visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes'
 visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
 ```
 
+<!-- Nota progetto: comportamento legacy "variabile ocr" -->
+<!-- Per compatibilità con implementazioni storiche, alcuni file usano `GetVariableSystem.Exists('ocr')`. -->
+<!-- Avvertenza importante: nel progetto il proprietario ha definito la semantica legacy INVERTITA: -->
+<!-- - `GetVariableSystem.Exists('ocr') = true` => modalità NORMALE (vanilla) -->
+<!-- - `GetVariableSystem.Exists('ocr') = false` => modalità NON VEDENTE (OCR) -->
+<!-- Gli agenti devono: preferire le binding basate su `GameRules.GetRule('ocr_accessibility_mode')`; -->
+<!-- se incontrano `GetVariableSystem.Exists('ocr')`, trattarlo come mapping legacy invertito e segnalare il file per normalizzazione. -->
+
 ---
 
 ## Template Canonico Dual Mode

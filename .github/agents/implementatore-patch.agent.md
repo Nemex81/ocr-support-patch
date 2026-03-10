@@ -30,6 +30,11 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
 6. Dopo ogni edit: verifica assenza di `name` duplicati allo stesso livello
 7. **Per ogni scope letto dal vanilla**: se non è in `.github/resources/jomini_scope_whitelist.md`, aggiungilo prima di procedere
 
+# Nota operativa: semantica legacy della variabile `ocr`
+- Alcuni file storici usano `GetVariableSystem.Exists('ocr')` come toggle.
+- Nota del proprietario: la semantica legacy è INVERTITA (presenza della variabile = modalità NORMALE).
+- Regola: preferire `GameRules.GetRule('ocr_accessibility_mode')` nelle nuove conversioni; se trovi `GetVariableSystem.Exists('ocr')`, adattalo alla mappatura legacy e segnala il file per normalizzazione.
+
 ## Riferimenti obbligatori (leggere prima di ogni implementazione)
 
 - Istruzioni globali: `.github/copilot-instructions.md`
