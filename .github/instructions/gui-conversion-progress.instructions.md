@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.gui"
+applyTo: ".github/**"
 ---
 
 # Stato Conversioni GUI — CK3 1.17.1
