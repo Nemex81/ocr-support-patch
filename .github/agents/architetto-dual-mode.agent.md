@@ -40,6 +40,15 @@ Documento di progetto in italiano con:
 - Container vanilla: identico al file `../CK3 ORIGINAL VERSION/ck3origin/game/gui/[file].gui`
 - Font size OCR minimo 18 | Header: colore `{ 255 221 136 255 }` (giallo)
 
+## Aggiornamento Whitelist (obbligatorio)
+
+Se durante la verifica dei scope hai consultato un file vanilla e trovato un binding
+non ancora presente in `coding_ai/gui/jomini_scope_whitelist.md`:
+1. Segnalalo nel documento di progetto con tag `[NUOVO SCOPE]`
+2. Aggiungi il binding alla whitelist con scope, contesto e note
+
+Non lasciare scope verificati fuori dalla whitelist.
+
 ## Passo successivo
 
 Dopo il progetto, suggerisci di invocare **Implementatore Patch**.

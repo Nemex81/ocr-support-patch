@@ -27,6 +27,7 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
 4. Container OCR = segue il progetto dell'Architetto o il pattern canonical
 5. Ogni modifica è minima — non toccare ciò che non è nel task
 6. Dopo ogni edit: verifica assenza di `name` duplicati allo stesso livello
+7. **Per ogni scope letto dal vanilla**: se non è in `coding_ai/gui/jomini_scope_whitelist.md`, aggiungilo prima di procedere
 
 ## Riferimenti obbligatori (leggere prima di ogni implementazione)
 
