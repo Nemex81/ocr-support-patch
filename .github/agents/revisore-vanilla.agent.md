@@ -1,7 +1,7 @@
 ---
 name: Revisore Vanilla
 description: Verifica fedeltà del container vanilla alla baseline CK3 originale. Solo lettura.
-model: ['GPT-5.4 (copilot)', 'Claude Sonnet 4.6 (copilot)']
+model: ['GPT-5.4', 'Claude Sonnet 4.6']
 tools: [read, search]
 handoffs:
   - label: "→ Fix vanilla"

@@ -1,7 +1,7 @@
 ---
 name: Auditore Finale
 description: Audit completo pre-commit. Emette verdetto APPROVED o BLOCKED. Solo lettura.
-model: ['Claude Opus 4.6 (copilot)', 'GPT-5.4 (copilot)']
+model: ['Claude Opus 4.6', 'GPT-5.4']
 tools: [read, search]
 handoffs:
   - label: "→ Fix implementatore"

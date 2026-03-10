@@ -2,7 +2,7 @@
 mode: agent
 description: Confronta la patch con upstream OCR e vanilla per rilevare aggiornamenti
 tools: [read, search]
-model: ['Claude Opus 4.6 (copilot)', 'GPT-5.4 (copilot)']
+model: ['Claude Opus 4.6', 'GPT-5.4']
 ---
 
 # Task: Aggiornamento da Upstream

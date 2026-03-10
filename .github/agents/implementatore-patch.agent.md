@@ -1,7 +1,7 @@
 ---
 name: Implementatore Patch
 description: Scrive e modifica i file .gui della patch. Opera SOLO su ocr_support_compatibility_pach/.
-model: ['GPT-5.2 Codex (copilot)', 'GPT-5.1 Codex Max (copilot)', 'GPT-5.4 (copilot)']
+model: ['GPT-5.2 Codex', 'GPT-5.1 Codex Max', 'GPT-5.4']
 tools: [edit, read, search]
 handoffs:
   - label: "→ Verifica Accessibilità"

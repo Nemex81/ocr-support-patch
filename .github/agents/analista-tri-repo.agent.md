@@ -1,7 +1,7 @@
 ---
 name: Analista Tri-Repo
 description: Analizza e confronta i tre repository CK3 (patch, OCR upstream, vanilla). Solo lettura, nessuna modifica.
-model: ['Claude Opus 4.6 (copilot)', 'GPT-5.4 (copilot)']
+model: ['Claude Opus 4.6', 'GPT-5.4']
 tools: [read, search]
 handoffs:
   - label: "→ Progetta struttura"
