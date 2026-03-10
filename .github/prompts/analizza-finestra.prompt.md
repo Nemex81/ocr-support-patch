@@ -1,7 +1,7 @@
 ---
 mode: agent
 description: Analizza una finestra GUI e produce un report strutturale
-tools: [codebase, read_file]
+tools: [read, search]
 ---
 
 # Task: Analisi Strutturale Finestra GUI

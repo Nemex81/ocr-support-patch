@@ -1,7 +1,7 @@
 ---
 mode: agent
 description: Converte una finestra GUI CK3 al sistema dual mode OCR/Vanilla
-tools: [codebase, read_file]
+tools: [read, search]
 ---
 
 # Task: Conversione Dual Mode
@@ -11,7 +11,7 @@ Leggi prima le istruzioni globali del progetto:
 
 ## Input richiesti
 - **File target** (nella patch): `ocr_support_compatibility_pach/gui/${input:nomeFile}.gui`
-- **File vanilla di riferimento**: `../CK3-ORIGINAL-VERSION/ck3origin/game/gui/${input:nomeFile}.gui`
+- **File vanilla di riferimento**: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFile}.gui`
 - **File OCR upstream**: `../CK3-OCR/OCR-Support/gui/${input:nomeFile}.gui`
 
 ## Procedura

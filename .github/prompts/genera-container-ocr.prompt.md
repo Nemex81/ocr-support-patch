@@ -1,7 +1,7 @@
 ---
 mode: agent
 description: Genera il container OCR per una sezione specifica di una finestra
-tools: [codebase, read_file]
+tools: [read, search]
 ---
 
 # Task: Genera Container OCR
@@ -11,7 +11,7 @@ Leggi: `${file:.github/copilot-instructions.md}`
 ## Input
 - **Finestra**: `${input:nomeFinestra}`
 - **Sezione da convertire**: `${input:nomeSezione}` (es: "tab_stats", "section_vassals", "panel_army")
-- **File vanilla**: `../CK3-ORIGINAL-VERSION/ck3origin/game/gui/${input:nomeFile}.gui`
+- **File vanilla**: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFile}.gui`
 
 ## Regole di generazione
 

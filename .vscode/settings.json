@@ -32,5 +32,8 @@
         "**/node_modules": true
     },
     "editor.rulers": [120],
-    "files.trimTrailingWhitespace": true
+    "files.trimTrailingWhitespace": true,
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
+    "github.copilot.chat.reviewSelection.enabled": true
 }

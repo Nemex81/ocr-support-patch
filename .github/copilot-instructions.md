@@ -25,7 +25,7 @@ coding_ai/
 ```
 
 I file GUI vanilla di riferimento si trovano in:
-`../CK3-ORIGINAL-VERSION/ck3origin/game/gui/`
+`../CK3 ORIGINAL VERSION/ck3origin/game/gui/`
 
 I file GUI OCR upstream (Agamidae) si trovano in:
 `../CK3-OCR/OCR-Support/gui/`
@@ -129,7 +129,7 @@ Prima di implementare una nuova finestra, **consulta sempre** un file già conve
 
 ## Workflow Standard per Nuova Finestra
 
-1. Apri il file vanilla da `../CK3-ORIGINAL-VERSION/ck3origin/game/gui/nome_file.gui`
+1. Apri il file vanilla da `../CK3 ORIGINAL VERSION/ck3origin/game/gui/nome_file.gui`
 2. Apri il file OCR upstream da `../CK3-OCR/OCR-Support/gui/nome_file.gui`
 3. Identifica la struttura dei widget vanilla (tipo, nome, gerarchia)
 4. Costruisci il container OCR rispettando la stessa gerarchia informativa
@@ -157,3 +157,44 @@ Prima di implementare una nuova finestra, **consulta sempre** un file già conve
 - Preferire risposte che spiegano il **perché** di ogni scelta tecnica
 - Se un pattern Jomini è ambiguo, chiedere conferma prima di implementare
 - La compatibilità con CK3 1.17.1 è prioritaria rispetto a qualunque feature nuova
+
+---
+
+## Agenti Disponibili in Questo Workspace
+
+Il progetto dispone di agenti specializzati in `.github/agents/`.
+VS Code li scopre automaticamente — selezionali nel picker agenti di Copilot Chat.
+Ciascun agente ha un ruolo fisso: non uscire dal ruolo assegnato.
+
+| Agente | File | Ruolo |
+|--------|------|-------|
+| Analista Tri-Repo | `analista-tri-repo.agent.md` | Solo lettura e confronto tra i 3 repo |
+| Architetto Dual-Mode | `architetto-dual-mode.agent.md` | Progetta struttura OCR/vanilla, no edit |
+| Implementatore Patch | `implementatore-patch.agent.md` | Scrive codice solo in `ocr_support_compatibility_pach/` |
+| Revisore Accessibilità | `revisore-accessibilita.agent.md` | Verifica qualità OCR/NVDA, no edit |
+| Revisore Vanilla | `revisore-vanilla.agent.md` | Verifica fedeltà al vanilla originale, no edit |
+| Auditore Finale | `auditore-finale.agent.md` | Review completa pre-commit, no edit |
+
+## Workflow Raccomandato per Nuova Finestra
+
+Sequenza standard con handoff tra agenti:
+1. **Analista Tri-Repo** — analizza i 3 file, produce report strutturale
+2. **Architetto Dual-Mode** — progetta la struttura OCR basandosi sul report
+3. **Implementatore Patch** — scrive il codice seguendo il progetto
+4. **Revisore Accessibilità** — verifica leggibilità NVDA, tooltip, ordine lettura
+5. **Revisore Vanilla** — verifica fedeltà container vanilla al CK3 originale
+6. **Auditore Finale** — checklist completa, APPROVED o BLOCKED
+
+## Istruzioni Specifiche per Dominio
+
+Attivate automaticamente per tipo di file:
+- `.github/instructions/gui-jomini.instructions.md` → attiva per `*.gui`
+- `.github/instructions/localization-ocr.instructions.md` → attiva per `*.yml`
+
+## Percorsi Repository di Riferimento
+
+- Patch attiva: `ocr_support_compatibility_pach/gui/`
+- OCR upstream (Agamidae): `../CK3-OCR/OCR-Support/gui/`
+- Vanilla CK3 1.17.1: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/`
+
+> ⚠️ Il path vanilla usa spazi, NON trattini: `CK3 ORIGINAL VERSION`
