@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Genera il container OCR per una sezione specifica di una finestra
 tools: [read, search]
 model: ['GPT-5.2 Codex', 'GPT-5.1 Codex Max', 'GPT-5.4']

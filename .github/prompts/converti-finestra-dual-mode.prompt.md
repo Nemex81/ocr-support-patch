@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Converte una finestra GUI CK3 al sistema dual mode OCR/Vanilla
 tools: [read, search]
 ---

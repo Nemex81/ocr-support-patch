@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Analizza un errore Jomini dai log CK3 e propone fix
 tools: [read, search]
 model: ['GPT-5.2 Codex', 'GPT-5.4']

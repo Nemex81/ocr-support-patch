@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Verifica la correttezza del dual mode in un file GUI già convertito
 tools: [read, search]
 ---

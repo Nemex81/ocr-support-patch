@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Analizza una finestra GUI e produce un report strutturale
 tools: [read, search]
 ---
