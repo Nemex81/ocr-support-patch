@@ -20,7 +20,7 @@ Leggi: `${file:.github/copilot-instructions.md}`
 2. Estrai TUTTE le informazioni mostrate (testo, numeri, stati, binding)
 3. Genera il container OCR con:
    - `name = "ocr_${input:nomeSezione}_container"`
-   - `visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"`
+   - `visible = "[Not(GetVariableSystem.Exists('ocr'))]"`
    - Header giallo per la sezione
    - Ogni dato vanilla rappresentato come testo leggibile
    - Bottoni con tooltip descrittivi

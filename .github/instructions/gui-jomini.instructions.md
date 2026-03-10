@@ -38,17 +38,13 @@ button = {
 ## Visibility Dual Mode (unica sintassi valida)
 
 ```jomini
-visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"
-visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
+# Container OCR attivo — modalità non vedente (variabile ocr assente)
+visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+# Container vanilla attivo — modalità normo-vedente (variabile ocr presente)
+visible = "[GetVariableSystem.Exists('ocr')]"
 ```
 
-<!-- Nota progetto: comportamento legacy "variabile ocr" -->
-<!-- Per compatibilità con implementazioni storiche, alcuni file usano `GetVariableSystem.Exists('ocr')`. -->
-<!-- Avvertenza importante: nel progetto il proprietario ha definito la semantica legacy INVERTITA: -->
-<!-- - `GetVariableSystem.Exists('ocr') = true` => modalità NORMALE (vanilla) -->
-<!-- - `GetVariableSystem.Exists('ocr') = false` => modalità NON VEDENTE (OCR) -->
-<!-- Gli agenti devono: preferire le binding basate su `GameRules.GetRule('ocr_accessibility_mode')`; -->
-<!-- se incontrano `GetVariableSystem.Exists('ocr')`, trattarlo come mapping legacy invertito e segnalare il file per normalizzazione. -->
+> ⚠️ `GameRules.GetRule('ocr_accessibility_mode')` è **deprecato** — non usarlo.
 
 ---
 
@@ -66,10 +62,11 @@ window = {
 
     # =============================================
     # BLOCCO OCR — solo testo, screen reader ready
+    # variabile ocr ASSENTE = modalità non vedente
     # =============================================
     container = {
         name = "ocr_esempio_container"
-        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"
+        visible = "[Not(GetVariableSystem.Exists('ocr'))]"
         size = { 100% 100% }
 
         vbox = {
@@ -107,11 +104,12 @@ window = {
 
     # =============================================
     # BLOCCO VANILLA — copia fedele del CK3 originale
+    # variabile ocr PRESENTE = modalità normo-vedente
     # NON MODIFICARE MAI — identico al vanilla
     # =============================================
     container = {
         name = "vanilla_esempio_container"
-        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
+        visible = "[GetVariableSystem.Exists('ocr')]"
 
         # Incollare qui il contenuto originale dal file vanilla
         # senza nessuna modifica

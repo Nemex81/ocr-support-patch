@@ -17,11 +17,13 @@ Copilot **NON deve usare scope non verificati nel vanilla** senza verifica espli
 ## Binding Dual Mode (obbligatori, non modificare)
 
 ```jomini
-# Visibilità OCR attiva
-visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"
-# Visibilità vanilla attiva
-visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
+# Container OCR attivo — modalità non vedente (variabile ocr assente)
+visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+# Container vanilla attivo — modalità normo-vedente (variabile ocr presente)
+visible = "[GetVariableSystem.Exists('ocr')]"
 ```
+
+> ⚠️ `GameRules.GetRule('ocr_accessibility_mode')` è **deprecato** — non usarlo.
 
 ---
 

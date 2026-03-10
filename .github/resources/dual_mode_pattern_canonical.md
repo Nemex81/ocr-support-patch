@@ -15,10 +15,11 @@ window = {
 
     # =============================================
     # BLOCCO OCR — solo testo, screen reader ready
+    # variabile ocr ASSENTE = modalità non vedente
     # =============================================
     container = {
         name = "ocr_esempio_container"
-        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"
+        visible = "[Not(GetVariableSystem.Exists('ocr'))]"
         size = { 100% 100% }
 
         vbox = {
@@ -56,11 +57,12 @@ window = {
 
     # =============================================
     # BLOCCO VANILLA — copia fedele del CK3 originale
+    # variabile ocr PRESENTE = modalità normo-vedente
     # NON MODIFICARE MAI — identico al vanilla
     # =============================================
     container = {
         name = "vanilla_esempio_container"
-        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
+        visible = "[GetVariableSystem.Exists('ocr')]"
 
         # Incollare qui il contenuto originale dal file vanilla
         # senza nessuna modifica
