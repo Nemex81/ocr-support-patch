@@ -1,0 +1,188 @@
+# Dual-mode draft for activity window
+# Generated as draft by Implementatore Patch
+
+types activity_window_types {
+    # (placeholder types if needed)
+}
+
+window = {
+    name = "activity_window"
+
+    # === BLOCCO OCR ===
+    container = {
+        name = "ocr_activity_window"
+        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"
+        # OCR layout: solo widget testuali, font size minimo 18
+
+        # Header
+        text_label = {
+            name = "ocr_activity_header"
+            text = "Attività"
+            font_size = 20
+            color = { 255 221 136 255 }
+        }
+
+        flowcontainer = {
+            name = "ocr_activity_flow"
+            direction = down
+            spacing = 8
+
+            # Summary
+            text_label = {
+                name = "ocr_activity_summary_header"
+                text = "Sommario"
+                font_size = 20
+                color = { 255 221 136 255 }
+            }
+
+            text_multi = {
+                name = "ocr_activity_summary"
+                autoresize = yes
+                font_size = 18
+                text = "[GetActivitySummary]"
+            }
+
+            # Participants
+            text_label = {
+                name = "ocr_activity_participants_header"
+                text = "Partecipanti"
+                font_size = 20
+                color = { 255 221 136 255 }
+            }
+
+            fixedgridwidget = {
+                name = "ocr_activity_participants_grid"
+                columns = 1
+                rows = 0
+                item = {
+                    text_single = {
+                        name = "ocr_activity_participant_item"
+                        autoresize = yes
+                        font_size = 18
+                        text = "- [GetParticipantName] — Ruolo: [GetParticipantRole]"
+                    }
+                }
+            }
+
+            # Actions
+            text_label = {
+                name = "ocr_activity_actions_header"
+                text = "Azioni disponibili"
+                font_size = 20
+                color = { 255 221 136 255 }
+            }
+
+            vbox = {
+                name = "ocr_activity_actions_box"
+                spacing = 6
+
+                item = {
+                    button = {
+                        name = "ocr_activity_action_button"
+                        text = "Esegui Azione"
+                        tooltip = "Esegui l'azione selezionata sull'attività"
+                        # accessibility: tooltip testuale descrittivo
+                    }
+                }
+            }
+
+            # Timeline testuale
+            text_label = {
+                name = "ocr_activity_timeline_header"
+                text = "Cronologia"
+                font_size = 20
+                color = { 255 221 136 255 }
+            }
+
+            text_multi = {
+                name = "ocr_activity_timeline"
+                autoresize = yes
+                font_size = 18
+                text = "[GetActivityTimelineText]"
+            }
+
+            # Conclusion
+            text_label = {
+                name = "ocr_activity_conclusion_header"
+                text = "Conclusione"
+                font_size = 20
+                color = { 255 221 136 255 }
+            }
+
+            text_single = {
+                name = "ocr_activity_conclusion"
+                autoresize = yes
+                font_size = 18
+                text = "[GetActivityConclusion]"
+            }
+        }
+    }
+
+    # === BLOCCO VANILLA ===
+    container = {
+        name = "vanilla_activity_window"
+        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
+        # COPY VANILLA CONTENT HERE FROM ../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_activity.gui
+        # TODO: Replace this comment with an exact, unmodified copy of the vanilla "window_activity.gui" content.
+        # Guidance: paste the full vanilla window contents inside this container block, preserving all original
+        # widget names, anchors and sizes. Do NOT change widget names or hierarchy.
+    }
+
+    # === EVENT-LEVEL CONTAINERS ===
+    container = {
+        name = "ocr_activity_event_window"
+        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('yes')]"
+
+        text_label = {
+            name = "ocr_activity_event_header"
+            text = "Evento"
+            font_size = 20
+            color = { 255 221 136 255 }
+        }
+
+        text_multi = {
+            name = "ocr_activity_event_description"
+            autoresize = yes
+            font_size = 18
+            text = "[GetEventDescription]"
+        }
+
+        text_single = {
+            name = "ocr_activity_event_participants"
+            autoresize = yes
+            font_size = 18
+            text = "Partecipanti: [GetEventParticipants]"
+        }
+
+        vbox = {
+            name = "ocr_activity_event_actions"
+            item = {
+                button = {
+                    name = "ocr_activity_event_action_button"
+                    text = "Scegli Azione"
+                    tooltip = "Scegli un'azione per questo evento"
+                }
+            }
+        }
+    }
+
+    container = {
+        name = "vanilla_activity_event_window"
+        visible = "[GameRules.GetRule('ocr_accessibility_mode').GetSetting().IsSet('no')]"
+        # COPY VANILLA EVENT CONTENT HERE FROM ../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_activity.gui
+        # TODO: paste vanilla event-level widgets here without modification.
+    }
+}
+
+# TODO (WHITELIST):
+# - Aggiungere i seguenti scope a coding_ai/gui/jomini_scope_whitelist.md se non presenti:
+#   | `GameRules` | accesso a game rules per toggle OCR | verificare binding in vanilla
+#   | `GetActivitySummary` | binding custom per sommario attività | verificare in data_binding
+#   | `GetParticipantName` | binding per nomi partecipanti | verificare in vanilla
+#   | `GetParticipantRole` | binding per ruolo partecipante | verificare
+#   | `GetActivityTimelineText` | binding per cronologia testuale | verificare
+#   | `GetActivityConclusion` | binding per conclusione attività | verificare
+#   | `GetEventDescription` | binding per descrizione evento | verificare
+#   | `GetEventParticipants` | binding per partecipanti evento | verificare
+# - Linee vanilla da verificare: aprire ../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_activity.gui
+#   e cercare i binding/data scopes usati nelle proprietà `text`, `visible`, `datamodel`.
