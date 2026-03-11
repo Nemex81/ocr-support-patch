@@ -17,11 +17,10 @@ Qualsiasi differenza non autorizzata è un bug. Non modifichi mai file.
 
 ## Metodologia
 
-1. Leggi file patch: `ocr_support_compatibility_pach/gui/[file].gui`
-2. Leggi vanilla: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/[file].gui`
-3. Estrai solo il blocco `vanilla_*_container` dalla patch
-4. Confronta con il vanilla originale
-5. Documenta ogni differenza
+1. Invoca `#vanilla-fidelity-check` con il percorso del file patch.
+2. Il verdetto della skill è il tuo verdetto di base.
+3. Se FAIL: riporta i bug esattamente come identificati dalla skill.
+4. Se PASS: aggiungi nota di conferma e suggerisci handoff ad Auditore Finale.
 
 ## Differenze Accettabili
 

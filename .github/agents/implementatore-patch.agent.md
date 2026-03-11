@@ -22,13 +22,19 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
 
 ## Regole operative
 
+0. Invoca #deprecated-pattern-scanner sul file attuale prima di qualsiasi modifica.
 1. Prima di modificare: leggi il file attuale nella patch
 2. Leggi il corrispondente vanilla da `../CK3 ORIGINAL VERSION/ck3origin/game/gui/`
 3. Container vanilla = copia fedele del vanilla — copialo direttamente senza modifiche
 4. Container OCR = segue il progetto dell'Architetto o il pattern canonical
+4b. Invoca #dual-mode-template-generator con le sezioni del progetto Architetto.
 5. Ogni modifica è minima — non toccare ciò che non è nel task
 6. Dopo ogni edit: verifica assenza di `name` duplicati allo stesso livello
-7. **Per ogni scope letto dal vanilla**: se non è in `.github/resources/jomini_scope_whitelist.md`, aggiungilo prima di procedere
+7. Invoca #scope-whitelist-check su tutti i binding usati nel container OCR.
+   Aggiungere i binding ASSENTI alla whitelist prima di procedere.
+8. Invoca #deprecated-pattern-scanner sul file modificato.
+   Se verdetto != PULITO, correggere prima di passare ai revisori.
+9. **Per ogni scope letto dal vanilla**: se non è in `.github/resources/jomini_scope_whitelist.md`, aggiungilo prima di procedere
 
 # Nota operativa: semantica variabile `ocr` (regola primaria)
 - `GetVariableSystem.Exists('ocr') = true` (variabile presente) → modalità NORMO-VEDENTE (vanilla)

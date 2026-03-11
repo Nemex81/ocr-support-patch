@@ -34,6 +34,8 @@ Documento di progetto in italiano con:
 
 - Pattern: `.github/resources/dual_mode_pattern_canonical.md`
 - Scope verificati: `.github/resources/jomini_scope_whitelist.md`
+- Skill scope: #scope-whitelist-check — invocare per ogni binding usato nel progetto
+- Skill bozza: #dual-mode-template-generator — usare per validare struttura proposta
 
 ## Regole architetturali
 

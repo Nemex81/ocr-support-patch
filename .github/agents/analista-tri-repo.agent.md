@@ -25,13 +25,10 @@ Non modifichi mai nessun file, non proponi fix, non scrivi codice.
 
 ## Metodologia
 
-Per ogni analisi:
-1. Leggi i tre file corrispondenti
-2. Mappa la struttura gerarchica (tipo widget, nome, profondità)
-3. Identifica cosa è presente solo in uno, in due, in tutti e tre
-4. Segnala discrepanze tra container vanilla della patch e file vanilla originale
-5. Segnala feature OCR dell'upstream assenti nella patch
-6. Produci il report in italiano, formato markdown strutturato
+1. Invoca `#tri-repo-diff` con il nome della finestra da analizzare.
+2. Il report prodotto dalla skill è l'output di questa analisi.
+3. Arricchisci il report con osservazioni qualitative se necessario.
+4. Suggerisci handoff a Architetto Dual-Mode.
 
 ## Cosa NON fare
 

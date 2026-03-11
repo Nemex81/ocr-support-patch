@@ -20,7 +20,8 @@ ocr-support-patch/
 │   ├── agents/                     ← definizioni agenti specializzati
 │   ├── instructions/               ← istruzioni attive per dominio
 │   ├── prompts/                    ← prompt riutilizzabili per Copilot
-│   └── resources/                  ← whitelist scope, pattern canonical, priority list
+│   ├── resources/                  ← whitelist scope, pattern canonical, priority list
+│   └── copilot-skills/             ← skills invocabili dagli agenti
 ocr_support_compatibility_pach/
 │   └── gui/                        ← file .gui della mod (lavoro attivo)
 coding_ai/                          ← documentazione storica (sola lettura)
@@ -221,6 +222,20 @@ Ciascun agente ha un ruolo fisso: non uscire dal ruolo assegnato.
 | Revisore Accessibilità | `revisore-accessibilita.agent.md` | Verifica qualità OCR/NVDA, no edit |
 | Revisore Vanilla | `revisore-vanilla.agent.md` | Verifica fedeltà al vanilla originale, no edit |
 | Auditore Finale | `auditore-finale.agent.md` | Review completa pre-commit, no edit |
+
+## Skills Disponibili in Questo Workspace
+
+Le skills in `.github/copilot-skills/` sono capacità procedurali invocabili
+dagli agenti tramite `#nome-skill`. Centralizzano logica ripetuta.
+
+| Skill | File | Scopo |
+|-------|------|-------|
+| deprecated-pattern-scanner | `deprecated-pattern-scanner.skill.md` | Rileva pattern vietati/deprecati in file .gui |
+| scope-whitelist-check | `scope-whitelist-check.skill.md` | Verifica binding Jomini contro whitelist |
+| tri-repo-diff | `tri-repo-diff.skill.md` | Confronto strutturale tra i 3 repository |
+| vanilla-fidelity-check | `vanilla-fidelity-check.skill.md` | Verifica fedeltà container vanilla |
+| accessibility-checklist-runner | `accessibility-checklist-runner.skill.md` | Checklist NVDA automatica |
+| dual-mode-template-generator | `dual-mode-template-generator.skill.md` | Genera scheletro dual mode da struttura vanilla |
 
 ## Workflow Raccomandato per Nuova Finestra
 

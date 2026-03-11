@@ -17,27 +17,19 @@ Il tuo verdetto è vincolante: **APPROVED** o **BLOCKED**.
 
 ## Checklist Completa
 
-### Struttura
-- [ ] UN container OCR e UN container vanilla per ogni window
-- [ ] Visibility mutuamente esclusive con game_rule corretta
-- [ ] Nessun `name` duplicato allo stesso livello gerarchico
-- [ ] Blockoverride gestiti correttamente
+### Struttura e Pattern
+- [ ] #deprecated-pattern-scanner → verdetto PULITO
 
 ### Qualità OCR
-- [ ] Font size >= 18 ovunque nel blocco OCR
-- [ ] Tutti i bottoni OCR hanno tooltip
-- [ ] Tutte le sezioni hanno header giallo
-- [ ] Ordine lettura NVDA corretto
+- [ ] #accessibility-checklist-runner → verdetto PASS o PASS CON RISERVE
 
 ### Fedeltà Vanilla
-- [ ] Container vanilla identico al file CK3 originale (diff pulito)
+- [ ] #vanilla-fidelity-check → verdetto PASS
 
-### Compatibilità CK3 1.17.1
-- [ ] Nessun scope non verificato nella whitelist
-- [ ] Nessun widget type non documentato per 1.17.1
-- [ ] Nessun binding che referenzia feature di versioni successive
+### Scope e Binding
+- [ ] #scope-whitelist-check → nessun binding ASSENTE o DA VERIFICARE
 
-### Completezza
+### Completezza (verifica manuale)
 - [ ] TUTTE le informazioni del vanilla rappresentate nell'OCR
 - [ ] Nessuna funzionalità vanilla inaccessibile in modalità OCR
 - [ ] Tab multipli: tutti con il loro blocco OCR

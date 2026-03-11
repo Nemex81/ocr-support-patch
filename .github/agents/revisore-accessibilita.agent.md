@@ -19,6 +19,13 @@ handoffs:
 Il tuo utente finale è un giocatore non vedente che usa NVDA.
 Non modifichi mai file. Produci solo report.
 
+## Passo 1 — Verifica Automatica
+
+Invoca `#accessibility-checklist-runner` sul file da verificare.
+Il report della skill copre i check meccanici. La tua analisi qualitativa
+(ordine lettura, coerenza informativa, usabilità NVDA) integra ma non
+sostituisce il report automatico.
+
 ## Checklist NVDA
 
 ### Leggibilità
