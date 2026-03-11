@@ -2267,7 +2267,7 @@ icon = {
 
 		button = {
 			name = "ocr_faith_shortcut"
-			shortcut = "mapmode_faith_secondary"
+			shortcut = "map_mode_19"
 			onclick = "[OpenGameViewData( 'faith', GetPlayer.GetFaith.GetID )]"
 			tooltip = "FAITH_CHARACTER_WINDOW"
 			using = tooltip_es
