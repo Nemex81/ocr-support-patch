@@ -4,10 +4,12 @@
 
 Questo repository contiene una **mod per Crusader Kings 3 (versione 1.17.1)** che implementa il sistema **Dual Mode** per l'accessibilità dei giocatori non vedenti.
 Ogni finestra GUI viene convertita per supportare due modalità:
-- **Modalità OCR** (`ocr_accessibility_mode = yes`): layout testuale puro, leggibile da screen reader
-- **Modalità Vanilla** (`ocr_accessibility_mode = no`): layout grafico originale Paradox, invariato
+- **Modalità OCR** (variabile `ocr` **assente** nel `GetVariableSystem`): layout testuale puro, leggibile da screen reader
+- **Modalità Vanilla** (variabile `ocr` **presente** nel `GetVariableSystem`): layout grafico originale Paradox, invariato
 
-Il toggle è controllato dalla game_rule `ocr_accessibility_mode`, attivabile con **Shift+F11** in-game.
+Il toggle è attivabile con **Shift+F11** in-game tramite scripted_gui che imposta o rimuove la variabile `ocr`.
+
+> ⚠️ Il bindings `GameRules.GetRule('ocr_accessibility_mode')` è **deprecato** — non usarlo nel codice GUI.
 
 ---
 
@@ -21,7 +23,14 @@ ocr-support-patch/
 │   ├── instructions/               ← istruzioni attive per dominio
 │   ├── prompts/                    ← prompt riutilizzabili per Copilot
 │   ├── resources/                  ← whitelist scope, pattern canonical, priority list
-│   └── copilot-skills/             ← skills invocabili dagli agenti
+│   ├── copilot-skills/             ← skills invocabili dagli agenti
+│   └── workflows/                  ← GitHub Actions (gui_audit.yml)
+├── tools/                          ← script Python di automazione
+│   ├── config.py                   ← percorsi centralizzati (importato dagli altri script)
+│   ├── gui_validator.py            ← scanner pattern deprecati/vietati nei .gui
+│   ├── scope_extractor.py          ← estrae binding Jomini e confronta la whitelist
+│   ├── tri_diff.py                 ← confronto strutturale tra i 3 repo
+│   └── audit.py                   ← orchestratore: valida tutti i file .gui convertiti
 ocr_support_compatibility_pach/
 │   └── gui/                        ← file .gui della mod (lavoro attivo)
 coding_ai/                          ← documentazione storica (sola lettura)
@@ -153,13 +162,15 @@ Prima di implementare una nuova finestra, **consulta sempre** un file già conve
 
 ## Workflow Standard per Nuova Finestra
 
+0. **[Pre-analisi]** `python tools/tri_diff.py --window nome_file` — confronto strutturale tra i 3 repo prima di scrivere codice
 1. Apri il file vanilla da `../CK3 ORIGINAL VERSION/ck3origin/game/gui/nome_file.gui`
 2. Apri il file OCR upstream da `../CK3-OCR/OCR-Support/gui/nome_file.gui`
 3. Identifica la struttura dei widget vanilla (tipo, nome, gerarchia)
 4. Costruisci il container OCR rispettando la stessa gerarchia informativa
 5. Incapsula il vanilla originale nel container vanilla senza modifiche
 6. Verifica che le due visibility siano mutuamente esclusive
-7. Testa la logica visible con entrambi i valori di `ocr_accessibility_mode`
+7. `python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/nome_file.gui` — aggiorna whitelist se ci sono binding DA VERIFICARE
+8. `python tools/gui_validator.py --file ocr_support_compatibility_pach/gui/nome_file.gui` — risolvi tutti i CRITICO prima di committare
 
 ---
 
@@ -250,12 +261,14 @@ dagli agenti tramite `#nome-skill`. Centralizzano logica ripetuta.
 ## Workflow Raccomandato per Nuova Finestra
 
 Sequenza standard con handoff tra agenti:
+0. **[Automazione]** `python tools/tri_diff.py --window nome_file` — verifica stato di partenza nei 3 repo
 1. **Analista Tri-Repo** — analizza i 3 file, produce report strutturale
 2. **Architetto Dual-Mode** — progetta la struttura OCR basandosi sul report
 3. **Implementatore Patch** — scrive il codice seguendo il progetto
 4. **Revisore Accessibilità** — verifica leggibilità NVDA, tooltip, ordine lettura
 5. **Revisore Vanilla** — verifica fedeltà container vanilla al CK3 originale
 6. **Auditore Finale** — checklist completa, APPROVED o BLOCKED
+7. **[Post-Commit]** `python tools/audit.py --window nome_file` — verdetto finale automatico
 
 ## Istruzioni Specifiche per Dominio
 
