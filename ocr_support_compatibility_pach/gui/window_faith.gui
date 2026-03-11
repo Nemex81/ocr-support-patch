@@ -2529,7 +2529,8 @@ window = {
                 item = {
                     button_standard = {
                         name = "show_faith_info"
-                        tooltip = "FAITH_COOLTIP_GETNAME"
+                        using = tooltip_es
+                        tooltipwidget = { faith_tooltip_click = {} }
                         layoutpolicy_horizontal = expanding
                         size = { 0 20 }
                         shortcuts_list = {
