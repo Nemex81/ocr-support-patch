@@ -2334,6 +2334,7 @@ widget = {
 
 			button_open_inventory = {
 				name = "open_inventory_button"
+				shortcut = "ocr_open_inventory"
 				size = { 55 55 }
 				datacontext = "[GetPlayer]"
 				using = tooltip_ne
@@ -2348,12 +2349,6 @@ widget = {
 				visible = "[Or( GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'inventory' ), '(int32)0' ), And( Not( GetPlayer.HasRoyalCourt ), GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' ) ) )]"
 			}
 
-			# Shortcut OCR: alt+1 → Inventario
-			button = {
-				size = { 0 0 }
-				shortcut = "ocr_open_inventory"
-				onclick = "[ToggleGameViewData( 'inventory', GetPlayer.GetID )]"
-			}
 		}
 
 		### 2. STILE DI VITA (Lifestyle)
@@ -2367,6 +2362,7 @@ widget = {
 			button_normal = {
 				name = "lifestyle_button"
 				visible = "[GetPlayer.IsAdult]"
+				shortcut = "ocr_open_lifestyle"
 
 				tooltip = "PLAYER_LIFESTYLE_TOOLTIP"
 				using = tooltip_ne
@@ -2418,13 +2414,6 @@ widget = {
 				}
 			}
 
-			# Shortcut OCR: alt+2 → Stile di vita (disabilitato se minorenne)
-			button = {
-				size = { 0 0 }
-				visible = "[GetPlayer.IsAdult]"
-				shortcut = "ocr_open_lifestyle"
-				onclick = "[OpenGameViewData( 'lifestyle', GetPlayer.GetID )]"
-			}
 		}
 
 		### 3. FEDE (Standalone - Funzionante)
@@ -2439,6 +2428,7 @@ widget = {
 
 			button_normal = {
 				name = "faith_button_manual"
+				shortcut = "ocr_open_faith"
 				size = { 45 45 }
 				onclick = "[OpenGameViewData( 'faith', Faith.GetID )]"
 
@@ -2454,12 +2444,6 @@ widget = {
 				}
 			}
 
-			# Shortcut OCR: alt+3 → Fede
-			button = {
-				size = { 0 0 }
-				shortcut = "ocr_open_faith"
-				onclick = "[OpenGameViewData( 'faith', Faith.GetID )]"
-			}
 		}
 
 		### 4. CULTURA (Standalone - Funzionante)
@@ -2474,6 +2458,7 @@ widget = {
 
 			button_normal = {
 				name = "culture_button_manual"
+				shortcut = "ocr_open_culture"
 				size = { 45 45 }
 				onclick = "[OpenGameViewData( 'culture_window', Culture.GetID )]"
 
@@ -2489,12 +2474,6 @@ widget = {
 				}
 			}
 
-			# Shortcut OCR: alt+4 → Cultura
-			button = {
-				size = { 0 0 }
-				shortcut = "ocr_open_culture"
-				onclick = "[OpenGameViewData( 'culture_window', Culture.GetID )]"
-			}
 		}
 
 		### 5. CASATA (Standalone - Funzionante)
@@ -2509,6 +2488,7 @@ widget = {
 
 			button_normal = {
 				name = "house_button_manual"
+				shortcut = "ocr_open_house"
 				size = { 45 45 }
 				onclick = "[DefaultOnHouseCoatOfArmsClick(DynastyHouse.GetID)]"
 
@@ -2525,12 +2505,6 @@ widget = {
 				}
 			}
 
-			# Shortcut OCR: alt+5 → Casata
-			button = {
-				size = { 0 0 }
-				shortcut = "ocr_open_house"
-				onclick = "[DefaultOnHouseCoatOfArmsClick(DynastyHouse.GetID)]"
-			}
 		}
 
 
