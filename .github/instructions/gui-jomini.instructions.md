@@ -152,6 +152,42 @@ Prima di salvare o committare un file `.gui` modificato, verificare:
 
 ---
 
+## Functional Parity — Checklist Verificabile
+
+**OCR e vanilla devono essere funzionalmente equivalenti**: nessuna delle due modalità è una versione ridotta dell'altra.
+
+### Checklist OCR
+
+- [ ] Tutte le informazioni leggibili nel vanilla sono presenti come testo nel blocco OCR
+- [ ] Ogni azione disponibile nel vanilla ha un bottone OCR equivalente con tooltip
+- [ ] L'ordine di lettura OCR riflette la gerarchia logica del vanilla
+- [ ] Le liste vuote hanno un messaggio di fallback testuale
+
+### Checklist Vanilla
+
+- [ ] Il container vanilla è una copia identica del file CK3 originale
+- [ ] Nessun widget rimosso, spostato o rinominato
+- [ ] `onclick`, `onrightclick`, `tooltip` preservati senza modifiche
+
+### Checklist Multiplayer / Checksum
+
+- [ ] Nessun `scripted_gui`, `effect` o `trigger` aggiunto che alteri il checksum
+- [ ] I due container usano solo `visible` per il toggle — nessuna logica script-side
+- [ ] Il file non introduce nuovi `game_rule` o `on_action`
+
+---
+
+## Performance Guidelines
+
+- **File size**: l'overhead atteso per la duplicazione dual-mode è ~15–20% per finestra (es. 40 KB → 48 KB)
+- **Parse time**: +2–5 ms per window load — trascurabile
+- **Runtime overhead**: ZERO — solo i widget visibili vengono processati dal motore
+- **Ottimizzazione**: riuso di types condivisi riduce l'impatto a ~10%
+
+Il trade-off è accettabile: la compatibilità multiplayer vale il piccolo overhead di file size.
+
+---
+
 ## Errori Comuni da Evitare
 
 - ❌ Non usare `show_when` al posto di `visible`
