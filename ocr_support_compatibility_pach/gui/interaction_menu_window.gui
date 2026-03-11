@@ -37,6 +37,9 @@ window = {
 	container = {
 		name = "ocr_interaction_menu_container"
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		alwaystransparent = yes
+		resizeparent = yes
+		allow_outside = yes
 
 		flowcontainer = {
 			direction = vertical
@@ -45,22 +48,32 @@ window = {
 			datacontext = "[CharacterInteractionMenuWindow.GetCharacter]"
 
 			# ---- HEADER ----
-			text_single = {
-				name = "ocr_title_other"
-				visible = "[Not(Character.IsLocalPlayer)]"
-				raw_text = "Interazioni con [Character.GetUINameNoTooltip]."
-				fontsize = 20
-				autoresize = yes
-				color = { 255 221 136 255 }
-			}
+			widget = {
+				name = "character_info"
+				size = { 317 32 }
 
-			text_single = {
-				name = "ocr_title_self"
-				visible = "[Character.IsLocalPlayer]"
-				raw_text = "Interazioni con te stesso."
-				fontsize = 20
-				autoresize = yes
-				color = { 255 221 136 255 }
+				flowcontainer = {
+					direction = vertical
+					ignoreinvisible = yes
+
+					text_single = {
+						name = "ocr_title_other"
+						visible = "[Not(Character.IsLocalPlayer)]"
+						raw_text = "Interazioni con [Character.GetUINameNoTooltip]."
+						fontsize = 20
+						autoresize = yes
+						color = { 255 221 136 255 }
+					}
+
+					text_single = {
+						name = "ocr_title_self"
+						visible = "[Character.IsLocalPlayer]"
+						raw_text = "Interazioni con te stesso."
+						fontsize = 20
+						autoresize = yes
+						color = { 255 221 136 255 }
+					}
+				}
 			}
 
 			# ---- AZIONI RAPIDE ----
@@ -128,7 +141,7 @@ window = {
 
 			# ---- LISTA CATEGORIE ----
 			flowcontainer = {
-				name = "ocr_category_interaction_list"
+				name = "category_interaction_list"
 				datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
 				direction = vertical
 				ignoreinvisible = yes
@@ -140,7 +153,7 @@ window = {
 
 			# ---- ALTRE INTERAZIONI ----
 			container = {
-				name = "ocr_more_interactions_container"
+				name = "more_interactions_container"
 				visible = "[CharacterInteractionMenuWindow.AreMoreInteractionsVisisble]"
 
 				flowcontainer = {
