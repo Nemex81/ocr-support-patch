@@ -38,7 +38,12 @@
 		"files.encoding": "utf8",
 		"chat.tools.terminal.autoApprove": {
 			"git add": true,
-			"git commit": true
+			"git commit": true,
+			"ForEach-Object": true,
+			"/^python -c \"p=r'c:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\CK3 ORIGINAL VERSION\\\\ck3origin\\\\game\\\\gui\\\\cooltip\\.gui'; f=open\\(p, encoding='utf-8', errors='replace'\\); \\[print\\(i\\+1,l\\.rstrip\\(\\)\\) for i,l in enumerate\\(f\\) if 'faith_tooltip' in l and 'type' in l\\]; f\\.close\\(\\)\"$/": {
+				"approve": true,
+				"matchCommandLine": true
+			}
 		}
 	},
 	"extensions": {
