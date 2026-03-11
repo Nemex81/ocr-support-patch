@@ -80,7 +80,7 @@ types FaithShared {
 
             text_single = {
                 name = "fervor_trend"
-                text = "[Faith.GetYearlyFervorChange|2]"
+                text = "[Faith.GetYearlyFervorChange|=+2]"
                 max_width = 110
                 default_format = "#low"
                 fontsize = 13
