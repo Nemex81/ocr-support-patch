@@ -34,7 +34,6 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
    Aggiungere i binding ASSENTI alla whitelist prima di procedere.
 8. Invoca #deprecated-pattern-scanner sul file modificato.
    Se verdetto != PULITO, correggere prima di passare ai revisori.
-9. **Per ogni scope letto dal vanilla**: se non è in `.github/resources/jomini_scope_whitelist.md`, aggiungilo prima di procedere
 
 # Nota operativa: semantica variabile `ocr` (regola primaria)
 - `GetVariableSystem.Exists('ocr') = true` (variabile presente) → modalità NORMO-VEDENTE (vanilla)
