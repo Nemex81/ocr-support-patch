@@ -83,4 +83,43 @@ text = "[GetDate]"
 - Se un scope non è in questa lista: aggiungerlo solo dopo verifica manuale nel vanilla
 
 **Aggiornare questo file ogni volta che si verifica un nuovo scope nel vanilla.**
-Ultimo aggiornamento: 2026-03-10
+Ultimo aggiornamento: 2026-03-11
+
+---
+
+## Scope e binding — window_faith.gui
+
+Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_faith.gui`.
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `FaithWindow` | window_faith.gui — contesto finestra fede | metodi: `GetFaith`, `GetHolySites`, `GetGroupingHelper()`, `GetSins`, `GetVirtues`, `Close`, `ToggleReligionWindow` |
+| `FaithDoctrine` | window_faith.gui — scope dottrina | metodi: `GetNameNoTooltip(Faith)`, `GetIcon`, `GetGroup`, `GetNameNoTooltip(Faith.Self)`, `GetBaseName` |
+| `Faith` | window_faith.gui — scope fede diretto (non solo via `GetFaith`) | metodi: `GetReligion`, `IsUnreformed`, `GetAdherentNamePlural`, `GetNameNoTooltip`, `MakeScope`, `GetID`, `Self` |
+| `HolySite` | window_faith.gui — scope sito sacro | metodi: `GetBarony`, `GetName`, `GetBarony.GetProvince` |
+| `GuiFaithDoctrineItem` | window_faith.gui — item datamodel dottrine | metodi: `GetDoctrine`, `GetFaith` |
+| `GuiHolySiteItem` | window_faith.gui — item datamodel siti sacri | metodi: `GetHolySite`, `IsHeldByFaith` |
+| `GuiVirtueOrSinItem` | window_faith.gui — item datamodel virtù/peccati | metodo: `GetTrait` |
+| `Title` | window_faith.gui — scope titolo diretto (non solo via `GetTitle`) | metodi: `GetHolder`, `GetNameNoTierNoTooltip`, `GetDeJureLiege`, `GetTopLiege`, `Self` |
+| `Trait` | window_faith.gui — scope tratto | metodi: `GetNameNoTooltip(GetPlayer)`, `GetIcon(GetPlayer)` |
+| `ScriptedGui` | window_faith.gui — binding GUI scriptata | metodi: `IsValid()`, `Execute()`, `BuildTooltip()`, `IsShown()` |
+| `ReligionWindow` | window_faith.gui — contesto finestra religione | metodi: `GetReligion`, `GetFaiths`, `ShowOnlyReligionFaiths`, `Close` |
+
+## Funzioni GUI — window_faith.gui
+
+| Funzione | Contesto | Note |
+|---|---|---|
+| `EqualTo_string()` | window_faith.gui — comparazione stringa | es. `EqualTo_string(Var.GetFlagName, 'piety')` |
+| `EqualTo_int32()` | window_faith.gui — comparazione int32 | es. `EqualTo_int32(GetDataModelSize(...), (int32)1)` |
+| `GreaterThan_int32()` | window_faith.gui — comparazione int > | es. `GreaterThan_int32(GetDataModelSize(...), (int32)1)` |
+| `GreaterThan_CFixedPoint()` | window_faith.gui — comparazione fixed point > | es. `GreaterThan_CFixedPoint(Faith.MakeScope.ScriptValue('faith_holy_sites_held'), CFixedPoint('0'))` |
+| `NotEqualTo_uint32()` | window_faith.gui — comparazione uint != | es. `NotEqualTo_uint32(Faith.GetID, GetPlayer.GetFaith.GetID)` |
+| `ObjectsEqual()` | window_faith.gui — comparazione oggetti ⚠️ verificare in vanilla | es. `ObjectsEqual(GetPlayer.GetFaith, Faith.Self)` |
+| `Select_CString()` | window_faith.gui — funzione ternaria stringa | es. `Select_CString(GetVariableSystem.Exists('holy_site_effects'), 'Show', 'Hide')` |
+| `AddTextIf()` | window_faith.gui — testo condizionale | es. `AddTextIf(GetPlayer.MakeScope.Var('faith_counties_filter').IsSet, ' held by non-believers')` |
+| `MakeScopeFlag()` | window_faith.gui — flag da scope | es. `MakeScopeFlag(Scope.GetFlagName)` |
+| `GetGlobalList()` | window_faith.gui — lista globale | es. `GetGlobalList('faith_followers_sort')` |
+| `GetDoctrine()` | window_faith.gui — accesso dottrina globale | es. `GetDoctrine('doctrine_spiritual_head')` |
+| `GetFaithDoctrine()` | window_faith.gui — accesso dottrina faith | es. `GetFaithDoctrine('unreformed_faith_doctrine').GetBaseName` |
+| `GetDataModelSize()` | window_faith.gui — conteggio elementi datamodel | es. `GetDataModelSize(Faith.GetReligion.GetFaiths)` |
+| `CFixedPoint()` | window_faith.gui — costruttore tipo fixed point | es. `CFixedPoint('0')` per confronti numerici |
