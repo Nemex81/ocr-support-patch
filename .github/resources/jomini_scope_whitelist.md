@@ -123,3 +123,32 @@ Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_fa
 | `GetFaithDoctrine()` | window_faith.gui — accesso dottrina faith | es. `GetFaithDoctrine('unreformed_faith_doctrine').GetBaseName` |
 | `GetDataModelSize()` | window_faith.gui — conteggio elementi datamodel | es. `GetDataModelSize(Faith.GetReligion.GetFaiths)` |
 | `CFixedPoint()` | window_faith.gui — costruttore tipo fixed point | es. `CFixedPoint('0')` per confronti numerici |
+| `GetNumberOfValidInteractionsWithFilter` | window_faith.gui — conteggio interazioni filtrate | verificato in vanilla window_faith.gui:730 |
+| `GetPietyLevelName` | window_faith.gui (OCR) — nome livello pietà | NON in vanilla GUI — binding OCR upstream, presente in data_binding/ |
+| `GetDataModelSize` | window_faith.gui — alias path-dotted di `GetDataModelSize()` | verificato in vanilla frontend_bookmarks.gui:1623 |
+| `GetDoctrine` | window_faith.gui — alias path-dotted di `GetDoctrine()` | verificato in vanilla window_faith.gui:769 |
+| `GetFaithDoctrine` | window_faith.gui — alias path-dotted di `GetFaithDoctrine()` | NON in vanilla GUI — binding OCR upstream |
+| `GetScriptedGui` | window_faith.gui — alias path-dotted | verificato in vanilla window_faith.gui:878 |
+| `AddWatchWindow` | window_faith.gui — aggiunge finestra watch | verificato in vanilla window_faith.gui:97 |
+| `AddTextIf` | window_faith.gui — alias path-dotted di `AddTextIf()` | verificato in vanilla (già whitelistato come `AddTextIf()`) |
+| `OrderFaithOption.GetName` | window_faith.gui — nome opzione sort faith | verificato in vanilla window_faith.gui:1210 |
+| `Select_float` | window_faith.gui — funzione ternaria float | verificato in vanilla window_faith.gui:1276 |
+| `Select_CString` | window_faith.gui — alias path-dotted di `Select_CString()` | già whitelistato come `Select_CString()` |
+| `EqualTo_int32` | window_faith.gui — alias path-dotted | già whitelistato come `EqualTo_int32()` |
+| `EqualTo_string` | window_faith.gui — alias path-dotted | già whitelistato come `EqualTo_string()` |
+| `GreaterThan_int32` | window_faith.gui — alias path-dotted | già whitelistato come `GreaterThan_int32()` |
+| `GreaterThan_CFixedPoint` | window_faith.gui — alias path-dotted | già whitelistato come `GreaterThan_CFixedPoint()` |
+| `NotEqualTo_uint32` | window_faith.gui — alias path-dotted | già whitelistato come `NotEqualTo_uint32()` |
+| `GetVariableSystem.Exists` | globale Dual Mode — controlla esistenza variabile | verificato in vanilla window_faith.gui:229 |
+| `GetVariableSystem.Set` | globale Dual Mode — imposta variabile | verificato in vanilla window_faith.gui:19 |
+| `GetVariableSystem.Clear` | globale Dual Mode — cancella variabile | verificato in vanilla window_faith.gui:29 |
+| `GetVariableSystem.HasValue` | globale Dual Mode — controlla valore variabile | verificato in vanilla window_faith.gui:229 |
+| `GetVariableSystem.Toggle` | globale Dual Mode — inverte variabile | presente in patch, compatibile con GetVariableSystem vanilla |
+| `GetPlayer.MakeScope.Var` | window_faith.gui (OCR) — variabile scope player | verificato in vanilla hud.gui:157 |
+| `Has` | window_faith.gui (OCR) — shorthand OCR per GetVariableSystem.HasValue | binding OCR mod (data_binding/OCR_bindings.txt) — NON in vanilla nativo |
+| `Scope.Faith` | window_faith.gui (OCR) — scope faith in catena GuiScope | binding Jomini scope accessor — `GuiScope.SetRoot(...).AddScope('faith', ...)` |
+| `Scope.GetCharacter` | window_faith.gui (OCR) — scope character in catena GuiScope | binding Jomini scope accessor |
+| `Scope.GetFlagName` | window_faith.gui (OCR) — flag name da scope | NON in vanilla GUI — binding OCR upstream / Jomini interno |
+| `Scope.Title` | window_faith.gui (OCR) — scope title in catena GuiScope | binding Jomini scope accessor |
+| `Scope.Title.GetCountyData.GetCapital` | window_faith.gui (OCR) — capitale contea del titolo | binding OCR specifico — catena scope |
+| `Scope.Var` | window_faith.gui (OCR) — variabile su scope | compatibile con GetPlayer.MakeScope.Var() verificato in vanilla hud.gui |

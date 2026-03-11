@@ -610,6 +610,7 @@ window = {
                             button = {
                                 visible = "[Or(IsNot('doctrine'), Has('doctrine', FaithDoctrine.GetNameNoTooltip(Faith.Self)))]"
                                 onclick = "[Set('doctrine', FaithDoctrine.GetNameNoTooltip(Faith.Self))]"
+                                tooltip = "FAITH_WINDOW_DOCTRINE_TOOLTIP"
                                 layoutpolicy_horizontal = expanding
                                 datacontext = "[GuiFaithDoctrineItem.GetDoctrine]"
                                 datacontext = "[GuiFaithDoctrineItem.GetFaith]"
@@ -1479,6 +1480,17 @@ window = {
                         vbox = {
                             layoutpolicy_horizontal = expanding
                             widget_doctrine_item_ocr = {
+                                visible = "[Faith.HasDoctrineByKey('doctrine_no_head')]"
+                                blockoverride "background" {}
+                                blockoverride "doctrine_icon" {
+                                    texture = "[GetDoctrine('doctrine_no_head').GetIcon]"
+                                }
+                                blockoverride "wdi_context" {
+                                    datacontext = "[GetDoctrine('doctrine_no_head')]"
+                                    datacontext = "[Faith]"
+                                }
+                            }
+                            widget_doctrine_item_ocr = {
                                 visible = "[Faith.HasDoctrineByKey('doctrine_spiritual_head')]"
                                 blockoverride "background" {}
                                 blockoverride "doctrine_icon" {
@@ -1781,10 +1793,10 @@ window = {
                                                     texture = "[Trait.GetIcon(GetPlayer)]"
                                                     tooltipwidget = {
                                                         using = faith_window_trait_tooltip
-                                                        block "tooltip_placement" {
-                                                            using = tooltip_ne
-                                                            tooltip_offset = { 0 20 }
-                                                        }
+                                                    }
+                                                    block "tooltip_placement" {
+                                                        using = tooltip_ne
+                                                        tooltip_offset = { 0 20 }
                                                     }
                                                 }
                                             }
@@ -1825,10 +1837,10 @@ window = {
                                                     texture = "[Trait.GetIcon(GetPlayer)]"
                                                     tooltipwidget = {
                                                         using = faith_window_trait_tooltip
-                                                        block "tooltip_placement" {
-                                                            using = tooltip_ne
-                                                            tooltip_offset = { 0 20 }
-                                                        }
+                                                    }
+                                                    block "tooltip_placement" {
+                                                        using = tooltip_ne
+                                                        tooltip_offset = { 0 20 }
                                                     }
                                                 }
                                             }
@@ -2226,7 +2238,7 @@ window = {
                             datacontext = "[FaithWindow.GetFaith]"
                             layoutpolicy_horizontal = expanding
                             size = { 0 45 }
-                            text = "FAITH_HOLY_SITE_EXPLANATION"
+                            text = FAITH_HOLY_SITE_EXPLANATION
                             default_format = "#weak"
                             margin = { 0 5 }
                             margin_bottom = 15
@@ -2517,6 +2529,7 @@ window = {
                 item = {
                     button_standard = {
                         name = "show_faith_info"
+                        tooltip = "FAITH_COOLTIP_GETNAME"
                         layoutpolicy_horizontal = expanding
                         size = { 0 20 }
                         shortcuts_list = {
@@ -2690,14 +2703,14 @@ window = {
                                     using = Background_Area
                                 }
                                 divider_light = {
-                                    alpha = "[Select_float(GreaterThan_int32(Faith.GetNumberOfCountiesOfFaith,(int32)0), (float)1.0,(float)0.5)]"
+                                    alpha = "[Select_float(GreaterThan_int32(Faith.GetNumberOfCountiesOfFaith,'(int32)0'), '(float)1.0','(float)0.5')]"
                                     size = { 100% 3 }
                                     parentanchor = bottom
                                     position = { 0 1 }
                                 }
                                 hbox = {
                                     margin = { 10 5 }
-                                    alpha = "[Select_float(GreaterThan_int32(Faith.GetNumberOfCountiesOfFaith,(int32)0), (float)1.0,(float)0.5)]"
+                                    alpha = "[Select_float(GreaterThan_int32(Faith.GetNumberOfCountiesOfFaith,'(int32)0'), '(float)1.0','(float)0.5')]"
                                     icon = {
                                         name = "faith_icon"
                                         texture = "[Faith.GetIcon]"
