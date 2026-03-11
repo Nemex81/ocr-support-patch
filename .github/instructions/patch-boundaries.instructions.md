@@ -21,7 +21,6 @@ Qualsiasi edit fuori dai percorsi scrivibili è **proibito senza conferma esplic
 
 - `../CK3-OCR/` — repository upstream Agamidae, sola lettura
 - `../CK3 ORIGINAL VERSION/` — vanilla Paradox, sola lettura
-- `coding_ai/` — documentazione storica, non modificare
 - `.github/agents/` — definizioni agenti, non modificare
 - `.github/prompts/` — prompt riutilizzabili, non modificare
 - `.github/instructions/` — istruzioni framework, non modificare

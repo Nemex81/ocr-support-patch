@@ -33,7 +33,6 @@ ocr-support-patch/
 │   └── audit.py                   ← orchestratore: valida tutti i file .gui convertiti
 ocr_support_compatibility_pach/
 │   └── gui/                        ← file .gui della mod (lavoro attivo)
-coding_ai/                          ← documentazione storica (sola lettura)
 ```
 
 I file GUI vanilla di riferimento si trovano in:
