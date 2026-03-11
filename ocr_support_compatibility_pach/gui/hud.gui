@@ -2250,6 +2250,48 @@ icon = {
 	}
 
 	hotkeys_HUD_ocr = {}
+
+	container = {
+		name = "ocr_bottom_left_icon_shortcuts"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		ignoreinvisible = yes
+		datacontext = "[GetPlayer]"
+
+		button = {
+			name = "ocr_lifestyle_shortcut"
+			shortcut = "map_mode_4"
+			visible = "[GetPlayer.IsAdult]"
+			onclick = "[OpenGameViewData( 'lifestyle', GetPlayer.GetID )]"
+			tooltip = "PLAYER_LIFESTYLE_TOOLTIP"
+		}
+
+		button = {
+			name = "ocr_faith_shortcut"
+			shortcut = "mapmode_faith_secondary"
+			onclick = "[OpenGameViewData( 'faith', GetPlayer.GetFaith.GetID )]"
+			tooltip = "FAITH_CHARACTER_WINDOW"
+			using = tooltip_es
+			tooltipwidget = { faith_tooltip_click = {} }
+		}
+
+		button = {
+			name = "ocr_culture_shortcut"
+			shortcut = "map_mode_2"
+			onclick = "[OpenGameViewData( 'culture_window', GetPlayer.GetCulture.GetID )]"
+			tooltip = "CULTURE_CHARACTER_WINDOW"
+			using = tooltip_es
+			tooltipwidget = { culture_tooltip_click = {} }
+		}
+
+		button = {
+			name = "ocr_house_shortcut"
+			shortcut = "mapmode_house_secondary"
+			onclick = "[DefaultOnHouseCoatOfArmsClick(GetPlayer.GetHouse.GetID)]"
+			tooltip = "DYNASTY_VIEW_HOUSES_TT"
+			using = tooltip_es
+			tooltipwidget = { using = dynasty_house_tooltip }
+		}
+	}
 }
 
 ### Bottom Left
@@ -2334,7 +2376,6 @@ widget = {
 
 			button_open_inventory = {
 				name = "open_inventory_button"
-				shortcut = "ocr_open_inventory"
 				size = { 55 55 }
 				datacontext = "[GetPlayer]"
 				using = tooltip_ne
@@ -2362,7 +2403,6 @@ widget = {
 			button_normal = {
 				name = "lifestyle_button"
 				visible = "[GetPlayer.IsAdult]"
-				shortcut = "ocr_open_lifestyle"
 
 				tooltip = "PLAYER_LIFESTYLE_TOOLTIP"
 				using = tooltip_ne
@@ -2428,7 +2468,6 @@ widget = {
 
 			button_normal = {
 				name = "faith_button_manual"
-				shortcut = "ocr_open_faith"
 				size = { 45 45 }
 				onclick = "[OpenGameViewData( 'faith', Faith.GetID )]"
 
@@ -2458,7 +2497,6 @@ widget = {
 
 			button_normal = {
 				name = "culture_button_manual"
-				shortcut = "ocr_open_culture"
 				size = { 45 45 }
 				onclick = "[OpenGameViewData( 'culture_window', Culture.GetID )]"
 
@@ -2488,7 +2526,6 @@ widget = {
 
 			button_normal = {
 				name = "house_button_manual"
-				shortcut = "ocr_open_house"
 				size = { 45 45 }
 				onclick = "[DefaultOnHouseCoatOfArmsClick(DynastyHouse.GetID)]"
 
