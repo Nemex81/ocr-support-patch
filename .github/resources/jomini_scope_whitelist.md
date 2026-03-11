@@ -87,6 +87,57 @@ Ultimo aggiornamento: 2026-03-11
 
 ---
 
+## Scope e binding — interaction_menu_window.gui
+
+Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/interaction_menu_window.gui`
+e in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/interaction_templates.gui`.
+
+### Scope finestra e controller
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `CharacterInteractionMenuWindow` | interaction_menu_window.gui — scope finestra interazioni | metodi: `GetCharacter`, `Close`, `OutsideDiplomaticRange`, `IsFiltered`, `GetFilterDescription`, `GetCategoryItems`, `GetMoreInteractions`, `AreMoreInteractionsVisisble` |
+| `CharacterInteractionMenuWindow.AreMoreInteractionsVisisble` | interaction_menu_window.gui | ⚠️ refuso storico nel nome — usare ESATTAMENTE così, non correggere |
+
+### Metodi Character verificati in interaction_menu_window.gui
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `Character.IsLocalPlayer` | interaction_menu_window.gui — check giocatore locale | usato nel header OCR e vanilla |
+| `Character.GetNameNoTooltip` | interaction_menu_window.gui — nome vanilla senza tooltip | con modificatore `\|U` per uppercase |
+| `Character.GetUINameNoTooltip` | interaction_menu_window.gui — nome UI completo senza tooltip | più completo di GetNameNoTooltip |
+| `Character.IsPinned` | interaction_menu_window.gui — stato pin outliner | usato per toggle testuale OCR |
+| `Character.ToggleCharacterPinned` | interaction_menu_window.gui — toggle pin outliner | onclick del pulsante pin vanilla e OCR |
+| `Character.CanCustomizePortrait` | interaction_menu_window.gui — guard apertura barbiere | visibilità pulsante barbiere vanilla e OCR |
+| `Character.OnCustomizePortrait` | interaction_menu_window.gui — apertura barbiere | onclick del pulsante barbiere |
+| `Character.CanCharacterBeRenamed` | interaction_menu_window.gui — guard rinomina | visibilità pulsante rename vanilla e OCR |
+| `Character.PanCameraTo` | interaction_menu_window.gui — centra camera sul personaggio | onclick del pulsante go-to vanilla e OCR |
+
+### Scope categorie e interazioni
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `InteractionCategoryItem` | interaction_templates.gui — scope categoria interazioni | metodi: `IsVisible`, `GetName`, `GetInteractions`, `ShowMoreInteractions` |
+| `InteractionItem` | interaction_templates.gui — scope singola riga interazione | metodi: `GetName`, `GetTooltip`, `IsValid`, `OnClick`, `ToggleFavorite`, `IsFavorite`, `IsMarriageSetting`, `OnClickCheckbox`, `CheckboxEnabled`, `GetCheckboxFrame`, `GetCheckboxTooltip`, `HasWarningIcon`, `GetWarningTooltipDesc`, `HasPreviewSchemeOdds`, `GetPreviewSchemeOdds`, `IsPotentialAccept`, `IsMore`, `IsCharacterInteraction`, `IsHighlighted`, `ShouldUseExtraIcon`, `GetExtraIcon`, `GetCharacterInteraction` |
+
+### Funzioni GUI verificate in interaction_menu_window.gui
+
+| Funzione | Contesto | Note |
+|---|---|---|
+| `GetDataModelSize()` | interaction_templates.gui — conteggio interazioni per categoria | es. `GetDataModelSize(InteractionCategoryItem.GetInteractions)` |
+| `EqualTo_int32()` | interaction_templates.gui — confronto checkbox frame | es. `EqualTo_int32(InteractionItem.GetCheckboxFrame, '(int32)2')` |
+| `LessThanOrEqualTo_CFixedPoint()` | interaction_templates.gui — check acceptance value | es. per "won't accept" nel riepilogo OCR upstream |
+| `Select_CString()` | interaction_menu_window.gui — testi condizionali | es. `Select_CString(Character.IsPinned, 'Rimuovi dall outliner.', 'Aggiungi all outliner.')` |
+
+### ScriptedGui rename verificato
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetScriptedGui('rename_character_after_birth')` | interaction_menu_window.gui — GUI scriptata rinomina | binding verificato in vanilla; `datacontext` sulla stessa riga non sovrascrive Character scope dal parent |
+| `ScriptedGui.Execute(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('child', Character.MakeScope).End)` | interaction_menu_window.gui — esecuzione rename | pattern GuiScope con AddScope 'child' verificato nel vanilla |
+
+---
+
 ## Scope e binding — window_faith.gui
 
 Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_faith.gui`.
