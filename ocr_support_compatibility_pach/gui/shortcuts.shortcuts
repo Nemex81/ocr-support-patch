@@ -1,0 +1,10 @@
+shortcutbindings = {
+	# OCR Support Patch — scorciatoie icone bottom-left per giocatori non vedenti
+	# Modificatore alt: libero in CK3 1.17.1 (non usato né in vanilla né in OCR-Support upstream)
+
+	ocr_open_inventory = "alt+1"	# alt+1 → Inventario artefatti
+	ocr_open_lifestyle  = "alt+2"	# alt+2 → Stile di vita (disabilitato se minorenne)
+	ocr_open_faith      = "alt+3"	# alt+3 → Finestra fede
+	ocr_open_culture    = "alt+4"	# alt+4 → Finestra cultura
+	ocr_open_house      = "alt+5"	# alt+5 → Finestra casata/dinastia
+}

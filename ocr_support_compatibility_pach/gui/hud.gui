@@ -2321,9 +2321,9 @@ widget = {
 		name = "bottom_left_icons_container_final"
 		visible = "[And(GetPlayer.IsValid, Not(IsPauseMenuShown))]"
 		parentanchor = bottom|left
-		size = { 300 400 } 
+		size = { 300 400 }
 		position = { 0 0 }
-		
+
 		# Contesto globale fondamentale
 		datacontext = "[GetPlayer]"
 
@@ -2331,7 +2331,7 @@ widget = {
 		widget = {
 			position = { 5 5 }
 			size = { 40 40 }
-			
+
 			button_open_inventory = {
 				name = "open_inventory_button"
 				size = { 55 55 }
@@ -2347,13 +2347,20 @@ widget = {
 				parentanchor = bottom|right
 				visible = "[Or( GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'inventory' ), '(int32)0' ), And( Not( GetPlayer.HasRoyalCourt ), GreaterThan_int32( LocalPlayerNewArtifacts.GetNumNewArtifactsOfCategory( 'court' ), '(int32)0' ) ) )]"
 			}
+
+			# Shortcut OCR: alt+1 → Inventario
+			button = {
+				size = { 0 0 }
+				shortcut = "ocr_open_inventory"
+				onclick = "[ToggleGameViewData( 'inventory', GetPlayer.GetID )]"
+			}
 		}
 
 		### 2. STILE DI VITA (Lifestyle)
 		widget = {
 			position = { 5 50 }
 			size = { 40 40 }
-			
+
 			# Questo contesto rende disponibile "Lifestyle" (l'oggetto)
 			datacontext = "[GetPlayer.GetLifestyle]"
 
@@ -2387,7 +2394,7 @@ widget = {
 						blend_mode = alphamultiply
 					}
 				}
-				
+
 				# Icona Stile Attivo
 				icon = {
 					visible = "[Lifestyle.IsValid]" # Usa 'Lifestyle' dal datacontext
@@ -2396,7 +2403,7 @@ widget = {
 					parentanchor = center
 					framesize = { 160 160 }
 				}
-				
+
 				# Icona Nessuno Stile
 				icon = {
 					visible = "[Not(Lifestyle.IsValid)]"
@@ -2404,11 +2411,19 @@ widget = {
 					size = { 38 38 }
 					parentanchor = center
 				}
-				
+
 				icon = {
 					texture = "gfx/interface/buttons/button_lifestyles_frame.dds"
 					size = { 100% 100% }
 				}
+			}
+
+			# Shortcut OCR: alt+2 → Stile di vita (disabilitato se minorenne)
+			button = {
+				size = { 0 0 }
+				visible = "[GetPlayer.IsAdult]"
+				shortcut = "ocr_open_lifestyle"
+				onclick = "[OpenGameViewData( 'lifestyle', GetPlayer.GetID )]"
 			}
 		}
 
@@ -2419,14 +2434,14 @@ widget = {
 			parentanchor = bottom|left
 			position = { 10 -150 }
 			size = { 45 45 }
-			
+
 			datacontext = "[GetPlayer.GetFaith]"
 
 			button_normal = {
 				name = "faith_button_manual"
 				size = { 45 45 }
 				onclick = "[OpenGameViewData( 'faith', Faith.GetID )]"
-				
+
 				using = tooltip_es
 				tooltipwidget = { faith_tooltip_click = {} }
 
@@ -2438,6 +2453,13 @@ widget = {
 					glow = { color = { 0 0 0 0.8 } glow_radius = 3 using = Glow_Standard }
 				}
 			}
+
+			# Shortcut OCR: alt+3 → Fede
+			button = {
+				size = { 0 0 }
+				shortcut = "ocr_open_faith"
+				onclick = "[OpenGameViewData( 'faith', Faith.GetID )]"
+			}
 		}
 
 		### 4. CULTURA (Standalone - Funzionante)
@@ -2447,14 +2469,14 @@ widget = {
 			parentanchor = bottom|left
 			position = { 10 -200 }
 			size = { 45 45 }
-			
+
 			datacontext = "[GetPlayer.GetCulture]"
 
 			button_normal = {
 				name = "culture_button_manual"
 				size = { 45 45 }
 				onclick = "[OpenGameViewData( 'culture_window', Culture.GetID )]"
-				
+
 				using = tooltip_es
 				tooltipwidget = { culture_tooltip_click = {} }
 
@@ -2466,6 +2488,13 @@ widget = {
 					glow = { color = { 0 0 0 0.8 } glow_radius = 3 using = Glow_Standard }
 				}
 			}
+
+			# Shortcut OCR: alt+4 → Cultura
+			button = {
+				size = { 0 0 }
+				shortcut = "ocr_open_culture"
+				onclick = "[OpenGameViewData( 'culture_window', Culture.GetID )]"
+			}
 		}
 
 		### 5. CASATA (Standalone - Funzionante)
@@ -2475,25 +2504,32 @@ widget = {
 			parentanchor = bottom|left
 			position = { 10 -250 }
 			size = { 45 45 }
-			
+
 			datacontext = "[GetPlayer.GetHouse]"
 
 			button_normal = {
 				name = "house_button_manual"
 				size = { 45 45 }
 				onclick = "[DefaultOnHouseCoatOfArmsClick(DynastyHouse.GetID)]"
-				
+
 				using = tooltip_es
 				tooltipwidget = { using = dynasty_house_tooltip }
 
 				icon = { texture = "gfx/interface/skinned/button_hud_character_sidebar.dds" size = { 100% 100% } }
-				
+
 				coa_house_tiny = {
 					parentanchor = center
 					scale = 0.85
 					blockoverride "coa_button" { alwaystransparent = yes }
 					blockoverride "coa_tooltip" {}
 				}
+			}
+
+			# Shortcut OCR: alt+5 → Casata
+			button = {
+				size = { 0 0 }
+				shortcut = "ocr_open_house"
+				onclick = "[DefaultOnHouseCoatOfArmsClick(DynastyHouse.GetID)]"
 			}
 		}
 
