@@ -10,19 +10,21 @@ Leggi: `${file:.github/copilot-instructions.md}`
 
 File da verificare: `ocr_support_compatibility_pach/gui/${input:nomeFile}.gui`
 
-## Checklist da verificare
+Usa questo prompt come entrypoint rapido e user-friendly.
+Per la verifica sostanziale, delega alle skill e ai revisori del framework invece di
+replicare una checklist completa concorrente.
 
-- [ ] Ogni window/widget ha il container OCR e il container vanilla
-- [ ] Le visibility sono mutuamente esclusive e usano la game_rule corretta
-- [ ] Il container vanilla è identico al file in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFile}.gui`
-- [ ] Il container OCR non contiene widget grafici (icon standalone, portrait, progressbar visive)
-- [ ] Tutti i bottoni OCR hanno tooltip testuale
-- [ ] Font size OCR >= 18 ovunque
-- [ ] Nessun `name` duplicato allo stesso livello gerarchico
-- [ ] Nessun scope o datatype non verificato nel vanilla
-- [ ] Gli header di sezione OCR sono presenti e in giallo
+## Flusso di verifica raccomandato
+
+- Invoca `#deprecated-pattern-scanner` per escludere pattern deprecati o vietati
+- Invoca `#accessibility-checklist-runner` per i controlli OCR automatici
+- Invoca `#vanilla-fidelity-check` per la fedelta' del container vanilla
+- Se emergono dubbi qualitativi OCR, passa a `revisore-accessibilita`
+- Se emergono dubbi di fedelta' vanilla o interazioni mouse-only, passa a `revisore-vanilla`
+- Se tutto e' coerente, suggerisci `auditore-finale`
 
 ## Output
 
-Per ogni voce della checklist: ✅ OK / ❌ Problema + riga/widget specifico.
-In fondo: lista prioritizzata dei fix necessari.
+- Riassunto breve dei risultati delle skill invocate
+- Bug o rischi residui ancora da far valutare ai revisori
+- Prossimo handoff consigliato: `revisore-accessibilita`, `revisore-vanilla` oppure `auditore-finale`

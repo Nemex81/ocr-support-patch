@@ -5,7 +5,7 @@ model: ['Claude Opus 4.6', 'GPT-5.4']
 tools: [read, search]
 handoffs:
   - label: "→ Fix implementatore"
-    agent: implementatore-patch
+    agent: "Implementatore Patch"
     prompt: "Risolvi i problemi critici identificati nell'audit prima del commit."
     send: false
 ---
@@ -25,6 +25,10 @@ Il tuo verdetto è vincolante: **APPROVED** o **BLOCKED**.
 
 ### Fedeltà Vanilla
 - [ ] #vanilla-fidelity-check → verdetto PASS
+
+### Parità Funzionale
+- [ ] Checksum e multiplayer parity non risultano degradati dalla patch
+- [ ] Interaction parity vanilla verificata per input mouse-only: click sinistro, click destro, tooltip e stati interattivi rilevanti
 
 ### Scope e Binding
 - [ ] #scope-whitelist-check → nessun binding ASSENTE o DA VERIFICARE

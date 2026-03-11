@@ -12,6 +12,8 @@ parameters:
     required: true
 ---
 
+# accessibility-checklist-runner
+
 ## Logica di Esecuzione
 
 Leggi il file `file_path`. Estrai SOLO il blocco con nome che inizia con `ocr_`
@@ -48,7 +50,9 @@ Verifica che nessun widget OCR contenga un binding numerico isolato.
 ### Check 6 — Liste vuote
 
 Se il file contiene `datamodel` nel blocco OCR, verifica che ci sia un widget
-o testo alternativo per il caso lista vuota.
+o testo alternativo per il caso lista vuota. Un fallback debole o ambiguo come
+un header generico senza messaggio esplicito non basta: deve risultare chiaro
+che la lista e' vuota e non semplicemente non caricata.
 
 ### Check 7 — Visibilità
 
@@ -65,7 +69,7 @@ Il blocco OCR deve avere almeno un widget con testo che identifica la finestra
 
 ## Formato Output Obbligatorio
 
-```
+```text
 ## Checklist Accessibilità NVDA: [nome_file]
 
 | Check | Stato | Dettaglio |

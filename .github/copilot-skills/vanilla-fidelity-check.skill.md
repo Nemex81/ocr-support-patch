@@ -12,6 +12,8 @@ parameters:
     required: true
 ---
 
+# vanilla-fidelity-check
+
 ## Logica di Esecuzione
 
 1. Leggi il file `file_path` nella patch.
@@ -21,6 +23,8 @@ parameters:
    `../CK3 ORIGINAL VERSION/ck3origin/game/gui/[nome_file].gui`
 4. Leggi il file vanilla originale.
 5. Confronta il contenuto del container vanilla estratto con il vanilla originale.
+  La verifica e' testuale e comparativa: non promettere automazioni oltre le differenze
+  leggibili nel contenuto dei file.
 
 ### Differenze AUTORIZZATE (non segnalare come bug)
 
@@ -36,12 +40,13 @@ parameters:
 - Proprietà modificate: `size`, `position`, `type`, `name`, binding `[...]`
 - Ordine dei widget alterato
 - Blocchi `blockoverride` modificati o rimossi
+- Proprietà interattive modificate o rimosse: `onclick`, `onrightclick`, `tooltip`, hover feedback, stato `enabled` o `disabled`
 
 ---
 
 ## Formato Output Obbligatorio
 
-```
+```text
 ## Verifica Fedeltà Vanilla: [nome_file]
 
 | Widget/Riga | Contenuto Patch | Contenuto Atteso | Tipo Differenza |

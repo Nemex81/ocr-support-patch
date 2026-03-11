@@ -126,6 +126,17 @@ window = {
 5. Tutti i bottoni OCR hanno `tooltip` descrittivo
 6. Nessun `name` duplicato allo stesso livello gerarchico
 
+## Mouse Input Parity
+
+Checklist operativa da applicare a ogni `.gui` quando il widget vanilla è interattivo:
+
+- preservare `onclick` quando il widget vanilla lo definisce
+- preservare `onrightclick` se presente nel vanilla
+- preservare feedback `enabled` o `disabled` se influenza l'uso reale del controllo
+- preservare `tooltip` e feedback hover quando fanno parte dell'esperienza vanilla
+- non ridurre testo o icona cliccabili a puro display nel container vanilla
+- non trasformare item di grid o lista interattivi in elementi passivi nel container vanilla
+
 ---
 
 ## Checklist Pre-Commit

@@ -12,6 +12,8 @@ parameters:
     required: true
 ---
 
+# deprecated-pattern-scanner
+
 ## Logica di Esecuzione
 
 Leggi il file indicato in `file_path`. Analizza ogni riga cercando i pattern
@@ -20,8 +22,11 @@ pattern esatto trovato, categoria, gravità, fix consigliato.
 
 ### Pattern da cercare — categoria DEPRECATO
 
-- `GameRules.GetRule('ocr_accessibility_mode')` — sostituire con
-  `GetVariableSystem.Exists('ocr')` per visibilità vanilla o
+- Qualunque variante realistica di `GameRules.GetRule('ocr_accessibility_mode')`, incluse:
+  - apici singoli o doppi
+  - spazi variabili tra `GetRule`, parentesi e stringa
+  - uso dentro binding più lunghi sulla stessa riga
+  Sostituire con `GetVariableSystem.Exists('ocr')` per visibilità vanilla o
   `Not(GetVariableSystem.Exists('ocr'))` per visibilità OCR.
 
 ### Pattern da cercare — categoria VIETATO
@@ -50,7 +55,7 @@ pattern esatto trovato, categoria, gravità, fix consigliato.
 
 ## Formato Output Obbligatorio
 
-```
+```text
 ## Risultati Scansione: [nome_file]
 
 | Riga | Pattern trovato | Categoria | Gravità | Fix consigliato |

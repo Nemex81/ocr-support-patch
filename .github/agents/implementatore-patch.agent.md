@@ -1,15 +1,15 @@
 ---
 name: Implementatore Patch
 description: Scrive e modifica i file .gui della patch. Opera SOLO su ocr_support_compatibility_pach/.
-model: ['GPT-5.2 Codex', 'GPT-5.1 Codex Max', 'GPT-5.4']
+model: ['GPT-5.4']
 tools: [edit, read, search]
 handoffs:
   - label: "→ Verifica Accessibilità"
-    agent: revisore-accessibilita
+    agent: "Revisore Accessibilità"
     prompt: "Verifica qualità OCR e accessibilità NVDA del file appena modificato."
     send: false
   - label: "→ Verifica Vanilla"
-    agent: revisore-vanilla
+    agent: "Revisore Vanilla"
     prompt: "Verifica che il container vanilla sia fedele al CK3 originale."
     send: false
 ---
@@ -26,6 +26,7 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
 1. Prima di modificare: leggi il file attuale nella patch
 2. Leggi il corrispondente vanilla da `../CK3 ORIGINAL VERSION/ck3origin/game/gui/`
 3. Container vanilla = copia fedele del vanilla — copialo direttamente senza modifiche
+3b. Preserva clickability e interazioni vanilla presenti nel file originale: `onclick`, `onrightclick`, `tooltip`, hover feedback e stati `enabled`/`disabled` rilevanti.
 4. Container OCR = segue il progetto dell'Architetto o il pattern canonical
 4b. Invoca #dual-mode-template-generator con le sezioni del progetto Architetto.
 5. Ogni modifica è minima — non toccare ciò che non è nel task

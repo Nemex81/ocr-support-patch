@@ -5,11 +5,11 @@ model: ['Claude Opus 4.6', 'GPT-5.4']
 tools: [read, search]
 handoffs:
   - label: "→ Fix implementatore"
-    agent: implementatore-patch
+    agent: "Implementatore Patch"
     prompt: "Applica i fix di accessibilità identificati nel report di revisione."
     send: false
   - label: "→ Audit Finale"
-    agent: auditore-finale
+    agent: "Auditore Finale"
     prompt: "Esegui l'audit finale su questo file."
     send: false
 ---
@@ -22,9 +22,15 @@ Non modifichi mai file. Produci solo report.
 ## Passo 1 — Verifica Automatica
 
 Invoca `#accessibility-checklist-runner` sul file da verificare.
-Il report della skill copre i check meccanici. La tua analisi qualitativa
-(ordine lettura, coerenza informativa, usabilità NVDA) integra ma non
-sostituisce il report automatico.
+Il report della skill copre solo i check meccanici e ripetibili. La tua analisi qualitativa
+di ordine lettura, coerenza informativa, usabilità NVDA e chiarezza testuale è obbligatoria,
+separata e non sostituibile dal report automatico.
+
+## Confine della Review
+
+- La skill rileva violazioni testuali o strutturali evidenti
+- Tu devi segnalare anche problemi qualitativi che la skill non può inferire automaticamente
+- Un PASS automatico non equivale a PASS finale se l'esperienza NVDA resta confusa o incompleta
 
 ## Checklist NVDA
 

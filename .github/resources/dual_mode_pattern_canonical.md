@@ -70,6 +70,27 @@ window = {
 }
 ```
 
+## Separazione dei Types
+
+- Regola: se il rendering diverge tra OCR e vanilla, separa i `types`
+- Naming: usa suffissi `_ocr` e `_vanilla` per i type divergenti; mantieni type condivisi solo quando struttura e comportamento restano identici
+- La fedeltà vanilla include anche le proprietà interattive rilevanti: `onclick`, `onrightclick`, `tooltip`, stato `enabled` o `disabled`
+
+Mini-pattern per componente interattivo divergente:
+
+```jomini
+types example_action_button_ocr = button {
+    fontsize = 18
+    tooltip = "Descrizione azione"
+}
+
+types example_action_button_vanilla = button {
+    onclick = "[DoThing]"
+    onrightclick = "[OpenContextMenu]"
+    tooltip = "Vanilla hover text"
+}
+```
+
 ## Regole Invariabili
 
 1. I due container sono **mutuamente esclusivi** via `visible`

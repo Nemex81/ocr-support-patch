@@ -388,7 +388,7 @@ window = {
                 using = close_window_ocr
                 tooltip = "BACK"
                 onclick = "[Clear('faith_view_tabs')]"
-                visible = "[Is('faith_view_tabs')]"}
+                visible = "[Is('faith_view_tabs')]"
             }
 
             button_text = {
@@ -592,7 +592,7 @@ window = {
                         using = close_window_ocr
                         tooltip = "BACK"
                         visible = "[Is('doctrine')]"
-                        onclick = "[Clear('doctrine')]"}
+                        onclick = "[Clear('doctrine')]"
                     }
 
                     vbox_doctrine_group = {
@@ -873,6 +873,7 @@ window = {
                         datamodel = "[GetGlobalList('faith_followers_sort')]"
                         button = {
                             using = close_window_ocr
+                            tooltip = "CLOSE_WINDOW"
                             onclick = "[Clear('faith_followers_sort')]"
                         }
                         text_single = {

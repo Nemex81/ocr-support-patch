@@ -82,6 +82,14 @@ window = {
 
 ---
 
+## Policy Globale di Parità
+
+- OCR e vanilla sono interfacce equivalenti e parallele: nessuna delle due è una versione ridotta dell'altra
+- Checksum invariato e multiplayer parity sono gate non negoziabili per ogni integrazione
+- La UX vanilla non va degradata, semplificata o impoverita per allinearla al layout OCR
+
+---
+
 ## Regole Widget OCR
 
 - `text_single` / `text_multi`: testo informativo — sempre con `autoresize = yes`
@@ -185,6 +193,8 @@ visible = "[GetVariableSystem.Exists('ocr')]"
 ```
 
 > ⚠️ `GameRules.GetRule('ocr_accessibility_mode')` è **deprecato** — non usarlo nelle nuove conversioni.
+
+La stessa regola vale per il framework di review: il vecchio pattern può comparire solo come esempio di anti-pattern da rilevare, mai come meccanismo attivo.
 
 
 ## Errori Comuni da Evitare
