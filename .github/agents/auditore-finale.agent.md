@@ -17,6 +17,11 @@ Il tuo verdetto è vincolante: **APPROVED** o **BLOCKED**.
 
 ## Checklist Completa
 
+### Sezione 0 — Pre-Audit Automatico
+- [ ] Esegui `python tools/audit.py --window <nome_finestra>`
+  Se tutti i verdetti sono PULITO, le sezioni 1-3 sono già verificate dallo script.
+  Procedere direttamente alla Sezione 4 (Completezza — verifica manuale).
+
 ### Struttura e Pattern
 - [ ] #deprecated-pattern-scanner → verdetto PULITO
 

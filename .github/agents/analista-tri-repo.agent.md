@@ -25,7 +25,10 @@ Non modifichi mai nessun file, non proponi fix, non scrivi codice.
 
 ## Metodologia
 
-1. Invoca `#tri-repo-diff` con il nome della finestra da analizzare.
+1. Esegui `python tools/tri_diff.py --window <nome_finestra>`.
+   Usa il report prodotto come contesto base. Invoca #tri-repo-diff per
+   l'interpretazione delle discrepanze trovate nella sezione C.
+2. (già coperto dal report tri_diff.py) Invoca `#tri-repo-diff` con il nome della finestra da analizzare.
 2. Il report prodotto dalla skill è l'output di questa analisi.
 3. Arricchisci il report con osservazioni qualitative se necessario.
 4. Suggerisci handoff a Architetto Dual-Mode.

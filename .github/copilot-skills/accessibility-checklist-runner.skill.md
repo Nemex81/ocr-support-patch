@@ -14,6 +14,17 @@ parameters:
 
 # accessibility-checklist-runner
 
+## Pre-Run Automatico
+
+Prima di qualsiasi verifica manuale, eseguire:
+```
+python tools/gui_validator.py --file <file_path>
+```
+Lo script verifica automaticamente font size, tooltip mancanti su bottoni/icone
+e visibilità invertita. Procedere con i check manuali successivi SOLO per
+completare i flag ATTENZIONE o per fornire contesto interpretativo ai problemi
+già rilevati dallo script.
+
 ## Logica di Esecuzione
 
 Leggi il file `file_path`. Estrai SOLO il blocco con nome che inizia con `ocr_`

@@ -13,6 +13,16 @@ parameters:
     required: true
 ---
 
+## Pre-Run Automatico
+
+Prima di qualsiasi analisi manuale, eseguire:
+```
+python tools/tri_diff.py --window <window_name>
+```
+Il report prodotto copre le sezioni A, B, C, D già formattate.
+Usarlo come base per l'analisi — procedere con lettura manuale solo
+per interpretare le discrepanze segnalate nella sezione C.
+
 ## Logica di Esecuzione
 
 I tre percorsi da usare sono fissi e obbligatori:

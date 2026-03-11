@@ -18,6 +18,16 @@ parameters:
     required: false
 ---
 
+## Pre-Run Automatico
+
+Prima di qualsiasi verifica manuale, eseguire:
+```
+python tools/scope_extractor.py --file <percorso_file_gui>
+```
+Lo script produce automaticamente la lista dei binding ASSENTI con le righe
+già formattate per la whitelist. Usare il suo output come input per questa skill.
+La verifica manuale rimane necessaria solo per i binding DA VERIFICARE (⚠️).
+
 ## Logica di Esecuzione
 
 Leggi il file `.github/resources/jomini_scope_whitelist.md`. Estrai tutti i

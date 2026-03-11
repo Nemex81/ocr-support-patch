@@ -14,6 +14,18 @@ parameters:
 
 # deprecated-pattern-scanner
 
+## Pre-Run Automatico
+
+Prima di qualsiasi analisi manuale, eseguire:
+```
+python tools/gui_validator.py --file <file_path>
+```
+L'output dello script è la fonte autoritativa per tutti i problemi CRITICO.
+Procedere con l'analisi manuale SOLO per completare i flag ATTENZIONE
+o per fornire contesto interpretativo ai problemi già rilevati dallo script.
+Se lo script riporta verdetto PULITO, la skill può concludere immediatamente
+senza analisi manuale ulteriore.
+
 ## Logica di Esecuzione
 
 Leggi il file indicato in `file_path`. Analizza ogni riga cercando i pattern
