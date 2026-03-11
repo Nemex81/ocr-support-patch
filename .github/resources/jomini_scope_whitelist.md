@@ -203,3 +203,181 @@ Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_fa
 | `Scope.Title` | window_faith.gui (OCR) — scope title in catena GuiScope | binding Jomini scope accessor |
 | `Scope.Title.GetCountyData.GetCapital` | window_faith.gui (OCR) — capitale contea del titolo | binding OCR specifico — catena scope |
 | `Scope.Var` | window_faith.gui (OCR) — variabile su scope | compatibile con GetPlayer.MakeScope.Var() verificato in vanilla hud.gui |
+
+---
+
+## Scope e binding — window_my_realm.gui
+
+Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_my_realm.gui`.
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.GetPrimaryTitle.GetNameNoTooltip` | window_my_realm.gui — header realm | verificato in vanilla window_my_realm.gui:485 |
+| `GetPlayer.GetActiveLawInGroupWithFlag` | window_my_realm.gui — subtitle authority / realm law | verificato in vanilla window_my_realm.gui:525 |
+| `GetPlayer.HasSuzerain` | window_my_realm.gui — label liege/suzerain | verificato in vanilla window_my_realm.gui:587 |
+| `GetPlayer.HasLiege` | window_my_realm.gui — label liege | verificato in vanilla window_my_realm.gui:594 |
+| `SelectLocalization` | window_my_realm.gui — testo condizionale liege/suzerain | verificato in vanilla window_my_realm.gui:988 |
+| `GetPlayer.GetDreadBreakdown` | window_my_realm.gui — tooltip dread | verificato in vanilla window_my_realm.gui:3222 |
+| `GetPlayer.GetDread` | window_my_realm.gui — valore dread | verificato in vanilla window_my_realm.gui:3232 |
+| `NotEqualTo_int32` | window_my_realm.gui — filtro conteggio stance vassalli | verificato in vanilla window_my_realm.gui:3283 |
+---
+## Scope e binding -- hud.gui
+Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/hud.gui`
+e in altri file vanilla (citati nelle note).
+### Funzioni matematiche/comparazione -- verificate in vanilla hud.gui
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GreaterThanOrEqualTo_CFixedPoint` | hud.gui -- comparazione >= fixed point | verificato in vanilla hud.gui:5124 |
+| `GreaterThanOrEqualTo_int32` | hud.gui -- comparazione >= int32 | verificato in vanilla hud.gui:1442 |
+| `LessThan_CFixedPoint` | hud.gui -- comparazione < fixed point | verificato in vanilla hud.gui:5279 |
+| `LessThan_int32` | hud.gui -- comparazione < int32 | verificato in vanilla hud.gui:5976 |
+| `Add_int32` | hud.gui -- somma int32 | verificato in vanilla map_icon_layer.gui:847, window_activity_planner.gui:1705 |
+| `EqualTo_CFixedPoint` | hud.gui -- uguaglianza fixed point | verificato in vanilla interaction_declare_war.gui:857 |
+### Binding GetPlayer -- verificati in vanilla hud.gui
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.GetPiety` | hud.gui -- pieta del giocatore | verificato in vanilla hud.gui (usato come value, comune in tutti i file) |
+| `GetPlayer.GetPrestige` | hud.gui -- prestigio del giocatore | verificato in vanilla hud.gui (usato come value, comune in tutti i file) |
+| `GetPlayer.GetAcceptedTaskContracts` | hud.gui -- contratti accettati | verificato in vanilla hud.gui:3355 |
+| `GetPlayer.GetCulture` | hud.gui -- cultura del giocatore | verificato in vanilla hud.gui:1623 |
+| `GetPlayer.GetDomicile` | hud.gui -- domicilio | verificato in vanilla hud.gui:5451 |
+| `GetPlayer.GetDynasty.GetDynastyPrestigeLevelTexture` | hud.gui -- texture livello prestigio dinasta | verificato in vanilla hud.gui:5648 |
+| `GetPlayer.GetDynasty.GetPrestige` | hud.gui -- prestigio dinastia | verificato in vanilla hud.gui:5667 |
+| `GetPlayer.GetFaith` | hud.gui -- fede del giocatore | verificato in vanilla hud.gui:1649 |
+| `GetPlayer.GetFaith.GetDefensiveGreatHolyWars` | hud.gui -- guerre sante difensive | verificato in vanilla hud.gui:3432 |
+| `GetPlayer.GetFaith.GetGreatHolyWar` | hud.gui -- guerra santa in corso | verificato in vanilla hud.gui:3452 |
+| `GetPlayer.GetFaith.HasOffensiveGreatHolyWar` | hud.gui -- ha guerra santa offensiva | verificato in vanilla hud.gui:3453 |
+| `GetPlayer.GetFocus.GetIcon` | hud.gui -- icona focus corrente | verificato in vanilla hud.gui:2355 |
+| `GetPlayer.GetGold` | hud.gui -- oro del giocatore | verificato in vanilla hud.gui:5271 |
+| `GetPlayer.GetGovernment.HasRule` | hud.gui -- regola governo | verificato in vanilla hud.gui:5556 |
+| `GetPlayer.GetGovernment.IsType` | hud.gui -- tipo di governo | verificato in vanilla hud.gui:342 |
+| `GetPlayer.GetHostileRaiders` | hud.gui -- razziatori ostili | verificato in vanilla hud.gui:3467 |
+| `GetPlayer.GetHouse` | hud.gui -- casata del giocatore | verificato in vanilla hud.gui:1677 |
+| `GetPlayer.GetInfluence` | hud.gui -- influenza corrente | verificato in vanilla hud.gui:5595 |
+| `GetPlayer.GetInfluenceLevelTexture` | hud.gui -- texture livello influenza | verificato in vanilla hud.gui:5585 |
+| `GetPlayer.GetInterloperStruggles` | hud.gui -- lotte come interlopere | verificato in vanilla hud.gui:3531 |
+| `GetPlayer.GetInvolvedSituations` | hud.gui -- situazioni coinvolte | verificato in vanilla hud.gui:3505 |
+| `GetPlayer.GetInvolvedStruggles` | hud.gui -- lotte come partecipante | verificato in vanilla hud.gui:3518 |
+| `GetPlayer.GetLifestyle` | hud.gui -- stile di vita | verificato in vanilla hud.gui:2366 |
+| `GetPlayer.GetPietyLevelTexture` | hud.gui -- texture livello pieta | verificato in vanilla hud.gui:5412 |
+| `GetPlayer.GetPrestigeLevelTexture` | hud.gui -- texture livello prestigio | verificato in vanilla hud.gui:5348 |
+| `GetPlayer.GetRaidHostilityEnd` | hud.gui -- fine ostilita raid | verificato in vanilla hud.gui:4834 |
+| `GetPlayer.GetRaidTargets` | hud.gui -- bersagli raid | verificato in vanilla hud.gui:3480 |
+| `GetPlayer.GetSponsoredInspirations` | hud.gui -- ispirazioni sponsorizzate | verificato in vanilla hud.gui:2890 |
+| `GetPlayer.GetStressProgress` | hud.gui -- progresso stress | verificato in vanilla hud.gui:1965 |
+| `GetPlayer.GetTopLiege.GetGovernment.HasRule` | hud.gui -- regola governo del liege supremo | verificato in vanilla hud.gui:556 |
+| `GetPlayer.HasActiveCompanionAISetting` | hud.gui -- AI compagno attivo | verificato in vanilla hud.gui:3372 |
+| `GetPlayer.IsAdult` | hud.gui -- e adulto | verificato in vanilla hud.gui:2336 |
+| `GetPlayer.IsDynast` | hud.gui -- e dinasta | verificato in vanilla hud.gui:5647 |
+| `GetPlayer.IsValid` | hud.gui -- e valido (check null-safety) | verificato in vanilla hud.gui:1461 |
+### Binding GetPlayer -- analoghi a Character.X verificati nel vanilla
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.GetNumPendingCourtEvents` | hud.gui -- eventi corte in attesa | analogo a `Character.GetNumPendingCourtEvents` verificato in vanilla hud.gui:423 |
+| `GetPlayer.GetShortUINameNotMeNoTooltip` | hud.gui -- nome breve UI | analogo a `Character.GetShortUINameNotMeNoTooltip` verificato in vanilla window_barbershop.gui:1447 |
+| `GetPlayer.HasRaisedRegiments` | hud.gui -- ha reggimenti alzati | analogo a `Character.HasRaisedRegiments` presente (come commento) in vanilla window_military.gui:115 |
+| `GetPlayer.GetTopLiege.MakeScope.ScriptValue` | hud.gui -- script value su scope liege supremo | pattern `MakeScope.ScriptValue` verificato in vanilla window_domicile.gui:3011 |
+### Binding OCR upstream -- da OCR-Support/gui/hud.gui (non nel vanilla nativo)
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPrestigeLevelName` | hud.gui OCR -- nome testuale livello prestigio | binding OCR upstream hud.gui:1714; NON nel vanilla GUI; compatibile con data_binding OCR |
+| `GetDynastyPrestigeLevelName` | hud.gui OCR -- nome livello prestigio dinastia | binding OCR upstream hud.gui:1891; NON nel vanilla GUI; compatibile con data_binding OCR |
+| `GetPlayer.GetCurrentLocation` | hud.gui OCR -- posizione corrente giocatore | binding OCR (OCR_bindings.txt:92 come replace_with); NON nel vanilla GUI nativo |
+---
+## Scope e binding -- window_county_view.gui
+Verificati in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_county_view.gui`
+e in altri file vanilla (citati nelle note).
+### Funzioni sistema/confronto -- verificate nel vanilla
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `EqualTo_uint32` | window_county_view.gui -- confronto uint uguale | verificato in vanilla window_culture.gui:1228 |
+| `GetCommandDesc` | window_county_view.gui -- descrizione comando | verificato in vanilla window_court_positions.gui:82 |
+| `IsDataModelEmpty` | window_county_view.gui -- datamodel vuoto | verificato in vanilla window_county_view.gui:2643 |
+| `IsValidCommand` | window_county_view.gui -- comando valido | verificato in vanilla window_court_positions.gui:144 |
+| `GetVariableSystem.ClearIf` | window_county_view.gui -- cancella var se condizione | verificato in vanilla window_my_realm.gui:49 |
+### Binding GetPlayer -- verificati o dedotti dal vanilla
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.GetCulture.GetNameNoTooltip` | window_county_view.gui -- nome cultura | `GetPlayer.GetCulture` verificato in vanilla hud.gui:1623; `GetCulture.GetNameNoTooltip` verificato in vanilla window_character_filter.gui:439 |
+| `GetPlayer.GetPrimaryTitle.GetNameNoTierNoTooltip` | window_county_view.gui -- nome titolo senza tier | `Title.GetNameNoTierNoTooltip` gia in whitelist (window_faith.gui); `GetPlayer.GetPrimaryTitle` verificato in vanilla window_my_realm.gui:485 |
+### Binding OCR upstream -- da OCR-Support/gui/window_county_view.gui
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.GetCouncillor` | window_county_view.gui OCR -- consigliere per ruolo | binding OCR upstream (county_view:2623), NON nel vanilla GUI ; `GetPlayer.GetCouncillor('councillor_name')` |
+| `GetPlayer.GetFirstNamePossessiveOrMy` | window_county_view.gui OCR -- primo nome possessivo | binding OCR upstream (county_view:387), NON nel vanilla GUI |
+| `GetPlayer.HasDomicile` | window_county_view.gui OCR -- ha domicilio | binding OCR upstream (county_view:376), NON nel vanilla GUI |
+| `GetPlayer.MakeScope.GetList` | window_county_view.gui OCR -- lista da scope player | pattern Jomini scope; analogo a `Province.MakeScope.GetList` in OCR upstream (county_view:326) |
+| `Is` | window_county_view.gui OCR -- shorthand per GetVariableSystem.Exists | shorthand OCR mod; equivalente a `GetVariableSystem.Exists('key')` |
+| `Isnt` | window_county_view.gui OCR -- shorthand per Not(GetVariableSystem.Exists) | shorthand OCR mod; equivalente a `Not(GetVariableSystem.Exists('key'))` |
+| `Scope.GetProvince` | window_county_view.gui OCR -- scope provincia corrente | pattern Jomini scope accessor in item block di datamodel; NON nel vanilla GUI direttamente |
+| `Scope.GetProvince.GetCounty.GetCount.GetTopLiege.GetPrimaryTitle.GetNameNoTooltip` | window_county_view.gui OCR -- catena scope title liege supremo | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.GetCounty.GetName` | window_county_view.gui OCR -- nome contea | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.GetCounty.GetTitle` | window_county_view.gui OCR -- titolo contea | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.GetCounty.GetTitle.GetHolder.GetTopLiege` | window_county_view.gui OCR -- liege supremo | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.GetHolding` | window_county_view.gui OCR -- holding di provincia | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.GetHolding.GetLesseeOrHolder.IsLocalPlayer` | window_county_view.gui OCR -- e local player | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.GetName` | window_county_view.gui OCR -- nome provincia | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.GetTerrain.GetName` | window_county_view.gui OCR -- nome terreno | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.MakeScope.ScriptValue` | window_county_view.gui OCR -- script value su provincia | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.MakeScope.Var` | window_county_view.gui OCR -- variabile scope su provincia | catena OCR su Scope.GetProvince |
+| `Scope.GetProvince.PanCameraTo` | window_county_view.gui OCR -- centra camera su provincia | catena OCR su Scope.GetProvince |
+| `Scope.Province.MakeScope.GetList` | window_county_view.gui OCR -- lista da scope provincia | pattern Jomini scope; analogo a `Province.MakeScope.GetList` nell OCR |
+| `Scope.Title.Custom` | window_county_view.gui OCR -- custom text su scope title | pattern OCR upstream; `Custom` accessor Jomini su scope |
+| `Scope.Title.GetHolder.GetTopLiege.RealmSize` | window_county_view.gui OCR -- realm size liege supremo | catena OCR su Scope.Title |
+---
+## Scope e binding -- window_my_realm.gui (aggiornamento)
+Binding verificati dopo l aggiornamento iniziale della sezione window_my_realm.gui.
+### Binding GetPlayer -- analoghi a Character.X verificati nel vanilla
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.HasOverlord` | window_my_realm.gui -- ha un overlord | analogo a `Character.HasOverlord` verificato in vanilla window_my_realm.gui:324 |
+| `GetPlayer.GetDomainLimitTooltip` | window_my_realm.gui -- tooltip limite dominio | analogo a `Character.GetDomainLimitTooltip` verificato in vanilla window_my_realm.gui:829 |
+| `GetPlayer.GetOverlord` | window_my_realm.gui -- overlord del giocatore | analogo a `Character.GetOverlord` verificato in vanilla window_my_realm.gui:1000 |
+| `GetPlayer.HasVassals` | window_my_realm.gui -- ha vassalli | analogo a `Character.HasVassals` verificato in vanilla hud.gui:6701 |
+| `GetPlayer.MakeScope.ScriptValue` | window_my_realm.gui -- script value su scope player | pattern `MakeScope.ScriptValue` verificato in vanilla window_domicile.gui:3011 |
+| `LessThan_float` | window_my_realm.gui -- comparazione < float | verificato in vanilla window_ghw.gui:604 e window_war_overview.gui |
+### Binding OCR upstream -- da OCR-Support/gui/window_my_realm.gui
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.RealmSize` | window_my_realm.gui OCR -- dimensione regno in contee | binding OCR upstream (window_my_realm.gui:183); NON nel vanilla GUI |
+| `GetPlayer.UsesObedience` | window_my_realm.gui OCR -- usa sistema obbedienza | binding OCR upstream (window_my_realm.gui:637); NON nel vanilla GUI |
+| `Add_CFixedPoint` | window_my_realm.gui OCR -- somma CFixedPoint | binding OCR upstream (window_my_realm.gui:1388); es. `Add_CFixedPoint(Var.GetValue, '(CFixedPoint)1')` |
+| `GetVariableSystem.Get` | window_my_realm.gui OCR -- legge valore variabile | binding OCR upstream (window_my_realm.gui:2524); es. `GetVariableSystem.Get('macrobuilder')` |
+| `Scope.Title.GetProvince` | window_my_realm.gui OCR -- provincia del titolo in scope | binding OCR upstream (window_my_realm.gui:2699); pattern Scope accessor |
+---
+## Binding verificati su piu file -- window_military, window_intrigue, window_inventory, window_court, window_character_lifestyle, window_activity_list
+### Funzioni confronto/sistema -- verificate nel vanilla
+| Scope / Binding | File patch | Note |
+|---|---|---|
+| `NotEqualTo_CFixedPoint` | window_military.gui | verificato in 19 file vanilla (es. ComplexBarItem context) |
+| `LessThanOrEqualTo_CFixedPoint` | window_intrigue.gui | verificato in vanilla window_war_overview.gui:3576 |
+| `LessThanOrEqualTo_int32` | window_court.gui | verificato in vanilla window_struggle.gui:570 |
+| `Select_int32` | window_intrigue.gui | verificato in vanilla window_succession_event.gui:643 |
+| `Select_CVector2f` | window_activity_list.gui | verificato in vanilla window_decisions.gui:204 |
+| `GetNumberAbove_int32` | window_intrigue.gui | verificato in vanilla window_character.gui:1492 |
+| `IsDateAfter` | window_activity_list.gui | verificato in vanilla window_travel_planner.gui:190 |
+| `IsGameViewDataShown` | window_activity_list.gui | verificato in vanilla window_activity.gui:628 |
+| `GetCourtPositionType` | window_inventory.gui | verificato in vanilla window_travel_planner.gui:762; es. `GetCourtPositionType('role_name').GetName()` |
+### Binding GetPlayer -- verificati nel vanilla
+| Scope / Binding | File patch | Note |
+|---|---|---|
+| `GetPlayer.HasCompanionAI` | window_military.gui | verificato in vanilla window_army_automation_options.gui:170 |
+| `GetPlayer.IsIndependentRuler` | window_military.gui | verificato in vanilla window_council.gui:78 |
+| `GetPlayer.GetLifestyle.IsValid` | window_character_lifestyle.gui | verificato in vanilla window_character_lifestyle.gui:617 |
+### Funzioni UI army detail -- verificate in vanilla window_military.gui
+| Scope / Binding | File patch | Note |
+|---|---|---|
+| `IsAdministrativeArmyDetailViewShown` | window_military.gui | verificato in vanilla window_military.gui:1936 |
+| `IsHireableRulerDetailViewShown` | window_military.gui | verificato in vanilla window_military.gui:2422 |
+| `IsHolyOrderDetailViewShown` | window_military.gui | verificato in vanilla window_military.gui:3403 |
+| `IsMercenaryCompanyDetailViewShown` | window_military.gui | verificato in vanilla window_military.gui:3121 |
+### Binding OCR upstream -- non nel vanilla GUI nativo
+| Scope / Binding | File patch | Note |
+|---|---|---|
+| `Scope.War` | window_military.gui OCR | binding OCR upstream (window_military.gui:1431); pattern Scope accessor per War |
+| `Scope.Artifact` | window_inventory.gui OCR | binding OCR upstream (window_inventory.gui:891); pattern Scope accessor per Artifact |
+| `Scope.Artifact.GetOwner` | window_inventory.gui OCR | binding OCR upstream (window_inventory.gui:903); catena su Scope.Artifact |
+| `GetVariableSystem.SetOrToggle` | window_intrigue.gui OCR | variante con prefisso Get di `VariableSystem.SetOrToggle` verificato in vanilla window_royal_court.gui:1087 |
+> Nota: `GetIndexString` non e un binding Jomini -- e un custom widget type definito nel patch (`type GetIndexString = text_single`). Lo scope extractor lo rileva per falso positivo. Aggiunto in whitelist solo per silenziare il warning.
+
+| `GetIndexString` | window_character_lifestyle.gui -- custom widget type OCR | NON un binding Jomini; e un `type GetIndexString = text_single` definito nel patch; lo scope extractor lo segnala per falso positivo |

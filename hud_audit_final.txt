@@ -1,0 +1,24 @@
+﻿File da analizzare: 10
+  Analisi: hud.gui ... CON AVVERTENZE
+  Analisi: interaction_interfere_in_war_notification.gui ... OK
+  Analisi: window_activity_list.gui ... CON AVVERTENZE
+  Analisi: window_character_lifestyle.gui ... CON AVVERTENZE
+  Analisi: window_county_view.gui ... CON AVVERTENZE
+  Analisi: window_court.gui ... CON AVVERTENZE
+  Analisi: window_intrigue.gui ... CON AVVERTENZE
+  Analisi: window_inventory.gui ... CON AVVERTENZE
+  Analisi: window_military.gui ... CON AVVERTENZE
+  Analisi: window_my_realm.gui ... CON AVVERTENZE
+
+| File | Validator | Critici | Avvertenze | Binding assenti | Stato |
+|------|-----------|---------|------------|-----------------|-------|
+| hud.gui | CON AVVERTENZE | 0 | 16 | 49 | [AVVERTENZE] |
+| interaction_interfere_in_war_notification.gui | PULITO | 0 | 0 | 0 | [OK] |
+| window_activity_list.gui | CON AVVERTENZE | 0 | 4 | 3 | [AVVERTENZE] |
+| window_character_lifestyle.gui | CON AVVERTENZE | 0 | 22 | 2 | [AVVERTENZE] |
+| window_county_view.gui | CON AVVERTENZE | 0 | 42 | 33 | [AVVERTENZE] |
+| window_court.gui | CON AVVERTENZE | 0 | 5 | 5 | [AVVERTENZE] |
+| window_intrigue.gui | CON AVVERTENZE | 0 | 35 | 8 | [AVVERTENZE] |
+| window_inventory.gui | CON AVVERTENZE | 0 | 15 | 7 | [AVVERTENZE] |
+| window_military.gui | CON AVVERTENZE | 0 | 34 | 16 | [AVVERTENZE] |
+| window_my_realm.gui | CON AVVERTENZE | 0 | 29 | 23 | [AVVERTENZE] |

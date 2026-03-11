@@ -35,7 +35,7 @@ button = {
 }
 ```
 
-## Visibility Dual Mode (unica sintassi valida)
+## Visibility Dual Mode (pattern canonico e varianti supportate)
 
 ```jomini
 # Container OCR attivo — modalità non vedente (variabile ocr assente)
@@ -45,6 +45,17 @@ visible = "[GetVariableSystem.Exists('ocr')]"
 ```
 
 > ⚠️ `GameRules.GetRule('ocr_accessibility_mode')` è **deprecato** — non usarlo.
+
+Pattern legacy supportati nel repository quando gia' presenti nei file modello Agamidae:
+
+```jomini
+# OCR attivo
+visible = "[Isnt('ocr')]"
+# Vanilla attivo
+visible = "[Is('ocr')]"
+```
+
+Per nuove conversioni, preferire sempre `GetVariableSystem.Exists('ocr')`.
 
 ---
 
@@ -119,12 +130,29 @@ window = {
 
 ### Regole Invariabili del Template
 
-1. I due container sono **mutuamente esclusivi** via `visible`
-2. Il container vanilla è **identico** al file CK3 originale — nessuna modifica
+1. I due blocchi OCR/vanilla sono **mutuamente esclusivi** via `visible`
+2. Il blocco vanilla è **fedele** al contenuto CK3 originale corrispondente
 3. Font size OCR **minimo 18** ovunque
 4. Header sezione OCR: colore `{ 255 221 136 255 }` (giallo), fontsize 20
 5. Tutti i bottoni OCR hanno `tooltip` descrittivo
 6. Nessun `name` duplicato allo stesso livello gerarchico
+
+## Naming dei blocchi Dual Mode
+
+Naming preferito per nuove conversioni:
+
+- `ocr_*_container`
+- `vanilla_*_container`
+
+Naming legacy gia' valido nel repository se la visibility e' chiara e mutuamente esclusiva:
+
+- `ocr_mode_content`
+- `normal_mode_content`
+- `window_ocr`
+- `grafic_version`
+- wrapper anonimi con `visible` esplicito
+
+La validazione dei tool deve basarsi prima sulla `visible`, non solo sul naming.
 
 ## Mouse Input Parity
 
@@ -144,7 +172,7 @@ Checklist operativa da applicare a ogni `.gui` quando il widget vanilla è inter
 Prima di salvare o committare un file `.gui` modificato, verificare:
 
 - [ ] Visibility mutuamente esclusive e corrette
-- [ ] Container vanilla identico al file CK3 originale
+- [ ] Blocco vanilla fedele al contenuto CK3 originale corrispondente
 - [ ] Font size >= 18 in tutto il blocco OCR
 - [ ] Ogni bottone OCR ha tooltip
 - [ ] Nessun nome widget duplicato a stesso livello
@@ -165,7 +193,7 @@ Prima di salvare o committare un file `.gui` modificato, verificare:
 
 ### Checklist Vanilla
 
-- [ ] Il container vanilla è una copia identica del file CK3 originale
+- [ ] Il blocco vanilla rappresenta fedelmente la sezione CK3 originale corrispondente
 - [ ] Nessun widget rimosso, spostato o rinominato
 - [ ] `onclick`, `onrightclick`, `tooltip` preservati senza modifiche
 

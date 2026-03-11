@@ -122,7 +122,7 @@ def _formatta_tabella(risultati: list[dict]) -> str:
         "| File | Validator | Critici | Avvertenze | Binding assenti | Stato |",
         "|------|-----------|---------|------------|-----------------|-------|",
     ]
-    icone = {"OK": "✅ OK", "CON AVVERTENZE": "🟡 AVVERTENZE", "BLOCCANTE": "🔴 BLOCCANTE"}
+    icone = {"OK": "[OK]", "CON AVVERTENZE": "[AVVERTENZE]", "BLOCCANTE": "[BLOCCANTE]"}
     for r in risultati:
         righe.append(
             f"| {r['file']} | {r['verdetto_validator']} | {r['critici']} | "
@@ -149,7 +149,7 @@ def _formatta_report_completo(risultati: list[dict]) -> str:
         if r["dettaglio_validator"]:
             sezioni.append("**Problemi rilevati dal validator:**")
             for issue in r["dettaglio_validator"]:
-                icona = "🔴" if issue["severity"] == "CRITICO" else "🟡"
+                icona = "[CRITICO]" if issue["severity"] == "CRITICO" else "[ATTENZIONE]"
                 sezioni.append(f"- {icona} Riga {issue['line']}: {issue['pattern']} — {issue['fix']}")
         else:
             sezioni.append("Nessun problema dal validator.")
@@ -168,6 +168,9 @@ def _formatta_report_completo(risultati: list[dict]) -> str:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
     parser = argparse.ArgumentParser(
         description="Audit completo OCR Support Patch: validator + scope extractor su file .gui."
     )

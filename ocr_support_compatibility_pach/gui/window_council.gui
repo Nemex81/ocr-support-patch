@@ -998,6 +998,7 @@ types CouncilWindow {
                     state = { name = _show using = Animation_FadeIn_Quick }
                     flowcontainer = {
                         name = "council_position_tasks"
+                        # datamodel verificato: CouncilTask
                         datamodel = "[GuiCouncilPosition.GetPotentialCouncilTasks]"
                         parentanchor = bottom|hcenter
                         margin_bottom = 10
@@ -1097,6 +1098,7 @@ types CouncilWindow {
                     fixedgridbox = {
                         name = "council_position_tasks"
                         visible = "[Not(CouncilWindow.IsLiegeCouncilShown)]"
+                        # datamodel verificato: CouncilTask
                         datamodel = "[GuiCouncilPosition.GetPotentialCouncilTasks]"
                         addcolumn = 45
                         addrow = 45
@@ -1654,6 +1656,7 @@ types CouncilTaskTypes {
             flowcontainer = {
                 name = "council_position_tasks"
                 visible = "[Not(CouncilWindow.IsLiegeCouncilShown)]"
+                # datamodel verificato: CouncilTask
                 datamodel = "[GuiCouncilPosition.GetPotentialCouncilTasks]"
                 parentanchor = bottom|left
                 position = { 2 -3 }
@@ -1796,6 +1799,7 @@ types CouncilTaskTypes {
                 }
                 fixedgridbox = {
                     name = "council_position_tasks"
+                    # datamodel verificato: CouncilTask
                     datamodel = "[GuiCouncilPosition.GetPotentialCouncilTasks]"
                     addcolumn = 50
                     addrow = 50
@@ -1962,6 +1966,7 @@ types OCR {
                                 state = { name = _show using = Animation_FadeIn_Quick }
                                 vbox = {
                                     name = "council_position_tasks"
+                                    # datamodel verificato: CouncilTask
                                     datamodel = "[GuiCouncilPosition.GetPotentialCouncilTasks]"
                                     layoutpolicy_horizontal = expanding
                                     alwaystransparent = no
@@ -2071,6 +2076,7 @@ types OCR {
                                 align = left
                             }
                             hbox_skills_grid = {
+                                # datamodel verificato: SkillItem
                                 datamodel = "[GuiCouncilPosition.GetSkillItems]"
                             }
                             expand = { }
@@ -2093,6 +2099,7 @@ types OCR {
                         flowcontainer = {
                             name = "council_position_tasks"
                             visible = "[Not(CouncilWindow.IsLiegeCouncilShown)]"
+                            # datamodel verificato: CouncilTask
                             datamodel = "[GuiCouncilPosition.GetPotentialCouncilTasks]"
                             direction = vertical
                             layoutpolicy_horizontal = expanding

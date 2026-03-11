@@ -104,22 +104,133 @@ def _feature_ocr_mancanti(righe_ocr: list[str], righe_patch: list[str]) -> list[
 # ---------------------------------------------------------------------------
 
 RE_VANILLA_CONTAINER = re.compile(r'name\s*=\s*"vanilla_')
+RE_VANILLA_ALT_NAME = re.compile(r'name\s*=\s*"(?:normal_mode|grafic_version)', re.IGNORECASE)
+RE_VANILLA_BLOCK_HINT = re.compile(r'^\s*[\w_]+\s*=\s*\{', re.IGNORECASE)
+RE_VISIBLE_VANILLA_EXISTS = re.compile(r'visible\s*=\s*"\[GetVariableSystem\.Exists\(\'ocr\'\)\]"')
+RE_VISIBLE_VANILLA_SHORTHAND = re.compile(r'visible\s*=\s*"\[[^\]]*\bIs\(\'ocr\'\)[^\]]*\]"')
+RE_USING_VANILLA = re.compile(r'using\s*=\s*vanilla\b', re.IGNORECASE)
+
+
+def _is_vanilla_visibility(riga: str) -> bool:
+    return bool(RE_VISIBLE_VANILLA_EXISTS.search(riga) or RE_VISIBLE_VANILLA_SHORTHAND.search(riga))
 
 
 def _estrai_container_vanilla(righe: list[str]) -> list[str]:
     """
-    Estrae le righe del container vanilla_* dalla patch.
+    Estrae le righe del blocco vanilla dalla patch.
     Usa bilanciamento delle parentesi graffe per trovare l'intero blocco.
     """
+    profondita = 0
     for i, riga in enumerate(righe):
-        if RE_VANILLA_CONTAINER.search(riga):
-            # cerca l'apertura di blocco nella stessa o nelle prossime righe
-            for j in range(max(0, i - 3), min(i + 3, len(righe))):
-                if "{" in righe[j]:
-                    fine = _trova_fine_blocco(righe, j)
-                    if fine > j:
-                        return righe[j:fine + 1]
+        if profondita != 1:
+            profondita += riga.count("{") - riga.count("}")
+            continue
+
+        if not RE_VANILLA_BLOCK_HINT.match(riga):
+            profondita += riga.count("{") - riga.count("}")
+            continue
+
+        fine = _trova_fine_blocco(righe, i)
+        if fine <= i:
+            profondita += riga.count("{") - riga.count("}")
+            continue
+
+        finestra = righe[i:min(fine + 1, i + 12)]
+        if any(_is_vanilla_visibility(r) for r in finestra):
+            return righe[i:fine + 1]
+
+        if any(RE_USING_VANILLA.search(r) for r in finestra) and any(_is_vanilla_visibility(r) for r in finestra):
+            return righe[i:fine + 1]
+
+        if RE_VANILLA_CONTAINER.search(riga) or RE_VANILLA_ALT_NAME.search(riga):
+            return righe[i:fine + 1]
+
+        profondita += riga.count("{") - riga.count("}")
     return []
+
+
+def _is_template_vanilla_delegation(righe_container: list[str]) -> bool:
+    """Rileva wrapper vanilla che delegano il contenuto a un template shared via `using = vanilla`."""
+    if not righe_container:
+        return False
+
+    corpo_significativo = [
+        r.strip() for r in righe_container[1:-1]
+        if r.strip() and not r.strip().startswith("#")
+    ]
+    if not corpo_significativo:
+        return False
+
+    ha_using_vanilla = any(RE_USING_VANILLA.search(r) for r in corpo_significativo)
+    ha_blocchi_annidati = any("{" in r for r in corpo_significativo)
+    return ha_using_vanilla and not ha_blocchi_annidati
+
+
+def _normalizza_container_vanilla(righe_container: list[str]) -> list[str]:
+    """
+    Rimuove il wrapper di dual-mode lasciando il contenuto vanilla confrontabile.
+    Mantiene eventuali proprietà extra del wrapper come differenze reali.
+    """
+    if not righe_container:
+        return []
+
+    corpo = righe_container[1:-1]
+    profondita = 0
+    normalizzate = []
+    for riga in corpo:
+        stripped = riga.strip()
+        if stripped.startswith("#"):
+            continue
+
+        if profondita == 0:
+            if not stripped:
+                continue
+            if stripped.startswith("name = ") and (
+                RE_VANILLA_CONTAINER.search(riga) or RE_VANILLA_ALT_NAME.search(riga)
+            ):
+                continue
+            if _is_vanilla_visibility(riga):
+                continue
+            if "{" not in riga:
+                continue
+
+        normalizzate.append(riga)
+        profondita += riga.count("{") - riga.count("}")
+
+    return normalizzate
+
+
+def _linee_significative(righe: list[str]) -> list[str]:
+    return [r.strip() for r in righe if r.strip() and not r.strip().startswith("#")]
+
+
+def _normalizza_per_diff(righe: list[str]) -> list[str]:
+    """Ignora differenze di sola indentazione o righe vuote nel confronto."""
+    linee = [r.strip() for r in righe if r.strip() and not r.strip().startswith("#")]
+    canonicali = []
+    for linea in linee:
+        if linea == "{" and canonicali:
+            canonicali[-1] = canonicali[-1].rstrip("\n") + " {\n"
+            continue
+        canonicali.append(f"{linea}\n")
+    return canonicali
+
+
+def _ritaglia_vanilla_riferimento(righe_vanilla: list[str], contenuto_patch: list[str]) -> list[str]:
+    """
+    Se il dual-mode duplica solo un ramo interno della window, allinea il confronto
+    al primo anchor significativo condiviso invece di usare sempre l'intero file.
+    """
+    patch_significative = _linee_significative(contenuto_patch)
+    if not patch_significative:
+        return righe_vanilla
+
+    primo_anchor = patch_significative[0]
+    for indice, riga in enumerate(righe_vanilla):
+        if riga.strip() == primo_anchor:
+            return righe_vanilla[indice:]
+
+    return righe_vanilla
 
 
 def _trova_fine_blocco(righe: list[str], inizio: int) -> int:
@@ -139,19 +250,29 @@ def _diff_container_vanilla(righe_patch: list[str], righe_vanilla: list[str], wi
     """
     container = _estrai_container_vanilla(righe_patch)
     if not container:
-        return ["Container vanilla_* non trovato nella patch."]
+        return ["Blocco vanilla non trovato nella patch."]
 
-    # Rimuove prefissi di indentazione eccedenti per confronto equo
+    if _is_template_vanilla_delegation(container):
+        return ["Nessuna discrepanza automatica: ramo vanilla delegato tramite template `vanilla`."]
+
+    contenuto_vanilla_patch = _normalizza_container_vanilla(container)
+    righe_vanilla_riferimento = _ritaglia_vanilla_riferimento(righe_vanilla, contenuto_vanilla_patch)
+
+    vanilla_normalizzato = _normalizza_per_diff(righe_vanilla_riferimento)
+    patch_normalizzato = _normalizza_per_diff(contenuto_vanilla_patch)
+    if len(vanilla_normalizzato) > len(patch_normalizzato):
+        vanilla_normalizzato = vanilla_normalizzato[:len(patch_normalizzato)]
+
     diff = list(difflib.unified_diff(
-        righe_vanilla,
-        container,
+        vanilla_normalizzato,
+        patch_normalizzato,
         fromfile=f"{window_name}.gui (vanilla CK3)",
         tofile=f"{window_name}.gui (patch — container vanilla)",
         lineterm="",
         n=3,
     ))
     if not diff:
-        return ["Nessuna discrepanza. Container vanilla identico al CK3 originale. ✅"]
+        return ["Nessuna discrepanza. Container vanilla identico al CK3 originale. OK"]
     return diff
 
 
@@ -255,6 +376,9 @@ def genera_report(window_name: str) -> str:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
     parser = argparse.ArgumentParser(
         description="Confronta un file .gui nei tre repository (patch, OCR upstream, vanilla)."
     )

@@ -1,0 +1,40 @@
+﻿| `GreaterThan_CFixedPoint()` | window_faith.gui â€” comparazione fixed point > | es. `GreaterThan_CFixedPoint(Faith.MakeScope.ScriptValue('faith_holy_sites_held'), CFixedPoint('0'))` |
+| `NotEqualTo_uint32()` | window_faith.gui â€” comparazione uint != | es. `NotEqualTo_uint32(Faith.GetID, GetPlayer.GetFaith.GetID)` |
+| `ObjectsEqual()` | window_faith.gui â€” comparazione oggetti âš ï¸ verificare in vanilla | es. `ObjectsEqual(GetPlayer.GetFaith, Faith.Self)` |
+| `Select_CString()` | window_faith.gui â€” funzione ternaria stringa | es. `Select_CString(GetVariableSystem.Exists('holy_site_effects'), 'Show', 'Hide')` |
+| `AddTextIf()` | window_faith.gui â€” testo condizionale | es. `AddTextIf(GetPlayer.MakeScope.Var('faith_counties_filter').IsSet, ' held by non-believers')` |
+| `MakeScopeFlag()` | window_faith.gui â€” flag da scope | es. `MakeScopeFlag(Scope.GetFlagName)` |
+| `GetGlobalList()` | window_faith.gui â€” lista globale | es. `GetGlobalList('faith_followers_sort')` |
+| `GetDoctrine()` | window_faith.gui â€” accesso dottrina globale | es. `GetDoctrine('doctrine_spiritual_head')` |
+| `GetFaithDoctrine()` | window_faith.gui â€” accesso dottrina faith | es. `GetFaithDoctrine('unreformed_faith_doctrine').GetBaseName` |
+| `GetDataModelSize()` | window_faith.gui â€” conteggio elementi datamodel | es. `GetDataModelSize(Faith.GetReligion.GetFaiths)` |
+| `CFixedPoint()` | window_faith.gui â€” costruttore tipo fixed point | es. `CFixedPoint('0')` per confronti numerici |
+| `GetNumberOfValidInteractionsWithFilter` | window_faith.gui â€” conteggio interazioni filtrate | verificato in vanilla window_faith.gui:730 |
+| `GetPietyLevelName` | window_faith.gui (OCR) â€” nome livello pietÃ  | NON in vanilla GUI â€” binding OCR upstream, presente in data_binding/ |
+| `GetDataModelSize` | window_faith.gui â€” alias path-dotted di `GetDataModelSize()` | verificato in vanilla frontend_bookmarks.gui:1623 |
+| `GetDoctrine` | window_faith.gui â€” alias path-dotted di `GetDoctrine()` | verificato in vanilla window_faith.gui:769 |
+| `GetFaithDoctrine` | window_faith.gui â€” alias path-dotted di `GetFaithDoctrine()` | NON in vanilla GUI â€” binding OCR upstream |
+| `GetScriptedGui` | window_faith.gui â€” alias path-dotted | verificato in vanilla window_faith.gui:878 |
+| `AddWatchWindow` | window_faith.gui â€” aggiunge finestra watch | verificato in vanilla window_faith.gui:97 |
+| `AddTextIf` | window_faith.gui â€” alias path-dotted di `AddTextIf()` | verificato in vanilla (giÃ  whitelistato come `AddTextIf()`) |
+| `OrderFaithOption.GetName` | window_faith.gui â€” nome opzione sort faith | verificato in vanilla window_faith.gui:1210 |
+| `Select_float` | window_faith.gui â€” funzione ternaria float | verificato in vanilla window_faith.gui:1276 |
+| `Select_CString` | window_faith.gui â€” alias path-dotted di `Select_CString()` | giÃ  whitelistato come `Select_CString()` |
+| `EqualTo_int32` | window_faith.gui â€” alias path-dotted | giÃ  whitelistato come `EqualTo_int32()` |
+| `EqualTo_string` | window_faith.gui â€” alias path-dotted | giÃ  whitelistato come `EqualTo_string()` |
+| `GreaterThan_int32` | window_faith.gui â€” alias path-dotted | giÃ  whitelistato come `GreaterThan_int32()` |
+| `GreaterThan_CFixedPoint` | window_faith.gui â€” alias path-dotted | giÃ  whitelistato come `GreaterThan_CFixedPoint()` |
+| `NotEqualTo_uint32` | window_faith.gui â€” alias path-dotted | giÃ  whitelistato come `NotEqualTo_uint32()` |
+| `GetVariableSystem.Exists` | globale Dual Mode â€” controlla esistenza variabile | verificato in vanilla window_faith.gui:229 |
+| `GetVariableSystem.Set` | globale Dual Mode â€” imposta variabile | verificato in vanilla window_faith.gui:19 |
+| `GetVariableSystem.Clear` | globale Dual Mode â€” cancella variabile | verificato in vanilla window_faith.gui:29 |
+| `GetVariableSystem.HasValue` | globale Dual Mode â€” controlla valore variabile | verificato in vanilla window_faith.gui:229 |
+| `GetVariableSystem.Toggle` | globale Dual Mode â€” inverte variabile | presente in patch, compatibile con GetVariableSystem vanilla |
+| `GetPlayer.MakeScope.Var` | window_faith.gui (OCR) â€” variabile scope player | verificato in vanilla hud.gui:157 |
+| `Has` | window_faith.gui (OCR) â€” shorthand OCR per GetVariableSystem.HasValue | binding OCR mod (data_binding/OCR_bindings.txt) â€” NON in vanilla nativo |
+| `Scope.Faith` | window_faith.gui (OCR) â€” scope faith in catena GuiScope | binding Jomini scope accessor â€” `GuiScope.SetRoot(...).AddScope('faith', ...)` |
+| `Scope.GetCharacter` | window_faith.gui (OCR) â€” scope character in catena GuiScope | binding Jomini scope accessor |
+| `Scope.GetFlagName` | window_faith.gui (OCR) â€” flag name da scope | NON in vanilla GUI â€” binding OCR upstream / Jomini interno |
+| `Scope.Title` | window_faith.gui (OCR) â€” scope title in catena GuiScope | binding Jomini scope accessor |
+| `Scope.Title.GetCountyData.GetCapital` | window_faith.gui (OCR) â€” capitale contea del titolo | binding OCR specifico â€” catena scope |
+| `Scope.Var` | window_faith.gui (OCR) â€” variabile su scope | compatibile con GetPlayer.MakeScope.Var() verificato in vanilla hud.gui |

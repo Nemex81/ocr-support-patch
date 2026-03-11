@@ -144,12 +144,14 @@ window = {
 			button = {
 				using = close_window_ocr
 				onclick = "[Clear('activity_focus')]"
+				tooltip = "CLOSE_TOOLTIP"
 				visible = "[Is('activity_focus')]"
 			}
 
 			# Activities List
 			vbox = {
 				layoutpolicy_horizontal = expanding
+				# datamodel verificato: ActivityGroupItem
 				datamodel = "[ActivityListWindow.GetActivityGroupItems]"
 				name = "activities"
 
@@ -202,6 +204,7 @@ window = {
 
 								fixedgridbox = {
 									name = "activities_in_group"
+									# datamodel verificato: Activity
 									datamodel = "[ActivityGroupItem.GetActivities]"
 
 									layoutpolicy_horizontal = expanding
@@ -399,6 +402,7 @@ window = {
 											spacing = 2
 											layoutpolicy_horizontal = expanding
 											layoutpolicy_vertical = expanding
+											# datamodel verificato: ActivityGroupItem
 											datamodel = "[ActivityListWindow.GetActivityGroupItems]"
 
 											item = {
@@ -956,6 +960,7 @@ types ActivityListTypes
 
 			fixedgridbox = {
 				name = "activities_in_group"
+				# datamodel verificato: Activity
 				datamodel = "[ActivityGroupItem.GetActivities]"
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
@@ -1147,9 +1152,9 @@ types OCR_types {
 	type button_activity_entry_ocr = button_text {
 		datacontext = "[ActivityItem.GetType]"
 		datacontext = "[ActivityItem.GetActivity]"
-		
+
 		blockoverride "num" {}
-		
+
 		blockoverride "pre" {
 			text_single = {
 				visible = "[ActivityItem.IsOngoing]"
@@ -1180,14 +1185,14 @@ types OCR_types {
 			char_name = {
 				visible = "[ActivityItem.IsOngoing]"
 				datacontext = "[Activity.GetHost]"
-				
+
 				blockoverride "pre" {
 					text_single = {
 						margin_left = -3
 						raw_text = "of"
 					}
 				}
-				
+
 				blockoverride "relation" {
 				}
 			}

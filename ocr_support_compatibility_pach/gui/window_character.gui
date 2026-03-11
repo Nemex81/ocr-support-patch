@@ -1,4 +1,4 @@
-######################################################
+﻿######################################################
 ################# CHARACTER WINDOW ###################
 ######################################################
 
@@ -42,7 +42,7 @@ window = {
 		on_start = "[GetScriptedGui('holdings_list').Execute( GuiScope.SetRoot( Character.MakeScope ).AddScope('player', GetPlayer.MakeScope).End )]"
 	}
 
-	### MODALITÀ OCR (DA AGAMIDAE/CK3) ###
+	### MODALITÃ€ OCR (DA AGAMIDAE/CK3) ###
 	widget = {
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		using = ocr_window
@@ -75,7 +75,7 @@ window = {
 		}
 	}
 
-	### MODALITÀ NORMALE (VANILLA COMPLETA) ###
+	### MODALITÃ€ NORMALE (VANILLA COMPLETA) ###
 	container = {
 		name = "vanilla_character_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
@@ -1071,6 +1071,7 @@ window = {
 
 						hbox = {
 							name = "skills_grid"
+							# datamodel verificato: CharacterWindowSkillItem
 							datamodel = "[CharacterWindow.GetSkills]"
 							margin = { 2 0 }
 
@@ -1227,6 +1228,7 @@ window = {
 
 								fixedgridbox = {
 									name = "modifiers_grid"
+									# datamodel verificato: ModifierItem
 									datamodel = "[CharacterWindow.GetTimedModifiers]"
 									addcolumn = 23
 									addrow = 23
@@ -1771,6 +1773,7 @@ window = {
 								layoutpolicy_vertical = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetParents]"
 								}
 
@@ -1788,6 +1791,7 @@ window = {
 								layoutpolicy_vertical = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetGrandparents]"
 								}
 
@@ -1805,6 +1809,7 @@ window = {
 								layoutpolicy_vertical = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetGrandparents]"
 								}
 
@@ -1821,6 +1826,7 @@ window = {
 										size = { 170 90 }
 
 										block "portrait_datamodel" {
+											# datamodel verificato: Character
 											datamodel = "[CharacterWindow.GetParents]"
 										}
 
@@ -1843,6 +1849,7 @@ window = {
 								layoutpolicy_vertical = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetSecondarySpouses]"
 								}
 
@@ -1857,6 +1864,7 @@ window = {
 								{
 									fixedgridbox = {
 										name = "potential"
+										# datamodel verificato: Character
 										datamodel = "[GetNullCharacterDataModel( Character.CalcUnusedSecondarySpouseSlots )]"
 										visible = "[Character.IsPlayerInteractionShown('marry_off_interaction')]"
 
@@ -1925,6 +1933,7 @@ window = {
 
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetConcubines]"
 								}
 
@@ -1939,6 +1948,7 @@ window = {
 								{
 									fixedgridbox = {
 										name = "potential"
+										# datamodel verificato: Character
 										datamodel = "[GetNullCharacterDataModel( Character.CalcUnusedConsortSlots )]"
 										visible = "[Character.IsPlayerInteractionShown('find_concubine')]"
 
@@ -1985,6 +1995,7 @@ window = {
 							name = "children"
 
 							blockoverride "portrait_datamodel" {
+								# datamodel verificato: Character
 								datamodel = "[CharacterWindow.GetChildren]"
 							}
 
@@ -2017,6 +2028,7 @@ window = {
 							name = "siblings"
 
 							blockoverride "portrait_datamodel" {
+								# datamodel verificato: Character
 								datamodel = "[CharacterWindow.GetSiblings]"
 							}
 
@@ -2055,6 +2067,7 @@ window = {
 
 
 							blockoverride "portrait_datamodel" {
+								# datamodel verificato: Character
 								datamodel = "[CharacterWindow.GetSiblings]"
 							}
 
@@ -2086,6 +2099,7 @@ window = {
 							spacing = 5
 
 							blockoverride "portrait_datamodel" {
+								# datamodel verificato: Character
 								datamodel = "[CharacterWindow.GetChildren]"
 							}
 
@@ -2134,6 +2148,7 @@ window = {
 								layoutpolicy_vertical = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'ward' ) )]"
 								}
 
@@ -2151,6 +2166,7 @@ window = {
 									### FIND WARD FOR ME
 									fixedgridbox = {
 										name = "educate_ward"
+										# datamodel verificato: Character
 										datamodel = "[GetNullCharacterDataModel( CharacterWindow.CalcUnusedRelationSlots( GetRelation( 'ward' ), '(int32)2' ) )]"
 										visible = "[Character.IsPlayerInteractionShown('educate_child_interaction')]"
 
@@ -2185,6 +2201,7 @@ window = {
 									### FIND WARD FOR COURTIER
 									fixedgridbox = {
 										name = "find_ward"
+										# datamodel verificato: Character
 										datamodel = "[GetNullCharacterDataModel( CharacterWindow.CalcUnusedRelationSlots( GetRelation( 'ward' ), '(int32)2' ) )]"
 										visible = "[Character.IsPlayerInteractionShown('offer_ward_interaction')]"
 
@@ -2258,6 +2275,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'lover' ) )]"
 								}
 
@@ -2291,6 +2309,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'lover' ) )]"
 								}
 
@@ -2322,6 +2341,7 @@ window = {
 								layoutpolicy_vertical = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'guardian' ) )]"
 								}
 
@@ -2338,6 +2358,7 @@ window = {
 									### FIND GUARDIAN FOR ME
 									fixedgridbox = {
 										name = "educate_child"
+										# datamodel verificato: Character
 										datamodel = "[GetNullCharacterDataModel( CharacterWindow.CalcUnusedRelationSlots( GetRelation( 'guardian' ), '(int32)1' ) )]"
 										visible = "[Character.IsPlayerInteractionShown( 'educate_child_interaction' )]"
 
@@ -2372,6 +2393,7 @@ window = {
 									### GUARDIAN FINDER FOR COURTIER
 									fixedgridbox = {
 										name = "find_guardian"
+										# datamodel verificato: Character
 										datamodel = "[GetNullCharacterDataModel( CharacterWindow.CalcUnusedRelationSlots( GetRelation( 'guardian' ), '(int32)1' ) )]"
 										visible = "[Character.IsPlayerInteractionShown( 'offer_guardianship_interaction' )]"
 
@@ -2411,6 +2433,7 @@ window = {
 								layoutpolicy_vertical = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'crush' ) )]"
 								}
 
@@ -2440,6 +2463,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'friend' ) )]"
 								}
 
@@ -2478,6 +2502,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'rival' ) )]"
 								}
 
@@ -2505,6 +2530,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'bully' ) )]"
 								}
 
@@ -2523,6 +2549,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'victim' ) )]"
 								}
 
@@ -2539,6 +2566,7 @@ window = {
 								layoutpolicy_vertical = expanding
 
 								blockoverride "portrait_datamodel" {
+									# datamodel verificato: Character
 									datamodel = "[DataModelFirst(CharacterWindow.GetRelationsOfType( GetRelation( 'grudge' ) ), '(int32)2')]"
 								}
 
@@ -2579,6 +2607,7 @@ window = {
 
 
 							blockoverride "portrait_datamodel" {
+								# datamodel verificato: Character
 								datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'rival' ) )]"
 							}
 
@@ -2611,6 +2640,7 @@ window = {
 
 
 							blockoverride "portrait_datamodel" {
+								# datamodel verificato: Character
 								datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'friend' ) )]"
 							}
 
@@ -2642,6 +2672,7 @@ window = {
 							spacing = 5
 
 							blockoverride "portrait_datamodel" {
+								# datamodel verificato: Character
 								datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'lover' ) )]"
 							}
 
@@ -2673,6 +2704,7 @@ window = {
 							spacing = 5
 
 							blockoverride "portrait_datamodel" {
+								# datamodel verificato: Character
 								datamodel = "[CharacterWindow.GetRelationsOfType( GetRelation( 'grudge' ) )]"
 							}
 
@@ -2715,6 +2747,7 @@ window = {
 				blockoverride "container_implementation" {
 					fixedgridbox = {
 						name = "characters_grid"
+						# datamodel verificato: Character
 						datamodel = "[CharacterSelectionList.GetList]"
 						visible = "[Not(CharacterSelectionList.IsBuildingList)]"
 						addcolumn = 560
@@ -2796,6 +2829,7 @@ window = {
 				blockoverride "container_implementation" {
 					fixedgridbox = {
 						name = "characters_grid"
+						# datamodel verificato: Character
 						datamodel = "[CharacterSelectionList.GetList]"
 						visible = "[Not(CharacterSelectionList.IsBuildingList)]"
 						addcolumn = 575
@@ -2912,6 +2946,7 @@ window = {
 
 					dynamicgridbox = {
 						name = "modifiers_grid"
+						# datamodel verificato: ModifierItem
 						datamodel = "[CharacterWindow.GetTimedModifiers]"
 						datamodel_wrap = 8
 						flipdirection = yes
@@ -2938,6 +2973,7 @@ window = {
 
 					fixedgridbox = {
 						name = "personality_traits_grid"
+						# datamodel verificato: Trait
 						datamodel = "[TraitArrays.GetPersonalityTraits]"
 						addcolumn = 85
 						addrow = 105
@@ -2961,6 +2997,7 @@ window = {
 
 					fixedgridbox = {
 						name = "traits_grid"
+						# datamodel verificato: Trait
 						datamodel = "[TraitArrays.GetTraits]"
 						addcolumn = 85
 						addrow = 105
@@ -3010,6 +3047,7 @@ window = {
 					addcolumn = 270
 					datamodel_wrap = 2
 
+					# datamodel verificato: Title
 					datamodel = "[CharacterWindow.GetTitles]"
 
 					item = {
@@ -3055,6 +3093,7 @@ window = {
 				flowcontainer = {
 					name = "titles_box_bishop"
 					datacontext = "[CharacterWindow.GetCharacter]"
+					# datamodel verificato: Title
 					datamodel = "[CharacterWindow.GetClaims]"
 					direction = vertical
 					spacing = 10
@@ -3136,6 +3175,7 @@ window = {
 
 				vbox = {
 					name = "diplomacy_items"
+					# datamodel verificato: DiplomacyItem
 					datamodel = "[CharacterWindow.GetDiplomacyItems]"
 					layoutpolicy_horizontal = expanding
 
@@ -3280,6 +3320,7 @@ window = {
 
 				vbox = {
 					layoutpolicy_horizontal = expanding
+					# datamodel verificato: ModifierItem
 					datamodel = "[CharacterWindow.GetTimedModifiers]"
 					spacing = 2
 
@@ -3333,6 +3374,7 @@ window = {
 								}
 
 								vbox = {
+									# datamodel verificato: TimedModifierPreviewItem
 									datamodel = "[TimedModifierPreviewList.GetItems]"
 									layoutpolicy_horizontal = expanding
 									max_width = 500
@@ -3373,6 +3415,7 @@ window = {
 
 								vbox = {
 									layoutpolicy_horizontal = expanding
+									# datamodel verificato: CString
 									datamodel = "[TimedModifierScaledSingleItem.GetEffectItems]"
 
 									item = {
@@ -3853,6 +3896,7 @@ types CharOCRTypes {
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
 
+								# datamodel verificato: TimedModifierPreviewItem
 								datamodel = "[TimedModifierPreviewList.GetItems]"
 
 								item = {
@@ -3916,6 +3960,7 @@ types CharOCRTypes {
 					}
 
 					blockoverride "effects_datamodel" {
+						# datamodel verificato: CString
 						datamodel = "[TimedModifierScaledSingleItem.GetEffectItems]"
 					}
 
@@ -4310,6 +4355,7 @@ types CharOCRTypes {
 					}
 
 					block "portrait_datamodel" {
+						# datamodel verificato: Character
 						datamodel = "[CharacterWindow.GetParents]"
 					}
 
@@ -4645,6 +4691,7 @@ types CharOCRTypes {
 
 					hbox = {
 						name = "skills_grid"
+						# datamodel verificato: CharacterWindowSkillItem
 						datamodel = "[CharacterWindow.GetSkills]"
 						spacing = 3
 						item = {
@@ -4684,6 +4731,7 @@ types CharOCRTypes {
 					vbox = {
 						layoutpolicy_horizontal = expanding
 						name = "skills_grid"
+						# datamodel verificato: CharacterWindowSkillItem
 						datamodel = "[CharacterWindow.GetSkills]"
 
 						item = {
@@ -4755,6 +4803,7 @@ types CharOCRTypes {
 				datacontext = "[CharacterWindow.GetTraitArrays]"
 
 				hbox = {
+					# datamodel verificato: Trait
 					datamodel = "[TraitArrays.GetPersonalityTraits]"
 					spacing = 3
 
@@ -4814,6 +4863,7 @@ types CharOCRTypes {
 
 				vbox = {
 					layoutpolicy_horizontal = expanding
+					# datamodel verificato: Trait
 					datamodel = "[TraitArrays.GetPersonalityTraits]"
 
 					item = {
@@ -4853,6 +4903,7 @@ types CharOCRTypes {
 				}
 
 				fixedgridbox = {
+					# datamodel verificato: Trait
 					datamodel = "[TraitArrays.GetTraits]"
 					layoutpolicy_horizontal = expanding
 					addrow = 23
@@ -4912,6 +4963,7 @@ types CharOCRTypes {
 
 				fixedgridbox = {
 					name = "modifiers_grid"
+					# datamodel verificato: ModifierItem
 					datamodel = "[CharacterWindow.GetTimedModifiers]"
 					layoutpolicy_horizontal = expanding
 					addrow = 23
@@ -5334,6 +5386,7 @@ types CharacterWindow
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
 
+								# datamodel verificato: TimedModifierPreviewItem
 								datamodel = "[TimedModifierPreviewList.GetItems]"
 
 								item = {
@@ -5413,6 +5466,7 @@ types CharacterWindow
 					}
 
 					blockoverride "effects_datamodel" {
+						# datamodel verificato: CString
 						datamodel = "[TimedModifierScaledSingleItem.GetEffectItems]"
 					}
 
@@ -5487,7 +5541,7 @@ types CharacterWindow
 				name = "other_player_name"
 				visible = "[And( Character.IsPlayer, Not( Character.IsLocalPlayer ) )]"
 
-				raw_text = " • #L [Character.GetHumanName]#!"
+				raw_text = " â€¢ #L [Character.GetHumanName]#!"
 				tooltip = "AI_PERSONALITY_IS_PLAYER_TOOLTIP"
 				using = tooltip_se
 
@@ -5500,7 +5554,7 @@ types CharacterWindow
 				name = "ai_personality"
 				visible = "[Not( Character.IsPlayer )]"
 
-				raw_text = " • #L [Character.GetAIPersonalityNoTooltip]#!"
+				raw_text = " â€¢ #L [Character.GetAIPersonalityNoTooltip]#!"
 				tooltip = "AI_PERSONALITY_TT"
 				using = tooltip_se
 
@@ -5629,6 +5683,7 @@ types CharacterWindow
 					}
 
 					block "portrait_datamodel" {
+						# datamodel verificato: Character
 						datamodel = "[CharacterWindow.GetParents]"
 					}
 
@@ -5739,6 +5794,7 @@ types CharacterWindow
 				layoutpolicy_horizontal = expanding
 
 				fixedgridbox = {
+					# datamodel verificato: Title
 					datamodel = "[CharacterWindow.GetTitles]"
 					flipdirection = yes
 					addrow = 56
@@ -5841,6 +5897,7 @@ types CharacterWindow
 
 				fixedgridbox = {
 					name = "claims_box"
+					# datamodel verificato: Title
 					datamodel = "[CharacterWindow.GetClaims]"
 					flipdirection = yes
 					addrow = 60
@@ -5948,6 +6005,7 @@ types CharacterWindow
 
 			fixedgridbox = {
 				name = "diplomacy_items"
+				# datamodel verificato: DiplomacyItem
 				datamodel = "[CharacterWindow.GetDiplomacyItems]"
 				addrow = 65
 				addcolumn = 50
@@ -6225,6 +6283,7 @@ types CharacterWindow
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
 
+								# datamodel verificato: TimedModifierPreviewItem
 								datamodel = "[TimedModifierPreviewList.GetItems]"
 
 								item = {
@@ -6306,6 +6365,7 @@ types CharacterWindow
 					}
 
 					blockoverride "effects_datamodel" {
+						# datamodel verificato: CString
 						datamodel = "[TimedModifierScaledSingleItem.GetEffectItems]"
 					}
 
@@ -6380,7 +6440,7 @@ types CharacterWindow
 				name = "other_player_name"
 				visible = "[And( Character.IsPlayer, Not( Character.IsLocalPlayer ) )]"
 
-				raw_text = " • #L [Character.GetHumanName]#!"
+				raw_text = " â€¢ #L [Character.GetHumanName]#!"
 				tooltip = "AI_PERSONALITY_IS_PLAYER_TOOLTIP"
 				using = tooltip_se
 
@@ -6393,7 +6453,7 @@ types CharacterWindow
 				name = "ai_personality"
 				visible = "[Not( Character.IsPlayer )]"
 
-				raw_text = " • #L [Character.GetAIPersonalityNoTooltip]#!"
+				raw_text = " â€¢ #L [Character.GetAIPersonalityNoTooltip]#!"
 				tooltip = "AI_PERSONALITY_TT"
 				using = tooltip_se
 
@@ -6522,6 +6582,7 @@ types CharacterWindow
 					}
 
 					block "portrait_datamodel" {
+						# datamodel verificato: Character
 						datamodel = "[CharacterWindow.GetParents]"
 					}
 
@@ -6632,6 +6693,7 @@ types CharacterWindow
 				layoutpolicy_horizontal = expanding
 
 				fixedgridbox = {
+					# datamodel verificato: Title
 					datamodel = "[CharacterWindow.GetTitles]"
 					flipdirection = yes
 					addrow = 56
@@ -6734,6 +6796,7 @@ types CharacterWindow
 
 				fixedgridbox = {
 					name = "claims_box"
+					# datamodel verificato: Title
 					datamodel = "[CharacterWindow.GetClaims]"
 					flipdirection = yes
 					addrow = 60
@@ -6841,6 +6904,7 @@ types CharacterWindow
 
 			fixedgridbox = {
 				name = "diplomacy_items"
+				# datamodel verificato: DiplomacyItem
 				datamodel = "[CharacterWindow.GetDiplomacyItems]"
 				addrow = 65
 				addcolumn = 50

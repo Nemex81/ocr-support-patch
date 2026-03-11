@@ -268,6 +268,7 @@ window = {
 						button = {
 							using = close_window_ocr
 							onclick = "[GetVariableSystem.Clear('claims')]"
+							tooltip = "CLOSE_TOOLTIP"
 						}
 					}
 
@@ -319,6 +320,7 @@ window = {
 							hbox = {
 								name = "artifact_slot_tabs"
 								visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
+								# datamodel verificato: InventorySlotType
 								datamodel = "[InventoryView.GetUniqueInventorySlotTypes]"
 
 								button_text = {
@@ -421,6 +423,7 @@ window = {
 
 								blockoverride "dropdown_properties"
 								{
+									# datamodel verificato: SortOption
 									datamodel = "[InventoryView.GetArtifactSortOptions]"
 									onselectionchanged = "[InventoryView.SortArtifacts]"
 									selectedindex = "[InventoryView.GetArtifactSortOptionsIndex]"
@@ -462,6 +465,7 @@ window = {
 
 							blockoverride "dropdown_properties"
 							{
+								# datamodel verificato: SortOption
 								datamodel = "[ArtifactClaimsList.GetSortOptions]"
 								onselectionchanged = "[ArtifactClaimsList.SortClaims]"
 								selectedindex = "[ArtifactClaimsList.GetSortOptionsIndex]"
@@ -497,6 +501,7 @@ window = {
 						blockoverride "scrollbox_content" {
 							vbox = {
 								name = "artifacts_list"
+								# datamodel verificato: Artifact
 								datamodel = "[InventoryView.GetSortedArtifacts]"
 								layoutpolicy_horizontal = expanding
 
@@ -538,6 +543,7 @@ window = {
 						blockoverride "scrollbox_content" {
 							vbox = {
 								name = "artifacts_list"
+								# datamodel verificato: ArtifactClaim
 								datamodel = "[ArtifactClaimsList.GetClaims]"
 								layoutpolicy_horizontal = expanding
 
@@ -567,6 +573,7 @@ window = {
 						blockoverride "scrollbox_content" {
 							vbox = {
 								name = "equippable_artifacts_list"
+								# datamodel verificato: Artifact
 								datamodel = "[InventoryView.GetSortedArtifacts]"
 								layoutpolicy_horizontal = expanding
 								spacing = 3
@@ -604,6 +611,7 @@ window = {
 							}
 
 							vbox = {
+								# datamodel verificato: Artifact
 								datamodel = "[InventoryView.GetSortedArtifacts]"
 								layoutpolicy_horizontal = expanding
 								spacing = 3
@@ -876,6 +884,7 @@ window = {
 								datacontext = "[GetScriptedGui('all_artifacts_page')]"
 
 								blockoverride "full_datamodel" {
+									# datamodel verificato: Artifact
 									datamodel = "[GetPlayer.MakeScope.GetList('all_artifacts')]"
 								}
 								blockoverride "vbox_contents" {
@@ -886,6 +895,7 @@ window = {
 										layoutpolicy_horizontal = expanding
 										# layoutpolicy_vertical = expanding
 
+										# datamodel verificato: Artifact
 										datamodel = "[PageModelGlobal(GetPlayer.MakeScope.GetList('all_artifacts'))]"
 
 										item = {
@@ -1022,7 +1032,7 @@ window = {
 										size = { 30 30 }
 
 										texture = "gfx/interface/icons/flat_icons/plus.dds"
-									}	
+									}
 								}
 
 								blockoverride "portrait_button_no_character_text"
@@ -1170,7 +1180,7 @@ window = {
 										align = center|nobaseline
 										text = "[GetDataModelSize(ArtifactClaimsList.GetClaims)]"
 										default_format = "#clickable"
-									}						
+									}
 								}
 							}
 
@@ -1302,6 +1312,7 @@ window = {
 						hbox = {
 							name = "artifact_slot_tabs"
 							visible = "[And( Not( VariableSystem.Exists( 'claims' ) ), Not( VariableSystem.Exists( 'court_artifacts' ) ) )]"
+							# datamodel verificato: InventorySlotType
 							datamodel = "[InventoryView.GetUniqueInventorySlotTypes]"
 							layoutpolicy_horizontal = expanding
 							margin_top = 10
@@ -1361,7 +1372,7 @@ window = {
 							layoutpolicy_horizontal = expanding
 							text = "CHARACTER_WITHOUT_ROYAL_COURT_COURT_ARTIFACT_TAB"
 							autoresize = yes
-							align = center 
+							align = center
 							default_format = "#weak"
 							max_width = 520
 						}
@@ -1416,6 +1427,7 @@ window = {
 
 							blockoverride "dropdown_properties"
 							{
+								# datamodel verificato: SortOption
 								datamodel = "[InventoryView.GetArtifactSortOptions]"
 								onselectionchanged = "[InventoryView.SortArtifacts]"
 								selectedindex = "[InventoryView.GetArtifactSortOptionsIndex]"
@@ -1470,6 +1482,7 @@ window = {
 
 							blockoverride "dropdown_properties"
 							{
+								# datamodel verificato: SortOption
 								datamodel = "[ArtifactClaimsList.GetSortOptions]"
 								onselectionchanged = "[ArtifactClaimsList.SortClaims]"
 								selectedindex = "[ArtifactClaimsList.GetSortOptionsIndex]"
@@ -1498,6 +1511,7 @@ window = {
 						blockoverride "scrollbox_content" {
 							vbox = {
 								name = "artifacts_list"
+								# datamodel verificato: Artifact
 								datamodel = "[InventoryView.GetSortedArtifacts]"
 								layoutpolicy_horizontal = expanding
 								spacing = 6
@@ -1536,6 +1550,7 @@ window = {
 						blockoverride "scrollbox_content" {
 							fixedgridbox = {
 								name = "artifacts_list"
+								# datamodel verificato: ArtifactClaim
 								datamodel = "[ArtifactClaimsList.GetClaims]"
 								addcolumn = 570
 								addrow = 122
@@ -1563,6 +1578,7 @@ window = {
 						blockoverride "scrollbox_content" {
 							vbox = {
 								name = "equippable_artifacts_list"
+								# datamodel verificato: Artifact
 								datamodel = "[InventoryView.GetSortedArtifacts]"
 								layoutpolicy_horizontal = expanding
 								spacing = 8

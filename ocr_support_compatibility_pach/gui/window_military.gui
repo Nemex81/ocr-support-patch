@@ -451,6 +451,7 @@ window = {
 
 							dynamicgridbox = {
 								name = "rally_point_list"
+								# datamodel verificato: RallyPointItem
 								datamodel = "[MilitaryView.GetRallyPoints]"
 								# flipdirection = yes
 								layoutpolicy_horizontal = expanding
@@ -713,9 +714,11 @@ window = {
 										visible = "[Is('men_at_arms')]"
 										using = close_window_ocr
 										onclick = "[Clear('men_at_arms')]"
+										tooltip = "CLOSE_TOOLTIP"
 									}
 
 									vbox = { # MAA
+										# datamodel verificato: Regiment
 										datamodel = "[MilitaryItem.GetOwnedMaa]"
 										layoutpolicy_horizontal = expanding
 										visible = "[Not(GetVariableSystem.Exists('ocr'))]"
@@ -821,6 +824,7 @@ window = {
 
 										fixedgridbox = {
 											visible = "[Not(GetVariableSystem.Exists('special_troops'))]"
+											# datamodel verificato: MilitaryViewEventTroop
 											datamodel = "[MilitaryView.GetEventTroops]"
 											layoutpolicy_horizontal = expanding
 											addrow = 70
@@ -843,6 +847,7 @@ window = {
 										}
 
 										vbox = {
+											# datamodel verificato: HiredTroopItem
 											datamodel = "[MilitaryView.GetHiredMercenaries]"
 											layoutpolicy_horizontal = expanding
 
@@ -855,6 +860,7 @@ window = {
 
 													blockoverride "HiredTroopMenAtArmsTypesDataModel"
 													{
+														# datamodel verificato: Regiment
 														datamodel = "[HiredTroopItem.GetRegiments]"
 													}
 												}
@@ -862,6 +868,7 @@ window = {
 										}
 
 										vbox = {
+											# datamodel verificato: HiredTroopItem
 											datamodel = "[MilitaryView.GetHiredHolyOrders]"
 											layoutpolicy_horizontal = expanding
 
@@ -873,6 +880,7 @@ window = {
 
 													blockoverride "HiredTroopMenAtArmsTypesDataModel"
 													{
+														# datamodel verificato: Regiment
 														datamodel = "[HiredTroopItem.GetRegiments]"
 													}
 												}
@@ -1115,11 +1123,13 @@ window = {
 								datacontext = "[GetScriptedGui('mercs_page')]"
 
 								blockoverride "full_datamodel" {
+									# datamodel verificato: HiredTroopItem
 									datamodel = "[MilitaryView.GetAllMercenaries]"
 								}
 								blockoverride "vbox_contents" {
 									vbox = {
 										name = "tutorial_highlight_mercenary_list_item"
+										# datamodel verificato: HiredTroopItem
 										datamodel = "[PageModelGlobal(MilitaryView.GetAllMercenaries)]"
 										visible = "[Isnt('merc_sorting')]"
 
@@ -1135,6 +1145,7 @@ window = {
 
 													blockoverride "HiredTroopMenAtArmsTypesDataModel"
 													{
+														# datamodel verificato: Regiment
 														datamodel = "[HiredTroopItem.GetRegiments]"
 													}
 												}
@@ -1142,6 +1153,7 @@ window = {
 										}
 									}
 									vbox = {
+										# datamodel verificato: HiredTroopItem
 										datamodel = "[PageModelGlobal(MilitaryView.GetAllMercenaries)]"
 										visible = "[Is('merc_sorting')]"
 										bottomtotop = yes
@@ -1158,6 +1170,7 @@ window = {
 
 													blockoverride "HiredTroopMenAtArmsTypesDataModel"
 													{
+														# datamodel verificato: Regiment
 														datamodel = "[HiredTroopItem.GetRegiments]"
 													}
 												}
@@ -1266,6 +1279,7 @@ window = {
 
 					blockoverride "scrollbox_content" {
 						vbox = {
+							# datamodel verificato: HiredTroopItem
 							datamodel = "[MilitaryView.GetAllHolyOrders]"
 							layoutpolicy_horizontal = expanding
 
@@ -1312,6 +1326,7 @@ window = {
 
 										blockoverride "HiredTroopMenAtArmsTypesDataModel"
 										{
+											# datamodel verificato: Regiment
 											datamodel = "[HiredTroopItem.GetRegiments]"
 										}
 									}
@@ -1323,6 +1338,7 @@ window = {
 
 										blockoverride "HiredTroopMenAtArmsTypesDataModel"
 										{
+											# datamodel verificato: Regiment
 											datamodel = "[HiredTroopItem.GetRegiments]"
 										}
 									}
@@ -1340,6 +1356,7 @@ window = {
 
 					blockoverride "scrollbox_content" {
 						vbox = {
+							# datamodel verificato: HiredTroopItem
 							datamodel = "[MilitaryView.GetAllHireableRulers]"
 							layoutpolicy_horizontal = expanding
 
@@ -1426,6 +1443,7 @@ window = {
 									layoutpolicy_horizontal = expanding
 									# layoutpolicy_vertical = expanding
 
+									# datamodel verificato: War
 									datamodel = "[GetPlayer.MakeScope.GetList('ongoing_wars')]"
 
 									item = {
@@ -1497,6 +1515,7 @@ window = {
 															scissor = yes
 
 															flowcontainer = {
+																# datamodel verificato: Character
 																datamodel = "[War.MakeScope.GetList('allies')]"
 																item = {
 																	char_name = {
@@ -1523,6 +1542,7 @@ window = {
 											button = {
 												size = { 100% 100% }
 												onclick = "[OpenGameViewData( 'war_overview',  War.GetID )]"
+												tooltip = "Open war overview"
 											}
 										}
 									}
@@ -1773,6 +1793,7 @@ types OCR {
 					layoutpolicy_horizontal = expanding
 					hbox = {
 						name = "regiment_types"
+						# datamodel verificato: Regiment
 						datamodel = "[MilitaryViewEventTroop.GetRegiments]"
 						layoutpolicy_vertical = expanding
 						margin_left = 5
@@ -1934,6 +1955,7 @@ types OCR {
 
 						# bad for FPS, showing only for available bands
 						hbox = {
+							# datamodel verificato: Trait
 							datamodel = "[GetTraits]"
 							datacontext = "[Character.GetFaith]"
 							datacontext = "[MercenaryCompany.GetTitle.GetHolder]"
@@ -2089,6 +2111,7 @@ types OCR {
 
 						# bad for FPS, showing only for available bands
 						hbox = {
+							# datamodel verificato: Trait
 							datamodel = "[GetTraits]"
 							datacontext = "[Character.GetFaith]"
 							datacontext = "[HolyOrder.GetTitle.GetHolder]"
@@ -2219,6 +2242,7 @@ types OCR {
 
 						# bad for FPS, showing only for available bands
 						hbox = {
+							# datamodel verificato: Trait
 							datamodel = "[GetTraits]"
 							datacontext = "[Character.GetFaith]"
 							visible = no#"[And(Or(Not(HiredTroopItem.IsHired), Character.IsHireableRulerEmployedByLocalPlayer), Not(HiredTroopItem.WillHireableRulerCauseBankrupcy))]"
@@ -2259,6 +2283,7 @@ types OCR {
 					layoutpolicy_horizontal = expanding
 
 					block "HiredTroopMenAtArmsTypesDataModel" {
+						# datamodel verificato: Regiment
 						datamodel = "[HiredTroopItem.GetRegiments]"
 					}
 
@@ -2376,6 +2401,7 @@ types OCR {
 
 						flowcontainer = {
 							name = "regiment_types"
+							# datamodel verificato: Regiment
 							datamodel = "[HiredTroopItem.GetRegiments]"
 							ignoreinvisible = yes
 							spacing = 3
@@ -2472,6 +2498,7 @@ types OCR {
 					margin_right = 10
 
 					overlappingitembox_regiment_types = {
+						# datamodel verificato: Regiment
 						datamodel = "[HiredTroopItem.GetRegiments]"
 
 						layoutpolicy_horizontal = expanding
@@ -2499,6 +2526,7 @@ types OCR {
 
 		vbox = {
 			layoutpolicy_horizontal = expanding
+			# datamodel verificato: MilitaryItem
 			datamodel = "[MilitaryView.GetHeldTitleItems]"
 			visible = "[Isnt('personal_title_armies')]"
 
@@ -2580,6 +2608,7 @@ types OCR {
 
 					vbox = {
 						layoutpolicy_horizontal = expanding
+						# datamodel verificato: Regiment
 						datamodel = "[MilitaryItem.GetOwnedMaa]"
 
 						item = {
@@ -2666,6 +2695,7 @@ types OCR {
 
 			hbox = {
 				name = "armies_you_command"
+				# datamodel verificato: HiredTroopItem
 				datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
 				item = {
 					container = {
@@ -2750,6 +2780,7 @@ types OCR {
 
 		vbox = {
 			layoutpolicy_horizontal = expanding
+			# datamodel verificato: HiredTroopItem
 			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
 			# name = "armies_you_command"
 			visible = "[Is('armies_you_command')]"
@@ -2851,6 +2882,7 @@ types OCR {
 		}
 
 		vbox = {
+			# datamodel verificato: HiredTroopItem
 			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
 			name = "other_imperial_armies" # for reference
 
@@ -2886,6 +2918,7 @@ types OCR {
 		}
 
 		vbox = {
+			# datamodel verificato: HiredTroopItem
 			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
 			name = "reassigned"
 
@@ -2898,6 +2931,7 @@ types OCR {
 		}
 
 		vbox = {
+			# datamodel verificato: HiredTroopItem
 			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
 			layoutpolicy_horizontal = expanding
 			visible = "[Is('reassigned_title_armies')]"
@@ -2927,6 +2961,7 @@ types OCR {
 		}
 
 		vbox = {
+			# datamodel verificato: HiredTroopItem
 			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
 			layoutpolicy_horizontal = expanding
 			name = "available"
@@ -2995,6 +3030,7 @@ types OCR {
 
 		vbox = {
 			layoutpolicy_horizontal = expanding
+			# datamodel verificato: HiredTroopItem
 			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
 			name = "fellow_vassal_armies"
 

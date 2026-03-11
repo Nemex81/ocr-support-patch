@@ -25,71 +25,151 @@ window = {
 		using = Sound_WindowHide_Standard
 	}
 
-	vbox = {
-		using = Window_Margins
-		set_parent_size_to_minimum = yes
-
-		header_pattern_interaction = {
-			layoutpolicy_horizontal = expanding
-
-			blockoverride "header_text"
-			{
-				text = "[CharacterInteractionNotificationWindow.GetContextName]"
-			}
-
-			blockoverride "button_close"
-			{
-				onclick = "[CharacterInteractionNotificationWindow.Close]"
-			}
-		}
-
-		hbox = {
-			layoutpolicy_horizontal = expanding
-
-			vbox_sender_portrait_message = {
-				layoutpolicy_horizontal = expanding
-				layoutpolicy_vertical = expanding
-
-				blockoverride "portrait_shoulders"
-				{
-					portrait_shoulders = {
-						name = "sender_portrait"
-					}
-				}
-			}
-		}
+	widget = {
+		name = "ocr_interfere_in_war_notification"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 
 		vbox = {
-			name = "window_content"
-			layoutpolicy_horizontal = expanding
+			using = Window_Margins
+			set_parent_size_to_minimum = yes
+			spacing = 8
 
-			margin = { 10 10 }
-			spacing = 5
+			background = {
+				using = Background_Area_Border_Solid
+			}
+
+			text_single = {
+				name = "ocr_notification_title"
+				layoutpolicy_horizontal = expanding
+				raw_text = "[CharacterInteractionNotificationWindow.GetContextName]."
+				fontsize = 20
+				autoresize = yes
+				color = { 255 221 136 255 }
+			}
 
 			vbox_character_interaction_effects = {
 				visible = "[CharacterInteractionNotificationWindow.GetCharacterInteraction.ShowEffectsInNotification]"
 				datacontext = "[CharacterInteractionNotificationWindow.GetEffectsDescription]"
 			}
 
-			hbox = {
-				name = "answer_area"
-				margin_top = 5
-				spacing = 20
+			vbox = {
+				name = "ocr_answer_area"
+				margin = { 0 10 }
+				layoutpolicy_horizontal = expanding
+				spacing = 6
 
-				button_standard = {
-					name = "reject_button"
-					text = "[CharacterInteractionNotificationWindow.GetAnswerRejectText]"
-					align = center|nobaseline
+				button_text = {
+					layoutpolicy_horizontal = expanding
+					name = "ocr_reject_button"
+					blockoverride "text" {
+						raw_text = "[CharacterInteractionNotificationWindow.GetAnswerRejectText]."
+					}
+					blockoverride "disabled" {
+						visible = "[Not(CharacterInteractionNotificationWindow.CanReject)]"
+					}
 					onclick = "[CharacterInteractionNotificationWindow.Reject]"
 					enabled = "[CharacterInteractionNotificationWindow.CanReject]"
 				}
 
-				button_primary = {
-					name = "accept_button"
-					text = "[CharacterInteractionNotificationWindow.GetAnswerAcceptText]"
-					align = center|nobaseline
+				button_primary_text = {
+					layoutpolicy_horizontal = expanding
+					name = "ocr_accept_button"
+					blockoverride "text" {
+						raw_text = "[CharacterInteractionNotificationWindow.GetAnswerAcceptText]"
+					}
+					blockoverride "disabled" {
+						visible = "[Not(CharacterInteractionNotificationWindow.CanAccept)]"
+					}
+					blockoverride "hotkey" {
+						visible = "[CharacterInteractionNotificationWindow.CanAccept]"
+					}
 					onclick = "[CharacterInteractionNotificationWindow.Accept]"
 					enabled = "[CharacterInteractionNotificationWindow.CanAccept]"
+				}
+			}
+
+			button_text = {
+				name = "ocr_close_notification_button"
+				layoutpolicy_horizontal = expanding
+				using = close_window_ocr
+				onclick = "[CharacterInteractionNotificationWindow.Close]"
+				blockoverride "text" {
+					raw_text = "Minimize notification, Escape."
+				}
+			}
+		}
+	}
+
+	widget = {
+		name = "vanilla_interfere_in_war_notification"
+		visible = "[GetVariableSystem.Exists('ocr')]"
+
+		vbox = {
+			using = Window_Margins
+			set_parent_size_to_minimum = yes
+
+			header_pattern_interaction = {
+				layoutpolicy_horizontal = expanding
+
+				blockoverride "header_text"
+				{
+					text = "[CharacterInteractionNotificationWindow.GetContextName]"
+				}
+
+				blockoverride "button_close"
+				{
+					onclick = "[CharacterInteractionNotificationWindow.Close]"
+				}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+
+				vbox_sender_portrait_message = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+
+					blockoverride "portrait_shoulders"
+					{
+						portrait_shoulders = {
+							name = "sender_portrait"
+						}
+					}
+				}
+			}
+
+			vbox = {
+				name = "window_content"
+				layoutpolicy_horizontal = expanding
+
+				margin = { 10 10 }
+				spacing = 5
+
+				vbox_character_interaction_effects = {
+					visible = "[CharacterInteractionNotificationWindow.GetCharacterInteraction.ShowEffectsInNotification]"
+					datacontext = "[CharacterInteractionNotificationWindow.GetEffectsDescription]"
+				}
+
+				hbox = {
+					name = "answer_area"
+					margin_top = 5
+					spacing = 20
+
+					button_standard = {
+						name = "reject_button"
+						text = "[CharacterInteractionNotificationWindow.GetAnswerRejectText]"
+						align = center|nobaseline
+						onclick = "[CharacterInteractionNotificationWindow.Reject]"
+						enabled = "[CharacterInteractionNotificationWindow.CanReject]"
+					}
+
+					button_primary = {
+						name = "accept_button"
+						text = "[CharacterInteractionNotificationWindow.GetAnswerAcceptText]"
+						align = center|nobaseline
+						onclick = "[CharacterInteractionNotificationWindow.Accept]"
+						enabled = "[CharacterInteractionNotificationWindow.CanAccept]"
+					}
 				}
 			}
 		}

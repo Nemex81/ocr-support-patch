@@ -70,19 +70,92 @@ SIMPLE_PATTERNS = [
     },
 ]
 
-# Pattern di visibilità invertita: rilevati con analisi multi-riga (vedi sotto)
-# Qui solo i regex usati nella logica dedicata.
-RE_OCR_NAME = re.compile(r'name\s*=\s*"ocr_', re.IGNORECASE)
-RE_VANILLA_NAME = re.compile(r'name\s*=\s*"vanilla_', re.IGNORECASE)
-RE_VISIBLE_VANILLA = re.compile(r'visible\s*=\s*"\[GetVariableSystem\.Exists\(\'ocr\'\)\]"')
-RE_VISIBLE_OCR = re.compile(r'visible\s*=\s*"\[Not\(GetVariableSystem\.Exists\(\'ocr\'\)\)\]"')
+# Pattern di naming/modalità: il repository usa naming misto.
+RE_OCR_NAME = re.compile(r'name\s*=\s*"(?:ocr_|ocr_mode|.*_ocr\b)', re.IGNORECASE)
+RE_VANILLA_NAME = re.compile(r'name\s*=\s*"(?:vanilla_|normal_mode|grafic_version)', re.IGNORECASE)
+RE_OCR_BLOCK_HINT = re.compile(r'^\s*(?:window_ocr|\w+_ocr)\s*=\s*\{', re.IGNORECASE)
+
+# Regex per visibilità OCR/vanilla, inclusi shorthand Agamidae Is/Isnt.
+RE_VISIBLE_VANILLA_EXISTS = re.compile(r'visible\s*=\s*"\[GetVariableSystem\.Exists\(\'ocr\'\)\]"')
+RE_VISIBLE_OCR_EXISTS = re.compile(r'visible\s*=\s*"\[Not\(GetVariableSystem\.Exists\(\'ocr\'\)\)\]"')
+RE_VISIBLE_VANILLA_SHORTHAND = re.compile(r'visible\s*=\s*"\[[^\]]*\bIs\(\'ocr\'\)[^\]]*\]"')
+RE_VISIBLE_OCR_SHORTHAND = re.compile(r'visible\s*=\s*"\[[^\]]*\bIsnt\(\'ocr\'\)[^\]]*\]"')
 
 # Regex per analisi blocchi (icon/button senza tooltip, fontsize OCR)
 RE_BLOCK_OPEN = re.compile(r'^\s*(icon|button|button_standard|button_primary|button_icon)\s*=\s*\{', re.IGNORECASE)
-RE_TOOLTIP = re.compile(r'\btooltip\s*=')
+RE_TOOLTIP = re.compile(r'\b(tooltip|tooltipwidget)\s*=')
 RE_FONTSIZE = re.compile(r'\bfontsize\s*=\s*(\d+)')
 RE_TEXT_WIDGET = re.compile(r'\b(text_single|text_multi|text_label)\s*=\s*\{', re.IGNORECASE)
-RE_OCR_CONTAINER = re.compile(r'name\s*=\s*"ocr_')
+RE_BUTTON_TEXT = re.compile(r'\b(text|raw_text)\s*=')
+RE_SHORTCUT = re.compile(r'\bshortcut\s*=')
+
+
+def _is_ocr_visibility(riga: str) -> bool:
+    return bool(RE_VISIBLE_OCR_EXISTS.search(riga) or RE_VISIBLE_OCR_SHORTHAND.search(riga))
+
+
+def _is_vanilla_visibility(riga: str) -> bool:
+    return bool(RE_VISIBLE_VANILLA_EXISTS.search(riga) or RE_VISIBLE_VANILLA_SHORTHAND.search(riga))
+
+
+def _is_ocr_block_header(riga: str) -> bool:
+    return bool(RE_OCR_NAME.search(riga) or RE_OCR_BLOCK_HINT.search(riga))
+
+
+def _linea_in_range(num_riga: int, ranges: list[tuple[int, int]]) -> bool:
+    return any(inizio <= num_riga <= fine for inizio, fine in ranges)
+
+
+def _trova_blocchi_modalita(righe: list[str], modalita: str) -> list[tuple[int, int]]:
+    """
+    Trova i blocchi principali OCR/vanilla usando naming e visibility reali.
+    Restituisce tuple (linea_inizio, linea_fine) 1-based.
+    """
+    ranges = []
+    predicato = _is_ocr_visibility if modalita == "ocr" else _is_vanilla_visibility
+
+    for i, riga in enumerate(righe):
+        if "{" not in riga:
+            continue
+
+        fine = _trova_fine_blocco(righe, i)
+        if fine == -1:
+            continue
+
+        finestra = righe[i:min(fine + 1, i + 12)]
+        ha_visibility = any(predicato(r) for r in finestra)
+        ha_nome = _is_ocr_block_header(riga) if modalita == "ocr" else bool(RE_VANILLA_NAME.search(riga))
+
+        if ha_visibility or ha_nome:
+            ranges.append((i + 1, fine + 1))
+
+    # Rimuove blocchi contenuti interamente in un altro blocco della stessa modalità.
+    ranges.sort()
+    filtrati = []
+    for inizio, fine in ranges:
+        if any(prev_inizio <= inizio and fine <= prev_fine for prev_inizio, prev_fine in filtrati):
+            continue
+        filtrati.append((inizio, fine))
+    return filtrati
+
+
+def _trova_blocchi_nascosti(righe: list[str]) -> list[tuple[int, int]]:
+    """Trova i container helper invisibili usati per shortcut keyboard-only."""
+    ranges = []
+    for i, riga in enumerate(righe):
+        if "{" not in riga:
+            continue
+
+        fine = _trova_fine_blocco(righe, i)
+        if fine <= i:
+            continue
+
+        finestra = righe[i:min(fine + 1, i + 12)]
+        ha_visible_no = any("visible = no" in r for r in finestra)
+        ha_size_zero = any("size = { 0 0 }" in r for r in finestra)
+        if ha_visible_no and ha_size_zero:
+            ranges.append((i + 1, fine + 1))
+    return ranges
 
 
 # ---------------------------------------------------------------------------
@@ -98,6 +171,9 @@ def _apri_file(percorso: Path) -> list[str]:
         return f.readlines()
 
 
+_RE_VERIFICA_DATAMODEL = re.compile(r"#\s*datamodel\s+verificato\s*:", re.IGNORECASE)
+
+
 def _scansione_semplice(righe: list[str]) -> list[dict]:
     """Applica i SIMPLE_PATTERNS riga per riga."""
     problemi = []
@@ -105,6 +181,16 @@ def _scansione_semplice(righe: list[str]) -> list[dict]:
     for num, riga in enumerate(righe, start=1):
         for pattern_re, p in compilati:
             if pattern_re.search(riga):
+                # Esenzione speciale per la regola datamodel:
+                # 1. Riga commentata (inizia con #) → codice inattivo, non segnalare
+                # 2. Riga contiene '# datamodel verificato:' inline → già verificato
+                # 3. Riga precedente contiene '# datamodel verificato:' → già verificato
+                if p["description"] == "datamodel senza nota di verifica del type":
+                    if riga.lstrip().startswith("#"):
+                        continue
+                    riga_prec = righe[num - 2] if num >= 2 else ""
+                    if _RE_VERIFICA_DATAMODEL.search(riga) or _RE_VERIFICA_DATAMODEL.search(riga_prec):
+                        continue
                 problemi.append({
                     "line": num,
                     "pattern": p["description"],
@@ -138,55 +224,53 @@ def _scansione_blocchi(righe: list[str]) -> list[dict]:
     - visibilità invertita (ocr_ con visible vanilla, vanilla_ con visible ocr) → CRITICO
     """
     problemi = []
-    in_ocr_contesto = False  # traccia se siamo dentro un container ocr_
+    blocchi_ocr = _trova_blocchi_modalita(righe, "ocr")
+    blocchi_nascosti = _trova_blocchi_nascosti(righe)
 
-    # Stack per nome container corrente (semplificato: nomi trovati sull'ultima riga di apertura)
     for i, riga in enumerate(righe):
         num_riga = i + 1
 
-        # Aggiorna il contesto OCR
-        if RE_OCR_CONTAINER.search(riga):
-            in_ocr_contesto = True
-        # Uscita da contesto OCR su chiusura di livello elevato (euristica: riga sola "}")
-        if riga.strip() == "}" and in_ocr_contesto:
-            in_ocr_contesto = False
-
         # --- Visibilità invertita ---
-        if RE_OCR_NAME.search(riga):
-            # cerca visible nelle prossime 10 righe
-            finestra = righe[i:i + 10]
+        if _is_ocr_block_header(riga):
+            fine = _trova_fine_blocco(righe, i)
+            finestra = righe[i:(fine + 1 if fine != -1 else i + 1)]
             for riga_f in finestra:
-                if RE_VISIBLE_VANILLA.search(riga_f):
+                if _is_vanilla_visibility(riga_f):
                     problemi.append({
                         "line": num_riga,
-                        "pattern": "Container ocr_* con visibility vanilla (invertita)",
+                        "pattern": "Blocco OCR con visibility vanilla (invertita)",
                         "category": "VISIBILITA",
                         "severity": "CRITICO",
-                        "fix": "Usare visible = \"[Not(GetVariableSystem.Exists('ocr'))]\" per container ocr_*",
+                        "fix": "Usare visible OCR corretto: [Not(GetVariableSystem.Exists('ocr'))] o equivalente Isnt('ocr')",
                     })
                     break
 
         if RE_VANILLA_NAME.search(riga):
-            finestra = righe[i:i + 10]
+            fine = _trova_fine_blocco(righe, i)
+            finestra = righe[i:(fine + 1 if fine != -1 else i + 1)]
             for riga_f in finestra:
-                if RE_VISIBLE_OCR.search(riga_f):
+                if _is_ocr_visibility(riga_f):
                     problemi.append({
                         "line": num_riga,
-                        "pattern": "Container vanilla_* con visibility OCR (invertita)",
+                        "pattern": "Blocco vanilla con visibility OCR (invertita)",
                         "category": "VISIBILITA",
                         "severity": "CRITICO",
-                        "fix": "Usare visible = \"[GetVariableSystem.Exists('ocr')]\" per container vanilla_*",
+                        "fix": "Usare visible vanilla corretto: [GetVariableSystem.Exists('ocr')] o equivalente Is('ocr')",
                     })
                     break
 
         # --- icon/button senza tooltip ---
-        if RE_BLOCK_OPEN.match(riga):
+        if _linea_in_range(num_riga, blocchi_ocr) and not _linea_in_range(num_riga, blocchi_nascosti) and RE_BLOCK_OPEN.match(riga):
             fine = _trova_fine_blocco(righe, i)
             if fine == -1:
                 fine = min(i + 15, len(righe) - 1)
             blocco = righe[i:fine + 1]
             ha_tooltip = any(RE_TOOLTIP.search(r) for r in blocco)
+            ha_testo = any(RE_BUTTON_TEXT.search(r) for r in blocco)
+            e_shortcut_helper = any(RE_SHORTCUT.search(r) for r in blocco) and not ha_testo
             if not ha_tooltip:
+                if e_shortcut_helper:
+                    continue
                 tipo_widget = RE_BLOCK_OPEN.match(riga).group(1).lower()
                 problemi.append({
                     "line": num_riga,
@@ -197,7 +281,7 @@ def _scansione_blocchi(righe: list[str]) -> list[dict]:
                 })
 
         # --- fontsize < 18 in contesto OCR ---
-        if in_ocr_contesto and RE_TEXT_WIDGET.match(riga):
+        if _linea_in_range(num_riga, blocchi_ocr) and RE_TEXT_WIDGET.match(riga):
             fine = _trova_fine_blocco(righe, i)
             if fine == -1:
                 fine = min(i + 10, len(righe) - 1)
@@ -219,13 +303,50 @@ def _scansione_blocchi(righe: list[str]) -> list[dict]:
     return problemi
 
 
+def _scansione_completezza_dual_mode(righe: list[str]) -> list[dict]:
+    """Verifica minima: una finestra dual-mode deve esporre entrambe le modalità."""
+    problemi = []
+    blocchi_ocr = _trova_blocchi_modalita(righe, "ocr")
+    blocchi_vanilla = _trova_blocchi_modalita(righe, "vanilla")
+
+    if not blocchi_ocr and not blocchi_vanilla:
+        problemi.append({
+            "line": 1,
+            "pattern": "Nessuna struttura dual mode rilevata",
+            "category": "STRUTTURALE",
+            "severity": "CRITICO",
+            "fix": "Aggiungere blocchi OCR e vanilla con visibility mutuamente esclusiva",
+        })
+        return problemi
+
+    if blocchi_ocr and not blocchi_vanilla:
+        problemi.append({
+            "line": blocchi_ocr[0][0],
+            "pattern": "Blocco vanilla non rilevato",
+            "category": "STRUTTURALE",
+            "severity": "ATTENZIONE",
+            "fix": "Verificare che la modalità normovedente abbia un blocco con visible = [GetVariableSystem.Exists('ocr')] o equivalente",
+        })
+
+    if blocchi_vanilla and not blocchi_ocr:
+        problemi.append({
+            "line": blocchi_vanilla[0][0],
+            "pattern": "Blocco OCR non rilevato",
+            "category": "STRUTTURALE",
+            "severity": "ATTENZIONE",
+            "fix": "Verificare che la modalità OCR abbia un blocco con visible = [Not(GetVariableSystem.Exists('ocr'))] o equivalente",
+        })
+
+    return problemi
+
+
 def analizza_file(percorso: Path) -> dict:
     """
     Analisi completa di un file .gui.
     Restituisce un dict con: file, verdict, critical_count, warning_count, issues.
     """
     righe = _apri_file(percorso)
-    problemi = _scansione_semplice(righe) + _scansione_blocchi(righe)
+    problemi = _scansione_semplice(righe) + _scansione_blocchi(righe) + _scansione_completezza_dual_mode(righe)
 
     # Rimuove duplicati (stessa riga + categoria)
     visti = set()
@@ -260,7 +381,7 @@ def analizza_file(percorso: Path) -> dict:
 # ---------------------------------------------------------------------------
 
 def _icona_gravita(severity: str) -> str:
-    return "🔴 CRITICO" if severity == "CRITICO" else "🟡 ATTENZIONE"
+    return "[CRITICO]" if severity == "CRITICO" else "[ATTENZIONE]"
 
 
 def formatta_markdown(risultato: dict) -> str:
@@ -298,6 +419,9 @@ def formatta_json(risultato: dict) -> str:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
     parser = argparse.ArgumentParser(
         description="Valida un file .gui CK3 per pattern deprecati e problemi strutturali."
     )

@@ -316,6 +316,7 @@ window = {
                 }
 
                 dynamicgridbox = {
+                    # datamodel verificato: Trait
                     datamodel = "[CombatWindow.GetLeftCommanderTraits]"
                     visible = "[LessThanOrEqualTo_int32(GetDataModelSize(CombatWindow.GetLeftCommanderTraits), '(int32)3')]"
 
@@ -335,6 +336,7 @@ window = {
                 }
 
                 dynamicgridbox = {
+                    # datamodel verificato: Trait
                     datamodel = "[CombatWindow.GetLeftCommanderTraits]"
                     visible = "[EqualTo_int32(GetDataModelSize(CombatWindow.GetLeftCommanderTraits), '(int32)4')]"
 
@@ -353,6 +355,7 @@ window = {
                 }
 
                 dynamicgridbox = {
+                    # datamodel verificato: Trait
                     datamodel = "[CombatWindow.GetLeftCommanderTraits]"
                     visible = "[EqualTo_int32(GetDataModelSize(CombatWindow.GetLeftCommanderTraits), '(int32)5')]"
 
@@ -371,6 +374,7 @@ window = {
                 }
 
                 dynamicgridbox = {
+                    # datamodel verificato: Trait
                     datamodel = "[CombatWindow.GetLeftCommanderTraits]"
                     visible = "[GreaterThanOrEqualTo_int32(GetDataModelSize(CombatWindow.GetLeftCommanderTraits), '(int32)6')]"
 
@@ -525,6 +529,7 @@ window = {
                 }
 
                 dynamicgridbox = {
+                    # datamodel verificato: Trait
                     datamodel = "[CombatWindow.GetRightCommanderTraits]"
                     visible = "[LessThanOrEqualTo_int32(GetDataModelSize(CombatWindow.GetRightCommanderTraits), '(int32)3')]"
 
@@ -544,6 +549,7 @@ window = {
                 }
 
                 dynamicgridbox = {
+                    # datamodel verificato: Trait
                     datamodel = "[CombatWindow.GetRightCommanderTraits]"
                     visible = "[EqualTo_int32(GetDataModelSize(CombatWindow.GetRightCommanderTraits), '(int32)4')]"
 
@@ -562,6 +568,7 @@ window = {
                 }
 
                 dynamicgridbox = {
+                    # datamodel verificato: Trait
                     datamodel = "[CombatWindow.GetRightCommanderTraits]"
                     visible = "[EqualTo_int32(GetDataModelSize(CombatWindow.GetRightCommanderTraits), '(int32)5')]"
 
@@ -580,6 +587,7 @@ window = {
                 }
 
                 dynamicgridbox = {
+                    # datamodel verificato: Trait
                     datamodel = "[CombatWindow.GetRightCommanderTraits]"
                     visible = "[GreaterThanOrEqualTo_int32(GetDataModelSize(CombatWindow.GetRightCommanderTraits), '(int32)6')]"
 
@@ -1846,6 +1854,7 @@ window = {
                         }
 
                         overlappingitembox = {
+                            # datamodel verificato: CombatMaaItem
                             datamodel = "[CombatWindow.GetLeftSideMaaTypes]"
                             datacontext = "[CombatWindow.GetLeftCombatSide]"
                             ignoreinvisible = yes
@@ -1923,6 +1932,7 @@ window = {
                         }
 
                         overlappingitembox = {
+                            # datamodel verificato: CombatMaaItem
                             datamodel = "[CombatWindow.GetRightSideMaaTypes]"
                             datacontext = "[CombatWindow.GetRightCombatSide]"
                             ignoreinvisible = yes
@@ -2447,6 +2457,7 @@ window = {
                                 layoutpolicy_horizontal = expanding
 
                                 vbox = {
+                                    # datamodel verificato: CombatMaaItem
                                     datamodel = "[CombatWindow.GetLeftSideMaaTypes]"
                                     datacontext = "[CombatWindow.GetLeftCombatSide]"
 
@@ -2469,6 +2480,7 @@ window = {
                                 layoutpolicy_horizontal = expanding
 
                                 vbox = {
+                                    # datamodel verificato: CombatMaaItem
                                     datamodel = "[CombatWindow.GetRightSideMaaTypes]"
                                     datacontext = "[CombatWindow.GetRightCombatSide]"
 
@@ -2521,6 +2533,7 @@ window = {
 
                         dynamicgridbox = {
                             layoutpolicy_horizontal = expanding
+                            # datamodel verificato: Trait
                             datamodel = "[CombatWindow.GetLeftCommanderTraits]"
                             datamodel_wrap = 5
 
@@ -2562,6 +2575,7 @@ window = {
 
                         dynamicgridbox = {
                             layoutpolicy_horizontal = expanding
+                            # datamodel verificato: Trait
                             datamodel = "[CombatWindow.GetRightCommanderTraits]"
                             datamodel_wrap = 5
 
@@ -3075,6 +3089,7 @@ types CombatWindow {
                     margin = { 10 0 }
                     margin_left = 30
                     direction = vertical
+                    # datamodel verificato: MenAtArmsType
                     datamodel = "[CombatMaaItem.GetCounteredByMaa]"
 
                     item = {
@@ -3091,6 +3106,7 @@ types CombatWindow {
                 visible = "[And( DataModelHasItems(CombatMaaItem.GetCountersMaa), Not( CombatWindow.IsCombatInPursuitPhase ) )]"
                 margin = { 10 0 }
                 direction = vertical
+                # datamodel verificato: MenAtArmsType
                 datamodel = "[CombatMaaItem.GetCountersMaa]"
 
                 item = {

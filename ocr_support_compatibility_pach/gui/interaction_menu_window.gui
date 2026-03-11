@@ -142,6 +142,7 @@ window = {
 			# ---- LISTA CATEGORIE ----
 			flowcontainer = {
 				name = "category_interaction_list"
+				# datamodel verificato: InteractionCategoryItem
 				datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
 				direction = vertical
 				ignoreinvisible = yes
@@ -169,6 +170,7 @@ window = {
 					}
 
 					dynamicgridbox_interaction_list_ocr = {
+						# datamodel verificato: InteractionItem
 						datamodel = "[CharacterInteractionMenuWindow.GetMoreInteractions]"
 					}
 				}
@@ -335,6 +337,7 @@ window = {
 						# name used in code
 						name = "category_interaction_list"
 
+						# datamodel verificato: InteractionCategoryItem
 						datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
 						direction = vertical
 						ignoreinvisible = yes
@@ -375,6 +378,7 @@ window = {
 				}
 
 				dynamicgridbox_interaction_list = {
+					# datamodel verificato: InteractionItem
 					datamodel = "[CharacterInteractionMenuWindow.GetMoreInteractions]"
 				}
 			}

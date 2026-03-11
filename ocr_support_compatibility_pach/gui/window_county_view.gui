@@ -283,16 +283,19 @@ window = {
 										blockoverride "bridge" {
 											raw_text = "strait crossing"
 										}
+										# datamodel verificato: Province
 										datamodel = "[Province.MakeScope.GetList('sea_crossings')]"
 									}
 
 									flow_crossing_ocr = {
 										visible = "[DataModelHasItems(Province.MakeScope.GetList('river_large_crossings'))]"
+										# datamodel verificato: Province
 										datamodel = "[Province.MakeScope.GetList('river_large_crossings')]"
 									}
 
 									flow_crossing_ocr = {
 										visible = "[DataModelHasItems(Province.MakeScope.GetList('river_crossings'))]"
+										# datamodel verificato: Province
 										datamodel = "[Province.MakeScope.GetList('river_crossings')]"
 									}
 
@@ -742,6 +745,7 @@ window = {
 											spacing = 3
 
 											flowcontainer = {
+												# datamodel verificato: Title
 												datamodel = "[DataModelFirst(HoldingView.GetCountyTitle.MakeScope.GetList('adjacent_seas'), '(int32)1')]"
 												visible = "[EqualTo_int32(GetDataModelSize(HoldingView.GetCountyTitle.MakeScope.GetList('adjacent_seas')), '(int32)1')]"
 
@@ -772,6 +776,7 @@ window = {
 											spacing = 3
 
 											flowcontainer = {
+												# datamodel verificato: Title
 												datamodel = "[DataModelFirst(HoldingView.GetCountyTitle.MakeScope.GetList('adjacent_rivers'), '(int32)1')]"
 												visible = "[EqualTo_int32(GetDataModelSize(HoldingView.GetCountyTitle.MakeScope.GetList('adjacent_rivers')), '(int32)1')]"
 
@@ -983,6 +988,7 @@ window = {
 											alwaystransparent = yes
 
 											hbox = {
+												# datamodel verificato: HoldingStatus
 												datamodel = "[HoldingView.GetHoldingStatuses]"
 												name = "items"
 												item = {
@@ -1390,6 +1396,7 @@ window = {
 
 										flowcontainer = {
 											name = "epidemics_here"
+											# datamodel verificato: HoldingStatus
 											datamodel = "[HoldingView.GetHoldingStatuses]"
 											ignoreinvisible = yes
 											direction = vertical
@@ -1442,6 +1449,7 @@ window = {
 
 										flowcontainer = {
 											name = "terrain"
+											# datamodel verificato: HoldingStatus
 											datamodel = "[HoldingView.GetHoldingStatuses]"
 											ignoreinvisible = yes
 											direction = vertical
@@ -1484,6 +1492,7 @@ window = {
 
 										flowcontainer = {
 											name = "holding_statuses"
+											# datamodel verificato: HoldingStatus
 											datamodel = "[HoldingView.GetHoldingStatuses]"
 											ignoreinvisible = yes
 											direction = vertical
@@ -1846,6 +1855,7 @@ window = {
 										flowcontainer = {
 											visible = "[Not(HoldingView.GetHolding.GetType.HasParameter('no_buildings'))]"
 											name = "buildings_grid"
+											# datamodel verificato: Building
 											datamodel = "[HoldingView.GetBuildings]"
 											ignoreinvisible = yes
 											direction = vertical
@@ -1917,6 +1927,7 @@ window = {
 							visible = "[GetVariableSystem.Exists('holding_tabs')]"
 							using = close_window_ocr
 							onclick = "[GetVariableSystem.Clear('holding_tabs')]"
+							tooltip = "CLOSE_TOOLTIP"
 						}
 
 						button_text = {
@@ -1937,6 +1948,7 @@ window = {
 						dynamicgridbox = {
 							visible = "[GetVariableSystem.HasValue('county_tabs', 'holdings')]"
 							layoutpolicy_horizontal = expanding
+							# datamodel verificato: Title
 							datamodel = "[HoldingView.GetCountyTitle.MakeScope.GetList('county_holdings')]"
 
 							item = {
@@ -2045,6 +2057,7 @@ window = {
 										flowcontainer = {
 											ignoreinvisible = yes
 											spacing = 3
+											# datamodel verificato: Building
 											datamodel = "[Scope.Province.MakeScope.GetList('buildings_ledger')]"
 											visible = "[DataModelHasItems(Scope.Province.MakeScope.GetList('buildings_ledger'))]"
 
@@ -2058,6 +2071,7 @@ window = {
 										flowcontainer = {
 											ignoreinvisible = yes
 											spacing = 3
+											# datamodel verificato: Building
 											datamodel = "[Scope.Province.MakeScope.GetList('duchy_building_ledger')]"
 											visible = "[DataModelHasItems(Scope.Province.MakeScope.GetList('duchy_building_ledger'))]"
 
@@ -2309,6 +2323,7 @@ window = {
 
 									dynamicgridbox = {
 										datamodel_wrap = 3
+										# datamodel verificato: Modifier
 										datamodel = "[HoldingView.GetCountyModifiers]"
 
 										item = {
@@ -2944,6 +2959,7 @@ window = {
 										vbox = {
 											layoutpolicy_horizontal = expanding
 
+											# datamodel verificato: Title
 											datamodel = "[Title.MakeScope.GetList('adjacent_seas')]"
 											item = {
 												button_sea = {
@@ -2967,6 +2983,7 @@ window = {
 										vbox = {
 											layoutpolicy_horizontal = expanding
 
+											# datamodel verificato: Title
 											datamodel = "[Title.MakeScope.GetList('adjacent_rivers')]"
 											item = {
 												button_sea = {
@@ -3026,6 +3043,7 @@ window = {
 									using = close_window_ocr
 									visible = "[Is('adjacent_counties_ring')]"
 									onclick = "[Clear('adjacent_counties_ring')]"
+									tooltip = "CLOSE_TOOLTIP"
 								}
 
 								button = {
@@ -3077,6 +3095,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 								visible = "[Or(Isnt('adjacent_counties_ring'), Has('adjacent_counties_ring', '1'))]"
 
+								# datamodel verificato: Title
 								datamodel = "[HoldingView.GetCountyTitle.MakeScope.GetList('adjacent_counties')]"
 
 								item = {
@@ -3100,6 +3119,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 								visible = "[Or(Isnt('adjacent_counties_ring'), Has('adjacent_counties_ring', '2'))]"
 
+								# datamodel verificato: Title
 								datamodel = "[HoldingView.GetCountyTitle.MakeScope.GetList('adjacent_counties_2')]"
 
 								item = {
@@ -3123,6 +3143,7 @@ window = {
 								layoutpolicy_horizontal = expanding
 								visible = "[Or(Isnt('adjacent_counties_ring'), Has('adjacent_counties_ring', '3'))]"
 
+								# datamodel verificato: Title
 								datamodel = "[HoldingView.GetCountyTitle.MakeScope.GetList('adjacent_counties_3')]"
 
 								item = {
@@ -3142,6 +3163,7 @@ window = {
 									layoutpolicy_horizontal = expanding
 									shortcut = map_mode_11
 									onclick = "[Set('adjacent_counties_ring', 'across_water')]"
+									tooltip = "Show adjacent counties across water"
 
 									flowcontainer = {
 										ignoreinvisible = yes
@@ -3175,6 +3197,7 @@ window = {
 								dynamicgridbox = {
 									layoutpolicy_horizontal = expanding
 									visible = "[Or(Isnt('adjacent_counties_ring'), Has('adjacent_counties_ring', 'across_water'))]"
+									# datamodel verificato: Title
 									datamodel = "[HoldingView.GetCountyTitle.MakeScope.GetList('adjacent_counties_across_water')]"
 
 									item = {
@@ -3206,6 +3229,7 @@ window = {
 							dynamicgridbox = {
 								visible = "[Not(GetVariableSystem.HasValue('county_tabs', 'adjacent counties'))]"
 								layoutpolicy_horizontal = expanding
+								# datamodel verificato: Title
 								datamodel = "[HoldingView.GetCountyTitle.MakeScope.GetList('county_holdings')]"
 
 								item = {
@@ -3493,6 +3517,7 @@ window = {
 				spacing = 5
 
 				hbox = {
+					# datamodel verificato: Title
 					datamodel = "[HoldingView.GetDeJureLieges]"
 
 					item = {
@@ -3516,6 +3541,7 @@ window = {
 
 					hbox = {
 						name = "county_modifiers_grid"
+						# datamodel verificato: Modifier
 						datamodel = "[HoldingView.GetCountyModifiers]"
 
 						button_round = {
@@ -4193,6 +4219,7 @@ window = {
 				layoutpolicy_horizontal = expanding
 
 				hbox = {
+					# datamodel verificato: Title
 					datamodel = "[HoldingView.GetCountyHoldings]"
 					margin_left = 5
 					spacing = 5
@@ -4461,6 +4488,7 @@ window = {
 
 						fixedgridbox = {
 							name = "holding_statuses"
+							# datamodel verificato: HoldingStatus
 							datamodel = "[HoldingView.GetHoldingStatuses]"
 							flipdirection = yes
 							datamodel_wrap = 2
@@ -5266,6 +5294,7 @@ window = {
 								# Upgrade buildings
 								flowcontainer = {
 									name = "buildings_grid"
+									# datamodel verificato: Building
 									datamodel = "[HoldingView.GetBuildings]"
 									ignoreinvisible = yes
 									spacing = 3
@@ -5341,6 +5370,7 @@ window = {
 		button = {
 			using = close_window_ocr
 			onclick = "[Clear('extra_window')]"
+			tooltip = "CLOSE_TOOLTIP"
 		}
 		blockoverride "show_window" {
 			visible = "[Has('extra_window', 'window_province_regions')]"
@@ -5368,6 +5398,7 @@ window = {
 			}
 			vbox = {
 				layoutpolicy_horizontal = expanding
+				# datamodel verificato: Region
 				datamodel = "[GetPlayer.MakeScope.GetList('province_regions')]"
 
 				item = {
@@ -5451,6 +5482,7 @@ window = {
 								}
 
 								fixedgridbox = {
+									# datamodel verificato: Province
 									datamodel = "[PageModel('province_region_page', FixedPointToInt(GetPlayer.MakeScope.Var('global_page_size').GetValue), GetPlayer.MakeScope.GetList(Concatenate(Scope.GetFlagName, '_foreign')))]"
 									layoutpolicy_horizontal = expanding
 									addrow = 25
@@ -5480,6 +5512,7 @@ window = {
 
 								fixedgridbox = {
 									name = "items"
+									# datamodel verificato: Province
 									datamodel = "[GetPlayer.MakeScope.GetList(Concatenate(Scope.GetFlagName, '_foreign'))]"
 									addcolumn = 1
 									addrow = 1
@@ -5511,10 +5544,12 @@ window = {
 							  datacontext = "[GetScriptedGui('province_region_page')]"
 
 							  blockoverride "full_datamodel" {
+							    # datamodel verificato: Province
 							    datamodel = "[GetPlayer.MakeScope.GetList(Concatenate(Scope.GetFlagName, '_yours'))]"
 							  }
 							  blockoverride "vbox_contents" {
 									fixedgridbox = {
+										# datamodel verificato: Province
 										datamodel = "[PageModel('province_region_page', FixedPointToInt(GetPlayer.MakeScope.Var('global_page_size').GetValue), GetPlayer.MakeScope.GetList(Concatenate(Scope.GetFlagName, '_yours')))]"
 									  layoutpolicy_horizontal = expanding
 									  addrow = 25
@@ -5596,6 +5631,7 @@ window = {
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		size = { 100% 100% }
 
+		# datamodel verificato: Building
 		datamodel = "[HoldingView.GetPotentialBuildings]"
 		datacontext = "[HoldingView.GetHolder]"
 		datacontext = "[HoldingView.GetProvince]"
@@ -5666,6 +5702,7 @@ window = {
 									#visible = "[Not(HoldingView.IsSelectingBuildingToConstruct)]"
 									layoutpolicy_horizontal = expanding
 									name = "tracks_grid"
+									# datamodel verificato: Building
 									datamodel = "[HoldingView.GetPotentialBuildings]"
 									datacontext = "[HoldingView.GetProvince]"
 									datacontext = "[HoldingView.GetProvince.GetCounty.GetCulture]"
@@ -6253,6 +6290,7 @@ window = {
 										### PREVIOUS BUILDINGS
 										vbox = {
 											name = "level_track_previous"
+											# datamodel verificato: GUITrackLevelItem
 											datamodel = "[GUITrackItem.GetPreLevelItems]"
 											layoutpolicy_horizontal = expanding
 
@@ -6319,6 +6357,7 @@ window = {
 										vbox = {
 											layoutpolicy_horizontal = expanding
 											name = "level_track_next"
+											# datamodel verificato: GUITrackLevelItem
 											datamodel = "[GUITrackItem.GetPostLevelItems]"
 
 											item = {
@@ -6438,6 +6477,7 @@ window = {
 								blockoverride "scrollbox_content"
 								{
 									name = "tracks_grid"
+									# datamodel verificato: Building
 									datamodel = "[HoldingView.GetPotentialBuildings]"
 									datacontext = "[HoldingView.GetProvince]"
 
@@ -6722,6 +6762,7 @@ window = {
 										### PREVIOUS BUILDINGS
 										hbox = {
 											name = "level_track_previous"
+											# datamodel verificato: GUITrackLevelItem
 											datamodel = "[GUITrackItem.GetPreLevelItems]"
 
 											item = {
@@ -6951,6 +6992,7 @@ window = {
 										### LEVEL TRACK
 										hbox = {
 											name = "level_track_next"
+											# datamodel verificato: GUITrackLevelItem
 											datamodel = "[GUITrackItem.GetPostLevelItems]"
 
 											item = {
@@ -7442,6 +7484,7 @@ window = {
 
 			flowcontainer = {
 				name = "holding_types"
+				# datamodel verificato: HoldingTypeItem
 				datamodel = "[HoldingView.GetHoldingTypeItems]"
 				layoutpolicy_horizontal = expanding
 				ignoreinvisible = yes
@@ -7543,6 +7586,7 @@ window = {
 
 			hbox = {
 				name = "holding_types"
+				# datamodel verificato: HoldingTypeItem
 				datamodel = "[HoldingView.GetHoldingTypeItems]"
 				layoutpolicy_horizontal = expanding
 				spacing = 10
@@ -8051,6 +8095,7 @@ types OCR {
 				spacing = 3
 
 				flowcontainer = {
+					# datamodel verificato: Province
 					datamodel = "[DataModelFirst(Province.MakeScope.GetList('adjacent_seas'), '(int32)1')]"
 					visible = "[EqualTo_int32(GetDataModelSize(Province.MakeScope.GetList('adjacent_seas')), '(int32)1')]"
 
@@ -8083,6 +8128,7 @@ types OCR {
 				spacing = 3
 
 				flowcontainer = {
+					# datamodel verificato: Province
 					datamodel = "[DataModelFirst(Province.MakeScope.GetList('adjacent_rivers'), '(int32)1')]"
 					visible = "[EqualTo_int32(GetDataModelSize(Province.MakeScope.GetList('adjacent_rivers')), '(int32)1')]"
 

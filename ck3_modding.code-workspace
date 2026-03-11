@@ -43,6 +43,137 @@
 			"/^python -c \"p=r'c:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\CK3 ORIGINAL VERSION\\\\ck3origin\\\\game\\\\gui\\\\cooltip\\.gui'; f=open\\(p, encoding='utf-8', errors='replace'\\); \\[print\\(i\\+1,l\\.rstrip\\(\\)\\) for i,l in enumerate\\(f\\) if 'faith_tooltip' in l and 'type' in l\\]; f\\.close\\(\\)\"$/": {
 				"approve": true,
 				"matchCommandLine": true
+			},
+			"/^python tools/audit\\.py --all 2>&1 \\| Select-String 'Analisi:\\|\\^\\\\\\| \\.\\*\\\\\\.gui \\\\\\|' \\| Out-String$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/window_my_realm\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/interaction_interfere_in_war_notification\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/tri_diff\\.py --window interaction_interfere_in_war_notification$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/window_court\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/audit\\.py --window interaction_interfere_in_war_notification$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/audit\\.py --window window_activity_list$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/audit\\.py --window window_court$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/window_inventory\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/window_intrigue\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/window_military\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/window_character_lifestyle\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/window_county_view\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/audit\\.py --window window_character_lifestyle$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/tri_diff\\.py --window window_my_realm$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/audit\\.py$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/hud\\.gui$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/hud\\.gui 2>&1$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"Add-Content": true,
+			"/^cd \"C:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\ocr-support-patch\"; python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/hud\\.gui 2>&1 \\| Select-String \"Riepilogo\\|PRESENTI\\|ASSENTI\"$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/hud\\.gui 2>&1 \\| Select-String \"ASSENTE\"$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/hud\\.gui 2>&1 \\| Select-String \"Riepilogo\\|ASSENTE\"$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/window_county_view\\.gui 2>&1 \\| Select-String \"ASSENTE\\|Riepilogo\"$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^cd \"C:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\ocr-support-patch\"; python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/window_county_view\\.gui 2>&1 \\| Select-String \"Riepilogo\\|ASSENTE\"$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/audit\\.py 2>&1 \\| Select-String \"File \\\\\\|\\|Stato\\|BLOCCANTE\\|Analisi\\|Riepilogo\\|assenti\" \\| Select-Object -First 40$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/audit\\.py 2>&1 \\| Select-String \"\\\\\\|\" \\| Select-Object -First 20$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/window_my_realm\\.gui 2>&1 \\| Select-String \"ASSENTE\\|Riepilogo\"$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^cd \"C:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\ocr-support-patch\"; foreach \\(\\$f in @\\(\"window_military\\.gui\",\"window_intrigue\\.gui\",\"window_inventory\\.gui\",\"window_court\\.gui\",\"window_character_lifestyle\\.gui\",\"window_activity_list\\.gui\"\\)\\) \\{ \\$r = python tools/scope_extractor\\.py --file \"ocr_support_compatibility_pach/gui/\\$f\" 2>&1 \\| Select-String \"ASSENTE\\|Riepilogo\"; Write-Host \"=== \\$f ===\"; \\$r \\}$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"Group-Object": true,
+			"/^cd \"C:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\ocr-support-patch\"; python tools/audit\\.py 2>&1 \\| Select-String \"\\\\\\|\" \\| Select-Object -First 15$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/scope_extractor\\.py --file ocr_support_compatibility_pach/gui/window_character_lifestyle\\.gui 2>&1 \\| Select-String \"ASSENTE\\|Riepilogo\"$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"&1": true,
+			"/^cd \"C:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\ocr-support-patch\"\n\\$files = @\\(\"hud\\.gui\",\"window_county_view\\.gui\",\"window_character_lifestyle\\.gui\",\"window_military\\.gui\",\"window_intrigue\\.gui\",\"window_inventory\\.gui\",\"window_court\\.gui\",\"window_activity_list\\.gui\",\"window_my_realm\\.gui\"\\)\nforeach \\(\\$f in \\$files\\) \\{\n    \\$out = python tools/gui_validator\\.py --file \"ocr_support_compatibility_pach/gui/\\$f\"\n    \\$lines = \\$out \\| Select-String \"datamodel senza nota\" \\| ForEach-Object \\{ \\(\\$_ -split '\\\\\\|'\\)\\[1\\]\\.Trim\\(\\) \\}\n    if \\(\\$lines\\) \\{ Write-Host \"\\$f`: \\$\\(\\$lines -join ','\\)\" \\}\n\\}$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^cd \"C:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\ocr-support-patch\"\npython tools/gui_validator\\.py --file ocr_support_compatibility_pach/gui/hud\\.gui \\| Select-String \"datamodel senza\" \\| ForEach-Object \\{ \\(\\$_ -split \"\\\\\\|\"\\)\\[1\\]\\.Trim\\(\\) \\}$/": {
+				"approve": true,
+				"matchCommandLine": true
+			},
+			"/^python tools/annotate_datamodels\\.py$/": {
+				"approve": true,
+				"matchCommandLine": true
 			}
 		}
 	},

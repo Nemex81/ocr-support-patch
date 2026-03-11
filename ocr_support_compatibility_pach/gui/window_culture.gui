@@ -502,6 +502,7 @@ window = {
 
 				#cultures
 				vbox = {
+					# datamodel verificato: Culture
 					datamodel = "[GetPlayer.MakeScope.GetList('cultures')]"
 					layoutpolicy_horizontal = expanding
 					visible = "[Has('culture_view_tabs', 'other cultures')]"
@@ -628,6 +629,7 @@ window = {
 						layoutpolicy_horizontal = expanding
 						addrow = 20
 						addcolumn = 690
+						# datamodel verificato: Character
 						datamodel = "[Culture.MakeScope.GetList('culture_characters')]"
 
 						item = {
@@ -717,6 +719,7 @@ window = {
 						layoutpolicy_horizontal = expanding
 						addrow = 20
 						addcolumn = 690
+						# datamodel verificato: Culture
 						datamodel = "[Culture.MakeScope.GetList('adjacent_cultures')]"
 
 						item = {
@@ -760,6 +763,7 @@ window = {
 						layoutpolicy_horizontal = expanding
 						addrow = 20
 						addcolumn = 600
+						# datamodel verificato: Title
 						datamodel = "[Culture.MakeScope.GetList('wrong_counties')]"
 
 						item = {
@@ -826,6 +830,7 @@ window = {
 					vbox = {
 						name = "items"
 						layoutpolicy_horizontal = expanding
+						# datamodel verificato: Title
 						datamodel = "[GetPlayer.MakeScope.GetList('culture_counties')]"
 
 						item = {
@@ -1047,6 +1052,7 @@ window = {
 
 								vbox = {
 									layoutpolicy_horizontal = expanding
+									# datamodel verificato: GuiCultureTradition
 									datamodel = "[CultureWindow.GetCultureTraditions]"
 									visible = "[Not(CultureWindow.IsInReformationMode)]"
 
@@ -1093,6 +1099,7 @@ window = {
 								}
 
 								vbox = {
+									# datamodel verificato: GuiCultureTradition
 									datamodel = "[CultureWindow.GetCultureTraditions]"
 	                visible = "[CultureWindow.IsInReformationMode]"
 									layoutpolicy_horizontal = expanding
@@ -1191,6 +1198,7 @@ window = {
 
 					vbox = {
 						layoutpolicy_horizontal = expanding
+						# datamodel verificato: GuiCultureEra
 						datamodel = "[CultureWindow.GetCultureEras]"
 						visible = "[Not(Is('all_eras'))]"
 
@@ -1203,6 +1211,7 @@ window = {
 
 					vbox = {
 						layoutpolicy_horizontal = expanding
+						# datamodel verificato: GuiCultureEra
 						datamodel = "[CultureWindow.GetCultureEras]"
 						visible = "[Is('all_eras')]"
 
@@ -1305,6 +1314,7 @@ window = {
 
 								vbox = {
 									name = "era_groups"
+									# datamodel verificato: GuiCultureEraGroup
 									datamodel = "[GuiCultureEra.GetCultureEraGroups]"
 									layoutpolicy_horizontal = expanding
 
@@ -1321,6 +1331,7 @@ window = {
 
 											dynamicgridbox = {
 												layoutpolicy_horizontal = expanding
+												# datamodel verificato: Innovation
 												datamodel = "[GuiCultureEraGroup.GetInnovations]"
 
 												item = {
@@ -1876,6 +1887,7 @@ window = {
 				blockoverride "scrollbox_content" {
 					vbox = {
 						fixedgridbox = {
+							# datamodel verificato: GuiCultureTradition
 							datamodel = "[CultureWindow.GetCultureTraditions]"
 							visible = "[Not(CultureWindow.IsInReformationMode)]"
 							flipdirection = yes
@@ -1990,6 +2002,7 @@ window = {
 						}
 
 						fixedgridbox = {
+							# datamodel verificato: GuiCultureTradition
 							datamodel = "[CultureWindow.GetCultureTraditions]"
 							visible = "[CultureWindow.IsInReformationMode]"
 							flipdirection = yes
@@ -2254,6 +2267,7 @@ window = {
 					using = Background_Area_Dark
 				}
 
+				# datamodel verificato: GuiCultureEra
 				datamodel = "[CultureWindow.GetCultureEras]"
 
 				item = {
@@ -2373,6 +2387,7 @@ window = {
 
 						vbox = {
 							name = "era_groups"
+							# datamodel verificato: GuiCultureEraGroup
 							datamodel = "[GuiCultureEra.GetCultureEraGroups]"
 							layoutpolicy_horizontal = expanding
 							spacing = 30
@@ -2391,6 +2406,7 @@ window = {
 									}
 
 									dynamicgridbox = {
+										# datamodel verificato: Innovation
 										datamodel = "[GuiCultureEraGroup.GetInnovations]"
 										datamodel_wrap = 2
 										flipdirection = yes

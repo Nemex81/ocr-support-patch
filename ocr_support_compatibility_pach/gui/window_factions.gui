@@ -143,6 +143,7 @@ window = {
 
 								vbox = {
 									name = "targeting_factions_grid"
+									# datamodel verificato: FactionItem
 									datamodel = "[FactionsWindow.GetTargetingFactions]"
 									visible = "[FactionsWindow.HasTargetingFactions]"
 									layoutpolicy_horizontal = expanding
@@ -195,6 +196,7 @@ window = {
 									vbox = {
 										layoutpolicy_horizontal = expanding
 										name = "cant_join_creater_members_grid"
+										# datamodel verificato: Character
 										datamodel = "[FactionsWindow.GetCantCreateOrJoinFactionVassals]"
 
 										item = {
@@ -301,6 +303,7 @@ window = {
 
 							vbox = {
 								name = "joined_factions"
+								# datamodel verificato: FactionItem
 								datamodel = "[FactionsWindow.GetJoinedFactions]"
 								visible = "[FactionsWindow.IsInAnyFaction]"
 								layoutpolicy_horizontal = expanding
@@ -329,6 +332,7 @@ window = {
 							vbox = {
 								name = "joinable_factions"
 								visible = "[FactionsWindow.CanJoinAnyFaction]"
+								# datamodel verificato: FactionItem
 								datamodel = "[FactionsWindow.GetJoinableFactions]"
 								layoutpolicy_horizontal = expanding
 
@@ -367,6 +371,7 @@ window = {
 
 							vbox = {
 								name = "creatable_factions"
+								# datamodel verificato: CreateFactionItem
 								datamodel = "[FactionsWindow.GetCreateFactionItems]"
 								visible = "[FactionsWindow.CanCreateAnyFaction]"
 								layoutpolicy_horizontal = growing
@@ -534,6 +539,7 @@ window = {
 
 										vbox = {
 											name = "targeting_factions_grid"
+											# datamodel verificato: FactionItem
 											datamodel = "[FactionsWindow.GetTargetingFactions]"
 											visible = "[FactionsWindow.HasTargetingFactions]"
 											layoutpolicy_horizontal = expanding
@@ -576,6 +582,7 @@ window = {
 
 											dynamicgridbox = {
 												name = "cant_join_creater_members_grid"
+												# datamodel verificato: Character
 												datamodel = "[FactionsWindow.GetCantCreateOrJoinFactionVassals]"
 												datamodel_wrap = 4
 												flipdirection = yes
@@ -642,6 +649,7 @@ window = {
 
 									vbox = {
 										name = "joined_factions"
+										# datamodel verificato: FactionItem
 										datamodel = "[FactionsWindow.GetJoinedFactions]"
 										visible = "[FactionsWindow.IsInAnyFaction]"
 										layoutpolicy_horizontal = expanding
@@ -671,6 +679,7 @@ window = {
 									vbox = {
 										name = "joinable_factions"
 										visible = "[FactionsWindow.CanJoinAnyFaction]"
+										# datamodel verificato: FactionItem
 										datamodel = "[FactionsWindow.GetJoinableFactions]"
 										layoutpolicy_horizontal = expanding
 
@@ -709,6 +718,7 @@ window = {
 
 									vbox = {
 										name = "creatable_factions"
+										# datamodel verificato: CreateFactionItem
 										datamodel = "[FactionsWindow.GetCreateFactionItems]"
 										visible = "[FactionsWindow.CanCreateAnyFaction]"
 										layoutpolicy_horizontal = growing
@@ -1079,6 +1089,7 @@ types FactionWindow
 				visible = "[FactionItem.HasCharacterMembers]"
 				addcolumn = 80
 				addrow = 90
+				# datamodel verificato: Character
 				datamodel = "[FactionItem.GetCharacterMembers]"
 				datamodel_wrap = 6
 				flipdirection = yes
@@ -1108,6 +1119,7 @@ types FactionWindow
 
 			fixedgridbox = {
 				name = "title_member_grid"
+				# datamodel verificato: Title
 				datamodel = "[FactionItem.GetCountyMembers]"
 				visible = "[FactionItem.HasCountyMembers]"
 				addcolumn = 75
@@ -1388,6 +1400,7 @@ types FactionWindow
 				layoutpolicy_horizontal = expanding
 				name = "character_member_grid"
 				visible = "[FactionItem.HasCharacterMembers]"
+				# datamodel verificato: Character
 				datamodel = "[FactionItem.GetCharacterMembers]"
 
 				item = {
@@ -1424,6 +1437,7 @@ types FactionWindow
 
 			vbox = {
 				name = "title_member_grid"
+				# datamodel verificato: Title
 				datamodel = "[FactionItem.GetCountyMembers]"
 				visible = "[FactionItem.HasCountyMembers]"
 				layoutpolicy_horizontal = expanding
