@@ -22,6 +22,7 @@ from tools.gui_validator import analizza_file as _valida
 from tools.scope_extractor import (
     estrai_binding, carica_whitelist, classifica_tutti
 )
+from tools.tri_diff import analizza_fedelta as _analizza_fedelta
 
 REPORT_PATH = PATCH_ROOT / "SKILLS_AUDIT_REPORT.md"
 
@@ -91,7 +92,10 @@ def _analizza_singolo(percorso: Path) -> dict:
     assenti = [r for r in risultati_scope if r["stato"] == "ASSENTE"]
     da_verificare = [r for r in risultati_scope if r["stato"] == "DA VERIFICARE"]
 
-    # Stato complessivo
+    # Analisi fedelta' tri-repo (advisory — non modifica il gate nella v1)
+    risultato_fedelta = _analizza_fedelta(percorso)
+
+    # Stato complessivo (la fedelta' vanilla e' advisory nella v1)
     if risultato_val["verdict"] == "BLOCCANTE" or da_verificare:
         stato = "BLOCCANTE"
     elif risultato_val["verdict"] == "CON AVVERTENZE" or assenti:
@@ -106,9 +110,12 @@ def _analizza_singolo(percorso: Path) -> dict:
         "avvertenze": risultato_val["warning_count"],
         "binding_assenti": len(assenti),
         "binding_da_verificare": len(da_verificare),
+        "fedelta_verdetto": risultato_fedelta["verdetto"],
+        "fedelta_feature_mancanti": len(risultato_fedelta["feature_ocr_mancanti"]),
         "stato_complessivo": stato,
         "dettaglio_validator": risultato_val["issues"],
         "dettaglio_assenti": [r["riga_whitelist"] for r in assenti],
+        "dettaglio_fedelta": risultato_fedelta,
     }
 
 
@@ -119,14 +126,22 @@ def _analizza_singolo(percorso: Path) -> dict:
 def _formatta_tabella(risultati: list[dict]) -> str:
     """Tabella riepilogativa Markdown."""
     righe = [
-        "| File | Validator | Critici | Avvertenze | Binding assenti | Stato |",
-        "|------|-----------|---------|------------|-----------------|-------|",
+        "| File | Validator | Critici | Avvertenze | Binding assenti | Fedelta' | Stato |",
+        "|------|-----------|---------|------------|-----------------|----------|-------|"  ,
     ]
     icone = {"OK": "[OK]", "CON AVVERTENZE": "[AVVERTENZE]", "BLOCCANTE": "[BLOCCANTE]"}
+    icone_fed = {
+        "ALLINEATO": "[OK]",
+        "DISCREPANZE_MINORI": "[MINOR]",
+        "DISCREPANZE": "[DIFF]",
+        "SKIP": "[--]",
+    }
     for r in risultati:
+        fed = r.get("fedelta_verdetto", "--")
         righe.append(
             f"| {r['file']} | {r['verdetto_validator']} | {r['critici']} | "
-            f"{r['avvertenze']} | {r['binding_assenti']} | {icone.get(r['stato_complessivo'], r['stato_complessivo'])} |"
+            f"{r['avvertenze']} | {r['binding_assenti']} | "
+            f"{icone_fed.get(fed, fed)} | {icone.get(r['stato_complessivo'], r['stato_complessivo'])} |"
         )
     return "\n".join(righe)
 

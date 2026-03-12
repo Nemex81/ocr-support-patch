@@ -88,6 +88,7 @@ RE_FONTSIZE = re.compile(r'\bfontsize\s*=\s*(\d+)')
 RE_TEXT_WIDGET = re.compile(r'\b(text_single|text_multi|text_label)\s*=\s*\{', re.IGNORECASE)
 RE_BUTTON_TEXT = re.compile(r'\b(text|raw_text)\s*=')
 RE_SHORTCUT = re.compile(r'\bshortcut\s*=')
+RE_WINDOW_ROOT = re.compile(r'^\s*window\s*=\s*\{', re.IGNORECASE)
 
 
 def _is_ocr_visibility(riga: str) -> bool:
@@ -341,13 +342,58 @@ def _scansione_completezza_dual_mode(righe: list[str]) -> list[dict]:
     return problemi
 
 
+def _scansione_copertura_multiwindow(righe: list) -> list:
+    """
+    In file con piu' blocchi window al livello radice (profondita' 0), verifica
+    che ogni blocco abbia visibilita' OCR o vanilla, o sia deliberatamente nascosto.
+    Si applica solo a file con 2+ blocchi window radice.
+    """
+    problemi = []
+    finestre_root = []
+    profondita = 0
+
+    for i, riga in enumerate(righe):
+        aperture = riga.count("{")
+        chiusure = riga.count("}")
+        if profondita == 0 and RE_WINDOW_ROOT.match(riga):
+            fine = _trova_fine_blocco(righe, i)
+            finestre_root.append((i + 1, fine + 1 if fine != -1 else i + 1))
+        profondita += aperture - chiusure
+
+    if len(finestre_root) <= 1:
+        return problemi  # file con una sola window radice: gia' gestito da _scansione_completezza_dual_mode
+
+    for inizio, fine in finestre_root:
+        finestra = righe[inizio - 1:min(inizio + 14, fine)]
+        ha_ocr = any(_is_ocr_visibility(r) for r in finestra)
+        ha_vanilla = any(_is_vanilla_visibility(r) for r in finestra)
+        ha_visible_no = any("visible = no" in r for r in finestra)
+        ha_size_zero = any("size = { 0 0 }" in r for r in finestra[:10])
+
+        if not ha_ocr and not ha_vanilla and not ha_visible_no and not ha_size_zero:
+            problemi.append({
+                "line": inizio,
+                "pattern": "Blocco window radice senza dual-mode esplicito",
+                "category": "STRUTTURALE",
+                "severity": "ATTENZIONE",
+                "fix": "Verificare se questo blocco window richiede dual-mode OCR/vanilla o e' un helper nascosto",
+            })
+
+    return problemi
+
+
 def analizza_file(percorso: Path) -> dict:
     """
     Analisi completa di un file .gui.
     Restituisce un dict con: file, verdict, critical_count, warning_count, issues.
     """
     righe = _apri_file(percorso)
-    problemi = _scansione_semplice(righe) + _scansione_blocchi(righe) + _scansione_completezza_dual_mode(righe)
+    problemi = (
+        _scansione_semplice(righe)
+        + _scansione_blocchi(righe)
+        + _scansione_completezza_dual_mode(righe)
+        + _scansione_copertura_multiwindow(righe)
+    )
 
     # Rimuove duplicati (stessa riga + categoria)
     visti = set()

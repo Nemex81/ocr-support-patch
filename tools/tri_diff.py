@@ -372,6 +372,68 @@ def genera_report(window_name: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Analisi strutturata per integrazione in audit.py
+# ---------------------------------------------------------------------------
+
+def analizza_fedelta(percorso: Path) -> dict:
+    """
+    Analisi strutturata di fedelta' tri-repo per un file .gui nella patch.
+    Usata da audit.py come pass aggiuntivo sul gate automatico.
+
+    Verdetto (advisory — non blocca il gate nella v1):
+        ALLINEATO          — nessuna discrepanza e nessuna feature OCR mancante
+        DISCREPANZE_MINORI — alcune discrepanze o pochi feature mancanti (<= 3)
+        DISCREPANZE        — molte feature mancanti o discrepanze rilevanti
+        SKIP               — file patch non trovato
+    """
+    window_name = percorso.stem
+    esiste_patch, righe_patch = _leggi_file(percorso)
+    esiste_vanilla, righe_vanilla = _leggi_file(VANILLA_GUI / f"{window_name}.gui")
+    esiste_ocr, righe_ocr = _leggi_file(OCR_GUI / f"{window_name}.gui")
+
+    if not esiste_patch:
+        return {
+            "verdetto": "SKIP",
+            "feature_ocr_mancanti": [],
+            "ha_discrepanze_vanilla": False,
+            "righe_diff": [],
+            "esiste_vanilla": False,
+            "esiste_ocr": False,
+        }
+
+    feature_mancanti: list = []
+    if esiste_ocr:
+        feature_mancanti = _feature_ocr_mancanti(righe_ocr, righe_patch)
+
+    ha_discrepanze = False
+    righe_diff: list = []
+    if esiste_vanilla:
+        diff_lines = _diff_container_vanilla(righe_patch, righe_vanilla, window_name)
+        ha_discrepanze = not any(
+            "identico" in l.lower() or l.startswith("Nessuna")
+            for l in diff_lines
+        )
+        if ha_discrepanze:
+            righe_diff = diff_lines[:30]
+
+    if len(feature_mancanti) > 3 or (ha_discrepanze and feature_mancanti):
+        verdetto = "DISCREPANZE"
+    elif feature_mancanti or ha_discrepanze:
+        verdetto = "DISCREPANZE_MINORI"
+    else:
+        verdetto = "ALLINEATO"
+
+    return {
+        "verdetto": verdetto,
+        "feature_ocr_mancanti": feature_mancanti,
+        "ha_discrepanze_vanilla": ha_discrepanze,
+        "righe_diff": righe_diff,
+        "esiste_vanilla": esiste_vanilla,
+        "esiste_ocr": esiste_ocr,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Entry point CLI
 # ---------------------------------------------------------------------------
 

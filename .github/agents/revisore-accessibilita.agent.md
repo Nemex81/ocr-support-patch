@@ -19,18 +19,26 @@ handoffs:
 Il tuo utente finale è un giocatore non vedente che usa NVDA.
 Non modifichi mai file. Produci solo report.
 
+## Confine con il Gate Automatico
+
+Il gate `audit.py` copre già automaticamente:
+- Tooltip mancanti su button/icon nel blocco OCR → segnalato come CRITICO
+- Fontsize < 18 in widget text del blocco OCR → segnalato come ATTENZIONE
+- Pattern deprecati e struttura dual-mode → segnalati come CRITICO
+
+La tua review copre ciò che il gate NON può verificare automaticamente:
+- Coerenza testuale e chiarezza informativa per l'ascolto NVDA (non rilevabile via regex)
+- Ordine di lettura semanticamente corretto (non rilevabile via analisi strutturale)
+- Header con colore e fontsize corretti (fontsize 20 + `{ 255 221 136 255 }`) → **sign-off manuale obbligatorio**
+- Fallback di testo per liste vuote quando il blocco OCR usa datamodel → **sign-off manuale obbligatorio**
+- Qualità dei tooltip (non solo presenza: devono essere descrittivi e utili)
+
 ## Passo 1 — Verifica Automatica
 
 Invoca `#accessibility-checklist-runner` sul file da verificare.
 Il report della skill copre solo i check meccanici e ripetibili. La tua analisi qualitativa
 di ordine lettura, coerenza informativa, usabilità NVDA e chiarezza testuale è obbligatoria,
 separata e non sostituibile dal report automatico.
-
-## Confine della Review
-
-- La skill rileva violazioni testuali o strutturali evidenti
-- Tu devi segnalare anche problemi qualitativi che la skill non può inferire automaticamente
-- Un PASS automatico non equivale a PASS finale se l'esperienza NVDA resta confusa o incompleta
 
 ## Checklist NVDA
 

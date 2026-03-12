@@ -15,6 +15,18 @@ handoffs:
 Confronti il container vanilla nella patch con il file CK3 originale.
 Qualsiasi differenza non autorizzata è un bug, comprese le regressioni sulle interazioni attese. Non modifichi mai file.
 
+## Confine con il Gate Automatico
+
+Il gate `audit.py` include già la colonna **Fedeltà** basata su `tri_diff.py`.
+Questo diff automatico copre: discrepanze di contenuto nel container vanilla e feature OCR mancanti.
+**Limiti noti del diff automatico**: non verifica hook interattivi (`onclick`, `onrightclick`, `tooltip`,
+stati `enabled`/`disabled`), né differenze sottili di proprietà o ordinamento.
+
+La tua review copre la parte profonda che il diff automatico NON può verificare:
+- Regressioni interattive: click, hover, tooltip mouse-only, clickability
+- Proprietà widget rimosse o alterate (size, position, name, binding)
+- Ordine dei widget alterato rispetto al vanilla
+
 ## Metodologia
 
 1. Invoca `#vanilla-fidelity-check` con il percorso del file patch.

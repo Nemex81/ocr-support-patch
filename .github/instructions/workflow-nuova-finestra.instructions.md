@@ -35,10 +35,15 @@ Sequenza operativa standard. Seguire nell'ordine indicato senza saltare passi.
 6. Verifica che le due `visible` siano mutuamente esclusive
 7. `python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/nome_file.gui`
    → aggiungi alla whitelist tutti i binding ASSENTI
-8. `python tools/gui_validator.py --file ocr_support_compatibility_pach/gui/nome_file.gui`
+8. `python tools/audit.py --window nome_file`
+   → gate completo: validator (CRITICO/ATTENZIONE) + scope whitelist + fedelta' vanilla (advisory)
    → risolvi tutti i CRITICO prima di passare ai revisori
+   → avvertenze CON AVVERTENZE richiedono sign-off esplicito dei revisori o fix
 9. Esegui la checklist pre-commit in `gui-jomini.instructions.md`
-10. Aggiorna `gui-conversion-progress.instructions.md` spostando la voce in "Già Convertite"
+10. Aggiorna `gui-conversion-progress.instructions.md` spostando la voce nella sezione corretta:
+    - **Convertite — Validate**: se audit.py = OK
+    - **Convertite — Revisione Necessaria**: se audit.py = CON AVVERTENZE
+    - **Convertite — Bloccanti**: se audit.py = BLOCCANTE (non committare)
 
 ---
 
