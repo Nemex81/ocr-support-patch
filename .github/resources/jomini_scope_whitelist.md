@@ -381,3 +381,48 @@ Binding verificati dopo l aggiornamento iniziale della sezione window_my_realm.g
 > Nota: `GetIndexString` non e un binding Jomini -- e un custom widget type definito nel patch (`type GetIndexString = text_single`). Lo scope extractor lo rileva per falso positivo. Aggiunto in whitelist solo per silenziare il warning.
 
 | `GetIndexString` | window_character_lifestyle.gui -- custom widget type OCR | NON un binding Jomini; e un `type GetIndexString = text_single` definito nel patch; lo scope extractor lo segnala per falso positivo |
+
+---
+
+## Scope e binding -- window_army.gui
+
+Verificati in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_army.gui` e
+in `../CK3-OCR/OCR-Support/gui/window_army.gui`.
+
+### Binding GetPlayer -- verificati in vanilla window_army.gui
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.CanRaid` | window_army.gui -- controllo permesso raid | verificato in vanilla window_army.gui (1 occorrenza) |
+
+### Binding SelectedUnitItem -- verificati in vanilla window_army.gui
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `SelectedUnitItem.IsGatheringArmy` | window_army.gui -- esercito in raccolta | verificato in vanilla window_army.gui (4 occorrenze) |
+| `SelectedUnitItem.GetArmy.IsEmbarked` | window_army.gui -- esercito imbarcato | verificato in vanilla window_army.gui (4 occorrenze) |
+| `SelectedUnitItem.GetArmy.GetSoldierCount` | window_army.gui -- conteggio soldati | verificato in vanilla window_army.gui (dal count di GetSoldierCount: 7 occorrenze) |
+| `SelectedUnitItem.GetTooltip` | window_army.gui -- tooltip item unita' | in vanilla window_army.gui (usato come valore tooltip) |
+| `SelectedUnitItem.IsShown` | window_army.gui -- item visibile/selezionato | verificato in vanilla window_army.gui |
+| `SelectedUnitItem.OnClick` | window_army.gui -- click su item unita' | verificato in vanilla window_army.gui |
+| `SelectedUnitItem.OnRightClick` | window_army.gui -- click destro su item unita' | verificato in vanilla window_army.gui |
+
+### Binding Scope.GetProvince -- verificati in vanilla window_army.gui
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `Scope.GetProvince.GetRaidLoot` | window_army.gui -- bottino raid della provincia | vanilla window_army.gui (2 occorrenze come GetRaidLoot) |
+| `Scope.GetProvince.GetTitle` | window_army.gui -- titolo diretto della provincia | catena OCR; `Province.GetTitle` presente in vanilla come pattern generale |
+
+### Binding OCR upstream -- da OCR-Support/gui/window_army.gui (non nel vanilla nativo)
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetPlayer.IsAtWar` | window_army.gui OCR -- giocatore in guerra | NON in vanilla window_army.gui; binding OCR upstream |
+| `GetPlayer.GetCapitalLocation` | window_army.gui OCR -- posizione capitale | NON in vanilla window_army.gui; binding OCR upstream |
+| `GetPlayer.Custom` | window_army.gui OCR -- testo custom su scope player | binding Jomini custom text accessor; NON in window_army.gui vanilla |
+| `Scope.Army.GetLocation` | window_army.gui OCR -- location dell'esercito in scope | catena OCR scope accessor su Army |
+| `Scope.GetProvince.GetEndOfRecentlyLooted.GetString` | window_army.gui OCR -- fine periodo saccheggio | NON in vanilla window_army.gui; binding OCR upstream |
+| `Scope.GetProvince.GetHolding.GetCurrentGarrisonSize` | window_army.gui OCR -- dimensione guarnigione holding | NON in vanilla window_army.gui; binding OCR upstream |
+| `Scope.GetProvince.IsRecentlyLooted` | window_army.gui OCR -- provincia recentemente saccheggiata | NON in vanilla window_army.gui; binding OCR upstream |
+| `Scope.Province` | window_army.gui OCR -- scope provincia in item block datamodel | pattern OCR scope accessor; analogo a `Scope.GetProvince` gia whitelistato |

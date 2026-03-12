@@ -1,5 +1,5 @@
 ﻿l_spanish:
- 
+
  #checkist:
  # 1. copy all locs
  # 2. commit
@@ -400,3 +400,8 @@ travel_planner_0_desc: "$travel_planner_desc$"
 
 economy_buildings_0: "$economy_buildings$"
 economy_buildings_0_desc: "$economy_buildings_desc$"
+
+# Tooltip finestra esercito (window_army.gui OCR)
+ BACK_TO_TARGETS_TOOLTIP: "Torna alla lista obiettivi."
+ BACK_TO_ADJACENCIES_TOOLTIP: "Torna alla lista province adiacenti."
+ CLOSE_WAR_SELECTOR_TOOLTIP: "Chiudi il selettore guerra."

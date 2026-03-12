@@ -225,6 +225,7 @@ def _scansione_blocchi(righe: list[str]) -> list[dict]:
     """
     problemi = []
     blocchi_ocr = _trova_blocchi_modalita(righe, "ocr")
+    blocchi_vanilla = _trova_blocchi_modalita(righe, "vanilla")
     blocchi_nascosti = _trova_blocchi_nascosti(righe)
 
     for i, riga in enumerate(righe):
@@ -260,7 +261,7 @@ def _scansione_blocchi(righe: list[str]) -> list[dict]:
                     break
 
         # --- icon/button senza tooltip ---
-        if _linea_in_range(num_riga, blocchi_ocr) and not _linea_in_range(num_riga, blocchi_nascosti) and RE_BLOCK_OPEN.match(riga):
+        if _linea_in_range(num_riga, blocchi_ocr) and not _linea_in_range(num_riga, blocchi_nascosti) and not _linea_in_range(num_riga, blocchi_vanilla) and RE_BLOCK_OPEN.match(riga):
             fine = _trova_fine_blocco(righe, i)
             if fine == -1:
                 fine = min(i + 15, len(righe) - 1)
@@ -281,7 +282,7 @@ def _scansione_blocchi(righe: list[str]) -> list[dict]:
                 })
 
         # --- fontsize < 18 in contesto OCR ---
-        if _linea_in_range(num_riga, blocchi_ocr) and RE_TEXT_WIDGET.match(riga):
+        if _linea_in_range(num_riga, blocchi_ocr) and not _linea_in_range(num_riga, blocchi_vanilla) and RE_TEXT_WIDGET.match(riga):
             fine = _trova_fine_blocco(righe, i)
             if fine == -1:
                 fine = min(i + 10, len(righe) - 1)
