@@ -90,6 +90,16 @@ RE_BUTTON_TEXT = re.compile(r'\b(text|raw_text)\s*=')
 RE_SHORTCUT = re.compile(r'\bshortcut\s*=')
 RE_WINDOW_ROOT = re.compile(r'^\s*window\s*=\s*\{', re.IGNORECASE)
 
+# --- Regex per completezza OCR ---
+# raw_text statico: il valore non inizia con '[' (binding) ne' '{' (reference)
+RE_STATIC_RAW_TEXT = re.compile(r'\braw_text\s*=\s*"[^\[{]')
+RE_COLOR_HEADER_CANONICAL = re.compile(r'\bcolor\s*=\s*\{\s*255\s+221\s+136\s+255\s*\}')
+RE_BUTTON_WIDGET_ANY = re.compile(
+    r'^\s*(button|button_standard|button_primary|button_icon|iconbutton)\s*=\s*\{',
+    re.IGNORECASE,
+)
+RE_DATAMODEL_LINE = re.compile(r'\bdatamodel\s*=')
+
 
 def _is_ocr_visibility(riga: str) -> bool:
     return bool(RE_VISIBLE_OCR_EXISTS.search(riga) or RE_VISIBLE_OCR_SHORTHAND.search(riga))
@@ -382,6 +392,128 @@ def _scansione_copertura_multiwindow(righe: list) -> list:
     return problemi
 
 
+def _scansione_header_ocr(righe: list) -> list:
+    """
+    Nei blocchi OCR, ogni widget text con fontsize=20 (header canonico) deve usare
+    il colore { 255 221 136 255 }. Se fontsize=20 e' presente ma il colore canonico
+    e' assente nel widget, segnala ATTENZIONE.
+    Non segnala widget senza fontsize=20: solo quelli che dichiarano esplicitamente
+    di essere header ma mancano del colore.
+    """
+    problemi = []
+    blocchi_ocr = _trova_blocchi_modalita(righe, "ocr")
+    blocchi_vanilla = _trova_blocchi_modalita(righe, "vanilla")
+    blocchi_nascosti = _trova_blocchi_nascosti(righe)
+
+    for i, riga in enumerate(righe):
+        num_riga = i + 1
+        if not _linea_in_range(num_riga, blocchi_ocr):
+            continue
+        if _linea_in_range(num_riga, blocchi_vanilla) or _linea_in_range(num_riga, blocchi_nascosti):
+            continue
+        if not RE_TEXT_WIDGET.match(riga):
+            continue
+
+        fine = _trova_fine_blocco(righe, i)
+        if fine == -1:
+            fine = min(i + 12, len(righe) - 1)
+        blocco_widget = righe[i:fine + 1]
+
+        ha_fontsize_20 = False
+        for r in blocco_widget:
+            m = RE_FONTSIZE.search(r)
+            if m and int(m.group(1)) == 20:
+                ha_fontsize_20 = True
+                break
+        if not ha_fontsize_20:
+            continue
+
+        if not any(RE_COLOR_HEADER_CANONICAL.search(r) for r in blocco_widget):
+            problemi.append({
+                "line": num_riga,
+                "pattern": "Header OCR (fontsize=20) senza colore canonico { 255 221 136 255 }",
+                "category": "COMPLETEZZA",
+                "severity": "ATTENZIONE",
+                "fix": "Aggiungere color = { 255 221 136 255 } al widget testo header nel blocco OCR",
+            })
+    return problemi
+
+
+def _scansione_fallback_datamodel_ocr(righe: list) -> list:
+    """
+    Nei blocchi OCR che usano datamodel, verifica la presenza di almeno un
+    raw_text statico (non-binding) che possa fungere da messaggio di fallback
+    per lista vuota. Se assente, segnala ATTENZIONE.
+    Limite noto: non verifica la correttezza semantica del fallback a runtime;
+    verifica solo la presenza strutturale di un testo statico nel blocco.
+    """
+    problemi = []
+    blocchi_ocr = _trova_blocchi_modalita(righe, "ocr")
+
+    for inizio_ocr, fine_ocr in blocchi_ocr:
+        righe_blocco = righe[inizio_ocr - 1:fine_ocr]
+        if not any(RE_DATAMODEL_LINE.search(r) for r in righe_blocco):
+            continue
+        if not any(RE_STATIC_RAW_TEXT.search(r) for r in righe_blocco):
+            problemi.append({
+                "line": inizio_ocr,
+                "pattern": "Blocco OCR con datamodel senza testo di fallback statico rilevato",
+                "category": "COMPLETEZZA",
+                "severity": "ATTENZIONE",
+                "fix": (
+                    "Aggiungere un widget con raw_text statico come messaggio di lista vuota "
+                    "(es: raw_text = \"NESSUN_ELEMENTO\"). "
+                    "Nota: la verifica semantica runtime e' fuori scopo del gate automatico v1."
+                ),
+            })
+    return problemi
+
+
+def _scansione_completezza_ocr(righe: list) -> list:
+    """
+    Confronto euristico tra blocchi OCR e vanilla: se il vanilla ha almeno 3 button
+    interattivi e il blocco OCR ne ha zero, segnala ATTENZIONE (rischio di azioni
+    vanilla non accessibili in modalita' OCR).
+    Limite noto: il conteggio e' puramente strutturale, non verifica la visibilita'
+    condizionale o lo stato enabled/disabled a runtime (fuori scopo gate v1).
+    """
+    problemi = []
+    blocchi_ocr = _trova_blocchi_modalita(righe, "ocr")
+    blocchi_vanilla = _trova_blocchi_modalita(righe, "vanilla")
+
+    if not blocchi_ocr or not blocchi_vanilla:
+        return problemi  # assenza dual-mode e' gia' segnalata altrove
+
+    n_btn_ocr = sum(
+        1 for i, r in enumerate(righe)
+        if _linea_in_range(i + 1, blocchi_ocr)
+        and not _linea_in_range(i + 1, blocchi_vanilla)
+        and RE_BUTTON_WIDGET_ANY.match(r)
+    )
+    n_btn_vanilla = sum(
+        1 for i, r in enumerate(righe)
+        if _linea_in_range(i + 1, blocchi_vanilla)
+        and not _linea_in_range(i + 1, blocchi_ocr)
+        and RE_BUTTON_WIDGET_ANY.match(r)
+    )
+
+    if n_btn_vanilla >= 3 and n_btn_ocr == 0:
+        problemi.append({
+            "line": blocchi_ocr[0][0],
+            "pattern": (
+                f"Nessun button nel blocco OCR, vanilla ne ha {n_btn_vanilla}: "
+                "possibile gap di azioni interattive"
+            ),
+            "category": "COMPLETEZZA",
+            "severity": "ATTENZIONE",
+            "fix": (
+                "Verificare che le azioni principali del vanilla siano accessibili in modalita' OCR. "
+                "Nota: la verifica di azioni condizionali a runtime e' fuori scopo gate v1."
+            ),
+        })
+    return problemi
+
+
 def analizza_file(percorso: Path) -> dict:
     """
     Analisi completa di un file .gui.
@@ -393,6 +525,9 @@ def analizza_file(percorso: Path) -> dict:
         + _scansione_blocchi(righe)
         + _scansione_completezza_dual_mode(righe)
         + _scansione_copertura_multiwindow(righe)
+        + _scansione_header_ocr(righe)
+        + _scansione_fallback_datamodel_ocr(righe)
+        + _scansione_completezza_ocr(righe)
     )
 
     # Rimuove duplicati (stessa riga + categoria)

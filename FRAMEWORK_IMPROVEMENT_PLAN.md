@@ -46,13 +46,13 @@ Portare il framework OCR-Patch da insieme di regole e skill advisory a sistema d
 - [x] Integrare in audit.py un controllo automatico di fedelta' vanilla basato su tools/tri_diff.py o logica equivalente condivisa
 - [x] Strutturare l'output di audit.py per categoria: structural, accessibility, whitelist, vanilla fidelity, coverage
 - [x] Estendere tools/gui_validator.py con controllo di copertura dual-mode per file multi-window e sub-window
-- [ ] Aggiungere in gui_validator.py controlli minimi coerenti per header OCR
-- [ ] Aggiungere in gui_validator.py controlli su fallback di liste vuote quando il blocco OCR usa datamodel
-- [ ] Introdurre un controllo esplicito di completezza OCR
-- [ ] Verificare presenza di dati leggibili nel ramo OCR rispetto al ramo vanilla
-- [ ] Verificare presenza di azioni OCR equivalenti alle azioni vanilla
-- [ ] Verificare copertura di sezioni, tab e sottofinestre rilevanti
-- [ ] Tenere fuori dalla prima iterazione la semantica runtime profonda di Jomini, ma segnalarla come limite noto
+- [x] Aggiungere in gui_validator.py controlli minimi coerenti per header OCR
+- [x] Aggiungere in gui_validator.py controlli su fallback di liste vuote quando il blocco OCR usa datamodel
+- [x] Introdurre un controllo esplicito di completezza OCR
+- [x] Verificare presenza di dati leggibili nel ramo OCR rispetto al ramo vanilla
+- [x] Verificare presenza di azioni OCR equivalenti alle azioni vanilla
+- [x] Verificare copertura di sezioni, tab e sottofinestre rilevanti
+- [x] Tenere fuori dalla prima iterazione la semantica runtime profonda di Jomini, ma segnalarla come limite noto
 - [ ] Introdurre un controllo esplicito di completezza OCR
 - [ ] Verificare presenza di dati leggibili nel ramo OCR rispetto al ramo vanilla
 - [ ] Verificare presenza di azioni OCR equivalenti alle azioni vanilla
