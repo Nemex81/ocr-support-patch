@@ -225,3 +225,4 @@ Il trade-off è accettabile: la compatibilità multiplayer vale il piccolo overh
 - ❌ Non duplicare `name` allo stesso livello gerarchico
 - ❌ Non usare `datamodel` senza verificarne il type nel vanilla
 - ❌ Non omettere `parentanchor` e `size` dove il vanilla li richiede
+- ❌ Non usare `GameRules.GetRule('ocr_accessibility_mode')` — **deprecato**, segnalare e sostituire con `GetVariableSystem.Exists('ocr')`

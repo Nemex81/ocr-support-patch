@@ -1,5 +1,5 @@
 ---
-applyTo: ".github/**"
+applyTo: "**"
 ---
 
 # Stato Conversioni GUI — CK3 1.17.1
@@ -67,16 +67,4 @@ Ultimo aggiornamento: 2026-03-10
 
 ---
 
-## Workflow per Nuova Conversione
-
-0. **[Pre-analisi]** `python tools/tri_diff.py --window nome_file` — report strutturale tra i 3 repo
-1. Aprire il file vanilla da `../CK3 ORIGINAL VERSION/ck3origin/game/gui/`
-2. Aprire il file OCR upstream da `../CK3-OCR/OCR-Support/gui/`
-3. Identificare struttura widget vanilla (tipo, nome, gerarchia)
-4. Costruire il container OCR rispettando la stessa gerarchia informativa
-5. Incapsulare il vanilla nel container vanilla **senza modifiche**
-6. Verificare che le due visibility siano mutuamente esclusive
-7. `python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/nome_file.gui` — aggiornare whitelist se necessario
-8. `python tools/gui_validator.py --file ocr_support_compatibility_pach/gui/nome_file.gui` — risolvere tutti i CRITICO prima di committare
-9. Eseguire la checklist pre-commit in `gui-jomini.instructions.md`
-10. Aggiornare questo file spostando la voce in "Già Convertite"
+> Il workflow completo passo per passo è in `workflow-nuova-finestra.instructions.md`.
