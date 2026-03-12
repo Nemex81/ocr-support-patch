@@ -136,7 +136,6 @@ window = {
 
 					blockoverride "scrollbox_content" {
 						vbox = {
-							# datamodel verificato: BlackmailSecretItem
 							datamodel = "[BlackmailInteractionWindow.GetSecretItems]"
 							layoutpolicy_horizontal = expanding
 							spacing = 3
@@ -338,7 +337,6 @@ window = {
 
 				blockoverride "scrollbox_content" {
 					vbox = {
-						# datamodel verificato: BlackmailSecretItem
 						datamodel = "[BlackmailInteractionWindow.GetSecretItems]"
 						layoutpolicy_horizontal = expanding
 						spacing = 3

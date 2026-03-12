@@ -1,0 +1,113 @@
+﻿l_spanish:
+ # Etichette Navigazione Tab
+ ocr_tab_1_label:0 "Scheda 1,"
+ ocr_tab_2_label:0 "Scheda 2,"
+ ocr_tab_3_label:0 "Scheda 3,"
+ ocr_tab_4_label:0 "Scheda 4,"
+ 
+ # Navigazione da Tastiera
+ ocr_page_up:0 "Pagina Su."
+ ocr_page_down:0 "Pagina Giù."
+ ocr_hotkey_1:0 "Tasto rapido 1."
+ ocr_hotkey_2:0 "Tasto rapido 2."
+ ocr_hotkey_3:0 "Tasto rapido 3."
+ ocr_control_f:0 "Control F."
+ 
+ # Messaggi di Stato Azioni
+ ocr_cant_open:0 "Non si può aprire"
+ ocr_cant_change:0 "Non si può modificare."
+ ocr_view_more:0 "Visualizza"
+ ocr_more:0 "altri."
+ ocr_view_more_hotkey_3_2:0 "altri. Tasto rapido 3, 2."
+ ocr_view_more_hotkey_3_3:0 "altri. Tasto rapido 3, 3."
+ 
+ # Etichette Relazioni
+ ocr_vassal_in:0 "Vassallo in"
+ ocr_liege:0 "Signore,"
+ ocr_you_are:0 "Tu sei"
+ ocr_your_heir:0 "Il tuo erede,"
+ ocr_heir:0 "Erede,"
+ ocr_dead:0 "Morto,"
+ ocr_in_prison:0 "In prigione,"
+ ocr_no_spouse:0 "Nessun coniuge."
+ ocr_view_previous_spouse:0 "Visualizza coniuge o reggente precedente."
+ ocr_view_next_spouse:0 "Visualizza coniuge o reggente successivo."
+ ocr_tributary_of:0 "tributario di"
+ 
+ # Stato Militare e del Reame
+ ocr_at_war:0 "in guerra,"
+ ocr_men:0 "uomini,"
+ ocr_de_jure_in:0 "de jure in"
+ ocr_soldiers:0 "Soldati,"
+ ocr_realm_size_count:0 "contea"
+ ocr_realm_size_counties:0 "contee"
+ ocr_realm_size_county:0 "contea"
+ 
+ # Informazioni Contea
+ ocr_capital:0 "capitale,"
+ ocr_tax:0 "Tasse:"
+ ocr_levies:0 "Leve:"
+ ocr_fort_level:0 "Livello fortificazione:"
+ ocr_empty_holding:0 "Vuoto."
+ ocr_in_county_of:0 "Nella contea di"
+ 
+ # Personalità e Tratti
+ ocr_personality_traits:0 "Personalità e tratti, tasto rapido 3."
+ ocr_personality_label:0 "Personalità:"
+ ocr_skills:0 "Abilità."
+ ocr_lifestyle:0 "Stile di vita,"
+ ocr_traits:0 "tratti."
+ ocr_modifiers:0 "Modificatori."
+ ocr_virtue_suffix:0 "(virtù)"
+ ocr_sin_suffix:0 "(peccato)"
+ 
+ # Fede e Cultura
+ ocr_all:0 "Tutte"
+ ocr_share_faith:0 "contee condividono questa fede."
+ ocr_share_culture:0 "contee condividono questa cultura."
+ ocr_of:0 "di"
+ 
+ # Genere e Sessualità
+ ocr_female:0 "Femmina"
+ ocr_male:0 "Maschio"
+ ocr_female_lowercase:0 "femmina"
+ ocr_male_lowercase:0 "maschio"
+ 
+ # Opinione
+ ocr_opinion:0 "opinione"
+ ocr_opinion_comma:0 "opinione,"
+ 
+ # Lingue
+ ocr_knows:0 "Conosce"
+ ocr_known:0 "Conosciute"
+ ocr_current:0 "Attuali"
+ ocr_out_of:0 "su"
+ ocr_limit:0 "limite"
+ 
+ # Stress e Salute
+ ocr_stress_level:0 "Livello stress:"
+ ocr_stress:0 "Stress:"
+ ocr_to_next_level:0 "% al prossimo livello."
+ ocr_weight:0 "Peso,"
+ ocr_above:0 "sopra"
+ ocr_below:0 "sotto"
+ ocr_average:0 "media."
+ 
+ # Tipi di Proprietà e Titoli
+ ocr_counties_label:0 "contee."
+ ocr_holdings_label:0 "proprietà."
+ ocr_titles_label:0 "titoli."
+ ocr_claims_label:0 "pretese."
+ 
+ # Pulsanti di Chiusura e Azioni
+ ocr_close_view:0 "Chiudi"
+ 
+ # Tab Contee con Tasti Rapidi
+ ocr_counties_tab_1:0 "Scheda 1,"
+ ocr_counties_tab_2:0 "Scheda 2,"
+ ocr_counties_tab_3:0 "Scheda 3,"
+ ocr_counties_tab_4:0 "Scheda 4,"
+ 
+ # Varie
+ OCR_ENABLED:0 "Attivata"
+ OCR_DISABLED:0 "Disattivata"

@@ -261,7 +261,6 @@ types OCR {
         vbox = {
             name = "items"
             block "datamodel" {
-                # datamodel verificato: GuiFaithDoctrineItem
                 datamodel = "[FaithWindow.GetGroupingHelper('special').GetGrouping]"
             }
             layoutpolicy_horizontal = expanding
@@ -276,7 +275,6 @@ types OCR {
 
     type vbox_holy_sites_ocr = vbox {
         layoutpolicy_horizontal = expanding
-        # datamodel verificato: GuiHolySiteItem
         datamodel = "[FaithWindow.GetHolySites]"
 
         item = {
@@ -603,7 +601,6 @@ window = {
                         }
                         visible = "[Or(IsNot('doctrines'), Has('doctrines', 'tenets'))]"
                         blockoverride "datamodel" {
-                            # datamodel verificato: GuiFaithDoctrineItem
                             datamodel = "[FaithWindow.GetGroupingHelper('core_tenets').GetGrouping]"
                         }
                         blockoverride "doctrine" {
@@ -641,7 +638,6 @@ window = {
                             onclick = "[Set('doctrines', 'special')]"
                         }
                         blockoverride "datamodel" {
-                            # datamodel verificato: GuiFaithDoctrineItem
                             datamodel = "[FaithWindow.GetGroupingHelper('special').GetGrouping]"
                         }
                         blockoverride "doctrine" {
@@ -673,7 +669,6 @@ window = {
                         }
                         visible = "[Or(IsNot('doctrines'), Has('doctrines', 'main'))]"
                         blockoverride "datamodel" {
-                            # datamodel verificato: GuiFaithDoctrineItem
                             datamodel = "[FaithWindow.GetGroupingHelper('main_group').GetGrouping]"
                         }
                         blockoverride "doctrine" {
@@ -689,7 +684,6 @@ window = {
                         }
                         visible = "[Or(IsNot('doctrines'), Has('doctrines', 'marriage'))]"
                         blockoverride "datamodel" {
-                            # datamodel verificato: GuiFaithDoctrineItem
                             datamodel = "[FaithWindow.GetGroupingHelper('marriage').GetGrouping]"
                         }
                         blockoverride "doctrine" {
@@ -703,7 +697,6 @@ window = {
                         }
                         visible = "[Or(IsNot('doctrines'), Has('doctrines', 'crime'))]"
                         blockoverride "datamodel" {
-                            # datamodel verificato: GuiFaithDoctrineItem
                             datamodel = "[FaithWindow.GetGroupingHelper('crimes').GetGrouping]"
                         }
                         blockoverride "doctrine" {
@@ -717,7 +710,6 @@ window = {
                         }
                         visible = "[Or(IsNot('doctrines'), Has('doctrines', 'clergy'))]"
                         blockoverride "datamodel" {
-                            # datamodel verificato: GuiFaithDoctrineItem
                             datamodel = "[FaithWindow.GetGroupingHelper('clergy').GetGrouping]"
                         }
                         blockoverride "doctrine" {
@@ -879,7 +871,6 @@ window = {
                         direction = vertical
                         layoutpolicy_horizontal = expanding
                         visible = "[Is('faith_followers_sort')]"
-                        # datamodel verificato: Scope
                         datamodel = "[GetGlobalList('faith_followers_sort')]"
                         button = {
                             using = close_window_ocr
@@ -907,7 +898,6 @@ window = {
                         layoutpolicy_horizontal = expanding
                         addrow = 20
                         addcolumn = 690
-                        # datamodel verificato: Character
                         datamodel = "[FaithWindow.GetFaith.MakeScope.GetList('followers')]"
                         visible = "[IsNot('faith_followers_sort')]"
                         item = {
@@ -1002,7 +992,6 @@ window = {
                         layoutpolicy_horizontal = expanding
                         addrow = 20
                         addcolumn = 690
-                        # datamodel verificato: Title
                         datamodel = "[Faith.MakeScope.GetList('faith_counties')]"
                         item = {
                             button_county_ocr = {
@@ -1037,7 +1026,6 @@ window = {
                         layoutpolicy_horizontal = expanding
                         addrow = 20
                         addcolumn = 600
-                        # datamodel verificato: Title
                         datamodel = "[Faith.MakeScope.GetList('wrong_counties')]"
                         item = {
                             button_county_ocr = {
@@ -1068,7 +1056,6 @@ window = {
                         layoutpolicy_horizontal = expanding
                         addrow = 20
                         addcolumn = 690
-                        # datamodel verificato: Faith
                         datamodel = "[FaithWindow.GetFaith.MakeScope.GetList('adjacent_faiths')]"
                         item = {
                             button_text = {
@@ -1330,7 +1317,6 @@ window = {
                             flowcontainer = {
                                 ignoreinvisible = yes
                                 spacing = 3
-                                # datamodel verificato: GuiFaithDoctrineItem
                                 datamodel = "[FaithWindow.GetGroupingHelper('core_tenets').GetGrouping]"
                                 item = {
                                     text_single = {
@@ -1364,7 +1350,6 @@ window = {
                             }
                             dynamicgridbox = {
                                 name = "virtues_grid"
-                                # datamodel verificato: GuiVirtueOrSinItem
                                 datamodel = "[FaithWindow.GetSins]"
                                 flipdirection = yes
                                 datamodel_wrap = 7
@@ -1400,7 +1385,6 @@ window = {
                             }
                             dynamicgridbox = {
                                 name = "virtues_grid"
-                                # datamodel verificato: GuiVirtueOrSinItem
                                 datamodel = "[FaithWindow.GetVirtues]"
                                 flipdirection = yes
                                 item = {
@@ -1425,7 +1409,6 @@ window = {
                             raw_text = "Crimes [PdxGuiWidget.AccessParent.FindChild('crimes').CountVisibleChildren]:"
                         }
                         flowcontainer = {
-                            # datamodel verificato: GuiFaithDoctrineItem
                             datamodel = "[FaithWindow.GetGroupingHelper('crimes').GetGrouping]"
                             ignoreinvisible = yes
                             name = "crimes"
@@ -1741,7 +1724,6 @@ window = {
                     }
                     hbox = {
                         name = "doctrines_grid_core_tenets"
-                        # datamodel verificato: GuiFaithDoctrineItem
                         datamodel = "[FaithWindow.GetGroupingHelper('core_tenets').GetGrouping]"
                         spacing = 52
                         state = {
@@ -1800,7 +1782,6 @@ window = {
                                     vbox = {
                                         dynamicgridbox = {
                                             name = "virtues_grid"
-                                            # datamodel verificato: GuiVirtueOrSinItem
                                             datamodel = "[FaithWindow.GetSins]"
                                             flipdirection = yes
                                             datamodel_wrap = 6
@@ -1845,7 +1826,6 @@ window = {
                                     vbox = {
                                         dynamicgridbox = {
                                             name = "virtues_grid"
-                                            # datamodel verificato: GuiVirtueOrSinItem
                                             datamodel = "[FaithWindow.GetVirtues]"
                                             flipdirection = yes
                                             datamodel_wrap = 6
@@ -1883,7 +1863,6 @@ window = {
                                     layoutpolicy_horizontal = expanding
                                     hbox = {
                                         name = "important_doctrines"
-                                        # datamodel verificato: GuiFaithDoctrineItem
                                         datamodel = "[FaithWindow.GetGroupingHelper('main_group').GetGrouping]"
                                         layoutpolicy_vertical = expanding
                                         minimumsize = { 0 108 }
@@ -1925,7 +1904,6 @@ window = {
                                     default_format = "#low"
                                 }
                                 fixedgridbox = {
-                                    # datamodel verificato: GuiFaithDoctrineItem
                                     datamodel = "[FaithWindow.GetGroupingHelper('marriage').GetGrouping]"
                                     flipdirection = yes
                                     addcolumn = 225
@@ -1946,7 +1924,6 @@ window = {
                                     default_format = "#low"
                                 }
                                 fixedgridbox = {
-                                    # datamodel verificato: GuiFaithDoctrineItem
                                     datamodel = "[FaithWindow.GetGroupingHelper('crimes').GetGrouping]"
                                     flipdirection = yes
                                     addcolumn = 225
@@ -1967,7 +1944,6 @@ window = {
                                     default_format = "#low"
                                 }
                                 fixedgridbox = {
-                                    # datamodel verificato: GuiFaithDoctrineItem
                                     datamodel = "[FaithWindow.GetGroupingHelper('clergy').GetGrouping]"
                                     flipdirection = yes
                                     addcolumn = 225
@@ -1988,7 +1964,6 @@ window = {
                                     default_format = "#low"
                                 }
                                 vbox = {
-                                    # datamodel verificato: GuiFaithDoctrineItem
                                     datamodel = "[FaithWindow.GetGroupingHelper('special').GetGrouping]"
                                     layoutpolicy_horizontal = expanding
                                     margin_left = 50
@@ -2257,7 +2232,6 @@ window = {
                 blockoverride "scrollbox_content" {
                     vbox = {
                         name = "holy_sites"
-                        # datamodel verificato: GuiHolySiteItem
                         datamodel = "[FaithWindow.GetHolySites]"
                         layoutpolicy_horizontal = expanding
                         text_multi = {
@@ -2537,7 +2511,6 @@ window = {
                         align = left
                     }
                     dropdown_sort_characterlist = {
-                        # datamodel verificato: OrderFaithOption
                         datamodel = "[ReligionWindow.GetOrderByOptions]"
                         onselectionchanged = "[ReligionWindow.OnOrderBySelectionChanged]"
                         selectedindex = "[ReligionWindow.GetOrderBySelectedIndex]"
@@ -2551,7 +2524,6 @@ window = {
         }
         blockoverride "ocr_content" {
             vbox = {
-                # datamodel verificato: Faith
                 datamodel = "[ReligionWindow.GetFaiths]"
                 layoutpolicy_horizontal = expanding
                 item = {
@@ -2679,7 +2651,6 @@ window = {
                         align = nobaseline
                     }
                     dropdown_sort_characterlist = {
-                        # datamodel verificato: OrderFaithOption
                         datamodel = "[ReligionWindow.GetOrderByOptions]"
                         onselectionchanged = "[ReligionWindow.OnOrderBySelectionChanged]"
                         selectedindex = "[ReligionWindow.GetOrderBySelectedIndex]"
@@ -2714,7 +2685,6 @@ window = {
                 layoutpolicy_vertical = expanding
                 blockoverride "scrollbox_content" {
                     vbox = {
-                        # datamodel verificato: Faith
                         datamodel = "[ReligionWindow.GetFaiths]"
                         layoutpolicy_horizontal = expanding
                         item = {

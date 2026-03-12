@@ -308,7 +308,6 @@
 
 							vbox = {
 								name = "idle_characters_ongoing"
-								# datamodel verificato: Character
 								datamodel = "[ActivityWindow.GetCharacters]"
 								layoutpolicy_horizontal = expanding
 								visible = "[Isnt('hide_activity_chars')]"
@@ -429,7 +428,6 @@
 													}
 
 													hbox = {
-														# datamodel verificato: ActivityIntent
 														datamodel = "[Character.GetCompletedIntents]"
 														spacing = 3
 
@@ -456,7 +454,6 @@
 													hbox = {
 														layoutpolicy_horizontal = expanding
 														datacontext_from_model = {
-															# datamodel verificato: ActivityIntent
 															datamodel = "[Character.GetCompletedIntents]"
 															index = 0
 														}
@@ -811,7 +808,6 @@ types ActivityWindowTypes
 			hbox = {
 				name = "planned_phases"
 				layoutpolicy_horizontal = expanding
-				# datamodel verificato: PlannedActivityPhase
 				datamodel = "[Activity.GetPlannedPhases]"
 				layoutstretchfactor_horizontal = "[GetDataModelSize( Activity.GetPlannedPhases )]"
 				datacontext = "[Activity.GetLastWeeklyPulseAction]"
@@ -1528,7 +1524,6 @@ types ActivityWindowTypes
 						size = { 420 500 }
 						addcolumn = 420
 						addrow = 42
-						# datamodel verificato: EventOption
 						datamodel = "[EventWindowData.GetOptions]"
 						alwaystransparent = no
 						layoutpolicy_horizontal = expanding

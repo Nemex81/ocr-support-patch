@@ -279,7 +279,6 @@ window_ocr = {
 								}
 
 								vbox = {
-									# datamodel verificato: ModifierItem
 									datamodel = "[DynastyHouseView.GetHouseModifiers]"
 									layoutpolicy_horizontal = expanding
 									visible = "[Isnt('house_modifiers')]"
@@ -443,7 +442,6 @@ window_ocr = {
 							vbox = {
 								layoutpolicy_horizontal = expanding
 								visible = "[DataModelHasItems( DynastyHouseView.GetHouseUnityModifiers )]"
-								# datamodel verificato: ModifierItem
 								datamodel = "[DynastyHouseView.GetHouseUnityModifiers]"
 
 								hbox = {
@@ -543,7 +541,6 @@ window_ocr = {
 
 										hbox = {
 											name = "items"
-											# datamodel verificato: Decision
 											datamodel = "[DynastyHouseView.GetDecisions(DynastyHouseView.GetCurrentHouseUnityStage)]"
 
 											item = {
@@ -566,7 +563,6 @@ window_ocr = {
 
 								vbox = {
 									name = house_unity_decisions # Used for Reactive Advice
-									# datamodel verificato: Decision
 									datamodel = "[DynastyHouseView.GetDecisions(DynastyHouseView.GetCurrentHouseUnityStage)]"
 									layoutpolicy_horizontal = expanding
 									item = {
@@ -753,7 +749,6 @@ window_ocr = {
 								vbox = {
 									visible = "[Isnt('dynasty_modifiers')]"
 									name = "dynasty modifiers"
-									# datamodel verificato: ModifierItem
 									datamodel = "[DynastyHouseView.GetDynastyModifiers]"
 									layoutpolicy_horizontal = expanding
 
@@ -775,7 +770,6 @@ window_ocr = {
 									text_single = {
 										raw_text = "[CountItems]"
 										hbox = {
-											# datamodel verificato: DynastyLegacyItem
 											datamodel = "[DynastyHouseView.GetLegacies]"
 											name = "items"
 											item = {
@@ -794,7 +788,6 @@ window_ocr = {
 
 							vbox = {
 								layoutpolicy_horizontal = expanding
-								# datamodel verificato: DynastyLegacyItem
 								datamodel = "[DynastyHouseView.GetLegacies]"
 								visible = "[Isnt('unlocked_legacies')]"
 								margin_left = 5
@@ -896,7 +889,6 @@ window_ocr = {
 						}
 					}
 
-					# datamodel verificato: GUIHouseUnityStage
 					datamodel = "[DataModelSkipLast(DynastyHouseView.GetHouseUnityStages, '(int32)1')]"
 
 					item = {
@@ -946,7 +938,6 @@ window_ocr = {
 
 										hbox = {
 											name = "items"
-											# datamodel verificato: Decision
 											datamodel = "[DynastyHouseView.GetDecisions(HouseUnityStage.Self)]"
 
 											item = {
@@ -968,7 +959,6 @@ window_ocr = {
 
 								vbox = {
 									layoutpolicy_horizontal = expanding
-									# datamodel verificato: Decision
 									datamodel = "[DynastyHouseView.GetDecisions(HouseUnityStage.Self)]"
 
 									item = {
@@ -991,7 +981,6 @@ window_ocr = {
 					layoutpolicy_horizontal = expanding
 					visible = "[Has('dynasty_view_expand', 'unity_changelog')]"
 
-					# datamodel verificato: HouseUnityChangelogEntry
 					datamodel = "[DynastyHouseView.GetDynastyHouse.GetChangelog]"
 
 					item = {
@@ -1021,7 +1010,6 @@ window_ocr = {
 						{
 							blockoverride "dropdown_properties"
 							{
-								# datamodel verificato: HouseOrderOption
 								datamodel = "[DynastyHouseView.GetOrderOptions]"
 								onselectionchanged = "[DynastyHouseView.SortHouses]"
 								selectedindex = "[DynastyHouseView.GetSortSelectedIndex]"
@@ -1051,7 +1039,6 @@ window_ocr = {
 						{
 							vbox = {
 								layoutpolicy_horizontal = expanding
-								# datamodel verificato: DynastyHouse
 								datamodel = "[DynastyHouseView.GetDynastyHouses]"
 
 								item = {
@@ -1338,7 +1325,6 @@ window_ocr = {
 									layoutpolicy_horizontal = expanding
 
 									hbox = {
-										# datamodel verificato: ModifierItem
 										datamodel = "[DynastyHouseView.GetHouseModifiers]"
 										spacing = 5
 
@@ -1813,7 +1799,6 @@ window_ocr = {
 
 											hbox = {
 												name = "dynasty modifiers"
-												# datamodel verificato: ModifierItem
 												datamodel = "[DynastyHouseView.GetDynastyModifiers]"
 
 												item = {
@@ -2044,7 +2029,6 @@ window_ocr = {
 
 							#This gridbox should display 5 empty spaces if you don't have any legacies yet. New legacies are added on top of those. If you have over 5 legacies, the icons become smaller.
 							dynamicgridbox = {
-								# datamodel verificato: DynastyLegacyItem
 								datamodel = "[DynastyHouseView.GetLegacies]"
 								visible = "[Not(LessThan_int32(GetDataModelSize(DynastyHouseView.GetLegacies), '(int32)10'))]"
 								datamodel_wrap = 6
@@ -2114,7 +2098,6 @@ window_ocr = {
 									scissor = yes
 
 									dynamicgridbox = {
-										# datamodel verificato: DynastyLegacyItem
 										datamodel = "[DynastyHouseView.GetLegacies]"
 										datamodel_wrap = 4
 										flipdirection = yes
@@ -2182,7 +2165,6 @@ window_ocr = {
 									scissor = yes
 
 									dynamicgridbox = {
-										# datamodel verificato: DynastyLegacyItem
 										datamodel = "[DynastyHouseView.GetLegacies]"
 										flipdirection = yes
 										parentanchor = bottom
@@ -2250,7 +2232,6 @@ window_ocr = {
 									scissor = yes
 
 									dynamicgridbox = {
-										# datamodel verificato: DynastyLegacyItem
 										datamodel = "[DynastyHouseView.GetLegacies]"
 										flipdirection = yes
 										parentanchor = bottom
@@ -2426,7 +2407,6 @@ window_ocr = {
 								allow_outside = yes
 
 								flowcontainer = {
-									# datamodel verificato: ModifierItem
 									datamodel = "[DynastyHouseView.GetHouseUnityModifiers]"
 									margin_top = 2
 
@@ -2601,7 +2581,6 @@ window_ocr = {
 								blockoverride "scrollbox_content"
 								{
 									vbox = {
-										# datamodel verificato: Decision
 										datamodel = "[DynastyHouseView.GetDecisions(DynastyHouseView.GetCurrentHouseUnityStage)]"
 										layoutpolicy_horizontal = expanding
 										spacing = 5
@@ -2688,7 +2667,6 @@ window_ocr = {
 				{
 					blockoverride "dropdown_properties"
 					{
-						# datamodel verificato: HouseOrderOption
 						datamodel = "[DynastyHouseView.GetOrderOptions]"
 						onselectionchanged = "[DynastyHouseView.SortHouses]"
 						selectedindex = "[DynastyHouseView.GetSortSelectedIndex]"
@@ -2718,7 +2696,6 @@ window_ocr = {
 				{
 					vbox = {
 						layoutpolicy_horizontal = expanding
-						# datamodel verificato: DynastyHouse
 						datamodel = "[DynastyHouseView.GetDynastyHouses]"
 
 						item = {
@@ -3106,7 +3083,6 @@ types DynastyView
 			margin_left = 20
 			margin_right = 20
 
-			# datamodel verificato: GUIHouseUnityStage
 			datamodel = "[DynastyHouseView.GetHouseUnityStages]"
 
 			item = {
@@ -3268,7 +3244,6 @@ types DynastyView
 				vbox = {
 					layoutpolicy_horizontal = expanding
 					block "decisions_datamodel" {
-						# datamodel verificato: Decision
 						datamodel = "[DynastyHouseView.GetDecisions(HouseUnityStage.Self)]"
 					}
 					margin_left = 6
@@ -3551,7 +3526,6 @@ types DynastyView
 				layoutpolicy_vertical = expanding
 
 				visible = "[DataModelHasItems( DynastyHouseView.GetDynastyHouse.GetChangelog )]"
-				# datamodel verificato: HouseUnityChangelogEntry
 				datamodel = "[DataModelFirst( DynastyHouseView.GetDynastyHouse.GetChangelog, '(int32)13' )]"
 
 				item = {

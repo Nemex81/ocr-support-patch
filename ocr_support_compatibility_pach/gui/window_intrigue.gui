@@ -7,7 +7,7 @@ window = {
 	widgetid = "intrigue_window"
 	movable = no
 	allow_outside = yes
-
+	
 	size = { 100% 100% }
 	layer = windows_layer
 
@@ -176,14 +176,13 @@ window = {
 								vbox = {
 									name = "my_own_contract_schemes"
 									visible = "[SkillSchemeGroup.HasSchemes]"
-									# datamodel verificato: SchemeItem
 									datamodel = "[SkillSchemeGroup.GetSchemes]"
 									layoutpolicy_horizontal = expanding
 
 									item = {
 										vbox = {
 											layoutpolicy_horizontal = expanding
-											datacontext = "[SchemeItem.GetScheme]"
+											datacontext = "[SchemeItem.GetScheme]" 
 
 											text_single = {
 												layoutpolicy_horizontal = expanding
@@ -211,7 +210,6 @@ window = {
 								vbox = {
 									name = "my_hostile_schemes"
 									visible = "[SkillSchemeGroup.HasSchemes]"
-									# datamodel verificato: SchemeItem
 									datamodel = "[SkillSchemeGroup.GetSchemes]"
 									layoutpolicy_horizontal = expanding
 
@@ -254,7 +252,6 @@ window = {
 								vbox = {
 									name = "personal_list"
 									visible = "[SkillSchemeGroup.HasSchemes]"
-									# datamodel verificato: SchemeItem
 									datamodel = "[SkillSchemeGroup.GetSchemes]"
 									layoutpolicy_horizontal = expanding
 
@@ -298,7 +295,6 @@ window = {
 								vbox = {
 									name = "my_own_political_schemes"
 									visible = "[SkillSchemeGroup.HasSchemes]"
-									# datamodel verificato: SchemeItem
 									datamodel = "[SkillSchemeGroup.GetSchemes]"
 									layoutpolicy_horizontal = expanding
 
@@ -341,7 +337,6 @@ window = {
 								vbox = {
 									name = "known_schemes_grid"
 									visible = "[IntrigueWindow.HasKnownSchemes]"
-									# datamodel verificato: SchemeItem
 									datamodel = "[IntrigueWindow.GetKnownSchemes]"
 									layoutpolicy_horizontal = expanding
 
@@ -410,7 +405,6 @@ window = {
 							vbox = {
 								layoutpolicy_horizontal = expanding
 								fixedgridbox = {
-									# datamodel verificato: Hook
 									datamodel = "[IntrigueWindow.GetMyHooks]"
 									maxhorizontalslots = 1
 									addcolumn = 700
@@ -455,7 +449,6 @@ window = {
 								onclick = "[GetVariableSystem.Toggle('secrets_show_all')]"
 							}
 							vbox_secret_item_ocr = {
-								# datamodel verificato: Secret
 								datamodel = "[IntrigueWindow.GetSecretsKnownToMe]"
 								layoutpolicy_horizontal = expanding
 								blockoverride "portrait" {
@@ -476,7 +469,6 @@ window = {
 								expand = {}
 							}
 							vbox = {
-								# datamodel verificato: Hook
 								datamodel = "[IntrigueWindow.GetHooksOnMe]"
 								visible = "[DataModelHasItems(IntrigueWindow.GetHooksOnMe)]"
 								layoutpolicy_horizontal = expanding
@@ -511,7 +503,6 @@ window = {
 							}
 							vbox = {
 								name = "my_secrets_grid"
-								# datamodel verificato: Secret
 								datamodel = "[IntrigueWindow.GetMySecrets]"
 								visible = "[DataModelHasItems(IntrigueWindow.GetMySecrets)]"
 								layoutpolicy_horizontal = expanding
@@ -536,7 +527,6 @@ window = {
 											icon = {
 												texture = "[Secret.GetType.GetIcon]"
 												size = { 30 30 }
-												tooltip = "[Secret.GetTooltipDesc]"
 											}
 											text_multi_wide = {
 												layoutpolicy_horizontal = expanding
@@ -549,7 +539,6 @@ window = {
 										}
 										vbox_secret_item_ocr = {
 											visible = "[IntrigueWindowSecretItem.IsExpanded]"
-											# datamodel verificato: Character
 											datamodel = "[IntrigueWindowSecretItem.GetKnownBy]"
 											layoutpolicy_horizontal = expanding
 											blockoverride "portrait_context" {}
@@ -661,7 +650,7 @@ window = {
 									widgetid = "my_own_schemes"
 									layoutpolicy_horizontal = expanding
 									spacing = 10
-
+									
 									# --- CONTRACT SCHEMES (VISUAL) ---
 									vbox = {
 										name = "my_contract_schemes"
@@ -675,10 +664,9 @@ window = {
 										vbox = {
 											name = "my_own_contract_schemes"
 											visible = "[SkillSchemeGroup.HasSchemes]"
-											# datamodel verificato: SchemeItem
 											datamodel = "[SkillSchemeGroup.GetSchemes]"
 											layoutpolicy_horizontal = expanding
-											item = {
+											item = { 
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													datacontext = "[SchemeItem.GetScheme]"
@@ -689,7 +677,7 @@ window = {
 														default_format = "#medium"
 														margin_left = 10
 													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding }
+													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
 												}
 											}
 										}
@@ -707,10 +695,9 @@ window = {
 										vbox = {
 											name = "my_own_hostile_schemes"
 											visible = "[SkillSchemeGroup.HasSchemes]"
-											# datamodel verificato: SchemeItem
 											datamodel = "[SkillSchemeGroup.GetSchemes]"
 											layoutpolicy_horizontal = expanding
-											item = {
+											item = { 
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													datacontext = "[SchemeItem.GetScheme]"
@@ -721,7 +708,7 @@ window = {
 														default_format = "#medium"
 														margin_left = 10
 													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding }
+													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
 												}
 											}
 										}
@@ -749,10 +736,9 @@ window = {
 										vbox = {
 											name = "my_own_personal_schemes"
 											visible = "[SkillSchemeGroup.HasSchemes]"
-											# datamodel verificato: SchemeItem
 											datamodel = "[SkillSchemeGroup.GetSchemes]"
 											layoutpolicy_horizontal = expanding
-											item = {
+											item = { 
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													datacontext = "[SchemeItem.GetScheme]"
@@ -763,7 +749,7 @@ window = {
 														default_format = "#medium"
 														margin_left = 10
 													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding }
+													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
 												}
 											}
 										}
@@ -792,10 +778,9 @@ window = {
 										vbox = {
 											name = "my_own_political_schemes"
 											visible = "[SkillSchemeGroup.HasSchemes]"
-											# datamodel verificato: SchemeItem
 											datamodel = "[SkillSchemeGroup.GetSchemes]"
 											layoutpolicy_horizontal = expanding
-											item = {
+											item = { 
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													datacontext = "[SchemeItem.GetScheme]"
@@ -805,7 +790,7 @@ window = {
 														default_format = "#medium"
 														margin_left = 10
 													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding }
+													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
 												}
 											}
 										}
@@ -858,7 +843,6 @@ window = {
 										vbox = {
 											name = "known_schemes_grid"
 											visible = "[IntrigueWindow.HasKnownSchemes]"
-											# datamodel verificato: SchemeItem
 											datamodel = "[IntrigueWindow.GetKnownSchemes]"
 											layoutpolicy_horizontal = expanding
 											item = { vbox_discovered_scheme_item = { layoutpolicy_horizontal = expanding } }
@@ -993,7 +977,6 @@ window = {
 									hbox = {
 										layoutpolicy_horizontal = expanding
 										fixedgridbox = {
-											# datamodel verificato: Hook
 											datamodel = "[IntrigueWindow.GetMyHooks]"
 											visible = "[And( GetVariableSystem.Exists( 'hooks_expand' ), DataModelHasItems(IntrigueWindow.GetMyHooks) )]"
 											flipdirection = yes
@@ -1004,7 +987,6 @@ window = {
 											item = { portrait_head = { datacontext = "[IntrigueWindowHookItem.GetCharacter]" } }
 										}
 										fixedgridbox = {
-											# datamodel verificato: Hook
 											datamodel = "[IntrigueWindow.GetMyHooks]"
 											visible = "[And( Not( GetVariableSystem.Exists( 'hooks_expand' ) ), DataModelHasItems(IntrigueWindow.GetMyHooks) )]"
 											flipdirection = yes
@@ -1067,7 +1049,6 @@ window = {
 										}
 									}
 									vbox_secret_item = {
-										# datamodel verificato: Secret
 										datamodel = "[IntrigueWindow.GetSecretsKnownToMe]"
 										layoutpolicy_horizontal = expanding
 										blockoverride "portrait" {
@@ -1120,7 +1101,6 @@ window = {
 										}
 									}
 									vbox = {
-										# datamodel verificato: Hook
 										datamodel = "[IntrigueWindow.GetHooksOnMe]"
 										visible = "[DataModelHasItems(IntrigueWindow.GetHooksOnMe)]"
 										layoutpolicy_horizontal = expanding
@@ -1185,7 +1165,6 @@ window = {
 									}
 									vbox = {
 										name = "my_secrets_grid"
-										# datamodel verificato: Secret
 										datamodel = "[IntrigueWindow.GetMySecrets]"
 										visible = "[DataModelHasItems(IntrigueWindow.GetMySecrets)]"
 										layoutpolicy_horizontal = expanding
@@ -1222,7 +1201,6 @@ window = {
 												}
 												vbox_secret_item = {
 													visible = "[IntrigueWindowSecretItem.IsExpanded]"
-													# datamodel verificato: Character
 													datamodel = "[IntrigueWindowSecretItem.GetKnownBy]"
 													layoutpolicy_horizontal = expanding
 													blockoverride "portrait_context" {}
@@ -1247,7 +1225,7 @@ window = {
 			}
 		}
 	}
-
+	
 	old_intrigue = {}
 }
 
@@ -1289,7 +1267,6 @@ types OCR_old
 				vbox = {
 					datacontext = "[IntrigueWindowSecretGroup.GetCharacter]"
 					name = "secrets"
-					# datamodel verificato: Secret
 					datamodel = "[IntrigueWindowSecretGroup.GetSecrets]"
 					visible = "[DataModelHasItems( IntrigueWindowSecretGroup.GetSecrets )]"
 					margin = { 5 5 }
@@ -1669,7 +1646,6 @@ types OCR
 				flowcontainer = {
 					visible = "[And(GetVariableSystem.Exists( 'own_scheme_expand' ), Not(SchemeItem.GetScheme.GetSchemeType.IsBasic))]"
 					name = "owner_member_grid"
-					# datamodel verificato: AgentSlot
 					datamodel = "[SchemeItem.GetAgentSlots]"
 					direction = vertical
 					ignoreinvisible = yes
@@ -1696,7 +1672,6 @@ types OCR
 				}
 
 				flowcontainer = {
-					# datamodel verificato: SchemeModifier
 					datamodel = "[Scheme.GetModifiers]"
 					direction = vertical
 					visible = "[Not( IsDataModelEmpty(Scheme.GetModifiers))]"
@@ -1901,7 +1876,6 @@ types OCR
 
 					hbox = {
 						name = "items"
-						# datamodel verificato: AgentSlot
 						datamodel = "[SchemeItem.GetAgentSlots]"
 						item = {
 							hbox = {
@@ -1920,7 +1894,6 @@ types OCR
 
 			vbox = {
 				name = "owner_member_grid"
-				# datamodel verificato: AgentSlot
 				datamodel = "[SchemeItem.GetAgentSlots]"
 				layoutpolicy_horizontal = expanding
 
@@ -1968,7 +1941,6 @@ types OCR
 					raw_text = "[CountItems] options,"
 
 					hbox = {
-						# datamodel verificato: SchemeCountermeasureType
 						datamodel = "[IntrigueWindow.GetCountermeasures]"
 						name = "items"
 
@@ -2021,7 +1993,6 @@ types OCR
 						raw_text = "[CountItems]"
 
 						hbox = {
-							# datamodel verificato: SchemeCountermeasureType
 							datamodel = "[IntrigueWindow.GetCountermeasures]"
 							name = "items"
 
@@ -2042,7 +2013,6 @@ types OCR
 			## Countermeasure icons
 			vbox = {
 				name = "scheme_countermeasure_icons"
-				# datamodel verificato: SchemeCountermeasureType
 				datamodel = "[IntrigueWindow.GetCountermeasures]"
 				layoutpolicy_horizontal = expanding
 
@@ -2611,7 +2581,6 @@ types IntrigueWindow
 					}
 
 					fixedgridbox = {
-						# datamodel verificato: SchemeModifier
 						datamodel = "[Scheme.GetModifiers]"
 						addcolumn = 30
 						addrow = 25
@@ -2801,7 +2770,6 @@ types IntrigueWindow
 
 					fixedgridbox = {
 						name = "owner_member_grid"
-						# datamodel verificato: AgentSlot
 						datamodel = "[SchemeItem.GetAgentSlots]"
 						addcolumn = 100
 						addrow = 152
@@ -2953,7 +2921,6 @@ types IntrigueWindowTypes
 			## Countermeasure icons
 			hbox = {
 				name = "scheme_countermeasure_icons"
-				# datamodel verificato: SchemeCountermeasureType
 				datamodel = "[IntrigueWindow.GetCountermeasures]"
 
 				background = {
@@ -3167,7 +3134,6 @@ types IntrigueWindowTypes
 
 				fixedgridbox = {
 					name = "owner_member_grid"
-					# datamodel verificato: AgentSlot
 					datamodel = "[SchemeItem.GetAgentSlots]"
 					addcolumn = 95
 					addrow = 95
@@ -3217,7 +3183,6 @@ types IntrigueWindowTypes
 
 					vbox = {
 						name = "secrets"
-						# datamodel verificato: Secret
 						datamodel = "[IntrigueWindowSecretGroup.GetSecrets]"
 						visible = "[DataModelHasItems( IntrigueWindowSecretGroup.GetSecrets )]"
 						layoutpolicy_horizontal = expanding

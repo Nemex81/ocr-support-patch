@@ -111,7 +111,6 @@ window = {
 						name = "decision_groups_container"
 						spacing = 0
 						layoutpolicy_horizontal = expanding
-						# datamodel verificato: DecisionGroupItem
 						datamodel = "[DecisionsView.GetDecisionGroupItems]"
 
 						item = {
@@ -143,7 +142,6 @@ window = {
 					vbox = {
 						layoutpolicy_horizontal = expanding
 						spacing = 10
-						# datamodel verificato: TaskContract
 						datamodel = "[GetPlayer.GetAcceptedTaskContracts]"
 
 						item = {
@@ -266,7 +264,6 @@ window = {
 								name = "decision_groups_container"
 								spacing = 2
 								layoutpolicy_horizontal = expanding
-								# datamodel verificato: DecisionGroupItem
 								datamodel = "[DecisionsView.GetDecisionGroupItems]"
 
 								item = {
@@ -298,7 +295,6 @@ window = {
 							vbox = {
 								layoutpolicy_horizontal = expanding
 								spacing = 10
-								# datamodel verificato: TaskContract
 								datamodel = "[GetPlayer.GetAcceptedTaskContracts]"
 
 								item = {
@@ -351,7 +347,6 @@ types Decisions
 
 			fixedgridbox = {
 				name = "decisions_in_group"
-				# datamodel verificato: Decision
 				datamodel = "[DecisionGroupItem.GetDecisions]"
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
@@ -421,7 +416,6 @@ types Decisions
 
 			fixedgridbox = {
 				name = "decisions_in_group"
-				# datamodel verificato: Decision
 				datamodel = "[DecisionGroupItem.GetDecisions]"
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding

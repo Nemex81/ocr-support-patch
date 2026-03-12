@@ -674,7 +674,6 @@ window = {
 						}
 
 						vbox = {
-							# datamodel verificato: VassalStance
 							datamodel = "[GetAllVassalStances]"
 							layoutpolicy_horizontal = expanding
 							visible = "[GetVariableSystem.Exists('stances')]"
@@ -704,7 +703,6 @@ window = {
 
 					hbox = {
 						name = "crown_authority"
-						# datamodel verificato: GuiLawGroup
 						datamodel = "[MyRealmWindow.GetRealmLaws]"
 						ignoreinvisible = yes
 						margin_top = 5
@@ -746,7 +744,6 @@ window = {
 									visible = "[Or(Is('crown_law'),IsLandlessAdventurer( GetPlayer ))]"
 									layoutpolicy_horizontal = expanding
 									direction = vertical
-									# datamodel verificato: Law
 									datamodel = "[GuiLawGroup.GetLaws]"
 
 									item = {
@@ -812,7 +809,6 @@ window = {
 					using = close_window_ocr
 					visible = "[GetVariableSystem.Exists('realm_tabs')]"
 					onclick = "[GetVariableSystem.Clear('realm_tabs')]"
-					tooltip = "CLOSE_TOOLTIP"
 				}
 
 				flowcontainer = {
@@ -988,7 +984,6 @@ window = {
 
 						blockoverride "scrollbox_content" {
 							vbox = {
-								# datamodel verificato: DomainItem
 								datamodel = "[MyRealmWindow.GetDomainItems]"
 								layoutpolicy_horizontal = expanding
 
@@ -1014,7 +1009,6 @@ window = {
 
 										vbox = {
 											name = "county_group"
-											# datamodel verificato: CountyGroup
 											datamodel = "[DuchyGroup.GetCounties]"
 											layoutpolicy_horizontal = expanding
 
@@ -1088,7 +1082,6 @@ window = {
 
 													vbox = {
 														visible = "[Not(GetVariableSystem.Exists('county_focus'))]"
-														# datamodel verificato: Title
 														datamodel = "[CountyGroup.GetHoldings]"
 														layoutpolicy_horizontal = expanding
 
@@ -1185,7 +1178,6 @@ window = {
 
 														flowcontainer = {
 															visible = "[DataModelHasItems(CountyGroup.GetEmptyHoldings)]"
-															# datamodel verificato: Title
 															datamodel = "[CountyGroup.GetEmptyHoldings]"
 															layoutpolicy_horizontal = expanding
 															spacing = 3
@@ -1312,7 +1304,6 @@ window = {
 
 							blockoverride "dropdown_properties"
 							{
-								# datamodel verificato: GovernmentTypeFilter
 								datamodel = "[MyRealmWindow.GetGovernmentTypeFilters]"
 
 								onselectionchanged = "[MyRealmWindow.SelectActiveGovernmentTypeFilter]"
@@ -1340,7 +1331,6 @@ window = {
 
 							blockoverride "dropdown_properties"
 							{
-								# datamodel verificato: VassalStanceFilter
 								datamodel = "[MyRealmWindow.GetVassalStanceFilters]"
 
 								onselectionchanged = "[MyRealmWindow.SelectActiveVassalStanceFilter]"
@@ -1411,7 +1401,6 @@ window = {
 									# datacontext = "[MyRealmWindow.GetVassals]"
 									# datamodel = "[MyRealmWindow.GetVassals]"
 									# datamodel = "[MyRealmWindow.GetVassals]"
-									# datamodel verificato: Character
 									datamodel = "[DataModelSubSpan( MyRealmWindow.GetVassals, FixedPointToInt( GetPlayer.MakeScope.Var('vassal_page').GetValue ), Min_int32(Subtract_int32( GetDataModelSize( MyRealmWindow.GetVassals ), FixedPointToInt(GetPlayer.MakeScope.Var('vassal_page').GetValue )), '(int32)5')) ]"
 
 									# visible = "[Not(CharacterSelectionList.IsBuildingList)]"
@@ -1495,12 +1484,10 @@ window = {
 							  datacontext = "[GetScriptedGui('realm_tribs_page')]"
 
 							  blockoverride "full_datamodel" {
-							    # datamodel verificato: Character
 							    datamodel = "[CharacterSelectionList.GetList]"
 							  }
 							  blockoverride "vbox_contents" {
 									fixedgridbox = {
-										# datamodel verificato: Character
 										datamodel = "[PageModelFive(CharacterSelectionList.GetList)]"
 										layoutpolicy_horizontal = expanding
 										addrow = 95
@@ -1578,7 +1565,6 @@ window = {
 						}
 
 						vbox = {
-							# datamodel verificato: GuiLawGroup
 							datamodel = "[MyRealmWindow.GetRealmLaws]"
 							ignoreinvisible = yes
 							layoutpolicy_horizontal = expanding
@@ -1784,7 +1770,6 @@ window = {
 
 									vbox = {
 										name = "partition_share_box"
-										# datamodel verificato: PartitionShare
 										datamodel = "[MyRealmWindow.GetMyPartitionShare]"
 										layoutpolicy_horizontal = expanding
 										# size = { 460 55 }
@@ -1795,7 +1780,6 @@ window = {
 												onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
 												onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
 												onclick = "[MyRealmWindow.Close]"
-														tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 												button_ignore = none
 												layoutpolicy_horizontal = expanding
 
@@ -1844,7 +1828,6 @@ window = {
 
 								vbox = {
 									name = "title_succession"
-									# datamodel verificato: TitleSuccessionItem
 									datamodel = "[MyRealmWindow.GetTitleSuccession]"
 									# visible = "[GetVariableSystem.Exists( 'expand_partition' )]"
 									layoutpolicy_horizontal = expanding
@@ -1872,7 +1855,6 @@ window = {
 													onclick = "[MyRealmWindow.Close]"
 													# onclick = "[DefaultOnCoatOfArmsRightClick(Character.CapitalLocation.GetCoATitle.GetID)]"
 													onrightclick = "[DefaultOnCharacterRightClick(Character.GetID)]"
-													tooltip = "[Character.GetUINameNoTooltip]"
 													button_ignore = none
 													layoutpolicy_horizontal = expanding
 
@@ -1912,7 +1894,6 @@ window = {
 												vbox = {
 													name = "titles_box"
 													layoutpolicy_horizontal = expanding
-													# datamodel verificato: Title
 													datamodel = "[TitleSuccessionItem.GetPartitionTitles]"
 													visible = "[DataModelHasItems(TitleSuccessionItem.GetPartitionTitles)]"
 													# minimumsize = { 350 50 }
@@ -1926,7 +1907,6 @@ window = {
 																onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
 																onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
 																onclick = "[MyRealmWindow.Close]"
-																tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 																button_ignore = none
 																layoutpolicy_horizontal = expanding
 																text_single = {
@@ -1965,7 +1945,6 @@ window = {
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													name = "exception_box"
-													# datamodel verificato: Title
 													datamodel = "[TitleSuccessionItem.GetExceptionTitles]"
 													visible = "[DataModelHasItems(TitleSuccessionItem.GetExceptionTitles)]"
 													# minimumsize = { 350 50 }
@@ -1976,7 +1955,6 @@ window = {
 															onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
 															onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
 															onclick = "[MyRealmWindow.Close]"
-															tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 															button_ignore = none
 															layoutpolicy_horizontal = expanding
 
@@ -2030,7 +2008,6 @@ window = {
 									# size = { 460 55 }
 									# spacing = 10
 
-									# datamodel verificato: SuccessionException
 									datamodel = "[MyRealmWindow.GetSuccessionExceptions]"
 
 									item = {
@@ -2038,7 +2015,6 @@ window = {
 											onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
 											onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
 											onclick = "[MyRealmWindow.Close]"
-											tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 											button_ignore = none
 											layoutpolicy_horizontal = expanding
 
@@ -2078,7 +2054,6 @@ window = {
 									direction = vertical
 									margin_right = 10
 
-									# datamodel verificato: Character
 									datamodel = "[MyRealmWindow.GetLineOfSuccession]"
 
 									item = {
@@ -2147,7 +2122,6 @@ window = {
 										name = "exceptions_box"
 										addcolumn = 600
 										addrow = 42
-										# datamodel verificato: Title
 										datamodel = "[MyRealmWindow.GetTitlesCanVote]"
 
 										item = {
@@ -2211,7 +2185,6 @@ window = {
 					{
 						vbox = {
 							name = "administrative_laws"
-							# datamodel verificato: GuiLawGroup
 							datamodel = "[MyRealmWindow.GetRealmLaws]"
 							ignoreinvisible = yes
 							layoutpolicy_horizontal = expanding
@@ -2235,7 +2208,6 @@ window = {
 									}
 
 									vbox = {
-										# datamodel verificato: Law
 										datamodel = "[GuiLawGroup.GetLaws]"
 										layoutpolicy_horizontal = expanding
 										item = {
@@ -2347,7 +2319,6 @@ window = {
 
 						blockoverride "scrollbox_content" {
 							fixedgridbox = {
-								# datamodel verificato: Building
 								datamodel = "[GetPlayer.MakeScope.GetList('special_buildings')]"
 
 								layoutpolicy_horizontal = expanding
@@ -2667,7 +2638,6 @@ window = {
 
 							vbox = {
 								layoutpolicy_horizontal = expanding
-								# datamodel verificato: Title
 								datamodel = "[GetPlayer.MakeScope.GetList('build_farms')]"
 								visible = "[GetVariableSystem.HasValue('macrobuilder', 'farms')]"
 
@@ -2702,7 +2672,6 @@ window = {
 
 							vbox = {
 								layoutpolicy_horizontal = expanding
-								# datamodel verificato: Title
 								datamodel = "[GetPlayer.MakeScope.GetList('integrate_titles')]"
 								visible = "[GetVariableSystem.HasValue('macrobuilder', 'titles')]"
 
@@ -2720,7 +2689,6 @@ window = {
 
 							vbox = {
 								layoutpolicy_horizontal = expanding
-								# datamodel verificato: Title
 								datamodel = "[GetPlayer.MakeScope.GetList('low_control_counties')]"
 								visible = "[GetVariableSystem.HasValue('macrobuilder', 'low control counties')]"
 
@@ -2764,7 +2732,6 @@ window = {
 					onclick = "[GetVariableSystem.Clear('sp_sorting')]"
 					using = close_window_ocr
 					shortcut = map_mode_2
-					tooltip = "CLOSE_TOOLTIP"
 				}
 
 				vbox = {
@@ -2787,7 +2754,6 @@ window = {
 	}
 
 	my_realm_window = {
-		visible = "[GetVariableSystem.Exists('ocr')]"
 		using = vanilla
 		alwaystransparent = no
 	}

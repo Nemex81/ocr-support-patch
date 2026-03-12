@@ -1,7 +1,7 @@
 ##############################################################################################
 ##
 ## COURT WINDOW - DUAL MODE (OCR + NORMAL)
-##
+## 
 ## STRUCTURE:
 ## 1. Window Base Setup (shared by both modes)
 ## 2. Tutorial Container (shared)
@@ -53,23 +53,23 @@ window = {
 	### Visibile quando la variabile 'ocr' ESISTE                     ###
 	### Right-aligned like other main tab windows                     ###
 	#####################################################################
-
+	
 	widget = {
 		name = "normal_mode_content"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 		parentanchor = top|right
 		using = Window_Size_MainTab
 		using = Window_Position_MainTab
-
+		
 		margin_widget = {
 			size = { 100% 100% }
 			margin_top = 30
 			margin_bottom = 25
 			margin_right = 13
-
+			
 			widget = {
 				size = { 100% 100% }
-
+				
 				vbox = {
 					using = Window_Margins
 
@@ -216,7 +216,6 @@ window = {
 										blockoverride "container_implementation" {
 											fixedgridbox = {
 												name = "characters_grid"
-												# datamodel verificato: Character
 												datamodel = "[CharacterSelectionList.GetList]"
 												visible = "[Not(CharacterSelectionList.IsBuildingList)]"
 												addcolumn = 520
@@ -319,7 +318,6 @@ window = {
 							{
 								fixedgridbox = {
 									name = "characters_grid"
-									# datamodel verificato: Character
 									datamodel = "[CharacterSelectionList.GetList]"
 									visible = "[Not(CharacterSelectionList.IsBuildingList)]"
 									layoutpolicy_horizontal = expanding
@@ -457,7 +455,6 @@ window = {
 							margin_left = 10
 
 							fixedgridbox = {
-								# datamodel verificato: Character
 								datamodel = "[CharacterSelectionList.GetList]"
 								layoutpolicy_horizontal = expanding
 								layoutpolicy_vertical = expanding
@@ -706,7 +703,6 @@ window = {
 				visible = "[GetVariableSystem.Exists('court_tabs')]"
 				using = close_window_ocr
 				onclick = "[GetVariableSystem.Clear('court_tabs')]"
-				tooltip = "CLOSE_TOOLTIP"
 			}
 
 			## POSITIONS
@@ -837,7 +833,6 @@ window = {
 								blockoverride "container_implementation" {
 									fixedgridbox = {
 										name = "characters_grid"
-										# datamodel verificato: Character
 										datamodel = "[PageModel('court_window_page', FixedPointToInt(GetPlayer.MakeScope.Var('court_window_page_size').GetValue), CharacterSelectionList.GetList)]"
 										visible = "[Not(CharacterSelectionList.IsBuildingList)]"
 										addcolumn = 600
@@ -964,7 +959,6 @@ window = {
 					{
 						fixedgridbox = {
 							name = "characters_grid"
-							# datamodel verificato: Character
 							datamodel = "[CharacterSelectionList.GetList]"
 							visible = "[Not(CharacterSelectionList.IsBuildingList)]"
 							layoutpolicy_horizontal = expanding
