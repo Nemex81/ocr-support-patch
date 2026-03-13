@@ -713,7 +713,11 @@ window = {
 										visible = "[Is('men_at_arms')]"
 										using = close_window_ocr
 										onclick = "[Clear('men_at_arms')]"
-									tooltip = "CLOSE_TAB"
+										tooltip = "CLOSE_TAB"
+									}
+
+									vbox = { # MAA
+										datamodel = "[MilitaryItem.GetOwnedMaa]"
 										layoutpolicy_horizontal = expanding
 										visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 										spacing = 3
