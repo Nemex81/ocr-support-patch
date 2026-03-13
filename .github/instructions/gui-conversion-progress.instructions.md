@@ -68,6 +68,8 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 
 > Nota (audit 2026-03-13): `window_intrigue.gui` — 0 critici confermati, 1 critico nel tracker era stima non verificata. Dati: 0 critici, 34 avvertenze (tutte datamodel senza nota verifica type), 0 binding assenti, fedeltà MINOR.
 
+> Stato: `window_intrigue.gui` spostata in **Convertite — Revisione Necessaria** (Ultimo audit 2026-03-13 — 0 critici, 34 avvertenze — tutte datamodel senza nota verifica type).
+
 > Nota (audit 2026-03-13): `window_inventory.gui` — 0 critici confermati, 1 critico nel tracker era stima non verificata. Dati: 0 critici, 15 avvertenze (tutte datamodel), 0 binding assenti, fedeltà MINOR.
 
 > Nota (audit 2026-03-13): `window_military.gui` — rilevato 1 CRITICO (button senza tooltip, riga 1524). Fix applicato 2026-03-13: aggiunto `tooltip = "[War.GetName]"`. Dati post-fix: 0 critici, 34 avvertenze (tutte datamodel), 0 binding assenti, fedeltà MINOR.
