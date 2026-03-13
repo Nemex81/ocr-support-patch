@@ -6,7 +6,7 @@ applyTo: "**"
 
 Registro delle finestre del progetto. Consultare prima di iniziare qualsiasi nuova conversione.
 
-Ultimo aggiornamento: 2026-03-13 (fix window_county_view — tooltip indentazione errata riga 3030, rientro corretto dentro il button)
+Ultimo aggiornamento: 2026-03-13 (fix window_character_lifestyle — tooltip e chiusura button mancante riga 661, button_text ripristinato come widget fratello)
 
 ## Convenzione stati
 
@@ -41,6 +41,7 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 | `window_activity.gui` | 44KB | Attività | 2026-03-12 | 0 | 6 | 1 |
 | `window_character.gui` | 187KB | Multi-tab, complessa | 2026-03-13 | 0 | 65 | 2 |
 | `window_combat.gui` | 123KB | Dati militari | 2026-03-13 | 0 | 16 | 2 |
+| `window_character_lifestyle.gui` | 73KB | Stile di vita | 2026-03-13 | 0 | 22 | 0 |
 | `window_council.gui` | 117KB | Tab task/skills | 2026-03-13 | 0 | 7 | 1 |
 | `window_culture.gui` | 99KB | Alberi cultura | 2026-03-12 | 0 | 16 | 2 |
 | `window_decisions.gui` | 26KB | Decisioni | 2026-03-12 | 0 | 6 | 0 |
@@ -64,7 +65,6 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 | File | Dim. | Note | Ultimo audit | Critici | Avv. |
 |------|------|------|-------------|---------|------|
 | `window_army.gui` | ~130KB | Gestione eserciti | 2026-03-13 | 8 | 55 |
-| `window_character_lifestyle.gui` | 73KB | Stile di vita | 2026-03-13 | 2 | 22 |
 | `window_my_realm.gui` | 85KB | Tab regno | 2026-03-13 | 5 | 27 |
 
 ---
