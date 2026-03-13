@@ -3144,6 +3144,7 @@ window = {
 									layoutpolicy_horizontal = expanding
 									shortcut = map_mode_11
 									onclick = "[Set('adjacent_counties_ring', 'across_water')]"
+									tooltip = "Across water adjacent counties, Shift E."
 
 									flowcontainer = {
 										ignoreinvisible = yes

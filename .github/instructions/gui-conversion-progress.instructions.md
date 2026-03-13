@@ -70,6 +70,8 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 
 > Nota (audit 2026-03-13): `window_character_lifestyle.gui` — rilevato 1 CRITICO (button SelectFocus senza tooltip, riga 544). Fix applicato 2026-03-13: aggiunto `tooltip = "[FocusType.GetDescription]"`. Dati post-fix: 0 critici, 22 avvertenze (tutte datamodel), 0 binding assenti, fedeltà MINOR.
 
+> Nota (audit 2026-03-13): `window_county_view.gui` — rilevati 4 CRITICI (button senza tooltip, righe 592, 852, 1070, 3147). Fix applicati 2026-03-13: `PROVINCE_CONTROLLER_TOOLTIP` (hostile controller), `[Title.GetNameNoTierNoTooltip]` (capital), `GRANT_TITLE_TOOLTIP` (grant holding), `"Across water adjacent counties, Shift E."` (across_water toggle). Dati post-fix: 0 critici, 45 avvertenze (tutte datamodel), 0 binding assenti, fedeltà MINOR.
+
 ---
 
 ## Convertite — Bloccanti (critici aperti, fix richiesti)
