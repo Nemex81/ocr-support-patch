@@ -29,7 +29,7 @@ Per ogni CRITICO trovato riporta:
 ## PASSO 2 — Contesto righe critiche
 
 Per ciascun CRITICO identificato nel passo precedente:
-- Mostrami le righe da `[riga - 8]` a `[riga + 8]` del file
+- Mostrami le righe da `[riga - 10]` a `[riga + 15]` del file
   `ocr_support_compatibility_pach/gui/${nomeFinestra}.gui`
 - Descrivi in italiano cosa fa il widget in quel punto
 
@@ -54,6 +54,16 @@ Solo dopo approvazione esplicita del modder:
 
 - Applica i fix approvati sul file `ocr_support_compatibility_pach/gui/${nomeFinestra}.gui`
 - Ogni modifica deve essere minima — tocca solo le righe del CRITICO
+
+> ⚠️ ATTENZIONE — Tooltip fuori dal blocco (pattern noto):
+> Se il CRITICO è un tooltip mal indentato (inserito fuori dal widget),
+> prima di scrivere leggi le righe `[riga-5]` a `[riga+5]` del file
+> e verifica che:
+> 1. Il tooltip sia DENTRO il blocco widget (stesso livello di using/onclick)
+> 2. La graffa di chiusura `}` del widget sia presente dopo il tooltip
+> 3. Il widget successivo sia FUORI dal blocco
+> Se la struttura è ambigua mostrami il contesto e aspetta conferma.
+
 - Non correggere avvertenze, non riorganizzare codice, non migliorare nulla fuori scope
 
 ---
