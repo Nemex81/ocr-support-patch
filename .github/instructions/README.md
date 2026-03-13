@@ -28,6 +28,12 @@ I file `.instructions.md` non si modificano durante una conversione attiva: le m
 
 Non richiedono invocazione manuale. Copilot le carica in automatico. Per verificare quali istruzioni sono attive in una sessione, aprire Copilot Chat e chiedere "quali istruzioni sono attive?"
 
+> Nota di compatibilità: l'attivazione automatica tramite `applyTo` richiede
+> VS Code con GitHub Copilot in modalità agent mode. Su versioni stabili di
+> VS Code o con Copilot in modalità chat standard il comportamento può
+> differire. Prima di affidarsi all'attivazione automatica, verificare che
+> agent mode sia abilitato nella configurazione Copilot.
+
 Per aggiungere una nuova istruzione: creare un file `.instructions.md` in questa cartella con frontmatter YAML `applyTo: pattern`. La nuova istruzione sarà attiva alla sessione successiva. Prima di aggiungerla, verificare che non ci siano conflitti con istruzioni esistenti.
 
 ## Dipendenze

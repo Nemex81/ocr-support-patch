@@ -32,7 +32,11 @@ La separazione tra "risorse" e "istruzioni" è intenzionale: le risorse sono dat
 
 I file in questa cartella si consultano direttamente o vengono referenziati da altri componenti. Non si invocano: sono letti automaticamente dagli script Python o dagli agenti quando necessario.
 
-Per aggiornare `jomini_scope_whitelist.md`: usare `scope_extractor.py` dopo una conversione. Lo script aggiunge automaticamente i binding assenti dopo verifica nel vanilla.
+Per aggiornare `jomini_scope_whitelist.md`: usare `scope_extractor.py` dopo una conversione. Lo script, invocato con il flag `--file percorso_file.gui`, estrae i binding
+presenti nel file indicato e li confronta con la whitelist. I binding assenti
+vengono aggiunti alla whitelist solo dopo conferma implicita nell'invocazione
+dello script — non avviene nulla senza un'esecuzione esplicita da parte del
+modder o dell'agente.
 
 Per aggiornare gli altri file: aprire manualmente, modificare, committare. Non modificare `dual_mode_pattern_canonical.md` senza prima verificare la compatibilità con i file già nella patch.
 

@@ -32,6 +32,11 @@ Esempio: `#scope-whitelist-check verifica i binding di window_title.gui`
 
 Le skill possono essere combinate nella stessa sessione. Esempio: invocare `#deprecated-pattern-scanner` e poi `#vanilla-fidelity-check` sullo stesso file.
 
+> I file `.skill.md` sono una convenzione interna del progetto, non una
+> feature nativa di GitHub Copilot. La sintassi `#nome-skill` funziona se
+> il file è caricato nel contesto della sessione Copilot Chat o referenziato
+> esplicitamente. Non si attiva in modo automatico come le istruzioni `applyTo`.
+
 ## Dipendenze
 
 - `.github/resources/jomini_scope_whitelist.md` — richiesta da `scope-whitelist-check`

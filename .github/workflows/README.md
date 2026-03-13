@@ -38,5 +38,11 @@ python tools/audit.py --window nome_finestra
 
 - `tools/audit.py` — script principale invocato dal workflow
 - `tools/config.py` — path configurati; il runner Ubuntu non ha accesso ai path locali Windows, quindi `audit.py` deve gestire gracefully i path mancanti
+
+> Attenzione: il workflow CI esegue solo la validazione strutturale Jomini
+> (`gui_validator.py`). I confronti con il vanilla e con l'upstream OCR
+> Agamidae non sono disponibili sul runner GitHub Actions perché richiedono
+> i repository locali configurati in `config.py`. Per una verifica completa
+> inclusi i confronti tri-repo, eseguire `audit.py` in locale prima del push.
 - `ocr_support_compatibility_pach/gui/` — percorso che triggerizza il workflow su push
 - Python 3.11 sul runner GitHub Actions (ubuntu-latest)
