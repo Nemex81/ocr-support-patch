@@ -33,3 +33,10 @@ Se un task richiede modifiche fuori da `ocr_support_compatibility_pach/gui/` o d
 1. **Fermarsi**
 2. Segnalare all'utente il file e il motivo
 3. Attendere conferma esplicita prima di procedere
+
+## Riferimento machine-readable
+
+Agli script e agli agenti automatizzati suggeriamo di consultare il file
+`.github/resources/domain_boundaries.md` prima di decidere il dominio operativo.
+Questo file contiene le categorie `framework` e `mod` e regole operative sintetiche
+che possono essere usate per decisioni automatiche.

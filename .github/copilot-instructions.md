@@ -74,6 +74,22 @@ visible = "[GetVariableSystem.Exists('ocr')]"        # container vanilla — nor
 
 ---
 
+## Distinzione Framework vs Mod (Operativo)
+
+Per chiarezza operativa, il progetto è suddiviso in due domini distinti e non sovrapponibili:
+
+- **Framework**: include logica, strumenti e istruzioni di processo. Percorsi tipici: `.github/` e `tools/` (es. `.github/instructions/`, `.github/agents/`, `tools/assemble_dualmode.py`).
+- **Mod (OCR Support Patch)**: contiene i file della patch attiva e le risorse modificate dal progetto. Percorso tipico: `ocr_support_compatibility_pach/` (es. `ocr_support_compatibility_pach/gui/`, `ocr_support_compatibility_pach/descriptor.mod`).
+
+Regole operative rapide:
+
+- Se un'istruzione dice **"non toccare la mod"**: NON modificare alcun file sotto `ocr_support_compatibility_pach/`. Limitarsi al dominio **Framework** (`.github/`, `tools/`).
+- Se un'istruzione dice **"guarda nel framework"**: ispezionare o modificare file solo in `.github/` e `tools/`. Non scrivere nella patch senza i checkpoint del workflow (CP1/CP2) definiti in `workflow-nuova-finestra.instructions.md`.
+- I percorsi scrivibili, vietati e la regola operativa centrale restano quelli definiti in `patch-boundaries.instructions.md`; seguirli sempre.
+
+Questa sezione aiuta ad evitare ambiguità quando l'operatore (umano o agente) riceve comandi generici relativi a "framework" o "mod".
+
+
 ## Finestre con Gestione OCR Alternativa
 
 Alcune finestre vanilla NON devono essere convertite al dual-mode perché il sistema OCR
