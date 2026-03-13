@@ -527,6 +527,7 @@ window = {
 											icon = {
 												texture = "[Secret.GetType.GetIcon]"
 												size = { 30 30 }
+												tooltip = "[Secret.GetType.GetName]"
 											}
 											text_multi_wide = {
 												layoutpolicy_horizontal = expanding

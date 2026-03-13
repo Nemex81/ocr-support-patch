@@ -1,0 +1,7 @@
+fix: window_intrigue.gui - aggiungi tooltip a icon senza tooltip (riga 527)
+
+Risolto 1 CRITICO: icon del tipo segreto (Secret.GetType.GetIcon) senza tooltip.
+Aggiunto tooltip = "[Secret.GetType.GetName]" per leggibilita' OCR.
+
+Nuovo verdetto audit: CON AVVERTENZE (0 critici, 34 avv. pre-esistenti).
+Spostato da Bloccanti a Revisione Necessaria nel registro conversioni.

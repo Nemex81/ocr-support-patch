@@ -6,7 +6,7 @@ applyTo: "**"
 
 Registro delle finestre del progetto. Consultare prima di iniziare qualsiasi nuova conversione.
 
-Ultimo aggiornamento: 2026-03-13 (fix tooltip close_window_ocr — 30 button in 12 file)
+Ultimo aggiornamento: 2026-03-13 (fix critico window_intrigue — icon tooltip riga 527)
 
 ## Convenzione stati
 
@@ -49,6 +49,7 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 | `window_factions.gui` | 39KB | Fazioni | 2026-03-12 | 0 | 14 | 3 |
 | `window_faith.gui` | 137KB | Tab dottrine/siti | 2026-03-12 | 0 | 32 | 0 |
 | `window_inventory.gui` | 82KB | Artefatti | 2026-03-13 | 0 | 15 | 0 |
+| `window_intrigue.gui` | 90KB | Schemi/agenti | 2026-03-13 | 0 | 34 | 0 |
 
 > Nota: `window_army.gui` era erroneamente classificata come "Da Convertire". Il file è presente nella patch con dual-mode funzionante. Spostata in "Revisione Necessaria" il 2026-03-12. Spostata in "Bloccanti" il 2026-03-13: rilevati 8 critici pre-esistenti (icon/button senza tooltip, righe 1044–5559) non correlati al fix tooltip close_window_ocr.
 
@@ -63,7 +64,6 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 | `window_army.gui` | ~130KB | Gestione eserciti | 2026-03-13 | 8 | 55 |
 | `window_character_lifestyle.gui` | 73KB | Stile di vita | 2026-03-13 | 2 | 22 |
 | `window_county_view.gui` | 269KB | Vista contea | 2026-03-13 | 1 | 45 |
-| `window_intrigue.gui` | 90KB | Schemi/agenti | 2026-03-13 | 1 | 34 |
 | `window_military.gui` | 91KB | Tab eserciti | 2026-03-13 | 1 | 33 |
 | `window_my_realm.gui` | 85KB | Tab regno | 2026-03-13 | 5 | 27 |
 
