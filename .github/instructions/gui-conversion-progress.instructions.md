@@ -6,7 +6,7 @@ applyTo: "**"
 
 Registro delle finestre del progetto. Consultare prima di iniziare qualsiasi nuova conversione.
 
-Ultimo aggiornamento: 2026-03-12 (Fase 4 — taratura dopo gate rafforzato)
+Ultimo aggiornamento: 2026-03-13 (correzione nomi file in "Da Convertire")
 
 ## Convenzione stati
 
@@ -78,18 +78,18 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 
 | File | Motivazione | Pattern |
 |------|-------------|--------|
-| `window_war.gui` | Interfaccia guerra | C |
+| `window_war_overview.gui` | Panoramica guerra | C |
 | `window_title.gui` | Gestione titoli | C |
-| `window_government.gui` | Governo/leggi | B |
+| `window_government_administration.gui` | Governo/leggi | B |
 
 ### Priorità MEDIA
 
 | File | Motivazione | Pattern |
 |------|-------------|--------|
-| `window_vassal_contracts.gui` | Contratti vassalli | B |
-| `window_schemes.gui` | Schema dettaglio | B |
-| `window_hook.gui` | Ganci/segreti | A |
-| `window_travel.gui` | Viaggio | B |
+| `interaction_modify_vassal_window.gui` | Contratti vassalli | B |
+| `window_travel_planner.gui` | Pianificazione viaggio | B |
+| `window_travel_option_selection.gui` | Selezione opzioni viaggio | A |
+| `window_travel_route_edit.gui` | Modifica rotta viaggio | A |
 
 ### Priorità BASSA
 
@@ -101,6 +101,4 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 
 > Il workflow completo passo per passo è in `workflow-nuova-finestra.instructions.md`.
 
----
-
-> Il workflow completo passo per passo è in `workflow-nuova-finestra.instructions.md`.
+> Note sui file rimossi: `window_schemes.gui` e `window_hook.gui` non esistono come finestre separate in vanilla né in OCR upstream — `window_hook.gui` non ha controparte, la logica degli schemi è già inclusa in `window_intrigue.gui` (presente nella patch).
