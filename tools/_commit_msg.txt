@@ -1,0 +1,11 @@
+fix(window_county_view): correggi indentazione tooltip riga 3030
+
+Il batch fix del 2026-03-13 aveva inserito tooltip = "CLOSE_TAB"
+a livello di button invece che dentro il button (un tab in meno).
+Stessa tipologia di danno gia corretta in window_military.gui.
+
+Fix applicato: aggiunto un tab di rientro alla riga del tooltip
+nel button del selettore adjacent_counties_ring.
+
+Risultato audit: 0 critici, 45 avvertenze
+Tracker: window_county_view.gui -> Revisione Necessaria

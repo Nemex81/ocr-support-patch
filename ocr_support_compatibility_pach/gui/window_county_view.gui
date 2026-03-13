@@ -3028,7 +3028,7 @@ window = {
 									using = close_window_ocr
 									visible = "[Is('adjacent_counties_ring')]"
 									onclick = "[Clear('adjacent_counties_ring')]"
-								tooltip = "CLOSE_TAB"
+									tooltip = "CLOSE_TAB"
 									onclick = "[Set('adjacent_counties_ring', '1')]"
 								}
 
