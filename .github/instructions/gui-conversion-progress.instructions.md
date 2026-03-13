@@ -68,6 +68,8 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 
 > Nota (audit 2026-03-13): `window_military.gui` — rilevato 1 CRITICO (button senza tooltip, riga 1524). Fix applicato 2026-03-13: aggiunto `tooltip = "[War.GetName]"`. Dati post-fix: 0 critici, 34 avvertenze (tutte datamodel), 0 binding assenti, fedeltà MINOR.
 
+> Nota (audit 2026-03-13): `window_character_lifestyle.gui` — rilevato 1 CRITICO (button SelectFocus senza tooltip, riga 544). Fix applicato 2026-03-13: aggiunto `tooltip = "[FocusType.GetDescription]"`. Dati post-fix: 0 critici, 22 avvertenze (tutte datamodel), 0 binding assenti, fedeltà MINOR.
+
 ---
 
 ## Convertite — Bloccanti (critici aperti, fix richiesti)
