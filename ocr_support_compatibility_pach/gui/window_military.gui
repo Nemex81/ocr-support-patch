@@ -1524,6 +1524,7 @@ window = {
 											button = {
 												size = { 100% 100% }
 												onclick = "[OpenGameViewData( 'war_overview',  War.GetID )]"
+												tooltip = "[War.GetName]"
 											}
 										}
 									}
