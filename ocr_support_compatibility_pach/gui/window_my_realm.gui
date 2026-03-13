@@ -137,6 +137,7 @@ window = {
 					onclick = "[MyRealmWindow.Close]"
 					using = close_window_ocr
 					onclick = "[Clear('toasted')]"
+					tooltip = "CLOSE"
 					# shortcut = character_window
 				}
 
@@ -809,6 +810,7 @@ window = {
 					using = close_window_ocr
 					visible = "[GetVariableSystem.Exists('realm_tabs')]"
 					onclick = "[GetVariableSystem.Clear('realm_tabs')]"
+					tooltip = "CLOSE_TAB"
 				}
 
 				flowcontainer = {
@@ -2732,6 +2734,7 @@ window = {
 					onclick = "[GetVariableSystem.Clear('sp_sorting')]"
 					using = close_window_ocr
 					shortcut = map_mode_2
+					tooltip = "CLOSE_TAB"
 				}
 
 				vbox = {

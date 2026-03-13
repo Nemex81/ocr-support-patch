@@ -106,6 +106,7 @@ window = {
 		onclick = "[ArmyWindow.CloseAndDeselect]"
 		size = { 0 0 }
 		using = close_window_ocr
+		tooltip = "CLOSE"
 		visible = "[Not(GetVariableSystem.Exists('army_tabs'))]"
 	}
 
@@ -1231,6 +1232,7 @@ window = {
 									visible = "[Has('last_army_view', 'targets')]"
 									onclick = "[Set('army_tabs', 'targets')]"
 									onclick = "[Clear('last_army_view')]"
+									tooltip = "CLOSE_TAB"
 								}
 								button = {
 									size = { 100% 100% }
@@ -1238,6 +1240,7 @@ window = {
 									visible = "[Has('last_army_view', 'adjacencies')]"
 									onclick = "[Set('army_tabs', 'adjacencies')]"
 									onclick = "[Clear('last_army_view')]"
+									tooltip = "CLOSE_TAB"
 								}
 							}
 
@@ -4075,6 +4078,7 @@ window = {
 						button = {
 							using = close_window_ocr
 							onclick = "[GetVariableSystem.Clear('war_selector')]"
+							tooltip = "CLOSE_TAB"
 						}
 					}
 
@@ -4285,7 +4289,7 @@ window = {
 							text_single = {
 								visible = "[GreaterThan_int32(GetDataModelSize(ArmyWindow.GetSelectedUnitItems), '(int32)8')]"
 								parentanchor = center
-						
+
 								text = "[GetNumberAbove_int32( GetDataModelSize(ArmyWindow.GetSelectedUnitItems), '(int32)8' )|=]"
 								align = center|nobaseline
 								default_format = "#Clickable"
@@ -5809,6 +5813,7 @@ window = {
 						visible = "[GetVariableSystem.Exists('move_to_new')]"
 						onclick = "[GetVariableSystem.Clear('move_to_new')]"
 						using = close_window_ocr
+						tooltip = "CLOSE_TAB"
 					}
 
 					button_text = {
@@ -5819,6 +5824,7 @@ window = {
 						visible = "[GetVariableSystem.Exists('move_to_old')]"
 						onclick = "[GetVariableSystem.Clear('move_to_old')]"
 						using = close_window_ocr
+						tooltip = "CLOSE_TAB"
 					}
 
 				    expand = { }
@@ -8188,6 +8194,7 @@ types OCRArmyNewTypes
 			size = { 100% 100% }
 			using = close_window_ocr
 			onclick = "[Clear('army_adjacencies')]"
+			tooltip = "CLOSE_TAB"
 		}
 	}
 
@@ -8220,6 +8227,7 @@ types OCRArmyNewTypes
 			size = { 100% 100% }
 			using = close_window_ocr
 			onclick = "[Clear('raid_list')]"
+			tooltip = "CLOSE_TAB"
 		}
 	}
 

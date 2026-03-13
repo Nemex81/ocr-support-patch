@@ -2867,6 +2867,7 @@ widget = {
 				button = {
 					using = close_window_ocr
 					onclick = "[InGameBottomBar.ClearSelectedInspiration]"
+					tooltip = "CLOSE_TAB"
 				}
 				blockoverride "hud" {
 				}

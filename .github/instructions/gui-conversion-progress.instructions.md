@@ -6,7 +6,7 @@ applyTo: "**"
 
 Registro delle finestre del progetto. Consultare prima di iniziare qualsiasi nuova conversione.
 
-Ultimo aggiornamento: 2026-03-13 (fix critico window_inventory — button tooltip riga 268)
+Ultimo aggiornamento: 2026-03-13 (fix tooltip close_window_ocr — 30 button in 12 file)
 
 ## Convenzione stati
 
@@ -24,7 +24,6 @@ Un file non ancora nella cartella patch si trova nella sezione "Da Convertire".
 
 | File | Dim. | Note | Ultimo audit | Critici | Avv. |
 |------|------|------|-------------|---------|------|
-| `hud.gui` | 177KB | HUD principale | 2026-03-12 | 0 | 0 |
 | `interaction_interfere_in_war_notification.gui` | 2KB | Notifica guerra | 2026-03-12 | 0 | 0 |
 
 ---
@@ -35,23 +34,23 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 
 | File | Dim. | Note | Ultimo audit | Critici | Avv. | Binding assenti |
 |------|------|------|-------------|---------|------|-----------------|
+| `hud.gui` | 177KB | HUD principale | 2026-03-13 | 0 | 16 | 0 |
 | `window_activity_list.gui` | 30KB | Lista attività | 2026-03-13 | 0 | 7 | 0 |
 | `interaction_blackmail.gui` | 13KB | Interazione | 2026-03-12 | 0 | 2 | 0 |
 | `interaction_menu_window.gui` | 9KB | Menu interazioni | 2026-03-12 | 0 | 4 | 0 |
 | `window_activity.gui` | 44KB | Attività | 2026-03-12 | 0 | 6 | 1 |
-| `window_army.gui` | ~130KB | Gestione eserciti | 2026-03-12 | 0 | 55 | 0 |
-| `window_character.gui` | 187KB | Multi-tab, complessa | 2026-03-12 | 0 | 64 | 2 |
-| `window_combat.gui` | 123KB | Dati militari | 2026-03-12 | 0 | 16 | 2 |
-| `window_council.gui` | 117KB | Tab task/skills | 2026-03-12 | 0 | 7 | 1 |
+| `window_character.gui` | 187KB | Multi-tab, complessa | 2026-03-13 | 0 | 65 | 2 |
+| `window_combat.gui` | 123KB | Dati militari | 2026-03-13 | 0 | 16 | 2 |
+| `window_council.gui` | 117KB | Tab task/skills | 2026-03-13 | 0 | 7 | 1 |
 | `window_culture.gui` | 99KB | Alberi cultura | 2026-03-12 | 0 | 16 | 2 |
 | `window_decisions.gui` | 26KB | Decisioni | 2026-03-12 | 0 | 6 | 0 |
-| `window_dynasty_house.gui` | 90KB | Dinastia/casata | 2026-03-12 | 0 | 26 | 0 |
+| `window_dynasty_house.gui` | 90KB | Dinastia/casata | 2026-03-13 | 0 | 26 | 0 |
 | `window_court.gui` | 38KB | Corte | 2026-03-13 | 0 | 5 | 0 |
 | `window_factions.gui` | 39KB | Fazioni | 2026-03-12 | 0 | 14 | 3 |
 | `window_faith.gui` | 137KB | Tab dottrine/siti | 2026-03-12 | 0 | 32 | 0 |
 | `window_inventory.gui` | 82KB | Artefatti | 2026-03-13 | 0 | 15 | 0 |
 
-> Nota: `window_army.gui` era erroneamente classificata come "Da Convertire". Il file è presente nella patch con dual-mode funzionante. Spostata qui il 2026-03-12.
+> Nota: `window_army.gui` era erroneamente classificata come "Da Convertire". Il file è presente nella patch con dual-mode funzionante. Spostata in "Revisione Necessaria" il 2026-03-12. Spostata in "Bloccanti" il 2026-03-13: rilevati 8 critici pre-esistenti (icon/button senza tooltip, righe 1044–5559) non correlati al fix tooltip close_window_ocr.
 
 ---
 
@@ -61,11 +60,12 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 
 | File | Dim. | Note | Ultimo audit | Critici | Avv. |
 |------|------|------|-------------|---------|------|
-| `window_character_lifestyle.gui` | 73KB | Stile di vita | 2026-03-12 | 3 | 22 |
-| `window_county_view.gui` | 269KB | Vista contea | 2026-03-12 | 4 | 45 |
-| `window_intrigue.gui` | 90KB | Schemi/agenti | 2026-03-12 | 1 | 34 |
-| `window_military.gui` | 91KB | Tab eserciti | 2026-03-12 | 2 | 34 |
-| `window_my_realm.gui` | 85KB | Tab regno | 2026-03-12 | 6 | 27 |
+| `window_army.gui` | ~130KB | Gestione eserciti | 2026-03-13 | 8 | 55 |
+| `window_character_lifestyle.gui` | 73KB | Stile di vita | 2026-03-13 | 2 | 22 |
+| `window_county_view.gui` | 269KB | Vista contea | 2026-03-13 | 1 | 45 |
+| `window_intrigue.gui` | 90KB | Schemi/agenti | 2026-03-13 | 1 | 34 |
+| `window_military.gui` | 91KB | Tab eserciti | 2026-03-13 | 1 | 33 |
+| `window_my_realm.gui` | 85KB | Tab regno | 2026-03-13 | 5 | 27 |
 
 ---
 

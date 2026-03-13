@@ -80,7 +80,7 @@ window = {
         using = Window_Size_Sidebar
         using = Window_Background_Sidebar
 
-        
+
 	datacontext = "[GetVariableSystem]"
 	datacontext = "[CharacterWindow.GetCharacter]"
 
@@ -143,7 +143,7 @@ window = {
 
 				using = Animation_Character_Window_Refresh_Short
 
-				blockoverride "portrait_button" 
+				blockoverride "portrait_button"
 				{
 					using = tooltip_es
 					tooltip_offset = { -50 0 }
@@ -4320,6 +4320,7 @@ types CharOCRTypes {
 			using = close_window_ocr
 			visible = "[GetVariableSystem.Exists('personality_view')]"
 			onclick = "[GetVariableSystem.Clear('personality_view')]"
+			tooltip = "CLOSE_TAB"
 		}
 
 		button_text = {

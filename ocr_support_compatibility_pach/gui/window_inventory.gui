@@ -143,6 +143,7 @@ window = {
 						shortcut = character_finder
 						using = close_window_ocr
 						onclick = "[Clear('claims')]"
+						tooltip = "CLOSE_TAB"
 					}
 
 					button_text = {
@@ -207,6 +208,7 @@ window = {
 							using = close_window_ocr
 							shortcut = explore_legends
 							onclick = "[GetVariableSystem.Clear('all_artifacts')]"
+							tooltip = "CLOSE_TAB"
 						}
 					}
 

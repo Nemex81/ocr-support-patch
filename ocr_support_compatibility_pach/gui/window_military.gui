@@ -713,10 +713,7 @@ window = {
 										visible = "[Is('men_at_arms')]"
 										using = close_window_ocr
 										onclick = "[Clear('men_at_arms')]"
-									}
-
-									vbox = { # MAA
-										datamodel = "[MilitaryItem.GetOwnedMaa]"
+									tooltip = "CLOSE_TAB"
 										layoutpolicy_horizontal = expanding
 										visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 										spacing = 3
@@ -1548,6 +1545,7 @@ window = {
 				onclick = "[GetVariableSystem.Clear('war_sorting')]"
 				using = close_window_ocr
 				shortcut = map_mode_2
+				tooltip = "CLOSE_TAB"
 			}
 
 			vbox = {
@@ -1618,6 +1616,7 @@ window = {
 				onclick = "[GetVariableSystem.Clear('war_filters')]"
 				using = close_window_ocr
 				shortcut = army_split_half
+				tooltip = "CLOSE_TAB"
 			}
 
 			vbox = {

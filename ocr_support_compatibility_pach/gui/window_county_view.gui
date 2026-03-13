@@ -1910,6 +1910,7 @@ window = {
 							onclick = "[GetVariableSystem.Clear('county_tabs')]"
 							visible = "[GetVariableSystem.Exists('county_tabs')]"
 							using = close_window_ocr
+							tooltip = "CLOSE_TAB"
 
 						}
 
@@ -1917,6 +1918,7 @@ window = {
 							visible = "[GetVariableSystem.Exists('holding_tabs')]"
 							using = close_window_ocr
 							onclick = "[GetVariableSystem.Clear('holding_tabs')]"
+							tooltip = "CLOSE_TAB"
 						}
 
 						button_text = {
@@ -3026,10 +3028,7 @@ window = {
 									using = close_window_ocr
 									visible = "[Is('adjacent_counties_ring')]"
 									onclick = "[Clear('adjacent_counties_ring')]"
-								}
-
-								button = {
-									shortcut = speed_1
+								tooltip = "CLOSE_TAB"
 									onclick = "[Set('adjacent_counties_ring', '1')]"
 								}
 
@@ -5341,6 +5340,7 @@ window = {
 		button = {
 			using = close_window_ocr
 			onclick = "[Clear('extra_window')]"
+			tooltip = "CLOSE_TAB"
 		}
 		blockoverride "show_window" {
 			visible = "[Has('extra_window', 'window_province_regions')]"
