@@ -1,8 +1,8 @@
 # Piano di Ristrutturazione Framework Dual-Mode
 ## OCR Support Patch — CK3 1.17.1
 
-**Data**: 13 Marzo 2026  
-**Autore**: Luca (Nemex81)  
+**Data**: 13 Marzo 2026
+**Autore**: Luca (Nemex81)
 **Scopo**: Rendere il framework sinergico, coeso e completamente operativo per la conversione dual-mode di ogni finestra di gioco CK3, una finestra alla volta, con controllo manuale obbligatorio del modder su ogni fase critica.
 
 ---
@@ -68,12 +68,33 @@ Il collegamento tra i livelli è umano: il modder fa da bridge manuale. Questo r
 
 **Come procedere**: eliminare ogni file con git, verificare che nessun altro script li importi.
 
-#### 1.2 — Fix path hardcoded in `assemble_army_dualmode.py`
+> **Nota su `annotate_datamodels.py`**: questo script NON è obsoleto. È uno strumento di manutenzione
+> che aggiunge annotazioni di tipo verificato alle righe `datamodel = "..."` nei file .gui.
+> Serve durante lo sviluppo attivo — va mantenuto.
+
+#### 1.2 — Eliminare tutti i file backup `- Copia` dal repository
+
+Nel repository sono presenti 35 file con suffisso `- Copia` (backup manuali) sparsi in:
+- `tools/` (5 file)
+- `.github/agents/` (6 file)
+- `.github/copilot-skills/` (6 file)
+- `.github/prompts/` (6 file)
+- `.github/resources/` (5 file)
+- `.github/instructions/` (5 file)
+- `.github/workflows/` (1 file)
+- `.vscode/` (1 file)
+
+Questi file sono cloni dei file originali, non contengono modifiche uniche, e generano
+confusione per gli agenti che li rilevano come file attivi. Eliminarli tutti.
+
+**Come procedere**: `Get-ChildItem -Recurse -Filter "*- Copia*" | Remove-Item -Force`
+
+#### 1.3 — Fix path hardcoded in `assemble_army_dualmode.py`
 
 Prima del refactor, fix immediato: sostituire i path calcolati autonomamente con import da `config.py`.
 
-File: `tools/assemble_army_dualmode.py`  
-Problema: usa `ROOT.parent / "CK3-OCR/..."` invece di importare `config.OCR_PATH` e `config.VANILLA_PATH`.  
+File: `tools/assemble_army_dualmode.py`
+Problema: usa `ROOT.parent / "CK3-OCR/..."` invece di importare `config.OCR_PATH` e `config.VANILLA_PATH`.
 Fix: aggiungere `from config import OCR_PATH, VANILLA_PATH, PATCH_PATH` e usare queste variabili.
 
 ---
@@ -93,12 +114,20 @@ Il file non viene eliminato e riscritto da zero. Viene convertito: le funzioni u
 - `find_type_block(content, type_name)` — trova `type X = ...` per nome
 - `find_template_block(content, template_name)` — trova `template X {}` per nome
 - `indent_lines(lines, spaces)` — utility di indentazione generica
-- `build_sub_window_dual(ocr_block, vanilla_block, window_name)` — già generico, solo aggiustamenti naming
+- `build_sub_window_dual(ocr_block, vanilla_block, window_name)` — già generico, ma richiede parametrizzazione del naming (vedi sotto)
 
 **Funzioni da rimuovere** (army-specifiche):
 - `extract_inner_vbox_from_ocr_army_window()` — cerca `size = {400 100%}` e `size = {800 100%}`, valori hardcoded army
 - `build_army_window()` — costruttore army-specifico
 - Le costanti `VANILLA_CONTAINER_HEADER`, `VANILLA_REORG_HEADER`, `VANILLA_ATTACH_HEADER` con dimensioni army
+
+**Riparametrizzazione `build_sub_window_dual`**:
+
+La funzione attuale usa `window_name.replace('army_', '').replace('_window', '')` per costruire i nomi
+dei container (logica army-specifica). Va sostituita con un parametro esplicito `container_prefix`
+che il chiamante può impostare liberamente. Se non fornito, il prefisso viene derivato dal `window_name`
+rimuovendo il prefisso `window_` iniziale (es. `window_faith` → `faith`). Questo elimina ogni
+logica hardcoded per una specifica finestra.
 
 **Funzioni da aggiungere** (nuove, parametriche):
 
@@ -125,13 +154,46 @@ def build_vanilla_container(window_name: str, vanilla_inner_content: str) -> str
     """
 
 def assemble_simple(window_name: str, ocr_content: str, vanilla_content: str) -> str:
-    """Pattern A: una sola window, struttura semplice."""
+    """
+    Pattern A: una sola window, struttura semplice.
+    Logica:
+    1. Estrai l'unica window dal file OCR e l'unica dal vanilla
+    2. Dal window OCR: separa header (state, layer, size, using, attachto)
+       da body (primo vbox/hbox/container di contenuto)
+    3. Avvolgi il body OCR in ocr_container con visible Not(ocr)
+    4. Avvolgi tutto il contenuto vanilla in vanilla_container con visible ocr
+    5. Componi: window header + ocr_container + vanilla_container + chiusura
+    """
 
 def assemble_tabs(window_name: str, ocr_content: str, vanilla_content: str) -> str:
-    """Pattern B: window principale + sub-windows."""
+    """
+    Pattern B: window principale + sub-windows.
+    Logica:
+    1. Estrai tutte le window da OCR e da vanilla con find_top_level_windows()
+    2. Abbina le window per nome (match esatto del campo name="...")
+    3. Se una window è presente solo in OCR: includerla solo nel container OCR
+    4. Se una window è presente solo in vanilla: includerla solo nel vanilla
+    5. Per ogni coppia abbinata: applica build_sub_window_dual()
+    6. Ordine output: stessa sequenza del file vanilla (per coerenza con CK3)
+    Se il match per nome fallisce (nomi divergenti tra OCR e vanilla),
+    usare l'ordine posizionale come fallback e logare un avvertimento.
+    """
 
 def assemble_complex(window_name: str, ocr_content: str, vanilla_content: str) -> str:
-    """Pattern C/D: window + types + templates separati."""
+    """
+    Pattern C/D: window + types + templates separati.
+    Logica:
+    1. Estrai separatamente: window blocks, types blocks, template blocks
+       da entrambi i file sorgente usando extract_window_content()
+    2. Per le window: stesso abbinamento per nome di assemble_tabs()
+    3. Per i types: i types vanilla vanno inclusi per intero (servono a entrambi
+       i container). I types presenti SOLO nell'OCR upstream vanno aggiunti
+       dopo i types vanilla, con commento '# Type OCR-only'
+    4. Per i templates: stessa logica dei types (vanilla + OCR-only)
+    5. Ordine output: window blocks → types blocks → template blocks
+    6. I types/templates condivisi (stesso nome in OCR e vanilla) usano
+       la versione vanilla come base
+    """
 ```
 
 **Entry point**:
@@ -143,7 +205,23 @@ python tools/assemble_dualmode.py --window window_nome --mode simple|tabs|comple
 - Senza `--dry-run`: scrive in `ocr_support_compatibility_pach/gui/window_nome.gui`
 - `--mode`: determina quale strategia di assemblaggio usare (corrisponde ai Pattern A/B/C/D)
 
-**Test di regressione obbligatorio**: dopo il refactor, eseguire il nuovo script con `--window window_army --mode complex --dry-run` e confrontare l'output con il file attuale in patch. Se identico (o differenze solo nel wrapper container), il refactor è corretto. Solo dopo eliminare `assemble_army_dualmode.py`.
+**Test di regressione obbligatorio**: dopo il refactor, eseguire il nuovo script con `--window window_army --mode complex --dry-run` e confrontare l'output con il file attuale in patch.
+
+**Criteri di confronto** (la regressione è OK se):
+- La struttura dei widget (tipo, nome, gerarchia) è identica
+- Le proprietà `visible` (toggle OCR/vanilla) sono identiche
+- I binding e le `onclick`/`tooltip` sono preservati
+- Differenze accettabili: commenti header (nome script cambiato), righe vuote, indentazione, ordine delle righe di commento
+
+**Confronto automatico consigliato**: usare un diff strutturale ignorando commenti e whitespace:
+```
+python -c "import difflib; ..."
+```
+o manualmente con `fc /W` su Windows.
+
+**`window_army` è il test case del refactor**, non un target di ri-conversione. Lo stato di conversione della finestra in `gui-conversion-progress.instructions.md` (Revisione Necessaria, 55 avvertenze) non cambia. Il test verifica solo che il nuovo script produca output equivalente al vecchio.
+
+Solo dopo il superamento del test: eliminare `assemble_army_dualmode.py`.
 
 #### 2.2 — Fix `tri_diff.py`: Sezione C più robusta
 
@@ -159,6 +237,15 @@ Fix: aggiungere fallback nella ricerca del container vanilla:
 ### FASE 3 — Agenti: Aggiungere `terminal` ai Tools
 
 **Obiettivo**: far sì che gli agenti possano eseguire script Python direttamente invece di chiedere al modder di farlo.
+
+**Nota sulla compatibilità `terminal`**: la disponibilità del tool `terminal` negli agenti custom
+dipende dalla versione di VS Code e dell'estensione GitHub Copilot. Se dopo l'aggiunta il tool
+non risulta disponibile a runtime, l'agente deve:
+1. Stampare il comando completo da eseguire
+2. Chiedere al modder di eseguirlo nel terminale
+3. Procedere dopo che il modder riporta l'output
+
+Questo fallback mantiene il workflow funzionante anche senza supporto `terminal` nativo.
 
 #### 3.1 — Agente Analista Tri-Repo
 
@@ -418,7 +505,8 @@ Copilot deve eseguire le fasi nell'ordine indicato. Non passare alla fase succes
 ```
 FASE 1 → Pulizia repository
    1.1 Elimina 6 script obsoleti
-   1.2 Fix path in assemble_army_dualmode.py
+   1.2 Elimina 35 file backup '- Copia' dall'intero repository
+   1.3 Fix path in assemble_army_dualmode.py
 
 FASE 2 → Refactor script core
    2.1 Refactor assemble_army_dualmode.py → assemble_dualmode.py
@@ -457,6 +545,8 @@ Il framework è ristrutturato correttamente quando:
 4. Dopo il completamento il sistema non propone automaticamente la finestra successiva
 5. `assemble_army_dualmode.py` non esiste più nel repository
 6. Gli 6 script obsoleti non esistono più nel repository
+7. Nessun file `- Copia` (backup) presente nel repository
+8. `annotate_datamodels.py` è mantenuto come strumento di manutenzione attivo
 
 ---
 
