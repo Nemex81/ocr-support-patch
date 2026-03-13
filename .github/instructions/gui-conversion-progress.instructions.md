@@ -62,6 +62,8 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 
 > Nota (audit 2026-03-13): `window_activity_list.gui` — 0 critici confermati, 1 critico nel tracker era stima non verificata. Dati: 0 critici, 7 avvertenze (4× datamodel, 3× window radice senza dual-mode), 0 binding assenti, fedeltà MINOR. Le 3 window radice senza dual-mode richiedono verifica manuale in sessione futura.
 
+> Nota (audit 2026-03-13): `window_intrigue.gui` — 0 critici confermati, 1 critico nel tracker era stima non verificata. Dati: 0 critici, 34 avvertenze (tutte datamodel senza nota verifica type), 0 binding assenti, fedeltà MINOR.
+
 ---
 
 ## Convertite — Bloccanti (critici aperti, fix richiesti)
