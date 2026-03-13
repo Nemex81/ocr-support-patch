@@ -69,6 +69,19 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 
 ---
 
+## Gestione Alternativa OCR (NON convertire al dual-mode)
+
+Queste finestre NON devono essere convertite al sistema dual-mode.
+Il sistema OCR le copre tramite shortcut da tastiera e override completo
+in OCR upstream Agamidae. Convertirle causerebbe duplicazione e potenziale
+conflitto con i meccanismi esistenti.
+
+| File | Meccanismo OCR alternativo | Shortcut |
+|------|---------------------------|----------|
+| `window_war_overview.gui` | Override OCR completo (2496 righe) in upstream Agamidae + shortcut apertura | Shift+W |
+
+---
+
 ## Da Convertire (nessun file dual-mode nella patch)
 
 > La colonna **Pattern** indica il valore `--mode` da usare con `assemble_dualmode.py`:
@@ -78,8 +91,7 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 
 | File | Motivazione | Pattern |
 |------|-------------|--------|
-| `window_war_overview.gui` | Panoramica guerra | C |
-| `window_title.gui` | Gestione titoli | C |
+| `window_title.gui` | GAP PARZIALE: info base (nome, contea, liege) già in griglia mappa OCR. Mancano: crea/usurpa/distruggi titolo, linea successione, claimant, storia titolo, vassalli de jure navigabili. | C |
 | `window_government_administration.gui` | Governo/leggi | B |
 
 ### Priorità MEDIA

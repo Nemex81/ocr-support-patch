@@ -14,6 +14,7 @@ Sequenza operativa standard. Seguire nell'ordine indicato senza saltare passi.
 
 | Passo | Chi | Azione |
 |-------|-----|--------|
+| **0** | **Agente** | **Verifica tabella "Gestione Alternativa OCR" in `copilot-instructions.md`. Se il file è presente: STOP immediato — rispondere al modder che il file ha copertura OCR alternativa e non va convertito.** |
 | 1 | Agente | `python tools/tri_diff.py --window nome` — report strutturale nei 3 repo |
 | 2 | Agente | Verifica esistenza file OCR upstream e vanilla. Se mancanti: STOP |
 | 3 | Agente | `python tools/assemble_dualmode.py --window nome --mode X --dry-run` |

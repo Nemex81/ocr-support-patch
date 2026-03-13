@@ -72,6 +72,25 @@ visible = "[GetVariableSystem.Exists('ocr')]"        # container vanilla — nor
 
 ---
 
+## Finestre con Gestione OCR Alternativa
+
+Alcune finestre vanilla NON devono essere convertite al dual-mode perché il sistema OCR
+le gestisce già tramite override completo in OCR upstream Agamidae e/o shortcut dedicati.
+
+Convertirle causerebbe: duplicazione di funzionalità già accessibili,
+conflitto con override OCR esistenti, aumento inutile della superficie di manutenzione.
+
+**Lista file ESCLUSI dal dual-mode:**
+
+| File | Perché escluso | Meccanismo OCR |
+|------|----------------|----------------|
+| `window_war_overview.gui` | Override OCR completo (2496 righe) già presente in upstream Agamidae | Shortcut Shift+W → apertura diretta del file con override OCR attivo |
+
+> ⚠️ REGOLA OBBLIGATORIA: prima di avviare qualsiasi nuova conversione,
+> verificare questa tabella. Se il file è presente: STOP — non procedere.
+
+---
+
 ## Istruzioni Attive per Dominio
 
 Si attivano automaticamente in base al file aperto:
