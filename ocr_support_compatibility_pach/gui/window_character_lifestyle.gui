@@ -658,7 +658,9 @@ window = {
 								button = {
 									using = close_window_ocr
 									onclick = "[Clear('focused_perk_tree')]"
-							tooltip = "CLOSE_TAB"
+									tooltip = "CLOSE_TAB"
+								}
+
 								button_text = {
 									layoutpolicy_horizontal = expanding
 									onclick = "[Set('focused_perk_tree', PerkGuiTree.GetName)]"
