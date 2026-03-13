@@ -1,0 +1,17 @@
+name: GUI Audit
+
+on:
+  push:
+    paths:
+      - 'ocr_support_compatibility_pach/gui/**'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Esegui audit su tutti i file .gui modificati
+        run: python tools/audit.py --all

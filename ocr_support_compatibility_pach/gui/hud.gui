@@ -318,7 +318,6 @@ widget = {
 						ignoreinvisible = yes
 						visible = "[DataModelHasItems(InGameTopbar.GetDiplomaticItems)]"
 
-						# datamodel verificato: DiplomaticItem
 						datamodel = "[DataModelLast(InGameTopbar.GetDiplomaticItems, '(int32)1')]"
 
 						item = {
@@ -343,7 +342,6 @@ widget = {
 						ignoreinvisible = yes
 						visible = "[And(IsDataModelEmpty(InGameTopbar.GetDiplomaticItems), DataModelHasItems(InGameTopbar.GetAlertItems))]"
 
-						# datamodel verificato: GUIAlertItem
 						datamodel = "[DataModelLast(InGameTopbar.GetAlertItems, '(int32)1')]"
 
 						item = {
@@ -601,7 +599,6 @@ widget = {
 					parentanchor = right|vcenter
 					texture = "gfx/interface/skinned/hud_spike_big.dds"
 					size = { 25 15 }
-					tooltip = "HUD section separator"
 
 					using = Animation_ShowHide_Standard
 				}
@@ -662,7 +659,6 @@ widget = {
 					parentanchor = right|vcenter
 					texture = "gfx/interface/skinned/hud_spike_big.dds"
 					size = { 25 15 }
-					tooltip = "HUD section separator"
 
 					using = Animation_ShowHide_Standard
 				}
@@ -813,7 +809,6 @@ widget = {
 						}
 
 						icon = {
-							tooltip = "Tax jurisdiction attention required"
 							size = { 100% 100% }
 							visible = "[GreaterThan_int32( GetPlayer.GetUnassignedVassalsCount, '(int32)0' )]"
 							texture = "gfx/interface/skinned/hud_maintab/maintab_tax_jurisdictions.dds"
@@ -846,10 +841,8 @@ widget = {
 							size = { 25 25 }
 							position = { -5 5}
 							texture = "gfx/interface/icons/symbols/icon_warning.dds"
-							tooltip = "Tax jurisdiction attention required"
 
 							icon = {
-								tooltip = "Tax jurisdiction attention required"
 								size = { 100% 100% }
 								alwaystransparent = yes
 								texture = "gfx/interface/icons/symbols/icon_warning.dds"
@@ -1174,7 +1167,6 @@ widget = {
 					parentanchor = right|vcenter
 					texture = "gfx/interface/skinned/hud_spike_big.dds"
 					size = { 25 15 }
-					tooltip = "HUD section separator"
 
 					using = Animation_ShowHide_Standard
 				}
@@ -1235,7 +1227,6 @@ widget = {
 					parentanchor = right|vcenter
 					texture = "gfx/interface/skinned/hud_spike_big.dds"
 					size = { 25 15 }
-					tooltip = "HUD section separator"
 
 					using = Animation_ShowHide_Standard
 				}
@@ -1386,7 +1377,6 @@ widget = {
 						}
 
 						icon = {
-							tooltip = "Tax jurisdiction attention required"
 							size = { 100% 100% }
 							visible = "[GreaterThan_int32( GetPlayer.GetUnassignedVassalsCount, '(int32)0' )]"
 							texture = "gfx/interface/skinned/hud_maintab/maintab_tax_jurisdictions.dds"
@@ -1419,10 +1409,8 @@ widget = {
 							size = { 25 25 }
 							position = { -5 5}
 							texture = "gfx/interface/icons/symbols/icon_warning.dds"
-							tooltip = "Tax jurisdiction attention required"
 
 							icon = {
-								tooltip = "Tax jurisdiction attention required"
 								size = { 100% 100% }
 								alwaystransparent = yes
 								texture = "gfx/interface/icons/symbols/icon_warning.dds"
@@ -2879,7 +2867,6 @@ widget = {
 				button = {
 					using = close_window_ocr
 					onclick = "[InGameBottomBar.ClearSelectedInspiration]"
-					tooltip = "CLOSE_TOOLTIP"
 				}
 				blockoverride "hud" {
 				}
@@ -2934,7 +2921,6 @@ widget = {
 				flowcontainer = {
 					background = { using = Background_Area_Border_Solid }
 					name = "task_contracts"
-					# datamodel verificato: TaskContract
 					datamodel = "[GetPlayer.GetAcceptedTaskContracts]"
 					ignoreinvisible = yes
 					direction = vertical
@@ -2984,7 +2970,6 @@ widget = {
 
 					flowcontainer = {
 						name = "player_inspirations"
-						# datamodel verificato: Inspiration
 						datamodel = "[GetPlayer.GetSponsoredInspirations]"
 						allow_outside = yes
 						visible = "[Not(IsLeftWindowOpen)]"
@@ -3149,7 +3134,6 @@ widget = {
 							ignoreinvisible = yes
 
 							flowcontainer = {
-								# datamodel verificato: GreatHolyWar
 								datamodel = "[GetPlayer.GetFaith.GetDefensiveGreatHolyWars]"
 								ignoreinvisible = yes
 
@@ -3196,7 +3180,6 @@ widget = {
 
 						flowcontainer = {
 							name = "raids_on_me"
-							# datamodel verificato: Character
 							datamodel = "[GetPlayer.GetHostileRaiders]"
 							allow_outside = yes
 							direction = vertical
@@ -3214,7 +3197,6 @@ widget = {
 
 						flowcontainer = {
 							name = "raids_by_me"
-							# datamodel verificato: Character
 							datamodel = "[GetPlayer.GetRaidTargets]"
 							direction = vertical
 
@@ -3231,7 +3213,6 @@ widget = {
 
 						flowcontainer = {
 							name = "regular_wars"
-							# datamodel verificato: WarItem
 							datamodel = "[InGameBottomBar.GetWarItems]"
 							ignoreinvisible = yes
 							direction = vertical
@@ -3333,7 +3314,6 @@ widget = {
 					}
 
 					flowcontainer = {
-						# datamodel verificato: BottomBarSchemeItem
 						datamodel = "[InGameBottomBar.GetSchemes]"
 						direction = vertical
 
@@ -3453,7 +3433,6 @@ widget = {
 					### Situations ###
 					flowcontainer = {
 						name = "situations"
-						# datamodel verificato: Situation
 						datamodel = "[GetPlayer.GetInvolvedSituations]"
 						ignoreinvisible = yes
 
@@ -3464,7 +3443,6 @@ widget = {
 
 					flowcontainer = {
 						name = "involved_struggles"
-						# datamodel verificato: Struggle
 						datamodel = "[GetPlayer.GetInvolvedStruggles]"
 						ignoreinvisible = yes
 
@@ -3499,7 +3477,6 @@ widget = {
 
 					flowcontainer = {
 						name = "interloper_struggles"
-						# datamodel verificato: Struggle
 						datamodel = "[GetPlayer.GetInterloperStruggles]"
 						ignoreinvisible = yes
 
@@ -6572,7 +6549,6 @@ types HUD
 					}
 					blockoverride "epidemic_datamodel"
 					{
-						# datamodel verificato: Epidemic
 						datamodel = "[InGameBottomBar.GetEpidemicsInRealm]"
 					}
 					blockoverride "item_extra_data"
@@ -6593,7 +6569,6 @@ types HUD
 					}
 					blockoverride "epidemic_datamodel"
 					{
-						# datamodel verificato: Epidemic
 						datamodel = "[InGameBottomBar.GetEpidemicsBorderingRealm]"
 					}
 				}
@@ -6608,7 +6583,6 @@ types HUD
 					}
 					blockoverride "epidemic_datamodel"
 					{
-						# datamodel verificato: Epidemic
 						datamodel = "[InGameBottomBar.GetGlobalNotificationEpidemics]"
 					}
 					blockoverride "item_extra_data"
@@ -7025,7 +6999,6 @@ types HUD
 								blockoverride "marker_tooltip"
 								{
 									datacontext_from_model = {
-										# datamodel verificato: LegitimacyLevel
 										datamodel = "[LegitimacyType.GetLevels]"
 										index = "[PdxGuiWidget.GetIndexInDataModel]"
 									}

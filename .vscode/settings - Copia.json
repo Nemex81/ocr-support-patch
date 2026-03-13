@@ -1,0 +1,39 @@
+{
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "file": ".github/copilot-instructions.md"
+        }
+    ],
+    "github.copilot.chat.reviewSelection.instructions": [
+        {
+            "file": ".github/copilot-instructions.md"
+        }
+    ],
+    "github.copilot.chat.testGeneration.instructions": [
+        {
+            "text": "Questo progetto non usa test automatici. La validazione è manuale in-game tramite CK3. Non generare test unitari."
+        }
+    ],
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+        {
+            "text": "Formato commit: 'tipo(file): descrizione breve in italiano'. Tipi: feat, fix, refactor, docs, cleanup. Esempio: 'feat(window_army.gui): aggiunge dual mode OCR/vanilla'"
+        }
+    ],
+    "files.associations": {
+        "*.gui": "plaintext",
+        "*.mod": "plaintext"
+    },
+    "editor.wordWrap": "on",
+    "editor.fontSize": 14,
+    "files.encoding": "utf8",
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true
+    },
+    "editor.rulers": [120],
+    "files.trimTrailingWhitespace": true,
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
+    "github.copilot.chat.reviewSelection.enabled": true
+}
