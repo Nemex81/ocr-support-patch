@@ -58,6 +58,8 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 
 > Nota: `window_army.gui` era erroneamente classificata come "Da Convertire". Il file è presente nella patch con dual-mode funzionante. Spostata in "Revisione Necessaria" il 2026-03-12. Spostata in "Bloccanti" il 2026-03-13: rilevati 4 critici (icon senza tooltip, righe 1044–1082). Fix applicato il 2026-03-13: 0 critici, 55 avvertenze.
 
+> Nota (audit 2026-03-13): `window_court.gui` — 0 critici confermati, 1 critico nel tracker era stima non verificata. Dati: 0 critici, 5 avvertenze, 0 binding assenti, fedeltà OK.
+
 ---
 
 ## Convertite — Bloccanti (critici aperti, fix richiesti)
