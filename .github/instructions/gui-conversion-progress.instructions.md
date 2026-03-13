@@ -6,7 +6,7 @@ applyTo: "**"
 
 Registro delle finestre del progetto. Consultare prima di iniziare qualsiasi nuova conversione.
 
-Ultimo aggiornamento: 2026-03-13 (correzione nomi file in "Da Convertire")
+Ultimo aggiornamento: 2026-03-13 (fix critico window_court — button tooltip riga 702)
 
 ## Convenzione stati
 
@@ -45,6 +45,7 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 | `window_culture.gui` | 99KB | Alberi cultura | 2026-03-12 | 0 | 16 | 2 |
 | `window_decisions.gui` | 26KB | Decisioni | 2026-03-12 | 0 | 6 | 0 |
 | `window_dynasty_house.gui` | 90KB | Dinastia/casata | 2026-03-12 | 0 | 26 | 0 |
+| `window_court.gui` | 38KB | Corte | 2026-03-13 | 0 | 5 | 0 |
 | `window_factions.gui` | 39KB | Fazioni | 2026-03-12 | 0 | 14 | 3 |
 | `window_faith.gui` | 137KB | Tab dottrine/siti | 2026-03-12 | 0 | 32 | 0 |
 
@@ -61,7 +62,6 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 | `window_activity_list.gui` | 30KB | Lista attività | 2026-03-12 | 1 | 7 |
 | `window_character_lifestyle.gui` | 73KB | Stile di vita | 2026-03-12 | 3 | 22 |
 | `window_county_view.gui` | 269KB | Vista contea | 2026-03-12 | 4 | 45 |
-| `window_court.gui` | 38KB | Corte | 2026-03-12 | 1 | 5 |
 | `window_intrigue.gui` | 90KB | Schemi/agenti | 2026-03-12 | 1 | 34 |
 | `window_inventory.gui` | 82KB | Artefatti | 2026-03-12 | 1 | 15 |
 | `window_military.gui` | 91KB | Tab eserciti | 2026-03-12 | 2 | 34 |
