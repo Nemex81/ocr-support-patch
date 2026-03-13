@@ -1045,6 +1045,7 @@ window = {
 													name = "loot_icon"
 													size = { 35 35 }
 													texture = "gfx/interface/icons/icon_gold.dds"
+													tooltip = "ARMY_RAID_LOOT_TOOLTIP"
 												}
 
 												text_single = {
@@ -1059,6 +1060,7 @@ window = {
 												icon = {
 													texture = "gfx/interface/icons/map_icons/attrition_icon.dds"
 													size = { 35 35 }
+													tooltip = "ARMY_ATTRITION_TT"
 												}
 
 												text_single = {
@@ -1077,6 +1079,7 @@ window = {
 													framesize = { 60 60 }
 													frame = "[ArmyWindow.GetSupplyStateFrame]"
 													texture = "gfx/interface/icons/icon_supplies.dds"
+													tooltip = "[Army.GetSupplyStateTooltip]"
 												}
 
 												icon = {
@@ -1084,6 +1087,7 @@ window = {
 													size = { 25 25 }
 													visible = "[ArmyWindow.ShowSupplyTrend]"
 													texture = "gfx/interface/icons/symbols/icon_supplies_trend.dds"
+													tooltip = "[Army.GetSupplyStateTooltip]"
 												}
 
 												text_single = {

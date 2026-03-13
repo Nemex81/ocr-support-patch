@@ -6,7 +6,7 @@ applyTo: "**"
 
 Registro delle finestre del progetto. Consultare prima di iniziare qualsiasi nuova conversione.
 
-Ultimo aggiornamento: 2026-03-13 (fix window_my_realm — 5 button OCR senza tooltip nelle sezioni partizione e successione)
+Ultimo aggiornamento: 2026-03-13 (fix window_army — 4 icon OCR senza tooltip nel pannello unità: loot, attrito, rifornimenti)
 
 ## Convenzione stati
 
@@ -54,8 +54,9 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 | `window_county_view.gui` | 269KB | Vista contea | 2026-03-13 | 0 | 45 | 0 |
 | `window_military.gui` | 91KB | Tab eserciti | 2026-03-13 | 0 | 33 | 0 |
 | `window_my_realm.gui` | 85KB | Tab regno | 2026-03-13 | 0 | 27 | 0 |
+| `window_army.gui` | ~130KB | Gestione eserciti | 2026-03-13 | 0 | 55 | 0 |
 
-> Nota: `window_army.gui` era erroneamente classificata come "Da Convertire". Il file è presente nella patch con dual-mode funzionante. Spostata in "Revisione Necessaria" il 2026-03-12. Spostata in "Bloccanti" il 2026-03-13: rilevati 8 critici pre-esistenti (icon/button senza tooltip, righe 1044–5559) non correlati al fix tooltip close_window_ocr.
+> Nota: `window_army.gui` era erroneamente classificata come "Da Convertire". Il file è presente nella patch con dual-mode funzionante. Spostata in "Revisione Necessaria" il 2026-03-12. Spostata in "Bloccanti" il 2026-03-13: rilevati 4 critici (icon senza tooltip, righe 1044–1082). Fix applicato il 2026-03-13: 0 critici, 55 avvertenze.
 
 ---
 
@@ -65,7 +66,6 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 
 | File | Dim. | Note | Ultimo audit | Critici | Avv. |
 |------|------|------|-------------|---------|------|
-| `window_army.gui` | ~130KB | Gestione eserciti | 2026-03-13 | 8 | 55 |
 
 ---
 
