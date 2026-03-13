@@ -6,7 +6,7 @@ applyTo: "**"
 
 Registro delle finestre del progetto. Consultare prima di iniziare qualsiasi nuova conversione.
 
-Ultimo aggiornamento: 2026-03-13 (fix critico window_court — button tooltip riga 702)
+Ultimo aggiornamento: 2026-03-13 (fix critico window_activity_list — button tooltip riga 144)
 
 ## Convenzione stati
 
@@ -35,6 +35,7 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 
 | File | Dim. | Note | Ultimo audit | Critici | Avv. | Binding assenti |
 |------|------|------|-------------|---------|------|-----------------|
+| `window_activity_list.gui` | 30KB | Lista attività | 2026-03-13 | 0 | 7 | 0 |
 | `interaction_blackmail.gui` | 13KB | Interazione | 2026-03-12 | 0 | 2 | 0 |
 | `interaction_menu_window.gui` | 9KB | Menu interazioni | 2026-03-12 | 0 | 4 | 0 |
 | `window_activity.gui` | 44KB | Attività | 2026-03-12 | 0 | 6 | 1 |
@@ -59,7 +60,6 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 
 | File | Dim. | Note | Ultimo audit | Critici | Avv. |
 |------|------|------|-------------|---------|------|
-| `window_activity_list.gui` | 30KB | Lista attività | 2026-03-12 | 1 | 7 |
 | `window_character_lifestyle.gui` | 73KB | Stile di vita | 2026-03-12 | 3 | 22 |
 | `window_county_view.gui` | 269KB | Vista contea | 2026-03-12 | 4 | 45 |
 | `window_intrigue.gui` | 90KB | Schemi/agenti | 2026-03-12 | 1 | 34 |
