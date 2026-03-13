@@ -1784,6 +1784,7 @@ window = {
 												onclick = "[MyRealmWindow.Close]"
 												button_ignore = none
 												layoutpolicy_horizontal = expanding
+												tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 
 												text_single = {
 													layoutpolicy_horizontal = expanding
@@ -1859,6 +1860,7 @@ window = {
 													onrightclick = "[DefaultOnCharacterRightClick(Character.GetID)]"
 													button_ignore = none
 													layoutpolicy_horizontal = expanding
+													tooltip = "[Character.GetUINameNoTooltip]"
 
 													text_single = {
 														name = "heir_name"
@@ -1911,6 +1913,7 @@ window = {
 																onclick = "[MyRealmWindow.Close]"
 																button_ignore = none
 																layoutpolicy_horizontal = expanding
+																tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 																text_single = {
 																	layoutpolicy_horizontal = expanding
 																	raw_text = "[TitleItem.GetTitle.GetNameNoTooltip]."
@@ -1959,6 +1962,7 @@ window = {
 															onclick = "[MyRealmWindow.Close]"
 															button_ignore = none
 															layoutpolicy_horizontal = expanding
+															tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 
 															text_single = {
 																layoutpolicy_horizontal = expanding
@@ -2019,6 +2023,7 @@ window = {
 											onclick = "[MyRealmWindow.Close]"
 											button_ignore = none
 											layoutpolicy_horizontal = expanding
+											tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 
 											text_single = {
 												layoutpolicy_horizontal = expanding
