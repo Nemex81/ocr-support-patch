@@ -60,6 +60,8 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 
 > Nota (audit 2026-03-13): `window_court.gui` — 0 critici confermati, 1 critico nel tracker era stima non verificata. Dati: 0 critici, 5 avvertenze, 0 binding assenti, fedeltà OK.
 
+> Nota (audit 2026-03-13): `window_activity_list.gui` — 0 critici confermati, 1 critico nel tracker era stima non verificata. Dati: 0 critici, 7 avvertenze (4× datamodel, 3× window radice senza dual-mode), 0 binding assenti, fedeltà MINOR. Le 3 window radice senza dual-mode richiedono verifica manuale in sessione futura.
+
 ---
 
 ## Convertite — Bloccanti (critici aperti, fix richiesti)
