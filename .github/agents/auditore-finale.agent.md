@@ -2,7 +2,7 @@
 name: Auditore Finale
 description: Audit completo pre-commit. Emette verdetto APPROVED o BLOCKED. Solo lettura.
 model: ['Claude Opus 4.6', 'GPT-5.4']
-tools: [read, search]
+tools: [read, search, terminal]
 handoffs:
   - label: "→ Fix implementatore"
     agent: "Implementatore Patch"
@@ -32,7 +32,10 @@ Il tuo verdetto è vincolante: **APPROVED** o **BLOCKED**.
 ## Checklist Completa
 
 ### Sezione 0 — Pre-Audit Automatico (obbligatorio)
-- [ ] Esegui `python tools/audit.py --window <nome_finestra>`
+- [ ] Esegui via tool **terminal**:
+  ```
+  python tools/audit.py --window <nome_finestra>
+  ```
   Il gate copre: lint strutturale, scope whitelist, fedelta' vanilla (advisory).
   - Se BLOCCANTE: emettere immediatamente **BLOCKED** con lista dei CRITICO. Non proseguire.
   - Se CON AVVERTENZE: documentare esplicitamente le avvertenze aperte e valutare sign-off.

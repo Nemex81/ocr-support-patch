@@ -71,28 +71,35 @@ Dual-mode presente ma con almeno un CRITICO rilevato da `audit.py`. Non dichiara
 
 ## Da Convertire (nessun file dual-mode nella patch)
 
+> La colonna **Pattern** indica il valore `--mode` da usare con `assemble_dualmode.py`:
+> A=simple | B=tabs | C=complex | D=complex (multi-window). Verificare con `tri_diff.py` prima di confermare.
+
 ### Priorità ALTA
 
-| File | Motivazione |
-|------|-------------|
-| `window_war.gui` | Interfaccia guerra |
-| `window_title.gui` | Gestione titoli |
-| `window_government.gui` | Governo/leggi |
+| File | Motivazione | Pattern |
+|------|-------------|--------|
+| `window_war.gui` | Interfaccia guerra | C |
+| `window_title.gui` | Gestione titoli | C |
+| `window_government.gui` | Governo/leggi | B |
 
 ### Priorità MEDIA
 
-| File | Motivazione |
-|------|-------------|
-| `window_vassal_contracts.gui` | Contratti vassalli |
-| `window_schemes.gui` | Schema dettaglio |
-| `window_hook.gui` | Ganci/segreti |
-| `window_travel.gui` | Viaggio |
+| File | Motivazione | Pattern |
+|------|-------------|--------|
+| `window_vassal_contracts.gui` | Contratti vassalli | B |
+| `window_schemes.gui` | Schema dettaglio | B |
+| `window_hook.gui` | Ganci/segreti | A |
+| `window_travel.gui` | Viaggio | B |
 
 ### Priorità BASSA
 
-| File | Motivazione |
-|------|-------------|
-| `window_struggle.gui` | Conflitti regionali |
+| File | Motivazione | Pattern |
+|------|-------------|--------|
+| `window_struggle.gui` | Conflitti regionali | C |
+
+---
+
+> Il workflow completo passo per passo è in `workflow-nuova-finestra.instructions.md`.
 
 ---
 

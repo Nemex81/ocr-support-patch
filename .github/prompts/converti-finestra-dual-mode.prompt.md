@@ -1,31 +1,82 @@
 ---
 agent: agent
-description: Converte una finestra GUI CK3 al sistema dual mode OCR/Vanilla
-tools: [read, search]
+description: Converte una singola finestra GUI CK3 al sistema dual-mode OCR/Vanilla. UNA FINESTRA ALLA VOLTA.
+tools: [read, search, terminal]
 ---
 
-# Task: Conversione Dual Mode
+# Conversione Dual-Mode — Una Finestra
 
-Leggi prima le istruzioni globali del progetto:
-`${file:.github/copilot-instructions.md}`
+Leggi prima le istruzioni globali: `${file:.github/copilot-instructions.md}`
+Leggi il pattern canonical: `${file:.github/resources/dual_mode_pattern_canonical.md}`
+Leggi i pattern di conversione: `${file:.github/resources/conversion-patterns.md}`
 
-## Input richiesti
-- **File target** (nella patch): `ocr_support_compatibility_pach/gui/${input:nomeFile}.gui`
-- **File vanilla di riferimento**: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFile}.gui`
-- **File OCR upstream**: `../CK3-OCR/OCR-Support/gui/${input:nomeFile}.gui`
+## Input
 
-## Procedura
+- Nome finestra: ${input:nomeFinestra}
+- Pattern di conversione: ${input:pattern} (simple | tabs | complex)
 
-1. Leggi il file vanilla — identifica: struttura widget, nomi container, tab, blockoverride
-2. Leggi il file OCR upstream di Agamidae — identifica cosa ha già implementato
-3. Confronta i due per trovare discrepanze e sezioni mancanti nella patch attuale
-4. Implementa il dual mode seguendo ESATTAMENTE il pattern in `.github/copilot-instructions.md`
-5. Il container vanilla = copia fedele del vanilla originale, NESSUNA modifica
-6. Il container OCR = implementazione testuale accessibile di TUTTE le informazioni presenti nel vanilla
+## File sorgente (sola lettura obbligatoria)
 
-## Vincoli
-- CK3 versione 1.17.1 — nessuna feature di versioni successive
-- Nessun widget grafico nel blocco OCR
-- Font size OCR minimo: 18
-- Ogni sezione OCR deve avere un header testuale in giallo (#FFDD88)
-- Tutti i bottoni OCR devono avere tooltip descrittivo
+- OCR upstream: `../CK3-OCR/OCR-Support/gui/${input:nomeFinestra}.gui`
+- Vanilla CK3: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFinestra}.gui`
+- Patch attuale: `ocr_support_compatibility_pach/gui/${input:nomeFinestra}.gui`
+
+## Sequenza operativa — SEGUIRE NELL'ORDINE, NON SALTARE PASSI
+
+### PASSO 1 — Analisi tri-repo
+```
+python tools/tri_diff.py --window ${input:nomeFinestra}
+```
+Mostrare il report completo al modder. Aspettare conferma prima di continuare.
+
+### PASSO 2 — Verifica sorgenti
+Verificare che entrambi i file sorgente esistano:
+- Se OCR upstream mancante: comunicarlo al modder, STOP.
+- Se vanilla mancante: comunicarlo al modder, STOP.
+- Se entrambi presenti: procedere.
+
+### PASSO 3 — Bozza assemblaggio (DRY-RUN)
+```
+python tools/assemble_dualmode.py --window ${input:nomeFinestra} --mode ${input:pattern} --dry-run
+```
+Mostrare l'output completo al modder.
+
+### CHECKPOINT 1 — APPROVAZIONE MODDER OBBLIGATORIA
+**STOP. Chiedere al modder: "La bozza è corretta? Posso scrivere il file nella patch?"**
+Non procedere senza risposta affermativa esplicita.
+
+### PASSO 4 — Scrittura file nella patch
+```
+python tools/assemble_dualmode.py --window ${input:nomeFinestra} --mode ${input:pattern}
+```
+
+### PASSO 5 — Estrazione scope e aggiornamento whitelist
+```
+python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/${input:nomeFinestra}.gui
+```
+Aggiungere alla whitelist `.github/resources/jomini_scope_whitelist.md` tutti i binding ASSENTI.
+
+### PASSO 6 — Audit automatico
+```
+python tools/audit.py --window ${input:nomeFinestra}
+```
+- Se BLOCCANTE: elencare i CRITICO, correggerli, ri-eseguire audit. Non procedere fino a OK.
+- Se CON AVVERTENZE: documentarle per il modder, procedere con nota.
+- Se OK: procedere.
+
+### CHECKPOINT 2 — VERDETTO AUDIT AL MODDER
+Mostrare il verdetto completo di audit.py al modder prima di passare ai revisori.
+
+### PASSO 7 — Revisori
+Invocare in sequenza:
+1. Agente **Revisore Accessibilità**
+2. Agente **Revisore Vanilla**
+3. Agente **Auditore Finale** → emette APPROVED o BLOCKED
+
+### PASSO 8 — Chiusura
+- Se APPROVED: aggiornare `gui-conversion-progress.instructions.md`
+- Se BLOCKED: elencare fix richiesti, aspettare istruzioni modder
+
+## Vincolo assoluto
+Dopo il completamento, NON proporre di iniziare un'altra finestra.
+Attendere istruzioni esplicite del modder per qualsiasi operazione successiva.

@@ -16,10 +16,12 @@ import sys
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-OCR_FILE  = ROOT.parent / "CK3-OCR/OCR-Support/gui/window_army.gui"
-VANILLA_FILE = ROOT.parent / "CK3 ORIGINAL VERSION/ck3origin/game/gui/window_army.gui"
-PATCH_FILE = ROOT / "ocr_support_compatibility_pach/gui/window_army.gui"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from config import OCR_GUI, VANILLA_GUI, PATCH_GUI
+
+OCR_FILE     = OCR_GUI / "window_army.gui"
+VANILLA_FILE = VANILLA_GUI / "window_army.gui"
+PATCH_FILE   = PATCH_GUI / "window_army.gui"
 
 DRY_RUN = "--dry-run" in sys.argv
 

@@ -13,17 +13,21 @@ parameters:
     required: true
 ---
 
-## Pre-Run Automatico
+## Esecuzione con tool terminal (percorso primario)
 
-Prima di qualsiasi analisi manuale, eseguire:
+Se il tool `terminal` è disponibile, eseguire **prima** lo script:
 ```
 python tools/tri_diff.py --window <window_name>
 ```
-Il report prodotto copre le sezioni A, B, C, D già formattate.
-Usarlo come base per l'analisi — procedere con lettura manuale solo
-per interpretare le discrepanze segnalate nella sezione C.
+L'output dello script copre gia' le sezioni A, B, C, D in modo automatico
+e preciso. **Usare l'output dello script come fonte primaria del report.**
+La logica LLM di questa skill serve SOLO per interpretare le discrepanze
+segnalate nella Sezione C che richiedono giudizio qualitativo
+(es. variazioni accettabili vs. bug strutturali).
 
-## Logica di Esecuzione
+Se `terminal` non è disponibile: eseguire la logica manuale descritta sotto.
+
+## Logica di Esecuzione (fallback senza terminal)
 
 I tre percorsi da usare sono fissi e obbligatori:
 - **Patch attiva**: `ocr_support_compatibility_pach/gui/[window_name].gui`

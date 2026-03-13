@@ -2,7 +2,7 @@
 name: Implementatore Patch
 description: Scrive e modifica i file .gui della patch. Opera SOLO su ocr_support_compatibility_pach/.
 model: ['GPT-5.4']
-tools: [edit, read, search]
+tools: [edit, read, search, terminal]
 handoffs:
   - label: "→ Verifica Accessibilità"
     agent: "Revisore Accessibilità"
@@ -22,22 +22,38 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
 
 ## Regole operative
 
-0. Esegui `python tools/gui_validator.py --file <percorso_file>`.
-   Se verdetto = BLOCCANTE: correggere tutti i problemi CRITICO prima di procedere.
+0. Esegui via tool **terminal**:
+   ```
+   python tools/gui_validator.py --file <percorso_file>
+   ```
+   Se verdetto = BLOCCANTE: correggere tutti i CRITICO prima di procedere.
    Se verdetto = CON AVVERTENZE o PULITO: procedere, poi invoca #deprecated-pattern-scanner
    per analisi contestuale dei problemi residui.
 1. Prima di modificare: leggi il file attuale nella patch
 2. Leggi il corrispondente vanilla da `../CK3 ORIGINAL VERSION/ck3origin/game/gui/`
 3. Container vanilla = copia fedele del vanilla — copialo direttamente senza modifiche
 3b. Preserva clickability e interazioni vanilla presenti nel file originale: `onclick`, `onrightclick`, `tooltip`, hover feedback e stati `enabled`/`disabled` rilevanti.
-4. Container OCR = segue il progetto dell'Architetto o il pattern canonical
+4. Container OCR = segue il progetto dell'Architetto o il pattern canonical.
+   Opzione alternativa per generare lo scheletro (via tool **terminal**):
+   ```
+   python tools/assemble_dualmode.py --window <nome> --mode simple|tabs|complex --dry-run
+   ```
+   Il `--dry-run` stampa solo l'anteprima senza scrivere il file.
+   Usa il risultato come base e applicare le personalizzazioni OCR dall'upstream Agamidae.
 4b. Invoca #dual-mode-template-generator con le sezioni del progetto Architetto.
 5. Ogni modifica è minima — non toccare ciò che non è nel task
 6. Dopo ogni edit: verifica assenza di `name` duplicati allo stesso livello
-7. Esegui `python tools/scope_extractor.py --file <percorso_file>`.
-   Aggiungi alla whitelist tutte le righe prodotte per i binding ASSENTI.
+7. Esegui via tool **terminal**:
+   ```
+   python tools/scope_extractor.py --file <percorso_file>
+   ```
+   Aggiungi alla whitelist `.github/resources/jomini_scope_whitelist.md`
+   tutte le righe prodotte per i binding ASSENTI.
    Poi invoca #scope-whitelist-check per i binding DA VERIFICARE (⚠️) se presenti.
-8. Esegui nuovamente `python tools/gui_validator.py --file <percorso_file>`.
+8. Esegui via tool **terminal**:
+   ```
+   python tools/gui_validator.py --file <percorso_file>
+   ```
    Se verdetto != PULITO, correggere prima di passare ai revisori.
    Invoca #deprecated-pattern-scanner solo se restano flag ATTENZIONE da interpretare.
 

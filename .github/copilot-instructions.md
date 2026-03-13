@@ -33,7 +33,15 @@ Toggle: **Shift+F11** in-game (imposta/rimuove variabile `ocr`).
   prompts/               ← prompt riutilizzabili
   resources/             ← pattern canonical, whitelist scope, priority list
   copilot-skills/        ← skills invocabili dagli agenti con #nome-skill
-tools/                   ← audit.py · tri_diff.py · gui_validator.py · scope_extractor.py · config.py
+tools/
+  audit.py               ← gate completo: validator + scope + fedelta' vanilla
+  tri_diff.py            ← confronto strutturale tra i 3 repo
+  gui_validator.py       ← lint strutturale file .gui
+  scope_extractor.py     ← estrae binding dal file e aggiorna whitelist
+  assemble_dualmode.py   ← assembla qualsiasi finestra in dual-mode (generico)
+  assemble_army_dualmode.py  ← assembla window_army.gui (specializzato, mantenuto)
+  annotate_datamodels.py ← strumento di manutenzione datamodel
+  config.py              ← path centralizzati ai 3 repo
 ocr_support_compatibility_pach/gui/  ← file .gui della mod (lavoro attivo)
 ```
 
@@ -105,7 +113,16 @@ In `.github/copilot-skills/` — invocabili dagli agenti con `#nome-skill`.
 | `tri-repo-diff` | Confronto strutturale tra i 3 repo |
 | `vanilla-fidelity-check` | Verifica fedeltà container vanilla |
 | `accessibility-checklist-runner` | Checklist NVDA automatica |
-| `dual-mode-template-generator` | Genera scheletro dual mode da struttura vanilla |
+| `dual-mode-template-generator` | Genera scheletro dual mode — usare solo per finestre senza sorgente OCR esistente |
+
+---
+
+## Principio di Controllo Manuale (non negoziabile)
+
+- Il modder approva **SEMPRE** prima che il file venga scritto nella patch (CHECKPOINT 1)
+- Il modder vede **SEMPRE** il verdetto di audit prima dei revisori (CHECKPOINT 2)
+- Il sistema **NON** avvia mai la conversione di una finestra successiva automaticamente
+- **Una finestra alla volta. Sempre.**
 
 ---
 

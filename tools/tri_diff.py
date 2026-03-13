@@ -118,7 +118,10 @@ def _is_vanilla_visibility(riga: str) -> bool:
 def _estrai_container_vanilla(righe: list[str]) -> list[str]:
     """
     Estrae le righe del blocco vanilla dalla patch.
-    Usa bilanciamento delle parentesi graffe per trovare l'intero blocco.
+    Strategia a tre livelli:
+    1. Cerca blocco con name = 'vanilla_*' o name = 'normal_mode*' / 'grafic_version*'
+    2. Fallback: cerca blocco con visible = Exists('ocr') — qualsiasi naming
+    3. Se nessuno trovato: restituisce lista vuota (segnalato in _diff_container_vanilla)
     """
     profondita = 0
     for i, riga in enumerate(righe):
@@ -135,17 +138,31 @@ def _estrai_container_vanilla(righe: list[str]) -> list[str]:
             profondita += riga.count("{") - riga.count("}")
             continue
 
-        finestra = righe[i:min(fine + 1, i + 12)]
-        if any(_is_vanilla_visibility(r) for r in finestra):
-            return righe[i:fine + 1]
-
-        if any(RE_USING_VANILLA.search(r) for r in finestra) and any(_is_vanilla_visibility(r) for r in finestra):
-            return righe[i:fine + 1]
+        # Controlla l'intero blocco (non solo le prime 12 righe) per visibility
+        blocco = righe[i:fine + 1]
+        if any(_is_vanilla_visibility(r) for r in blocco):
+            return blocco
 
         if RE_VANILLA_CONTAINER.search(riga) or RE_VANILLA_ALT_NAME.search(riga):
-            return righe[i:fine + 1]
+            return blocco
 
         profondita += riga.count("{") - riga.count("}")
+
+    # Fallback: scansione completa del file per visible = Exists('ocr') —
+    # cattura container vanilla con naming non standard
+    profondita = 0
+    for i, riga in enumerate(righe):
+        profondita += riga.count("{") - riga.count("}")
+        if _is_vanilla_visibility(riga) and profondita >= 1:
+            # backtrack fino all'inizio del blocco che contiene questa riga
+            for j in range(i - 1, max(i - 20, -1), -1):
+                stripped = righe[j].strip()
+                if RE_VANILLA_BLOCK_HINT.match(righe[j]) and stripped.endswith("{"):
+                    fine = _trova_fine_blocco(righe, j)
+                    if fine > j:
+                        return righe[j:fine + 1]
+                    break
+
     return []
 
 
@@ -250,7 +267,13 @@ def _diff_container_vanilla(righe_patch: list[str], righe_vanilla: list[str], wi
     """
     container = _estrai_container_vanilla(righe_patch)
     if not container:
-        return ["Blocco vanilla non trovato nella patch."]
+        return [
+            "[AVVERTENZA] CONTAINER VANILLA NON TROVATO nella patch.",
+            "Possibili cause:",
+            "  1. Il file patch non ha ancora il dual-mode (da convertire)",
+            "  2. Il container vanilla usa un naming non standard — verifica visible",
+            "  3. Il blocco vanilla non contiene la proprieta' visible corretta",
+        ]
 
     if _is_template_vanilla_delegation(container):
         return ["Nessuna discrepanza automatica: ramo vanilla delegato tramite template `vanilla`."]

@@ -2,9 +2,9 @@
 name: dual-mode-template-generator
 description: >
   Genera lo scheletro Jomini dual mode completo per una finestra CK3.
-  Produce il container OCR strutturato e il wrapper container vanilla.
-  Il container vanilla è sempre un blocco vuoto con commento: il contenuto
-  vanilla originale va incollato dall'Implementatore, mai inventato dalla skill.
+  PERCORSO PRINCIPALE: usare assemble_dualmode.py --dry-run che estrae contenuto
+  reale dai file sorgente. Questa skill e' utile SOLO per finestre senza sorgente
+  OCR upstream esistente, dove il contenuto deve essere costruito da zero.
 parameters:
   - name: window_name
     description: >
@@ -18,12 +18,31 @@ parameters:
       Esempio: "intestazione:titolo,oro:dato_numerico,vassalli:lista,chiudi:bottone"
       Tipi validi: titolo, dato_numerico, dato_testuale, lista, bottone, tab_header
     required: true
+  - name: ocr_source_path
+    description: >
+      Path del file OCR upstream (Agamidae) da cui estrarre il contenuto reale.
+      Se fornito, la skill legge il file invece di generare placeholder.
+      Esempio: ../CK3-OCR/OCR-Support/gui/window_faith.gui
+    required: false
+  - name: vanilla_source_path
+    description: >
+      Path del file vanilla CK3 originale da cui copiare il container vanilla.
+      Se fornito, il blocco vanilla viene popolato con contenuto reale.
+      Esempio: ../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_faith.gui
+    required: false
   - name: window_size
     description: >
       Dimensioni della finestra in pixel, formato LARGHEZZAxALTEZZA.
       Esempio: 800x600. Se non fornito, usa 800x600 come default.
     required: false
 ---
+
+> **PERCORSO CONSIGLIATO**: Per finestre con sorgente OCR esistente, usare direttamente:
+> ```
+> python tools/assemble_dualmode.py --window <nome> --mode simple|tabs|complex --dry-run
+> ```
+> Lo script estrae contenuto reale dai file sorgente senza placeholder.
+> Questa skill rimane utile SOLO per finestre nuove senza sorgente OCR upstream.
 
 ## Logica di Esecuzione
 
@@ -83,10 +102,12 @@ container = {
 
 ### Vincoli assoluti
 
-- La skill NON inventa mai il contenuto vanilla. Il blocco vanilla è sempre
-  vuoto con il commento di istruzione. Questo è intenzionale e non va cambiato.
-- La skill NON aggiunge binding reali. Usa sempre placeholder espliciti del
-  tipo `[PlaceholderBinding]` con commento `# Sostituire con binding verificato`.
+- Se `ocr_source_path` e `vanilla_source_path` sono forniti: leggere i file
+  e produrre il template con **contenuto reale**, non placeholder.
+- Se i path NON sono forniti (uso legacy): usare placeholder espliciti del tipo
+  `[PlaceholderBinding]` con commento `# Sostituire con binding verificato`.
+- La skill NON inventa mai binding. Se i path non sono forniti, usa placeholder.
+- Il blocco vanilla senza `vanilla_source_path`: sempre vuoto con commento istruzione.
 
 ---
 
