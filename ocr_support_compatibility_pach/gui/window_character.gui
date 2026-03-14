@@ -42,6 +42,7 @@ window = {
 	### MODALITÀ OCR (DA AGAMIDAE/CK3) ###
 	widget = {
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		datacontext = "[CharacterWindow.GetCharacter]"
 		using = ocr_window
 		size = { 800 100% }
 
