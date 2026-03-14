@@ -7,6 +7,9 @@
 		{
 			"name": "🎮 CK3-Vanilla (Paradox originale — installazione locale completa)",
 			"path": "../../../../../../Program Files (x86)/Steam/steamapps/common/Crusader Kings III"
+		},
+		{
+			"path": "../CK3-OCR"
 		}
 	],
 	"settings": {
