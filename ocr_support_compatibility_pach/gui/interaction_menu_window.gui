@@ -23,6 +23,19 @@ window = {
 	# widget_anchor is set dynamically by code
 	using = Animation_ShowHide_Quick
 
+	state = {
+		name = _show
+		using = Animation_FadeIn_Quick
+		on_start = "[CloseGameView(AddTextIf(And(Not(GetVariableSystem.Exists('ocr')), GetScriptedGui('close_interactions').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )), 'character'))]"
+	}
+
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Quick
+		on_finish = "[Set('favorite_interaction', 'yes')]"
+		on_finish = "[Clear('filtered_actions')]"
+	}
+
 	# Not shown to the player, but is used by the hotkey system
 	button_normal = {
 		name = "button_close"
