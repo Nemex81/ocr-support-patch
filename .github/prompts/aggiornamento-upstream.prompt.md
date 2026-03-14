@@ -12,7 +12,8 @@ Leggi: `${file:.github/copilot-instructions.md}`
 ## File da confrontare
 - Patch attuale: `ocr_support_compatibility_pach/gui/${input:nomeFile}.gui`
 - OCR upstream: `../CK3-OCR/OCR-Support/gui/${input:nomeFile}.gui`
-- Vanilla baseline: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFile}.gui`
+- Vanilla baseline: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/${input:nomeFile}.gui`
+  (path letto da `tools/config.py` — VANILLA_GUI)
 
 ## Cosa rilevare
 

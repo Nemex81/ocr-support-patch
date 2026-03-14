@@ -18,7 +18,8 @@ Leggi i pattern di conversione: `${file:.github/resources/conversion-patterns.md
 ## File sorgente (sola lettura obbligatoria)
 
 - OCR upstream: `../CK3-OCR/OCR-Support/gui/${input:nomeFinestra}.gui`
-- Vanilla CK3: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFinestra}.gui`
+- Vanilla CK3: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/${input:nomeFinestra}.gui`
+  (path letto da `tools/config.py` — VANILLA_GUI)
 - Patch attuale: `ocr_support_compatibility_pach/gui/${input:nomeFinestra}.gui`
 
 ## Sequenza operativa — SEGUIRE NELL'ORDINE, NON SALTARE PASSI

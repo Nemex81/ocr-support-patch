@@ -32,9 +32,8 @@ Se `terminal` non è disponibile: eseguire la logica manuale descritta sotto.
 I tre percorsi da usare sono fissi e obbligatori:
 - **Patch attiva**: `ocr_support_compatibility_pach/gui/[window_name].gui`
 - **OCR upstream**: `../CK3-OCR/OCR-Support/gui/[window_name].gui`
-- **Vanilla CK3**: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/[window_name].gui`
-
-> ⚠️ Il path vanilla usa SPAZI, non trattini: `CK3 ORIGINAL VERSION`
+- **Vanilla CK3**: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/[window_name].gui`
+  (path letto da `tools/config.py` — VANILLA_GUI)
 
 Per ognuno dei tre file:
 1. Verifica se esiste. Se non esiste, segnalarlo esplicitamente nel report.

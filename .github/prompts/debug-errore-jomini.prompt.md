@@ -21,7 +21,7 @@ ${input:testoErrore}
 
 1. Identifica il tipo di errore (syntax, missing widget, invalid scope, missing datatype...)
 2. Individua la riga/widget specifico nel file
-3. Confronta con il file vanilla in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/` per capire lo stato atteso
+3. Confronta con il file vanilla in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/` per capire lo stato atteso
 4. Proponi il fix minimo necessario senza toccare altro
 5. Spiega in italiano perché si è verificato l'errore e come evitarlo in futuro
 

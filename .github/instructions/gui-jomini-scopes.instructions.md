@@ -7,7 +7,8 @@ applyTo: "**/*.gui"
 Copilot **NON deve usare scope non verificati nel vanilla** senza verifica esplicita.
 
 > **Regola obbligatoria**: ogni volta che un nuovo scope viene verificato nel vanilla
-> (`../CK3 ORIGINAL VERSION/ck3origin/game/gui/`), va aggiunto immediatamente
+> (`C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/`
+> — path letto da `tools/config.py` come `VANILLA_GUI`), va aggiunto immediatamente
 > a `.github/resources/jomini_scope_whitelist.md` (file master).
 
 **Lista completa scope verificati**: `.github/resources/jomini_scope_whitelist.md`

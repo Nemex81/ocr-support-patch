@@ -40,7 +40,8 @@ Documento di progetto in italiano con:
 ## Regole architetturali
 
 - Usa SOLO scope presenti nella whitelist. Se manca: segnalare come "DA VERIFICARE"
-- Container vanilla: identico al file `../CK3 ORIGINAL VERSION/ck3origin/game/gui/[file].gui`
+- Container vanilla: identico al file `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/[file].gui`
+  (path letto da `tools/config.py` — VANILLA_GUI)
 - Font size OCR minimo 18 | Header: colore `{ 255 221 136 255 }` (giallo)
 
 ## Aggiornamento Whitelist (obbligatorio)

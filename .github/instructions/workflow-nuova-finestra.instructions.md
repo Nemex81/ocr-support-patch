@@ -34,7 +34,8 @@ Sequenza operativa standard. Seguire nell'ordine indicato senza saltare passi.
    → se BLOCCANTE: correggere tutti i CRITICO prima di procedere
 1. Verifica esistenza dei file sorgente:
    - OCR upstream: `../CK3-OCR/OCR-Support/gui/nome_file.gui`
-   - Vanilla CK3: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/nome_file.gui`
+   - Vanilla CK3: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/nome_file.gui`
+     (path effettivo letto da `tools/config.py` — VANILLA_GUI)
    - Se uno dei due manca: segnalare al modder, STOP
 2. **DRY-RUN obbligatorio** — genera bozza senza scrivere:
    `python tools/assemble_dualmode.py --window nome_file --mode X --dry-run`

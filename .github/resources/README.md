@@ -44,4 +44,5 @@ Per aggiornare gli altri file: aprire manualmente, modificare, committare. Non m
 
 - `tools/scope_extractor.py` — aggiorna `jomini_scope_whitelist.md`
 - `tools/config.py` — fornisce i path per leggere i file vanilla di riferimento
-- I file vanilla in `CK3 ORIGINAL VERSION/` o nell'installazione CK3 locale — richiesti per verificare i binding prima di aggiungerli alla whitelist
+- I file vanilla in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/` — richiesti per verificare i binding prima di aggiungerli alla whitelist
+  (path configurato in `tools/config.py` come `VANILLA_GUI`)

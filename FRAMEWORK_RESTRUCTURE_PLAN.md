@@ -349,7 +349,7 @@ Leggi i pattern di conversione: `${file:.github/resources/conversion-patterns.md
 ## File sorgente (sola lettura obbligatoria)
 
 - OCR upstream: `../CK3-OCR/OCR-Support/gui/${input:nomeFinestra}.gui`
-- Vanilla CK3: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFinestra}.gui`
+- Vanilla CK3: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/${input:nomeFinestra}.gui`
 - Patch attuale: `ocr_support_compatibility_pach/gui/${input:nomeFinestra}.gui`
 
 ## Sequenza operativa — SEGUIRE NELL'ORDINE, NON SALTARE PASSI
@@ -557,5 +557,5 @@ Il framework è ristrutturato correttamente quando:
 - Il test di regressione in FASE 2.1 è obbligatorio — non saltarlo
 - Ogni fase completata: comunicare al modder prima di passare alla successiva
 - Se un passo è ambiguo: chiedere chiarimenti al modder, non procedere per ipotesi
-- Non modificare mai file in `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/` — sola lettura assoluta
+- Non modificare mai file in `../CK3-OCR/` o `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/` — sola lettura assoluta
 - Non modificare file in `ocr_support_compatibility_pach/gui/` tranne quando esplicitamente richiesto dal piano (FASE 2.1, test di regressione)

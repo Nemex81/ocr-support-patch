@@ -16,13 +16,13 @@ PATCH_GUI = PATCH_ROOT / "ocr_support_compatibility_pach" / "gui"
 OCR_ROOT = WORKSPACE_ROOT / "CK3-OCR"
 OCR_GUI = OCR_ROOT / "OCR-Support" / "gui"
 
-# Repository 3 — Copia parziale vanilla su GitHub (solo .gui — utile per contesto rapido)
-VANILLA_ROOT = WORKSPACE_ROOT / "CK3 ORIGINAL VERSION"
-VANILLA_GUI = VANILLA_ROOT / "ck3origin" / "game" / "gui"
+# Repository 3 — Installazione CK3 completa locale (fonte autorevole, sola lettura)
+VANILLA_ROOT = Path("C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III")
+VANILLA_GUI = VANILLA_ROOT / "game" / "gui"
 
-# Repository 4 — Installazione CK3 completa locale (fonte autorevole, sola lettura)
-CK3_INSTALL_ROOT = Path("C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III")
-CK3_INSTALL_GUI = CK3_INSTALL_ROOT / "game" / "gui"
+# Alias mantenuto per compatibilità con script che lo referenziano direttamente
+CK3_INSTALL_ROOT = VANILLA_ROOT
+CK3_INSTALL_GUI = VANILLA_GUI
 
 # Risorse framework
 WHITELIST_PATH = PATCH_ROOT / ".github" / "resources" / "jomini_scope_whitelist.md"

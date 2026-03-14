@@ -19,9 +19,8 @@ Non modifichi mai nessun file, non proponi fix, non scrivi codice.
 
 - **Patch attiva**: `ocr_support_compatibility_pach/gui/`
 - **OCR upstream** (Agamidae): `../CK3-OCR/OCR-Support/gui/`
-- **Vanilla CK3 1.17.1**: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/`
-
-> Il path vanilla usa spazi: `CK3 ORIGINAL VERSION` (non trattini)
+- **Vanilla CK3 1.17.1**: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/`
+  (path effettivo configurato in `tools/config.py` come `VANILLA_GUI`)
 
 ## Metodologia
 

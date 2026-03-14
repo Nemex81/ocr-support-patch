@@ -20,7 +20,6 @@ Copilot può modificare file **esclusivamente** nei seguenti percorsi:
 Qualsiasi edit fuori dai percorsi scrivibili è **proibito senza conferma esplicita dell'utente**. In particolare:
 
 - `../CK3-OCR/` — repository upstream Agamidae, sola lettura
-- `../CK3 ORIGINAL VERSION/` — copia parziale vanilla su GitHub (solo .gui), sola lettura
 - `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/` — installazione CK3 completa locale, sola lettura
 - `.github/agents/` — definizioni agenti, non modificare
 - `.github/prompts/` — prompt riutilizzabili, non modificare

@@ -52,4 +52,4 @@ Non modificare `config.py` per aggiungere path temporanei: usarlo solo per i pat
 - Python 3.11 o superiore
 - `config.py` configurato correttamente con i path ai tre repository locali
 - `.github/resources/jomini_scope_whitelist.md` — letta e aggiornata da `scope_extractor.py`
-- I tre repository nel workspace: patch (`ocr_support_compatibility_pach/`), OCR upstream (`../CK3-OCR/`), vanilla (`../CK3 ORIGINAL VERSION/`) o installazione CK3 locale (`C:/Program Files (x86)/Steam/...`)
+- I repository nel workspace: patch (`ocr_support_compatibility_pach/`), OCR upstream (`../CK3-OCR/`), vanilla (installazione CK3 locale — `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/`)

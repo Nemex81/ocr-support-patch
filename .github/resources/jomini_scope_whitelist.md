@@ -89,8 +89,8 @@ Ultimo aggiornamento: 2026-03-11
 
 ## Scope e binding — interaction_menu_window.gui
 
-Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/interaction_menu_window.gui`
-e in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/interaction_templates.gui`.
+Verificati direttamente in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/interaction_menu_window.gui`
+e in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/interaction_templates.gui`.
 
 ### Scope finestra e controller
 
@@ -140,7 +140,7 @@ e in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/interaction_templates.gui`.
 
 ## Scope e binding — window_faith.gui
 
-Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_faith.gui`.
+Verificati direttamente in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/window_faith.gui`.
 
 | Scope / Binding | Contesto | Note |
 |---|---|---|
@@ -208,7 +208,7 @@ Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_fa
 
 ## Scope e binding — window_my_realm.gui
 
-Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_my_realm.gui`.
+Verificati direttamente in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/window_my_realm.gui`.
 
 | Scope / Binding | Contesto | Note |
 |---|---|---|
@@ -222,7 +222,7 @@ Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_my
 | `NotEqualTo_int32` | window_my_realm.gui — filtro conteggio stance vassalli | verificato in vanilla window_my_realm.gui:3283 |
 ---
 ## Scope e binding -- hud.gui
-Verificati direttamente in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/hud.gui`
+Verificati direttamente in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/hud.gui`
 e in altri file vanilla (citati nelle note).
 ### Funzioni matematiche/comparazione -- verificate in vanilla hud.gui
 | Scope / Binding | Contesto | Note |
@@ -285,7 +285,7 @@ e in altri file vanilla (citati nelle note).
 | `GetPlayer.GetCurrentLocation` | hud.gui OCR -- posizione corrente giocatore | binding OCR (OCR_bindings.txt:92 come replace_with); NON nel vanilla GUI nativo |
 ---
 ## Scope e binding -- window_county_view.gui
-Verificati in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_county_view.gui`
+Verificati in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/window_county_view.gui`
 e in altri file vanilla (citati nelle note).
 ### Funzioni sistema/confronto -- verificate nel vanilla
 | Scope / Binding | Contesto | Note |
@@ -386,7 +386,7 @@ Binding verificati dopo l aggiornamento iniziale della sezione window_my_realm.g
 
 ## Scope e binding -- window_army.gui
 
-Verificati in `../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_army.gui` e
+Verificati in `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/window_army.gui` e
 in `../CK3-OCR/OCR-Support/gui/window_army.gui`.
 
 ### Binding GetPlayer -- verificati in vanilla window_army.gui

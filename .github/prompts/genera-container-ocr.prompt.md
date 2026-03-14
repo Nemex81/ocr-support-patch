@@ -12,7 +12,8 @@ Leggi: `${file:.github/copilot-instructions.md}`
 ## Input
 - **Finestra**: `${input:nomeFinestra}`
 - **Sezione da convertire**: `${input:nomeSezione}` (es: "tab_stats", "section_vassals", "panel_army")
-- **File vanilla**: `../CK3 ORIGINAL VERSION/ck3origin/game/gui/${input:nomeFile}.gui`
+- **File vanilla**: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/${input:nomeFile}.gui`
+  (path letto da `tools/config.py` — VANILLA_GUI)
 
 ## Regole di generazione
 

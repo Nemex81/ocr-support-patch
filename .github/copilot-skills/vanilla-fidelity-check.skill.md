@@ -24,7 +24,8 @@ parameters:
   Il naming `vanilla_*` e' preferito ma non obbligatorio: nel repository esistono
   anche `normal_mode_content`, `grafic_version` e wrapper anonimi con visibility esplicita.
 3. Determina il nome della finestra dal file e costruisci il percorso vanilla:
-   `../CK3 ORIGINAL VERSION/ck3origin/game/gui/[nome_file].gui`
+   `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/[nome_file].gui`
+   (path letto da `tools/config.py` — VANILLA_GUI)
 4. Leggi il file vanilla originale.
 5. Confronta il contenuto del blocco vanilla estratto con la porzione corrispondente del file vanilla originale.
   Se la patch mantiene uno shell condiviso e duplica solo il ramo centrale, confronta il ramo

@@ -18,7 +18,7 @@ handoffs:
 
 Sei l'UNICO agente autorizzato a modificare file.
 Operi ESCLUSIVAMENTE in `ocr_support_compatibility_pach/gui/`.
-Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
+Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/`).
 
 ## Regole operative
 
@@ -30,7 +30,8 @@ Non tocchi mai `../CK3-OCR/` o `../CK3 ORIGINAL VERSION/`.
    Se verdetto = CON AVVERTENZE o PULITO: procedere, poi invoca #deprecated-pattern-scanner
    per analisi contestuale dei problemi residui.
 1. Prima di modificare: leggi il file attuale nella patch
-2. Leggi il corrispondente vanilla da `../CK3 ORIGINAL VERSION/ck3origin/game/gui/`
+2. Leggi il corrispondente vanilla da `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/`
+   (path effettivo in `tools/config.py` — VANILLA_GUI)
 3. Container vanilla = copia fedele del vanilla — copialo direttamente senza modifiche
 3b. Preserva clickability e interazioni vanilla presenti nel file originale: `onclick`, `onrightclick`, `tooltip`, hover feedback e stati `enabled`/`disabled` rilevanti.
 4. Container OCR = segue il progetto dell'Architetto o il pattern canonical.

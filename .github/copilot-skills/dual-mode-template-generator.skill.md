@@ -28,7 +28,7 @@ parameters:
     description: >
       Path del file vanilla CK3 originale da cui copiare il container vanilla.
       Se fornito, il blocco vanilla viene popolato con contenuto reale.
-      Esempio: ../CK3 ORIGINAL VERSION/ck3origin/game/gui/window_faith.gui
+      Esempio: C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/window_faith.gui
     required: false
   - name: window_size
     description: >
@@ -94,7 +94,7 @@ container = {
     # =============================================
     # VANILLA ORIGINALE — NON MODIFICARE MAI
     # Incollare qui il contenuto del file:
-    # ../CK3 ORIGINAL VERSION/ck3origin/game/gui/[window_name].gui
+    # C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/[window_name].gui
     # Identico al vanilla senza nessuna modifica.
     # =============================================
 }

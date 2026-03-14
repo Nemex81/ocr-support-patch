@@ -18,11 +18,9 @@ Toggle: **Shift+F11** in-game (imposta/rimuove variabile `ocr`).
 |----------|-------|
 | `ocr_support_compatibility_pach/gui/` | Patch attiva — **unico percorso scrivibile** |
 | `../CK3-OCR/OCR-Support/gui/` | OCR upstream Agamidae — sola lettura |
-| `../CK3 ORIGINAL VERSION/ck3origin/game/gui/` | Copia parziale vanilla su GitHub (solo .gui) — sola lettura |
-| `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/` | Installazione CK3 completa locale — sola lettura, fonte autorevole |
+| `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/` | Vanilla CK3 completa locale — sola lettura, **fonte autorevole** |
 
-> ⚠️ Il path vanilla su GitHub usa spazi: `CK3 ORIGINAL VERSION` (non trattini)
-> ⚠️ Per verifiche complete (shader, audio, localization, data) usare l'installazione locale. La copia GitHub è parziale (solo .gui).
+> ⚠️ Per aggiornare il path vanilla usato dagli script, modificare `tools/config.py`.
 
 ---
 
@@ -43,7 +41,7 @@ tools/
   assemble_dualmode.py   ← assembla qualsiasi finestra in dual-mode (generico)
   assemble_army_dualmode.py  ← assembla window_army.gui (specializzato, mantenuto)
   annotate_datamodels.py ← strumento di manutenzione datamodel
-  config.py              ← path centralizzati ai 3 repo
+  config.py              ← path centralizzati ai repo (vanilla = installazione locale CK3)
 ocr_support_compatibility_pach/gui/  ← file .gui della mod (lavoro attivo)
 ```
 

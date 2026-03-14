@@ -5,14 +5,7 @@
 			"path": "."
 		},
 		{
-			"name": "📖 OCR-Originale (Agamidae upstream)",
-			"path": "../CK3-OCR"
-		},
-		{
-			"name": "🎮 CK3-Vanilla (Paradox originale)",
-			"path": "../CK3 ORIGINAL VERSION"
-		},
-		{
+			"name": "🎮 CK3-Vanilla (Paradox originale — installazione locale completa)",
 			"path": "../../../../../../Program Files (x86)/Steam/steamapps/common/Crusader Kings III"
 		}
 	],
@@ -43,7 +36,7 @@
 			"git add": true,
 			"git commit": true,
 			"ForEach-Object": true,
-			"/^python -c \"p=r'c:\\\\Users\\\\nemex\\\\OneDrive\\\\Documenti\\\\GitHub\\\\CK3 ORIGINAL VERSION\\\\ck3origin\\\\game\\\\gui\\\\cooltip\\.gui'; f=open\\(p, encoding='utf-8', errors='replace'\\); \\[print\\(i\\+1,l\\.rstrip\\(\\)\\) for i,l in enumerate\\(f\\) if 'faith_tooltip' in l and 'type' in l\\]; f\\.close\\(\\)\"$/": {
+			"/^python -c \"p=r'C:\\\\Program Files \\(x86\\)\\\\Steam\\\\steamapps\\\\common\\\\Crusader Kings III\\\\game\\\\gui\\\\cooltip\\.gui'; f=open\\(p, encoding='utf-8', errors='replace'\\); \\[print\\(i\\+1,l\\.rstrip\\(\\)\\) for i,l in enumerate\\(f\\) if 'faith_tooltip' in l and 'type' in l\\]; f\\.close\\(\\)\"$/": {
 				"approve": true,
 				"matchCommandLine": true
 			},
