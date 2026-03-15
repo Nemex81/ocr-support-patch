@@ -48,13 +48,11 @@ window = {
 		blockoverride "ocr_header" {
 			button = {
 				using = close_window_ocr
-				tooltip = "CLOSE_WINDOW"
 				onclick = "[FaithWindow.Close]"
 			}
 
 			button = {
 				using = close_window_ocr
-				tooltip = "CLEAR_CURRENT_SELECTION"
 				onclick = "[Clear('faith_view_tabs')]"
 				visible = "[Is('faith_view_tabs')]"
 			}
@@ -837,14 +835,12 @@ window = {
 
 							button = {
 								using = close_window_ocr
-								tooltip = "CLEAR_CURRENT_SELECTION"
 								visible = "[Is('doctrines')]"
 								onclick = "[Clear('doctrines')]"
 							}
 
 							button = {
 								using = close_window_ocr
-								tooltip = "CLEAR_CURRENT_SELECTION"
 								visible = "[Is('doctrine')]"
 								onclick = "[Clear('doctrine')]"
 							}
@@ -1169,7 +1165,6 @@ window = {
 
 								button = {
 									using = close_window_ocr
-									tooltip = "CLEAR_CURRENT_SELECTION"
 									onclick = "[Clear('faith_followers_sort')]"
 								}
 

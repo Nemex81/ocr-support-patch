@@ -155,7 +155,6 @@ window = {
 					button = {
 						visible = "[GetVariableSystem.Exists('court_tabs')]"
 						using = close_window_ocr
-						tooltip = "CLEAR_CURRENT_SELECTION"
 						onclick = "[GetVariableSystem.Clear('court_tabs')]"
 					}
 

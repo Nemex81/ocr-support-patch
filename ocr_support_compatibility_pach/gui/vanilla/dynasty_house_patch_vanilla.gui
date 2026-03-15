@@ -9,33 +9,13 @@ types OCR_PATCH_VANILLA {
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
 			name = "dynasty_house_view"
-			widgetid = "dynasty_house_view"
 			datacontext = "[DynastyHouseView.GetDynastyHouse]"
 			datacontext = "[DynastyHouse.GetDynasty]"
-			movable = no
-			allow_outside = yes
-			layer = middle
 
 			using = Window_Size_Sidebar
 			using = Window_Background_Sidebar
 
-			state = {
-				name = _show
-				using = Animation_FadeIn_Quick
-				using = Sound_WindowShow_Standard
-				position_x = 0
-				on_start = "[GetVariableSystem.Set( 'hide_bottom_left_HUD', 'true' )]"
-				on_start = "[GetVariableSystem.Set( 'dynasty_view_expand', 'none' )]"
-			}
 
-			state = {
-				name = _hide
-
-				using = Animation_FadeOut_Quick
-				using = Sound_WindowHide_Standard
-				position_x = -60
-				on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
-			}
 
 			vbox = {
 				name = "dynasty_house"

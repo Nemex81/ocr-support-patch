@@ -9,13 +9,8 @@ types OCR_PATCH_VANILLA {
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
 			name = "character_lifestyle_window"
-			widgetid = "character_lifestyle_window"
-			size = { 100% 100% }
-			parentanchor = center|hcenter
 			#	position = { 80 20 }
-			movable = no
 			filter_mouse = all
-			layer = middle
 
 			datacontext = "[CharacterLifestyleWindow.GetCharacter]"
 			datacontext = "[CharacterLifestyleWindow.GetSelectedLifestyle]"
@@ -30,22 +25,7 @@ types OCR_PATCH_VANILLA {
 				alpha = 0.6
 			}
 
-			state = {
-				name = _show
-				using = Animation_FadeIn_Standard
-				using = Sound_WindowShow_Standard
-				using = Sound_Window_AmbienceMute_Snapshot
 
-				on_start = "[GetVariableSystem.Set( 'lifestyle_open', 'true' )]"
-			}
-
-			state = {
-				name = _hide
-				using = Animation_FadeOut_Standard
-				using = Sound_WindowHide_Standard
-
-				on_start = "[GetVariableSystem.Clear( 'lifestyle_open' )]"
-			}
 
 
 			### Select Focus start screen

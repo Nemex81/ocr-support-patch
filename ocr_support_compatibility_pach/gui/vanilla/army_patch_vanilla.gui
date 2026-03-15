@@ -11,12 +11,7 @@ types OCR_PATCH_VANILLA {
 			name = "army_window"
 			datacontext = "[ArmyWindow.GetArmy]"
 
-			parentanchor = bottom|left
-			size = { 785 350 }
 			filter_mouse = left|right
-			movable = no
-			layer = middle
-			allow_outside = yes
 
 			background = {
 				texture = "gfx/interface/component_tiles/tile_window_background_subwindow.dds"
@@ -36,25 +31,7 @@ types OCR_PATCH_VANILLA {
 				}
 			}
 
-			state = {
-				name = _show
-				on_start = "[GetVariableSystem.Set( 'county_view_open', 'true' )]"
-				on_start = "[GetVariableSystem.Set( 'hide_bottom_left_HUD', 'true' )]"
 
-				using = Animation_FadeIn_Standard
-				using = Sound_WindowShow_Standard
-				using = Animation_FadeIn_BottomLeft
-			}
-
-			state = {
-				name = _hide
-				on_start = "[GetVariableSystem.Clear( 'county_view_open' )]"
-				on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
-
-				using = Animation_FadeOut_Standard
-				using = Sound_WindowHide_Standard
-				using = Animation_FadeOut_BottomLeft
-			}
 
 			vbox = {
 				margin_right = 33
@@ -979,24 +956,9 @@ types OCR_PATCH_VANILLA {
 			}
 
 			widget = {
-				size = { 770 345 }
 				name = "hundred"
-				parentanchor = bottom|right
 
-				state = {
-					name = "army_change"
-					alpha = 0.5
-					duration = 0.2
-					next = "b"
-					using = Animation_Curve_Default
-				}
 
-				state = {
-					name = "b"
-					alpha = 1
-					duration = 0.2
-					using = Animation_Curve_Default
-				}
 
 				vbox = {
 					margin_right = 45
@@ -1362,26 +1324,12 @@ types OCR_PATCH_VANILLA {
 			widget = {
 				name = "expanded_armies_window"
 				visible = "[GetVariableSystem.Exists( 'expanded_armies_window' )]"
-				parentanchor = top
 				widgetanchor = bottom
-				position = { 40 0 }
-				layer = top
 
-				allow_outside = yes
 
 				using = Animation_ShowHide_Quick
 
-				state = {
-					name = _show
-					using = Animation_FadeIn_Quick
-					position_y = 15
-				}
 
-				state = {
-					name = _hide
-					using = Animation_FadeOut_Quick
-					position_y = 50
-				}
 
 				vbox = {
 					alwaystransparent = no

@@ -8,27 +8,12 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_interaction_interfere_in_war_notification_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			gfxtype = windowgfx
 			name = "interfere_in_war_interaction_notification_window"
-			parentanchor = center
-			position = { 0 40 }
-			size = { 650 700 }
-			layer = middle
 
 			using = Window_Background
 			using = Window_Decoration_Warfare
 
-			state = {
-				name = _show
-				using = Animation_FadeIn_Quick
-				using = Sound_WindowShow_Standard
-			}
 
-			state = {
-				name = _hide
-				using = Animation_FadeOut_Quick
-				using = Sound_WindowHide_Standard
-			}
 
 			vbox = {
 				using = Window_Margins

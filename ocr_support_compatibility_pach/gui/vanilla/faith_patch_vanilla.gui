@@ -9,34 +9,13 @@ types OCR_PATCH_VANILLA {
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
 			name = "faith_window"
-			widgetid = "faith_window"
 			datacontext = "[FaithWindow.GetFaith]"
 			datacontext = "[GetVariableSystem]"
-			movable = no
-			layer = middle
 
 			using = Window_Size_Sidebar
 			using = Window_Background_Sidebar
 
-			state = {
-				name = _show
-				position = { 0 0 }
-				on_start = "[GetVariableSystem.Set( 'faith_view_tabs', 'beliefs' )]"
-				on_start = "[GetVariableSystem.Set( 'hide_bottom_left_HUD', 'true' )]"
 
-				using = Animation_FadeIn_Quick
-				using = Sound_WindowShow_Standard
-			}
-
-			state = {
-				name = _hide
-				position = { -60 0 }
-				on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
-
-
-				using = Animation_FadeOut_Quick
-				using = Sound_WindowHide_Standard
-			}
 
 			### INSIDE WINDOW
 			vbox = {

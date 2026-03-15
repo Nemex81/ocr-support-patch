@@ -1,7 +1,7 @@
 # window_military.gui — OCR Support Patch — Wrapper (Pattern v1.1)
 # Il branch vanilla è nel type separato: gui/vanilla/military_patch_vanilla.gui
 # Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1
-# Generato da: tools/assemble_dualmode.py --window window_military --mode tabs --separate-vanilla
+# Generato da: tools/assemble_dualmode.py --window window_military --mode complex --separate-vanilla
 
 window = {
 	name = "military_view"
@@ -720,7 +720,6 @@ window = {
 											button = {
 												visible = "[Is('men_at_arms')]"
 												using = close_window_ocr
-												tooltip = "CLEAR_CURRENT_SELECTION"
 												onclick = "[Clear('men_at_arms')]"
 											}
 
@@ -1531,7 +1530,6 @@ window = {
 
 													button = {
 														size = { 100% 100% }
-														tooltip = "WAR_OVERVIEW"
 														onclick = "[OpenGameViewData( 'war_overview',  War.GetID )]"
 													}
 												}

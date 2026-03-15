@@ -9,54 +9,11 @@ types OCR_PATCH_VANILLA {
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
 			name = "combat_window"
-			size = { 875 330 }
-			position = { 0 27 }
-			gfxtype = windowgfx
-			parentanchor = bottom|hcenter
-			movable = no
-			layer = top
-			allow_outside = yes
 
-			state = {
-				name = _show
-				position = { 0 27 }
-				duration = 0.15
-				bezier = { 0.5 0 1 0.5 }
-				alpha = 1
 
-				start_sound = {
-					soundeffect = "event:/SFX/UI/Generic/Windows/sfx_ui_generic_window_standard_show"
 
-				}
-			}
 
-			state = {
-				name = _hide
-				position = { 0 60 }
-				duration = 0.2
-				bezier = { 0.5 0 1 0.5 }
-				alpha = 0
 
-				start_sound = {
-					soundeffect = "event:/SFX/UI/Generic/Windows/sfx_ui_generic_window_standard_hide"
-
-				}
-			}
-
-			state = {
-				name = "phase_change"
-				alpha = 1
-			}
-
-			state = {
-				name = "daily_tick"
-				alpha = 1
-			}
-
-			state = {
-				name = "new_battle_event"
-				alpha = 1
-			}
 
 			widget = {
 				size = { 100% 100% }

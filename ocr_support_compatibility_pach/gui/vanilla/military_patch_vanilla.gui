@@ -1,5 +1,5 @@
 # military_patch_vanilla.gui — OCR Support Patch — Vanilla type separato (Pattern v1.1)
-# Generato da: tools/assemble_dualmode.py --window window_military --mode tabs --separate-vanilla
+# Generato da: tools/assemble_dualmode.py --window window_military --mode complex --separate-vanilla
 # ATTENZIONE: contenuto vanilla identico al file CK3 originale — non modificare.
 # La guard visible vive QUI — il wrapper istanzia questo type senza visible esplicita.
 
@@ -9,31 +9,13 @@ types OCR_PATCH_VANILLA {
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
 			name = "military_view"
-			widgetid = "military_view"
 			datacontext = "[GetVariableSystem]"
 			datacontext = "[GetPlayer]"
-			parentanchor = top|right
 
-			layer = windows_layer
-			movable = no
 
 			using = Window_Size_MainTab
 
-			state = {
-				name = _show
-				using = Animation_FadeIn_Quick
-				using = Sound_WindowShow_Standard
-				using = Window_Position_MainTab
 
-				on_start = "[GetVariableSystem.Set( 'military_view_mercenaries', 'mercenaries' )]"
-			}
-
-			state = {
-				name = _hide
-				using = Animation_FadeOut_Quick
-				using = Sound_WindowHide_Standard
-				using = Window_Position_MainTab_Hide
-			}
 
 			margin_widget = {
 				size = { 100% 100% }

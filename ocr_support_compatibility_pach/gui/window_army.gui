@@ -1053,7 +1053,6 @@ window = {
 														icon = {
 															name = "loot_icon"
 															size = { 35 35 }
-																tooltip = "ARMY_RAID_LOOT_TOOLTIP"
 															texture = "gfx/interface/icons/icon_gold.dds"
 														}
 
@@ -1067,7 +1066,6 @@ window = {
 														tooltip = "ARMY_ATTRITION_TT"
 
 														icon = {
-																tooltip = "ARMY_ATTRITION_TT"
 															texture = "gfx/interface/icons/map_icons/attrition_icon.dds"
 															size = { 35 35 }
 														}
@@ -1086,7 +1084,6 @@ window = {
 															name = "supply_icon"
 															size = { 40 40 }
 															framesize = { 60 60 }
-																tooltip = "[Army.GetSupplyStateTooltip]"
 															frame = "[ArmyWindow.GetSupplyStateFrame]"
 															texture = "gfx/interface/icons/icon_supplies.dds"
 														}
@@ -1095,7 +1092,6 @@ window = {
 															name = "supply_trend_icon"
 															size = { 25 25 }
 															visible = "[ArmyWindow.ShowSupplyTrend]"
-																tooltip = "[Army.GetSupplyStateTooltip]"
 															texture = "gfx/interface/icons/symbols/icon_supplies_trend.dds"
 														}
 
@@ -1243,7 +1239,6 @@ window = {
 											size = { 100% 100% }
 											using = close_window_ocr
 											visible = "[Has('last_army_view', 'targets')]"
-														tooltip = "Return to targets view."
 											onclick = "[Set('army_tabs', 'targets')]"
 											onclick = "[Clear('last_army_view')]"
 										}
@@ -1251,7 +1246,6 @@ window = {
 											size = { 100% 100% }
 											using = close_window_ocr
 											visible = "[Has('last_army_view', 'adjacencies')]"
-														tooltip = "Return to adjacent counties view."
 											onclick = "[Set('army_tabs', 'adjacencies')]"
 											onclick = "[Clear('last_army_view')]"
 										}
@@ -4090,7 +4084,6 @@ window = {
 
 								button = {
 									using = close_window_ocr
-														tooltip = "Close war selector."
 									onclick = "[GetVariableSystem.Clear('war_selector')]"
 								}
 							}

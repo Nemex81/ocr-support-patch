@@ -43,7 +43,6 @@ window = {
 	window_ocr = {
 		button = {
 			using = close_window_ocr
-			tooltip = "CLOSE_WINDOW"
 			onclick = "[CharacterLifestyleWindow.Close]"
 			visible = "[Isnt('focused_perk_tree')]"
 		}
@@ -62,7 +61,6 @@ window = {
 					onclick = "[CharacterLifestyleWindow.Close]"
 				}
 			}
-		}
 
 
 	# ============================================================
@@ -345,7 +343,6 @@ window = {
 
 												button = {
 													visible = "[Not(GetVariableSystem.Exists('hide_foci'))]"
-													tooltip = "SELECT_FOCUS"
 													background = { using = Background_Area_Dark }
 
 													enabled = "[Or(CharacterLifestyleWindow.CanSelectFocus( FocusType.Self ), EqualTo_string( FocusType.GetKey, Character.GetFocus.GetKey ))]"
@@ -462,7 +459,6 @@ window = {
 
 										button = {
 											using = close_window_ocr
-											tooltip = "CLEAR_CURRENT_SELECTION"
 											onclick = "[Clear('focused_perk_tree')]"
 											visible = "[Is('focused_perk_tree')]"
 										}

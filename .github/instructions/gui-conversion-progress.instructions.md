@@ -6,7 +6,7 @@ applyTo: "**"
 
 Registro delle finestre del progetto. Consultare prima di iniziare qualsiasi nuova conversione.
 
-Ultimo aggiornamento: 2026-03-13 (fix window_army — 4 icon OCR senza tooltip nel pannello unità: loot, attrito, rifornimenti)
+Ultimo aggiornamento: 2026-03-15 (rigenerazione massiva stabilizzazione crash — tutti i file rigenerati da OCR upstream + vanilla, file vanilla type-separati creati, wrapper troncati convertiti a inline)
 
 ## Convenzione stati
 
@@ -39,28 +39,30 @@ Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di di
 | File | Arch. | Dim. | Note | Ultimo audit | Critici | Avv. | Binding assenti |
 |------|-------|------|------|-------------|---------|------|-----------------|
 | `hud.gui` | inline | 177KB | HUD principale | 2026-03-13 | 0 | 16 | 0 |
-| `window_activity_list.gui` | inline | 30KB | Lista attività | 2026-03-13 | 0 | 7 | 0 |
+| `window_activity_list.gui` | inline | 51KB | Lista attività — rigenerato inline 2026-03-15 (era v1.1 troncato) | 2026-03-13 | 0 | — | — |
 | `interaction_blackmail.gui` | inline | 13KB | Interazione | 2026-03-12 | 0 | 2 | 0 |
 | `interaction_menu_window.gui` | inline | 9KB | Menu interazioni | 2026-03-12 | 0 | 4 | 0 |
-| `window_activity.gui` | inline | 44KB | Attività | 2026-03-12 | 0 | 6 | 1 |
-| `window_character.gui` | inline | 187KB | Multi-tab, complessa | 2026-03-13 | 0 | 65 | 2 |
-| `window_combat.gui` | inline | 123KB | Dati militari | 2026-03-13 | 0 | 16 | 2 |
-| `window_character_lifestyle.gui` | inline | 73KB | Stile di vita | 2026-03-13 | 0 | 22 | 0 |
-| `window_council.gui` | inline | 117KB | Tab task/skills | 2026-03-13 | 0 | 7 | 1 |
-| `window_culture.gui` | inline | 99KB | Alberi cultura | 2026-03-12 | 0 | 16 | 2 |
-| `window_decisions.gui` | inline | 26KB | Decisioni | 2026-03-12 | 0 | 6 | 0 |
-| `window_dynasty_house.gui` | inline | 90KB | Dinastia/casata | 2026-03-13 | 0 | 26 | 0 |
-| `window_court.gui` | inline | 38KB | Corte | 2026-03-13 | 0 | 5 | 0 |
-| `window_factions.gui` | inline | 39KB | Fazioni | 2026-03-12 | 0 | 14 | 3 |
-| `window_faith.gui` | inline | 137KB | Tab dottrine/siti | 2026-03-12 | 0 | 32 | 0 |
-| `window_inventory.gui` | inline | 82KB | Artefatti | 2026-03-13 | 0 | 15 | 0 |
-| `window_intrigue.gui` | inline | 90KB | Schemi/agenti | 2026-03-13 | 0 | 34 | 0 |
-| `window_county_view.gui` | inline | 269KB | Vista contea | 2026-03-13 | 0 | 45 | 0 |
-| `window_military.gui` | inline | 91KB | Tab eserciti | 2026-03-13 | 0 | 34 | 0 |
-| `window_my_realm.gui` | inline | 85KB | Tab regno | 2026-03-13 | 0 | 27 | 0 |
-| `window_army.gui` | inline | ~130KB | Gestione eserciti | 2026-03-13 | 0 | 55 | 0 |
+| `window_activity.gui` | inline | 99KB | Attività — rigenerato inline 2026-03-15 | 2026-03-15 | — | — | — |
+| `window_character.gui` | inline | 185KB | Multi-tab, complessa — rigenerato inline 2026-03-15 (era v1.1 troncato) | 2026-03-13 | 0 | — | — |
+| `window_combat.gui` | sep | 22KB+52KB | Dati militari — rigenerato v1.1 2026-03-15 | 2026-03-13 | 0 | 16 | 2 |
+| `window_character_lifestyle.gui` | sep | 32KB+41KB | Stile di vita — rigenerato v1.1 2026-03-15 | 2026-03-13 | 0 | — | — |
+| `window_council.gui` | inline | 83KB | Tab task/skills — rigenerato inline 2026-03-15 (era v1.1 troncato) | 2026-03-13 | 0 | — | — |
+| `window_culture.gui` | sep | 50KB+37KB | Alberi cultura — rigenerato v1.1 2026-03-15 | 2026-03-12 | 0 | 16 | 2 |
+| `window_decisions.gui` | inline | 27KB | Decisioni — rigenerato inline 2026-03-15 (era v1.1 troncato) | 2026-03-12 | 0 | — | — |
+| `window_dynasty_house.gui` | sep | 31KB+45KB | Dinastia/casata — rigenerato v1.1 2026-03-15 | 2026-03-13 | 0 | 26 | 0 |
+| `window_court.gui` | sep | 24KB+21KB | Corte — rigenerato v1.1 2026-03-15 | 2026-03-13 | 0 | — | — |
+| `window_factions.gui` | inline | 32KB | Fazioni — rigenerato inline 2026-03-15 (era v1.1 troncato) | 2026-03-12 | 0 | — | — |
+| `window_faith.gui` | sep | 43KB+29KB | Tab dottrine/siti — rigenerato v1.1 2026-03-15 | 2026-03-15 | — | — | — |
+| `window_inventory.gui` | inline | 78KB | Artefatti — rigenerato inline 2026-03-15 | 2026-03-15 | — | — | — |
+| `window_intrigue.gui` | inline | 93KB | Schemi/agenti — rigenerato inline 2026-03-15 (era v1.1 troncato) | 2026-03-13 | 0 | — | — |
+| `window_county_view.gui` | sep | 137KB+57KB | Vista contea — rigenerato v1.1 2026-03-15 | 2026-03-15 | — | — | — |
+| `window_military.gui` | sep | 55KB+35KB | Tab eserciti — rigenerato v1.1 2026-03-15 | 2026-03-13 | 0 | 34 | 0 |
+| `window_my_realm.gui` | sep | 88KB+11KB | Tab regno — rigenerato v1.1 2026-03-15 | 2026-03-13 | 0 | 27 | 0 |
+| `window_army.gui` | sep | 152KB+37KB | Gestione eserciti — rigenerato v1.1 2026-03-15 | 2026-03-13 | 0 | 55 | 0 |
 
 > Nota: `window_army.gui` era erroneamente classificata come "Da Convertire". Il file è presente nella patch con dual-mode funzionante. Spostata in "Revisione Necessaria" il 2026-03-12. Spostata in "Bloccanti" il 2026-03-13: rilevati 4 critici (icon senza tooltip, righe 1044–1082). Fix applicato il 2026-03-13: 0 critici, 55 avvertenze.
+
+> **Nota 2026-03-15 — RIGENERAZIONE MASSIVA PER STABILIZZAZIONE CRASH**: tutti i file con Pattern v1.1 avevano la cartella `gui/vanilla/` completamente vuota — i tipi vanilla referenziati non esistevano, causando errori di tipo al bootstrap GUI (EXCEPTION_ACCESS_VIOLATION). Fix: rigenerazione completa di tutti i wrapper da sorgente OCR upstream + vanilla. File con wrapper troncato (window_character, window_council, window_activity_list, window_decisions, window_factions, window_intrigue) convertiti a inline. Stato qualità audit da reverificare in sessione successiva. Dati "-" nella tabella indicano che l'audit precedente non è più valido dopo la rigenerazione.
 
 > Nota (audit 2026-03-13): `window_court.gui` — 0 critici confermati, 1 critico nel tracker era stima non verificata. Dati: 0 critici, 5 avvertenze, 0 binding assenti, fedeltà OK.
 

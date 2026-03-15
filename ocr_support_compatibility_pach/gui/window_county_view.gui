@@ -2128,7 +2128,6 @@ window = {
 							button = {
 								visible = "[GetVariableSystem.Exists('holding_tabs')]"
 								using = close_window_ocr
-														tooltip = "Close holdings panel."
 								onclick = "[GetVariableSystem.Clear('holding_tabs')]"
 							}
 
@@ -3260,7 +3259,6 @@ window = {
 									button = {
 										using = close_window_ocr
 										visible = "[Is('adjacent_counties_ring')]"
-														tooltip = "Close adjacent counties list."
 										onclick = "[Clear('adjacent_counties_ring')]"
 									}
 
@@ -3375,7 +3373,6 @@ window = {
 										size = { 400 22 }
 										layoutpolicy_horizontal = expanding
 										shortcut = map_mode_11
-														tooltip = "Across water adjacent counties, Shift E."
 										onclick = "[Set('adjacent_counties_ring', 'across_water')]"
 
 										flowcontainer = {
@@ -3549,7 +3546,6 @@ window = {
 				button = {
 					# visible = "[Isnt('province_region')]"
 					using = close_window_ocr
-								tooltip = "Close province regions."
 					onclick = "[Clear('extra_window')]"
 				}
 				blockoverride "show_window" {

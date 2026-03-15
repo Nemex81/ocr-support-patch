@@ -9,34 +9,9 @@ types OCR_PATCH_VANILLA {
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
 			name = "holding_view"
-			widgetid = "holding_view"
-			parentanchor = bottom|left
-			allow_outside = yes
-			movable = no
-			layer = windows_layer
-			size = { 605 750 }
 
-			state = {
-				name = _show
-				on_start = "[GetVariableSystem.Set( 'county_view_open', 'true' )]"
-				on_start = "[GetVariableSystem.Set( 'hide_bottom_left_HUD', 'true' )]"
 
-				using = Animation_FadeIn_Standard
-				using = Sound_WindowShow_Standard
-				using = Animation_FadeIn_BottomLeft
-			}
 
-			state = {
-				name = _hide
-				on_start = "[GetVariableSystem.Clear( 'county_view_open' )]"
-				on_start = "[GetVariableSystem.Clear( 'hide_bottom_left_HUD' )]"
-
-				using = Animation_FadeOut_Standard
-				using = Sound_WindowHide_Standard
-				using = Animation_FadeOut_BottomLeft
-			}
-
-			alwaystransparent = yes
 
 			vbox = {
 

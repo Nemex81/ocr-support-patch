@@ -1,7 +1,7 @@
 # window_my_realm.gui — OCR Support Patch — Wrapper (Pattern v1.1)
 # Il branch vanilla è nel type separato: gui/vanilla/my_realm_patch_vanilla.gui
 # Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1
-# Generato da: tools/assemble_dualmode.py --window window_my_realm --mode tabs --separate-vanilla
+# Generato da: tools/assemble_dualmode.py --window window_my_realm --mode complex --separate-vanilla
 
 window = {
 	name = "my_realm_window"
@@ -819,7 +819,6 @@ window = {
 
 						button = {
 							using = close_window_ocr
-							tooltip = "CLEAR_CURRENT_SELECTION"
 							visible = "[GetVariableSystem.Exists('realm_tabs')]"
 							onclick = "[GetVariableSystem.Clear('realm_tabs')]"
 						}
@@ -1790,7 +1789,6 @@ window = {
 
 												item = {
 													button = {
-														tooltip = "OPEN_TITLE"
 														onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
 														onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
 														onclick = "[MyRealmWindow.Close]"
@@ -1864,7 +1862,6 @@ window = {
 														# margin_bottom = 5
 
 														button = {
-															tooltip = "OPEN_CHARACTER"
 															onclick = "[DefaultOnCharacterClick(Character.GetID)]"
 															onclick = "[DefaultOnCharacterClick(Character.GetID)]"
 															onclick = "[MyRealmWindow.Close]"
@@ -1919,7 +1916,6 @@ window = {
 																	layoutpolicy_horizontal = expanding
 
 																	button = {
-																		tooltip = "OPEN_TITLE"
 																		onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
 																		onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
 																		onclick = "[MyRealmWindow.Close]"
@@ -1968,7 +1964,6 @@ window = {
 
 															item = {
 																button = {
-																	tooltip = "OPEN_TITLE"
 																	onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
 																	onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
 																	onclick = "[MyRealmWindow.Close]"
@@ -2029,7 +2024,6 @@ window = {
 
 											item = {
 												button = {
-													tooltip = "OPEN_TITLE"
 													onclick = "[DefaultOnCoatOfArmsClick(TitleItem.GetTitle.GetID)]"
 													onclick = "[DefaultOnCoatOfArmsRightClick(TitleItem.GetTitle.GetID)]"
 													onclick = "[MyRealmWindow.Close]"

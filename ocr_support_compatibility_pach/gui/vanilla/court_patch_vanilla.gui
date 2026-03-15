@@ -9,30 +9,12 @@ types OCR_PATCH_VANILLA {
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
 			name = "court_window"
-			parentanchor = top|right
-			layer = windows_layer
-			movable = no
-			allow_outside = yes
 
 			using = Window_Size_MainTab
 
 			datacontext = "[GetVariableSystem]"
 
-			state = {
-				name = _show
-				using = Animation_FadeIn_Quick
-				using = Sound_WindowShow_Standard
-				using = Window_Position_MainTab
 
-				on_start = "[GetVariableSystem.Set( 'council_tabs', 'my_council' )]"
-			}
-
-			state = {
-				name = _hide
-				using = Animation_FadeOut_Quick
-				using = Sound_WindowHide_Standard
-				using = Window_Position_MainTab_Hide
-			}
 
 			margin_widget = {
 				size = { 100% 100% }

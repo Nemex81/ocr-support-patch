@@ -176,6 +176,27 @@ def extract_window_content(lines: list[str]) -> list[dict]:
             i = end + 1
             continue
 
+        # Catch-all: qualsiasi blocco top-level non riconosciuto che contenga '{'
+        # (es. widget = {}, window_ocr = {}, blocchi anonimi, ecc.)
+        if "{" in stripped:
+            end = find_block_end(lines, i)
+            # Deriva un nome identificativo dalla riga header o dalle prime righe
+            name = f"anon_{i}"
+            if "=" in stripped:
+                # Prova a estrarre il nome dal lato sinistro di '='
+                lhs = stripped.split("=")[0].strip().rstrip()
+                if lhs:
+                    name = lhs
+            # Cerca anche 'name = "..."' nelle prime righe del blocco
+            for j in range(i, min(i + 5, end + 1)):
+                m_name = re.search(r'name\s*=\s*"([^"]+)"', lines[j])
+                if m_name:
+                    name = m_name.group(1)
+                    break
+            results.append({"type": "other", "name": name, "start": i, "end": end})
+            i = end + 1
+            continue
+
         i += 1
 
     return results
@@ -258,6 +279,64 @@ def build_vanilla_container(container_prefix: str, vanilla_inner: list[str],
     return result
 
 
+def sanitize_vanilla_inner_for_type(vanilla_inner: list[str]) -> list[str]:
+    """
+    Rimuove dal body vanilla le proprieta' window-level che non sono valide
+    dentro un type widget separato (Pattern v1.1).
+
+    Nota: in ``vanilla_inner`` la profondita' 0 corrisponde al livello top del
+    vecchio ``window = { ... }`` originale.
+    """
+    forbidden_top_level_props = {
+        "movable",
+        "layer",
+        "attachto",
+        "widgetid",
+        "parentanchor",
+        "allow_outside",
+        "gfxtype",
+        "alwaystransparent",
+        "size",
+        "position",
+    }
+
+    sanitized: list[str] = []
+    depth = 0
+    skipping_state = False
+    state_depth = 0
+
+    for line in vanilla_inner:
+        stripped = line.strip()
+        open_count = line.count("{")
+        close_count = line.count("}")
+
+        if skipping_state:
+            state_depth += open_count - close_count
+            depth += open_count - close_count
+            if state_depth <= 0:
+                skipping_state = False
+                state_depth = 0
+            continue
+
+        if depth == 0:
+            key = stripped.split("=", 1)[0].strip() if "=" in stripped else ""
+            if key in forbidden_top_level_props:
+                depth += open_count - close_count
+                continue
+
+            if stripped.startswith("state") and stripped.endswith("{"):
+                # I blocchi _show/_hide appartengono al window wrapper, non al type.
+                skipping_state = True
+                state_depth = 1
+                depth += open_count - close_count
+                continue
+
+        sanitized.append(line)
+        depth += open_count - close_count
+
+    return sanitized
+
+
 # ---------------------------------------------------------------------------
 # Builder — sub-window dual-mode generica
 
@@ -272,6 +351,8 @@ def build_vanilla_type_file(type_name: str, vanilla_inner: list[str],
     Il tipo ha nome '{prefix}_patch_vanilla' dentro il blocco types OCR_PATCH_VANILLA.
     La guard visible è esplicita dentro il type.
     """
+    sanitized_inner = sanitize_vanilla_inner_for_type(vanilla_inner)
+
     output = [
         f"# {type_name}.gui — OCR Support Patch — Vanilla type separato (Pattern v1.1)\n",
         f"# Generato da: tools/assemble_dualmode.py --window {window_name} --mode {mode} --separate-vanilla\n",
@@ -284,7 +365,7 @@ def build_vanilla_type_file(type_name: str, vanilla_inner: list[str],
         f"\t\tvisible = \"{TOGGLE_OCR_ON}\"\n",
         "\n",
     ]
-    output += indent_lines(vanilla_inner, extra_tabs=2)
+    output += indent_lines(sanitized_inner, extra_tabs=2)
     output += [
         "\t}\n",
         "}\n",
@@ -387,6 +468,108 @@ def build_sub_window_dual(ocr_lines: list[str],
 
 
 # ---------------------------------------------------------------------------
+# Helper — raccolta blocchi non-window (types, templates, local_template)
+# ---------------------------------------------------------------------------
+
+def collect_non_window_blocks(ocr_lines: list[str],
+                               vanilla_lines: list[str]) -> list[str]:
+    """
+    Raccoglie blocchi top-level non-window (types, template, type, local_template)
+    da entrambi i file sorgente, usando la stessa strategia di assemble_complex:
+      1. Tutti i blocchi vanilla (servono a entrambi i container)
+      2. Blocchi OCR-only (nomi non presenti in vanilla)
+
+    In Jomini, blocchi con lo stesso nome sono validi (vengono mergiati),
+    quindi si rispettano le occorrenze multiple.
+    """
+    ocr_content = extract_window_content(ocr_lines)
+    van_content = extract_window_content(vanilla_lines)
+
+    output: list[str] = []
+
+    # -- Types e types_block --
+    van_types = [b for b in van_content if b["type"] in ("type", "types_block")]
+    van_type_names = {}
+    for b in van_types:
+        van_type_names[b["name"]] = van_type_names.get(b["name"], 0) + 1
+        output += vanilla_lines[b["start"] : b["end"] + 1]
+        output.append("\n")
+
+    ocr_types = [b for b in ocr_content if b["type"] in ("type", "types_block")]
+    ocr_only_types = []
+    ocr_type_counts = {}
+    for b in ocr_types:
+        ocr_type_counts[b["name"]] = ocr_type_counts.get(b["name"], 0) + 1
+        van_count = van_type_names.get(b["name"], 0)
+        if ocr_type_counts[b["name"]] > van_count:
+            ocr_only_types.append(b)
+
+    if ocr_only_types:
+        output.append("# ============================================================\n")
+        output.append("# Types OCR-only — necessari per la modalita' non vedente\n")
+        output.append("# ============================================================\n\n")
+        for b in ocr_only_types:
+            output += ocr_lines[b["start"] : b["end"] + 1]
+            output.append("\n")
+
+    # -- Templates --
+    van_templates = [b for b in van_content if b["type"] == "template"]
+    van_tpl_names = {}
+    for b in van_templates:
+        van_tpl_names[b["name"]] = van_tpl_names.get(b["name"], 0) + 1
+        output += vanilla_lines[b["start"] : b["end"] + 1]
+        output.append("\n")
+
+    ocr_templates = [b for b in ocr_content if b["type"] == "template"]
+    ocr_only_templates = []
+    ocr_tpl_counts = {}
+    for b in ocr_templates:
+        ocr_tpl_counts[b["name"]] = ocr_tpl_counts.get(b["name"], 0) + 1
+        van_count = van_tpl_names.get(b["name"], 0)
+        if ocr_tpl_counts[b["name"]] > van_count:
+            ocr_only_templates.append(b)
+
+    if ocr_only_templates:
+        output.append("# ============================================================\n")
+        output.append("# Templates OCR-only — necessari per la modalita' non vedente\n")
+        output.append("# ============================================================\n\n")
+        for b in ocr_only_templates:
+            output += ocr_lines[b["start"] : b["end"] + 1]
+            output.append("\n")
+
+    # -- Blocchi top-level "other" da OCR (widget, window_ocr, window secondari, ecc.) --
+    # Questi blocchi non hanno controparte vanilla — sono completamente OCR-only.
+    ocr_others = [b for b in ocr_content if b["type"] == "other"]
+    van_other_names = {b["name"] for b in van_content if b["type"] == "other"}
+    ocr_only_others = [b for b in ocr_others if b["name"] not in van_other_names]
+
+    if ocr_only_others:
+        output.append("# ============================================================\n")
+        output.append("# Blocchi extra OCR-only (widget, window_ocr, ecc.)\n")
+        output.append("# ============================================================\n\n")
+        for b in ocr_only_others:
+            output += ocr_lines[b["start"] : b["end"] + 1]
+            output.append("\n")
+
+    # -- Finestre secondarie vanilla (window top-level con name != window principale) --
+    # Queste finestre esistono in vanilla come blocchi top-level extra e devono
+    # essere presenti nel wrapper per evitare "Could not find widget".
+    van_extra_windows = [b for b in van_content if b["type"] == "window"]
+    ocr_window_names = {b["name"] for b in ocr_content if b["type"] == "window"}
+    van_only_extra_windows = [b for b in van_extra_windows if b["name"] not in ocr_window_names]
+
+    if van_only_extra_windows:
+        output.append("# ============================================================\n")
+        output.append("# Finestre secondarie vanilla (non presenti in OCR upstream)\n")
+        output.append("# ============================================================\n\n")
+        for b in van_only_extra_windows:
+            output += vanilla_lines[b["start"] : b["end"] + 1]
+            output.append("\n")
+
+    return output
+
+
+# ---------------------------------------------------------------------------
 # Assembly — Pattern A (simple)
 # ---------------------------------------------------------------------------
 
@@ -395,6 +578,7 @@ def assemble_simple(window_name: str, ocr_lines: list[str],
     """
     Pattern A: una sola window, struttura semplice.
     Estrae la prima window da OCR e da vanilla e costruisce la dual-mode.
+    Include anche blocchi types/template da entrambi i file sorgente.
     """
     ocr_wins = find_top_level_windows(ocr_lines)
     van_wins = find_top_level_windows(vanilla_lines)
@@ -404,8 +588,11 @@ def assemble_simple(window_name: str, ocr_lines: list[str],
     if not van_wins:
         raise ValueError(f"Nessuna window trovata nel file vanilla di {window_name}")
 
+    # Prima i blocchi non-window (types, templates)
+    result = collect_non_window_blocks(ocr_lines, vanilla_lines)
+
     prefix = _derive_prefix(window_name)
-    result = build_sub_window_dual(
+    result += build_sub_window_dual(
         ocr_lines, vanilla_lines,
         (ocr_wins[0][0], ocr_wins[0][1]),
         (van_wins[0][0], van_wins[0][1]),
@@ -427,6 +614,7 @@ def assemble_tabs(window_name: str, ocr_lines: list[str],
     Ordine output: sequenza del file vanilla (coerenza con CK3).
     Window presente solo in vanilla → solo vanilla_container.
     Window presente solo in OCR → solo ocr_container.
+    Include anche blocchi types/template da entrambi i file sorgente.
     """
     ocr_wins = find_top_level_windows(ocr_lines)
     van_wins = find_top_level_windows(vanilla_lines)
@@ -434,7 +622,8 @@ def assemble_tabs(window_name: str, ocr_lines: list[str],
     ocr_by_name = {w[2]: w for w in ocr_wins}
     van_by_name = {w[2]: w for w in van_wins}
 
-    output = []
+    # Prima i blocchi non-window (types, templates)
+    output = collect_non_window_blocks(ocr_lines, vanilla_lines)
 
     # Verifica se è necessario il fallback posizionale
     names_diverge = len(ocr_wins) != len(van_wins) or any(
