@@ -96,6 +96,49 @@ container = {
     # Incollare qui il contenuto del file:
     # C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/[window_name].gui
     # Identico al vanilla senza nessuna modifica.
+
+    ### Pattern v1.1 — type-separated (opzionale per finestre grandi)
+
+    Se il wrapper stimato è > 2000 righe E il branch vanilla > 40% del totale,
+    genera invece DUE template distinti:
+
+    **Template 1 — Wrapper** (`gui/<window_name>.gui`):
+    ```jomini
+    window = {
+      # ... proprietà window condivise ...
+
+      # BLOCCO OCR inline
+      widget = {
+        name = "ocr_[window_name]_container"
+        visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+        # ... contenuto OCR ...
+      }
+
+      # Istanziazione vanilla type (senza visible esplicita — la guard è nel type)
+      [window_name_senza_window]_patch_vanilla = {}
+    }
+    ```
+
+    **Template 2 — Type file** (`gui/vanilla/[window_name_senza_window]_patch_vanilla.gui`):
+    ```jomini
+    types OCR_PATCH_VANILLA {
+      type [window_name_senza_window]_patch_vanilla = widget {
+        name = "vanilla_[window_name]_patch_vanilla_container"
+        visible = "[GetVariableSystem.Exists('ocr')]"
+        # =============================================
+        # VANILLA ORIGINALE — NON MODIFICARE MAI
+        # Incollare qui il contenuto del file:
+        # C:/Program Files (x86)/Steam/.../game/gui/[window_name].gui
+        # Identico al vanilla senza nessuna modifica.
+        # =============================================
+      }
+    }
+    ```
+
+    Naming convention obbligatorio (non derogare — rischio collisione con Agamidae):
+    - Namespace: sempre `types OCR_PATCH_VANILLA { }`
+    - Nome type: `{finestra_senza_window}_patch_vanilla`
+    - Cartella: `ocr_support_compatibility_pach/gui/vanilla/`
     # =============================================
 }
 ```

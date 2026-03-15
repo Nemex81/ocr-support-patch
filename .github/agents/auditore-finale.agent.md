@@ -64,6 +64,15 @@ Il tuo verdetto è vincolante: **APPROVED** o **BLOCKED**.
 - [ ] Nessuna funzionalità vanilla inaccessibile in modalità OCR
 - [ ] Tab multipli: tutti con il loro blocco OCR
 
+### Pattern v1.1 — Type-Separated (se applicabile)
+Se il wrapper usa un'istanziazione `*_patch_vanilla = {}` (pattern type-separated v1.1):
+- [ ] File type associato esiste: `ocr_support_compatibility_pach/gui/vanilla/<nome>_patch_vanilla.gui`
+  - Se **mancante**: emette immediatamente **BLOCKED** — "file vanilla type atteso non trovato"
+- [ ] Il file type ha `visible = "[GetVariableSystem.Exists('ocr')]"` (guard vanilla, non OCR)
+- [ ] Il wrapper non ha `visible` esplicita sul sito di istanziazione `*_patch_vanilla = {}`
+- [ ] Il verdetto di `audit.py` include l'audit del file type (sezione "File type v1.1 associato")
+- [ ] Se `audit.py` segnala ATTENZIONE sul file type: documentare e valutare sign-off come per qualsiasi avvertenza
+
 ## Politica Override CON AVVERTENZE
 
 Un file con esito CON AVVERTENZE può procedere al commit **solo se**:

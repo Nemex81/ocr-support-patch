@@ -17,7 +17,8 @@ from pathlib import Path
 
 # Aggiunge la directory radice al path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.config import PATCH_GUI, PATCH_ROOT
+import re as _re
+from tools.config import PATCH_GUI, PATCH_ROOT, VANILLA_TYPES_GUI
 from tools.gui_validator import analizza_file as _valida
 from tools.scope_extractor import (
     estrai_binding, carica_whitelist, classifica_tutti
@@ -25,6 +26,9 @@ from tools.scope_extractor import (
 from tools.tri_diff import analizza_fedelta as _analizza_fedelta
 
 REPORT_PATH = PATCH_ROOT / "SKILLS_AUDIT_REPORT.md"
+
+# Regex per rilevare l'istanziazione v1.1 nel wrapper (es: army_patch_vanilla = {)
+_RE_TYPE_INST_IN_WRAPPER = _re.compile(r'^\s*(\w+)_patch_vanilla\s*=\s*\{', _re.MULTILINE)
 
 
 # ---------------------------------------------------------------------------
@@ -54,7 +58,9 @@ def _file_da_git_diff() -> list[Path]:
 def _seleziona_file(tutti: bool, window: str | None) -> list[Path]:
     """Seleziona i file da analizzare in base ai parametri CLI."""
     if tutti:
-        return sorted(PATCH_GUI.glob("*.gui"))
+        file_wrapper = sorted(PATCH_GUI.glob("*.gui"))
+        file_type = sorted(VANILLA_TYPES_GUI.glob("*.gui")) if VANILLA_TYPES_GUI.exists() else []
+        return file_wrapper + file_type
     if window:
         percorso = PATCH_GUI / f"{window}.gui"
         if not percorso.exists():
@@ -75,6 +81,23 @@ def _seleziona_file(tutti: bool, window: str | None) -> list[Path]:
 
 # ---------------------------------------------------------------------------
 # Analisi singolo file
+
+def _trova_file_type_associato(percorso_wrapper: Path) -> Path | None:
+    """
+    Controlla se il wrapper usa il pattern v1.1 (*_patch_vanilla = {}) e
+    restituisce il Path atteso del file type in gui/vanilla/.
+    Restituisce None se il wrapper non usa il pattern v1.1.
+    """
+    try:
+        contenuto = percorso_wrapper.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return None
+    m = _RE_TYPE_INST_IN_WRAPPER.search(contenuto)
+    if not m:
+        return None
+    prefix = m.group(1)
+    return VANILLA_TYPES_GUI / f"{prefix}_patch_vanilla.gui"
+
 # ---------------------------------------------------------------------------
 
 def _analizza_singolo(percorso: Path) -> dict:
@@ -103,6 +126,25 @@ def _analizza_singolo(percorso: Path) -> dict:
     else:
         stato = "OK"
 
+    # Pattern v1.1: rilevamento e audit del file type associato
+    tipo_file = _trova_file_type_associato(percorso)
+    risultato_val_type = None
+    tipo_avviso = None
+    if tipo_file is not None:
+        if tipo_file.exists():
+            risultato_val_type = _valida(tipo_file)
+            if risultato_val_type["verdict"] == "BLOCCANTE":
+                stato = "BLOCCANTE"
+            elif risultato_val_type["verdict"] == "CON AVVERTENZE" and stato == "OK":
+                stato = "CON AVVERTENZE"
+        else:
+            tipo_avviso = (
+                f"ATTENZIONE: file vanilla type atteso non trovato: "
+                f"gui/vanilla/{tipo_file.name}"
+            )
+            if stato == "OK":
+                stato = "CON AVVERTENZE"
+
     return {
         "file": percorso.name,
         "verdetto_validator": risultato_val["verdict"],
@@ -116,6 +158,14 @@ def _analizza_singolo(percorso: Path) -> dict:
         "dettaglio_validator": risultato_val["issues"],
         "dettaglio_assenti": [r["riga_whitelist"] for r in assenti],
         "dettaglio_fedelta": risultato_fedelta,
+        # Campi v1.1 — None se il wrapper non usa il pattern type-separated
+        "type_file": tipo_file.name if tipo_file else None,
+        "type_file_trovato": tipo_file.exists() if tipo_file else None,
+        "type_avviso": tipo_avviso,
+        "verdetto_validator_type": risultato_val_type["verdict"] if risultato_val_type else None,
+        "critici_type": risultato_val_type["critical_count"] if risultato_val_type else 0,
+        "avvertenze_type": risultato_val_type["warning_count"] if risultato_val_type else 0,
+        "dettaglio_validator_type": risultato_val_type["issues"] if risultato_val_type else [],
     }
 
 
@@ -173,6 +223,19 @@ def _formatta_report_completo(risultati: list[dict]) -> str:
             sezioni.append("**Binding assenti dalla whitelist (righe pronte):**")
             for riga in r["dettaglio_assenti"]:
                 sezioni.append(riga)
+        # Dettagli file type v1.1
+        if r.get("type_file"):
+            sezioni.append("")
+            sezioni.append(f"**File type v1.1 associato:** `{r['type_file']}`")
+            if r.get("type_avviso"):
+                sezioni.append(f"- [ATTENZIONE] {r['type_avviso']}")
+            elif r.get("dettaglio_validator_type"):
+                sezioni.append("**Problemi nel file type:**")
+                for issue in r["dettaglio_validator_type"]:
+                    icona = "[CRITICO]" if issue["severity"] == "CRITICO" else "[ATTENZIONE]"
+                    sezioni.append(f"- {icona} Riga {issue['line']}: {issue['pattern']} — {issue['fix']}")
+            else:
+                sezioni.append("File type: nessun problema rilevato.")
         sezioni.append("")
 
     return "\n".join(sezioni)

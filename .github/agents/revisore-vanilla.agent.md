@@ -32,6 +32,10 @@ La tua review copre la parte profonda che il diff automatico NON può verificare
 1. Invoca `#vanilla-fidelity-check` con il percorso del file patch.
 2. Il verdetto della skill è il tuo verdetto di base, non il limite della tua review.
 3. Controlla anche regressioni interattive residue nel container vanilla: `onclick`, `onrightclick`, `tooltip`, hover feedback, stati `enabled` o `disabled` e clickability mouse-only.
+  **Nota Pattern v1.1:** se il wrapper non contiene un blocco vanilla inline (nessuna `visible = "[GetVariableSystem.Exists('ocr')]"` nel wrapper), cerca il file type separato:
+  `ocr_support_compatibility_pach/gui/vanilla/<nome_senza_window>_patch_vanilla.gui`
+  Quel file è la sorgente vanilla per il confronto — invoca `#vanilla-fidelity-check` con quel percorso.
+  Non segnalare come errore l'assenza del blocco vanilla inline se il file type separato esiste.
 4. Se FAIL: riporta i bug esattamente come identificati dalla skill e aggiungi quelli interattivi non emersi automaticamente.
 5. Se PASS: conferma che non risultano regressioni interattive evidenti e suggerisci handoff ad Auditore Finale.
 

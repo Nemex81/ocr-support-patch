@@ -178,6 +178,35 @@ Prima di salvare o committare un file `.gui` modificato, verificare:
 - [ ] Nessun nome widget duplicato a stesso livello
 - [ ] Nessun scope non verificato nella whitelist (`gui-jomini-scopes.instructions.md`)
 
+### Checklist aggiuntiva per pattern v1.1 (type-separated)
+
+Applicare **in aggiunta** alle voci sopra quando si usa il pattern con vanilla separato:
+
+- [ ] File type presente in `gui/vanilla/{nome}_patch_vanilla.gui`
+- [ ] Blocco `types OCR_PATCH_VANILLA { }` nel file type
+- [ ] Guard `visible = "[GetVariableSystem.Exists('ocr')]"` presente dentro il type
+- [ ] Il type **non contiene** proprietà window-level: `state`, `widgetid`, `layer`, `attachto`, `movable`
+- [ ] Istanziazione nel wrapper: `{nome}_patch_vanilla = {}` senza `visible` esplicita
+- [ ] Contenuto vanilla nel type identico al file CK3 originale
+- [ ] `audit.py` produce report unificato coppia wrapper+type senza critici
+
+---
+
+## Naming Convention Type-Separated (Pattern v1.1)
+
+> Attiva solo per file che adottano il pattern vanilla separato.
+
+| Elemento | Regola |
+|----------|--------|
+| Nome type | `{finestra_senza_window}_patch_vanilla` (es. `character_patch_vanilla`) |
+| Nome file | `{finestra_senza_window}_patch_vanilla.gui` |
+| Blocco types | `types OCR_PATCH_VANILLA { }` — mai `types VANILLA` |
+| Widget base | `widget` come default; `window` solo se documentato e verificato |
+| Guard visibilità | `visible = "[GetVariableSystem.Exists('ocr')]"` — mai `using = vanilla` |
+
+**Proprietà VIETATE nel type separato** (devono restare nel wrapper):
+`state`, `widgetid`, `layer`, `attachto`, `movable`, `allow_outside`, `parentanchor`
+
 ---
 
 ## Functional Parity — Checklist Verificabile

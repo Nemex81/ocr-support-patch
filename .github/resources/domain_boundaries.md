@@ -12,7 +12,10 @@ mod:
   - path: "ocr_support_compatibility_pach/"
   - examples:
     - "ocr_support_compatibility_pach/gui/"
+    - "ocr_support_compatibility_pach/gui/vanilla/"
     - "ocr_support_compatibility_pach/descriptor.mod"
+  - notes:
+    - "ocr_support_compatibility_pach/gui/vanilla/ contiene file type .gui separati (pattern v1.1 type-separated). Scrivibile solo per finestre che adottano il pattern separato."
 
 operational_rules:
   - id: rule_not_touch_mod

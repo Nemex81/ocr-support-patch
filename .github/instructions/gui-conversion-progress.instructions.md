@@ -18,13 +18,17 @@ Ogni finestra ha due stati distinti e indipendenti:
 Un file può essere convertito ma non validato (avvertenze o critici aperti).
 Un file non ancora nella cartella patch si trova nella sezione "Da Convertire".
 
+La colonna **Arch.** indica l'architettura dual-mode usata:
+- `inline` — Pattern v1.0: entrambi i branch OCR e vanilla nello stesso file wrapper (default retrocompatibile)
+- `sep` — Pattern v1.1: branch vanilla estratto in `gui/vanilla/<nome>_patch_vanilla.gui` (type-separated)
+
 ---
 
 ## Convertite — Validate (audit OK)
 
-| File | Dim. | Note | Ultimo audit | Critici | Avv. |
-|------|------|------|-------------|---------|------|
-| `interaction_interfere_in_war_notification.gui` | 2KB | Notifica guerra | 2026-03-12 | 0 | 0 |
+| File | Arch. | Dim. | Note | Ultimo audit | Critici | Avv. |
+|------|-------|------|------|-------------|---------|------|
+| `interaction_interfere_in_war_notification.gui` | inline | 2KB | Notifica guerra | 2026-03-12 | 0 | 0 |
 
 ---
 
@@ -32,29 +36,29 @@ Un file non ancora nella cartella patch si trova nella sezione "Da Convertire".
 
 Dual-mode presente, nessun critico, ma avvertenze aperte. Verificare prima di dichiarare validata.
 
-| File | Dim. | Note | Ultimo audit | Critici | Avv. | Binding assenti |
-|------|------|------|-------------|---------|------|-----------------|
-| `hud.gui` | 177KB | HUD principale | 2026-03-13 | 0 | 16 | 0 |
-| `window_activity_list.gui` | 30KB | Lista attività | 2026-03-13 | 0 | 7 | 0 |
-| `interaction_blackmail.gui` | 13KB | Interazione | 2026-03-12 | 0 | 2 | 0 |
-| `interaction_menu_window.gui` | 9KB | Menu interazioni | 2026-03-12 | 0 | 4 | 0 |
-| `window_activity.gui` | 44KB | Attività | 2026-03-12 | 0 | 6 | 1 |
-| `window_character.gui` | 187KB | Multi-tab, complessa | 2026-03-13 | 0 | 65 | 2 |
-| `window_combat.gui` | 123KB | Dati militari | 2026-03-13 | 0 | 16 | 2 |
-| `window_character_lifestyle.gui` | 73KB | Stile di vita | 2026-03-13 | 0 | 22 | 0 |
-| `window_council.gui` | 117KB | Tab task/skills | 2026-03-13 | 0 | 7 | 1 |
-| `window_culture.gui` | 99KB | Alberi cultura | 2026-03-12 | 0 | 16 | 2 |
-| `window_decisions.gui` | 26KB | Decisioni | 2026-03-12 | 0 | 6 | 0 |
-| `window_dynasty_house.gui` | 90KB | Dinastia/casata | 2026-03-13 | 0 | 26 | 0 |
-| `window_court.gui` | 38KB | Corte | 2026-03-13 | 0 | 5 | 0 |
-| `window_factions.gui` | 39KB | Fazioni | 2026-03-12 | 0 | 14 | 3 |
-| `window_faith.gui` | 137KB | Tab dottrine/siti | 2026-03-12 | 0 | 32 | 0 |
-| `window_inventory.gui` | 82KB | Artefatti | 2026-03-13 | 0 | 15 | 0 |
-| `window_intrigue.gui` | 90KB | Schemi/agenti | 2026-03-13 | 0 | 34 | 0 |
-| `window_county_view.gui` | 269KB | Vista contea | 2026-03-13 | 0 | 45 | 0 |
-| `window_military.gui` | 91KB | Tab eserciti | 2026-03-13 | 0 | 34 | 0 |
-| `window_my_realm.gui` | 85KB | Tab regno | 2026-03-13 | 0 | 27 | 0 |
-| `window_army.gui` | ~130KB | Gestione eserciti | 2026-03-13 | 0 | 55 | 0 |
+| File | Arch. | Dim. | Note | Ultimo audit | Critici | Avv. | Binding assenti |
+|------|-------|------|------|-------------|---------|------|-----------------|
+| `hud.gui` | inline | 177KB | HUD principale | 2026-03-13 | 0 | 16 | 0 |
+| `window_activity_list.gui` | inline | 30KB | Lista attività | 2026-03-13 | 0 | 7 | 0 |
+| `interaction_blackmail.gui` | inline | 13KB | Interazione | 2026-03-12 | 0 | 2 | 0 |
+| `interaction_menu_window.gui` | inline | 9KB | Menu interazioni | 2026-03-12 | 0 | 4 | 0 |
+| `window_activity.gui` | inline | 44KB | Attività | 2026-03-12 | 0 | 6 | 1 |
+| `window_character.gui` | inline | 187KB | Multi-tab, complessa | 2026-03-13 | 0 | 65 | 2 |
+| `window_combat.gui` | inline | 123KB | Dati militari | 2026-03-13 | 0 | 16 | 2 |
+| `window_character_lifestyle.gui` | inline | 73KB | Stile di vita | 2026-03-13 | 0 | 22 | 0 |
+| `window_council.gui` | inline | 117KB | Tab task/skills | 2026-03-13 | 0 | 7 | 1 |
+| `window_culture.gui` | inline | 99KB | Alberi cultura | 2026-03-12 | 0 | 16 | 2 |
+| `window_decisions.gui` | inline | 26KB | Decisioni | 2026-03-12 | 0 | 6 | 0 |
+| `window_dynasty_house.gui` | inline | 90KB | Dinastia/casata | 2026-03-13 | 0 | 26 | 0 |
+| `window_court.gui` | inline | 38KB | Corte | 2026-03-13 | 0 | 5 | 0 |
+| `window_factions.gui` | inline | 39KB | Fazioni | 2026-03-12 | 0 | 14 | 3 |
+| `window_faith.gui` | inline | 137KB | Tab dottrine/siti | 2026-03-12 | 0 | 32 | 0 |
+| `window_inventory.gui` | inline | 82KB | Artefatti | 2026-03-13 | 0 | 15 | 0 |
+| `window_intrigue.gui` | inline | 90KB | Schemi/agenti | 2026-03-13 | 0 | 34 | 0 |
+| `window_county_view.gui` | inline | 269KB | Vista contea | 2026-03-13 | 0 | 45 | 0 |
+| `window_military.gui` | inline | 91KB | Tab eserciti | 2026-03-13 | 0 | 34 | 0 |
+| `window_my_realm.gui` | inline | 85KB | Tab regno | 2026-03-13 | 0 | 27 | 0 |
+| `window_army.gui` | inline | ~130KB | Gestione eserciti | 2026-03-13 | 0 | 55 | 0 |
 
 > Nota: `window_army.gui` era erroneamente classificata come "Da Convertire". Il file è presente nella patch con dual-mode funzionante. Spostata in "Revisione Necessaria" il 2026-03-12. Spostata in "Bloccanti" il 2026-03-13: rilevati 4 critici (icon senza tooltip, righe 1044–1082). Fix applicato il 2026-03-13: 0 critici, 55 avvertenze.
 

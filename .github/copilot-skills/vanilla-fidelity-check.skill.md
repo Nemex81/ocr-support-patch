@@ -23,6 +23,13 @@ parameters:
   `visible = "[Is('ocr')]"`.
   Il naming `vanilla_*` e' preferito ma non obbligatorio: nel repository esistono
   anche `normal_mode_content`, `grafic_version` e wrapper anonimi con visibility esplicita.
+  **Pattern v1.1 — type-separated:** se nel file non esiste nessun blocco con
+  `visible = "[GetVariableSystem.Exists('ocr')]"` inline, controlla l'esistenza del file type separato:
+  `ocr_support_compatibility_pach/gui/vanilla/<nome_senza_window>_patch_vanilla.gui`
+  Se trovato: usa QUEL file come sorgente del branch vanilla da confrontare.
+  Il file type contiene l'intera struttura vanilla dentro `types OCR_PATCH_VANILLA { type ... = widget { ... } }`.
+  Se non trovato e il wrapper referenzia `*_patch_vanilla = {}`: emette FAIL con messaggio
+  "File vanilla type atteso assente — verificare `gui/vanilla/`".
 3. Determina il nome della finestra dal file e costruisci il percorso vanilla:
    `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/[nome_file].gui`
    (path letto da `tools/config.py` — VANILLA_GUI)

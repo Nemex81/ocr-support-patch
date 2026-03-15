@@ -41,6 +41,17 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
    ```
    Il `--dry-run` stampa solo l'anteprima senza scrivere il file.
    Usa il risultato come base e applicare le personalizzazioni OCR dall'upstream Agamidae.
+   **Pattern v1.1 — type-separated (finestre grandi):**
+   Se il wrapper supera 2000 righe E il branch vanilla > 40% del totale, usare il flag aggiuntivo:
+   ```
+   python tools/assemble_dualmode.py --window <nome> --mode simple|tabs|complex --separate-vanilla --dry-run
+   ```
+   Il flag genera DUE file:
+   - `ocr_support_compatibility_pach/gui/<nome>.gui` (wrapper — OCR + istanziazione type)
+   - `ocr_support_compatibility_pach/gui/vanilla/<nome_senza_window>_patch_vanilla.gui` (type vanilla)
+   Entrambi i file devono essere approvati al CHECKPOINT 1 prima della scrittura.
+   **NON usare `--separate-vanilla`** se il file è < 500 righe: il beneficio è minimo e aumenta la manutenzione.
+   La cartella `ocr_support_compatibility_pach/gui/vanilla/` è scrivibile solo per file type del pattern v1.1.
 4b. Invoca #dual-mode-template-generator con le sezioni del progetto Architetto.
 5. Ogni modifica è minima — non toccare ciò che non è nel task
 6. Dopo ogni edit: verifica assenza di `name` duplicati allo stesso livello

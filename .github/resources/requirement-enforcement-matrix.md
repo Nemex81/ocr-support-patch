@@ -82,6 +82,23 @@ Ogni riga mappa un requisito del framework a:
 ## Riepilogo gap per fase
 
 ### Gap Fase 2 (gate automatico da rafforzare)
+---
+
+## Pattern v1.1 — Type-Separated Vanilla
+
+| Requisito | Fonte | Tipo | Owner attuale | Blocking | Note |
+|-----------|-------|------|--------------|---------|------|
+| Naming type: `{nome}_patch_vanilla` (non `_old`, non `_vanilla` puro) | copilot-instructions.md | lint | gui_validator.py (da implementare Fase 3) | SI | Previene collisioni con Agamidae |
+| Blocco `types OCR_PATCH_VANILLA { }` nel file type | dual_mode_pattern_canonical.md | lint | gui_validator.py (da implementare Fase 3) | SI | Namespace univoco della patch |
+| Guard `visible = "[GetVariableSystem.Exists('ocr')]"` presente nel type | dual_mode_pattern_canonical.md | gate | gui_validator.py (da implementare Fase 3) | SI | Errore VISIBILITA_TYPE_SEPARATED_INCOHERENTE |
+| Assenza proprietà window-level nel type (`state`, `widgetid`, `layer`, `attachto`, `movable`) | dual_mode_pattern_canonical.md | lint | gui_validator.py (da implementare Fase 3) | SI | Warning TYPE_SEPARATO_NO_NOME se name assente |
+| Istanziazione wrapper senza `visible` esplicita | dual_mode_pattern_canonical.md | lint | gui_validator.py (da implementare Fase 3) | WARN | La visibilità è responsabilità del type |
+| File type in `gui/vanilla/` presente quando wrapper lo referenzia | workflow-nuova-finestra.instructions.md | gate | audit.py (da implementare Fase 3) | WARN | ATTENZIONE: non blocca ma da risolvere pre-commit |
+| Contenuto vanilla nel type identico al file CK3 originale | dual_mode_pattern_canonical.md | manuale | revisore-vanilla.agent.md | NO | Nessun controllo automatico |
+| Audit cumulativo coppia wrapper+type | workflow-nuova-finestra.instructions.md | gate | audit.py (da implementare Fase 3) | SI | Verdetto unificato obbligatorio |
+
+---
+
 - Copertura dual-mode sub-window/multi-window: MANCANTE
 - Controllo header OCR (fontsize 20, colore): MANCANTE
 - Controllo fallback liste vuote OCR: MANCANTE

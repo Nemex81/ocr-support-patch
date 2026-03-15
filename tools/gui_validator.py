@@ -100,6 +100,11 @@ RE_BUTTON_WIDGET_ANY = re.compile(
 )
 RE_DATAMODEL_LINE = re.compile(r'\bdatamodel\s*=')
 
+# Pattern v1.1 — Type-Separated Vanilla
+RE_TYPES_OCR_PATCH_VANILLA = re.compile(r'^\s*types\s+OCR_PATCH_VANILLA\s*\{', re.IGNORECASE)
+RE_TYPE_DEF_PATCH_VANILLA = re.compile(r'^\s*type\s+\w+_patch_vanilla\s*=\s*widget\s*\{', re.IGNORECASE)
+RE_TYPE_INST_PATCH_VANILLA = re.compile(r'^\s*\w+_patch_vanilla\s*=\s*\{')
+
 
 def _is_ocr_visibility(riga: str) -> bool:
     return bool(RE_VISIBLE_OCR_EXISTS.search(riga) or RE_VISIBLE_OCR_SHORTHAND.search(riga))
@@ -111,6 +116,11 @@ def _is_vanilla_visibility(riga: str) -> bool:
 
 def _is_ocr_block_header(riga: str) -> bool:
     return bool(RE_OCR_NAME.search(riga) or RE_OCR_BLOCK_HINT.search(riga))
+
+
+def _e_file_type_separato(righe: list) -> bool:
+    """Restituisce True se il file e' un type file v1.1 (contiene 'types OCR_PATCH_VANILLA {')."""
+    return any(RE_TYPES_OCR_PATCH_VANILLA.search(r) for r in righe)
 
 
 def _linea_in_range(num_riga: int, ranges: list[tuple[int, int]]) -> bool:
@@ -514,21 +524,102 @@ def _scansione_completezza_ocr(righe: list) -> list:
     return problemi
 
 
+def _scansione_type_separato(righe: list) -> list:
+    """
+    Valida la struttura di un file type v1.1 (gui/vanilla/*_patch_vanilla.gui).
+    Verifica:
+    - Presenza di guard visible = "[GetVariableSystem.Exists('ocr')]" dentro il type.
+    - Assenza di guard OCR ([Not(...)]) che sarebbe incoerente in un file vanilla.
+    - Nota: state, layer ecc. presenti nel contenuto vanilla sono attesi e non vengono segnalati.
+    Non segnala errori per la mancanza del blocco dual-mode standard (il file non e' un wrapper).
+    """
+    problemi = []
+
+    ha_guard_vanilla = any(_is_vanilla_visibility(r) for r in righe)
+    ha_guard_ocr = any(_is_ocr_visibility(r) for r in righe)
+
+    if not ha_guard_vanilla:
+        problemi.append({
+            "line": 1,
+            "pattern": "File type v1.1 senza guard vanilla ([GetVariableSystem.Exists('ocr')])",
+            "category": "VISIBILITA_TYPE_SEPARATED_INCOHERENTE",
+            "severity": "CRITICO",
+            "fix": (
+                "Aggiungere visible = \"[GetVariableSystem.Exists('ocr')]\" come prima proprieta' "
+                "dentro il blocco 'type *_patch_vanilla = widget {'."
+            ),
+        })
+
+    if ha_guard_ocr:
+        for i, r in enumerate(righe):
+            if _is_ocr_visibility(r):
+                problemi.append({
+                    "line": i + 1,
+                    "pattern": "Guard OCR ([Not(GetVariableSystem.Exists('ocr'))]) in file vanilla type — incoerente",
+                    "category": "VISIBILITA_TYPE_SEPARATED_INCOHERENTE",
+                    "severity": "CRITICO",
+                    "fix": (
+                        "I file type vanilla usano visible = \"[GetVariableSystem.Exists('ocr')]\" "
+                        "(senza Not()), non la guard OCR."
+                    ),
+                })
+                break
+
+    return problemi
+
+
+def _scansione_wrapper_type_ref(righe: list) -> list:
+    """
+    Nei wrapper che usano il pattern v1.1, l'istanziazione '*_patch_vanilla = {}'
+    non deve contenere una guard visible esplicita: la guard vive nel file type.
+    Segnala CRITICO se la guard viene trovata sul sito di istanziazione.
+    """
+    problemi = []
+    for i, r in enumerate(righe):
+        if not RE_TYPE_INST_PATCH_VANILLA.match(r):
+            continue
+        fine = _trova_fine_blocco(righe, i)
+        if fine == -1:
+            fine = min(i + 5, len(righe) - 1)
+        righe_blocco = righe[i + 1:fine + 1]
+        if any(_is_vanilla_visibility(rb) or _is_ocr_visibility(rb) for rb in righe_blocco):
+            problemi.append({
+                "line": i + 1,
+                "pattern": "Istanziazione _patch_vanilla con guard visible esplicita nel wrapper",
+                "category": "VISIBILITA_TYPE_SEPARATED_INCOHERENTE",
+                "severity": "CRITICO",
+                "fix": (
+                    "Rimuovere il blocco visible dall'istanziazione — la guard visible "
+                    "vive nel file type in gui/vanilla/."
+                ),
+            })
+    return problemi
+
+
 def analizza_file(percorso: Path) -> dict:
     """
     Analisi completa di un file .gui.
     Restituisce un dict con: file, verdict, critical_count, warning_count, issues.
     """
     righe = _apri_file(percorso)
-    problemi = (
-        _scansione_semplice(righe)
-        + _scansione_blocchi(righe)
-        + _scansione_completezza_dual_mode(righe)
-        + _scansione_copertura_multiwindow(righe)
-        + _scansione_header_ocr(righe)
-        + _scansione_fallback_datamodel_ocr(righe)
-        + _scansione_completezza_ocr(righe)
-    )
+    if _e_file_type_separato(righe):
+        # File type v1.1: usa solo le scansioni dedicate.
+        # Le scansioni dual-mode standard non si applicano (nessuna window wrapper).
+        problemi = (
+            _scansione_semplice(righe)
+            + _scansione_type_separato(righe)
+        )
+    else:
+        problemi = (
+            _scansione_semplice(righe)
+            + _scansione_blocchi(righe)
+            + _scansione_completezza_dual_mode(righe)
+            + _scansione_copertura_multiwindow(righe)
+            + _scansione_header_ocr(righe)
+            + _scansione_fallback_datamodel_ocr(righe)
+            + _scansione_completezza_ocr(righe)
+            + _scansione_wrapper_type_ref(righe)
+        )
 
     # Rimuove duplicati (stessa riga + categoria)
     visti = set()

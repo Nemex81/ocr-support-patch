@@ -42,7 +42,8 @@ tools/
   assemble_army_dualmode.py  ← assembla window_army.gui (specializzato, mantenuto)
   annotate_datamodels.py ← strumento di manutenzione datamodel
   config.py              ← path centralizzati ai repo (vanilla = installazione locale CK3)
-ocr_support_compatibility_pach/gui/  ← file .gui della mod (lavoro attivo)
+ocr_support_compatibility_pach/gui/          ← file .gui della mod (lavoro attivo)
+ocr_support_compatibility_pach/gui/vanilla/  ← type vanilla separati (pattern v1.1)
 ```
 
 ---
@@ -69,6 +70,38 @@ visible = "[GetVariableSystem.Exists('ocr')]"        # container vanilla — nor
 - **Vanilla immutabile**: il container vanilla è copia fedele del CK3 originale. Nessuna modifica.
 - **Checksum/multiplayer parity**: gate non negoziabili per ogni integrazione.
 - **Whitelist scope obbligatoria**: ogni binding usato deve essere verificato in `.github/resources/jomini_scope_whitelist.md`. Se non presente dopo verifica nel vanilla → aggiungere immediatamente.
+
+---
+
+## Architettura Dual Mode — Pattern Type-Separated (v1.1+)
+
+Dal 2026-03-14 la patch supporta un'architettura alternativa per le finestre più grandi,
+in cui il branch vanilla viene estratto in un type `.gui` separato.
+
+### Quando usarla
+
+- File wrapper > 2000 righe E branch vanilla > 40% del totale → **separato consigliato**
+- File < 500 righe o interazioni semplici (`interaction_*.gui`) → **inline preferibile**
+- `hud.gui` e `window_army.gui` → **ultima priorità** (alto rischio operativo)
+
+### Naming convention (non derogare — rischio collisione con Agamidae)
+
+| Elemento | Convenzione |
+|----------|-------------|
+| Cartella | `ocr_support_compatibility_pach/gui/vanilla/` |
+| Nome type | `{finestra_senza_window}_patch_vanilla` |
+| Nome file | `{finestra_senza_window}_patch_vanilla.gui` |
+| Blocco types | `types OCR_PATCH_VANILLA { }` |
+| Guard nel type | `visible = "[GetVariableSystem.Exists('ocr')]"` esplicita |
+
+> ⚠️ Non usare mai: `_old`, namespace `VANILLA` puro, `_vanilla` senza `_patch_`.
+
+### Regole strutturali essenziali
+
+- La guard `visible` vive **dentro il type**, mai sull'istanziazione nel wrapper
+- Il type separato **non contiene** `state`, `widgetid`, `layer`, `attachto`, `movable`
+- Il contenuto vanilla nel type è **identico** al file CK3 originale — nessuna modifica
+- Template completo e checklist in `.github/resources/dual_mode_pattern_canonical.md`
 
 ---
 

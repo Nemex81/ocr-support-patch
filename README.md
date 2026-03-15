@@ -31,6 +31,10 @@ Il repository è diviso in due domini distinti:
 - **Mod** (`ocr_support_compatibility_pach/`): i file `.gui` della patch attiva, il font, le localizzazioni. Questo è ciò che viene installato nel gioco.
 - **Framework** (`.github/` e `tools/`): strumenti di sviluppo, istruzioni operative, agenti Copilot, script Python per l'assemblaggio e la validazione. Non viene installato nel gioco.
 
+All'interno della mod, la struttura segue il pattern dual-mode del progetto:
+- `ocr_support_compatibility_pach/gui/` — file wrapper con il branch OCR e (per finestre piccole) il branch vanilla inline
+- `ocr_support_compatibility_pach/gui/vanilla/` — file type separati per il branch vanilla (Pattern v1.1), usati per le finestre più grandi dove il vanilla supera il 40% del file totale. I file in questa cartella contengono `types OCR_PATCH_VANILLA { }` e non vanno modificati: il loro contenuto è identico al vanilla CK3 originale.
+
 ## Documentazione del framework
 
 Per chi contribuisce allo sviluppo:

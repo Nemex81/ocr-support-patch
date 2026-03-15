@@ -13,6 +13,7 @@ Copilot può modificare file **esclusivamente** nei seguenti percorsi:
 | Percorso | Condizione |
 |----------|-----------|
 | `ocr_support_compatibility_pach/gui/` | Lavoro principale — conversioni Dual Mode |
+| `ocr_support_compatibility_pach/gui/vanilla/` | File type vanilla separati — solo per finestre che adottano il pattern v1.1 (type-separated) |
 | `.github/resources/jomini_scope_whitelist.md` | Solo per aggiunta scope verificati nel vanilla |
 
 ## Percorsi Vietati in Scrittura

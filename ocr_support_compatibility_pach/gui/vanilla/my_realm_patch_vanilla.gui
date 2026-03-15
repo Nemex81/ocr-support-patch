@@ -1,0 +1,448 @@
+# my_realm_patch_vanilla.gui — OCR Support Patch — Vanilla type separato (Pattern v1.1)
+# Generato da: tools/assemble_dualmode.py --window window_my_realm --mode tabs --separate-vanilla
+# ATTENZIONE: contenuto vanilla identico al file CK3 originale — non modificare.
+# La guard visible vive QUI — il wrapper istanzia questo type senza visible esplicita.
+
+types OCR_PATCH_VANILLA {
+	type my_realm_patch_vanilla = widget {
+		name = "vanilla_my_realm_patch_vanilla_container"
+		visible = "[GetVariableSystem.Exists('ocr')]"
+
+			name = "my_realm_window"
+			widgetid = "my_realm_window"
+			datacontext = "[GetVariableSystem]"
+			datacontext = "[GetPlayer]"
+			parentanchor = top|right
+			allow_outside = yes
+			movable = no
+			layer = windows_layer
+
+			using = Window_Size_MainTab
+
+			state = {
+				name = on_create
+				trigger_on_create = yes
+
+				on_start = "[GetVariableSystem.Set( 'bookmark_domain', 'true'  )]"
+				on_start = "[GetVariableSystem.Clear( 'bookmark_laws' )]"
+				on_start = "[GetVariableSystem.Clear( 'bookmark_subjects' )]"
+				on_start = "[GetVariableSystem.Clear( 'bookmark_succession' )]"
+			}
+
+			state = {
+				name = _show
+				next = refresh_bookmark_tabs
+
+				using = Animation_FadeIn_Quick
+				using = Sound_WindowShow_Standard
+				using = Window_Position_MainTab
+			}
+
+			state = {
+				name = _hide
+				using = Animation_FadeOut_Quick
+				using = Sound_WindowHide_Standard
+				using = Window_Position_MainTab_Hide
+			}
+
+			state = {
+				name = refresh_bookmark_tabs
+				on_start = "[GetVariableSystem.Set( 'bookmark_domain', 'true' )]"
+				on_start = "[GetVariableSystem.Set( 'bookmark_subjects', 'true' )]"
+				on_start = "[GetVariableSystem.Set( 'bookmark_succession', 'true' )]"
+				on_start = "[GetVariableSystem.Set( 'bookmark_laws', 'true' )]"
+				on_start = "[GetVariableSystem.ClearIf( 'bookmark_domain', Not( MyRealmWindow.IsActiveTab( 'bookmark_domain' ) ) )]"
+				on_start = "[GetVariableSystem.ClearIf( 'bookmark_subjects', Not( MyRealmWindow.IsActiveTab( 'bookmark_subjects' ) ) )]"
+				on_start = "[GetVariableSystem.ClearIf( 'bookmark_succession', Not( MyRealmWindow.IsActiveTab( 'bookmark_succession' ) ) )]"
+				on_start = "[GetVariableSystem.ClearIf( 'bookmark_laws', Not( MyRealmWindow.IsActiveTab( 'bookmark_laws' ) ) )]"
+			}
+
+			### BOOKMARK SIDE TABS
+			widget = {
+				position = { -64 220 }
+				size = { 100 208 }
+				scissor = yes
+
+				allow_outside = yes
+
+				flowcontainer = {
+					parentanchor = right|vcenter
+					position = { 7 0 }
+					direction = vertical
+					ignoreinvisible = yes
+					allow_outside = yes
+
+					### BOOKMARK TAB DOMAIN
+					button_tab_vertical_bookmark = {
+						name = "tab_domain"
+						down = "[GetVariableSystem.Exists( 'bookmark_domain' )]"
+
+						blockoverride "tab_button"
+						{
+							onclick = "[GetVariableSystem.Set( 'bookmark_domain', 'true' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_subjects' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_succession' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_laws' )]"
+							onclick = "[MyRealmWindow.SetActiveTab( 'bookmark_domain' )]"
+
+							tooltip = "MY_REALM_WINDOW_BOOKMARK_DOMAIN_TT"
+						}
+
+						blockoverride = "tab_glow"
+						{
+							visible = "[GetVariableSystem.Exists( 'bookmark_domain' )]"
+						}
+
+						blockoverride "tab_active"
+						{
+							trigger_when = "[GetVariableSystem.Exists( 'bookmark_domain' )]"
+						}
+
+						blockoverride "tab_inactive"
+						{
+							trigger_when = "[Not( GetVariableSystem.Exists( 'bookmark_domain' ) )]"
+						}
+
+						blockoverride "tab_texture"
+						{
+							texture = "gfx/interface/icons/flat_icons/legend_province_modifier.dds"
+
+							down = "[GetVariableSystem.Exists( 'bookmark_domain' )]"
+						}
+
+						blockoverride "tab_frame_texture"
+						{
+							down = "[GetVariableSystem.Exists( 'bookmark_domain' )]"
+						}
+					}
+
+					### BOOKMARK TAB SUBJECTS (OR VASSALS)
+					button_tab_vertical_bookmark = {
+						name = "tutorial_highlight_vassals_tab"
+						visible = "[Not( IsLandlessAdventurer( GetPlayer ) )]"
+						down = "[GetVariableSystem.Exists( 'bookmark_subjects' )]"
+
+						blockoverride "tab_button"
+						{
+							onclick = "[GetVariableSystem.Clear( 'bookmark_domain' )]"
+							onclick = "[GetVariableSystem.Set( 'bookmark_subjects', 'true' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_succession' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_laws' )]"
+							onclick = "[MyRealmWindow.SetActiveTab( 'bookmark_subjects' )]"
+
+							tooltip = "MY_REALM_WINDOW_BOOKMARK_SUBJECTS_TT"
+						}
+
+						blockoverride = "tab_glow"
+						{
+							visible = "[GetVariableSystem.Exists( 'bookmark_subjects' )]"
+						}
+
+						blockoverride "tab_active"
+						{
+							trigger_when = "[GetVariableSystem.Exists( 'bookmark_subjects' )]"
+						}
+
+						blockoverride "tab_inactive"
+						{
+							trigger_when = "[Not( GetVariableSystem.Exists( 'bookmark_subjects' ) )]"
+						}
+
+						blockoverride "tab_texture"
+						{
+							texture = "gfx/interface/icons/flat_icons/clan_contract.dds"
+
+							down = "[GetVariableSystem.Exists( 'bookmark_subjects' )]"
+						}
+
+						blockoverride "tab_frame_texture"
+						{
+							down = "[GetVariableSystem.Exists( 'bookmark_subjects' )]"
+						}
+					}
+
+					### BOOKMARK TAB LAWS
+					button_tab_vertical_bookmark = {
+						down = "[GetVariableSystem.Exists( 'bookmark_laws' )]"
+
+						blockoverride "tab_button"
+						{
+							onclick = "[GetVariableSystem.Clear( 'bookmark_domain' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_subjects' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_succession' )]"
+							onclick = "[GetVariableSystem.Set( 'bookmark_laws', 'true' )]"
+							onclick = "[MyRealmWindow.SetActiveTab( 'bookmark_laws' )]"
+
+							tooltip = "MY_REALM_WINDOW_BOOKMARK_LAWS_TT"
+						}
+
+						blockoverride = "tab_glow"
+						{
+							visible = "[GetVariableSystem.Exists( 'bookmark_laws' )]"
+						}
+
+						blockoverride "tab_active"
+						{
+							trigger_when = "[GetVariableSystem.Exists( 'bookmark_laws' )]"
+						}
+
+						blockoverride "tab_inactive"
+						{
+							trigger_when = "[Not( GetVariableSystem.Exists( 'bookmark_laws' ) )]"
+						}
+
+						blockoverride "tab_texture"
+						{
+							texture = "gfx/interface/icons/title_actions/add_laws.dds"
+
+							down = "[GetVariableSystem.Exists( 'bookmark_laws' )]"
+						}
+
+						blockoverride "tab_frame_texture"
+						{
+							down = "[GetVariableSystem.Exists( 'bookmark_laws' )]"
+						}
+					}
+
+					### BOOKMARK TAB SUCCESSION
+					button_tab_vertical_bookmark = {
+						name = "tutorial_highlight_succession_tab"
+						down = "[GetVariableSystem.Exists( 'bookmark_succession' )]"
+
+						blockoverride "tab_button"
+						{
+							onclick = "[GetVariableSystem.Clear( 'bookmark_domain' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_subjects' )]"
+							onclick = "[GetVariableSystem.Set( 'bookmark_succession', 'true' )]"
+							onclick = "[GetVariableSystem.Clear( 'bookmark_laws' )]"
+							onclick = "[MyRealmWindow.SetActiveTab( 'bookmark_succession' )]"
+
+							tooltip = "MY_REALM_WINDOW_BOOKMARK_SUCCESSION_TT"
+						}
+
+						blockoverride = "tab_glow"
+						{
+							visible = "[GetVariableSystem.Exists( 'bookmark_succession' )]"
+						}
+
+						blockoverride "tab_active"
+						{
+							trigger_when = "[GetVariableSystem.Exists( 'bookmark_succession' )]"
+						}
+
+						blockoverride "tab_inactive"
+						{
+							trigger_when = "[Not( GetVariableSystem.Exists( 'bookmark_succession' ) )]"
+						}
+
+						blockoverride "tab_texture"
+						{
+							texture = "gfx/interface/icons/flat_icons/heir.dds"
+
+							down = "[GetVariableSystem.Exists( 'bookmark_succession' )]"
+						}
+
+						blockoverride "tab_frame_texture"
+						{
+							down = "[GetVariableSystem.Exists( 'bookmark_succession' )]"
+						}
+					}
+				}
+			}
+
+			### Solution to make tabs look like they are layered under main tab window without code support since Maintab background seems to be set in by code somehow
+			icon = {
+				position = { 22 195 }
+				size = { 14 260 }
+				texture = "gfx/interface/component_tiles/tab_group_edge.dds"
+				alpha = 0.95
+				texture_density = 2
+			}
+
+			margin_widget = {
+				size = { 100% 100% }
+				margin = { 0 30 }
+				margin_right = 13
+
+				widget = {
+					size = { 100% 100% }
+
+					### WINDOW CONTENT
+					vbox = {
+						using = Window_Margins
+
+						header_pattern = {
+							layoutpolicy_horizontal = expanding
+
+							header_text = {
+								visible = "[GetVariableSystem.Exists( 'bookmark_domain' )]"
+								parentanchor = top|hcenter
+								position = { 0 8 }
+
+								text = "MY_REALM_WINDOW_HEADER"
+								align = nobaseline
+							}
+
+							header_text = {
+								visible = "[GetVariableSystem.Exists( 'bookmark_subjects' )]"
+								parentanchor = top|hcenter
+								position = { 0 8 }
+
+								text = "MY_REALM_WINDOW_BODY_TITLE_SUBJECTS"
+								align = nobaseline
+							}
+
+							header_text = {
+								datacontext = "[MyRealmWindow.GetKurultaiSuccession]"
+								visible = "[GetVariableSystem.Exists( 'bookmark_succession' )]"
+								parentanchor = top|hcenter
+								position = { 0 8 }
+
+								text = "MY_REALM_WINDOW_BODY_TITLE_SUCCESSION"
+								align = nobaseline
+							}
+
+							header_text = {
+								visible = "[GetVariableSystem.Exists( 'bookmark_laws' )]"
+								parentanchor = top|hcenter
+								position = { 0 8 }
+
+								text = "MY_REALM_WINDOW_BODY_TITLE_LAWS"
+								align = nobaseline
+							}
+
+							blockoverride "header_text" {}
+
+							blockoverride "button_close"
+							{
+								onclick = "[MyRealmWindow.Close]"
+							}
+						}
+
+						### Default Header
+						widget_my_realm_header = {
+							datacontext = "[GetPlayer]"
+							visible = "[Not( IsLandlessAdventurer( Character ) )]"
+
+							blockoverride "show_overlord"
+							{
+								visible = "[Character.HasOverlord]"
+							}
+
+							blockoverride "show_diarchy" {}
+						}
+
+						### Adventurer Header
+						widget_my_realm_header = {
+							datacontext = "[GetPlayer]"
+							visible = "[IsLandlessAdventurer( Character )]"
+
+							blockoverride "header_subtitle"
+							{
+								vbox = {
+									spacing = 2
+
+									text_single = {
+										name = "realm_type_adv"
+										text = "you_are_an_adventurer_tt"
+										align = nobaseline
+									}
+
+									text_single = {
+										text = "MY_REALM_WINDOW_DOMICILE_LOCATION"
+										align = nobaseline
+									}
+								}
+							}
+						}
+
+						## MY_REALM BODY HEADERS
+						vbox = {
+							layoutpolicy_horizontal = expanding
+
+							vbox_my_realm_subjects_top = {
+								visible = "[GetVariableSystem.Exists( 'bookmark_subjects' )]"
+							}
+
+							vbox_my_realm_laws_top = {
+								visible = "[Or( GetVariableSystem.Exists( 'bookmark_laws' ), GetVariableSystem.Exists( 'bookmark_succession' ) )]"
+							}
+
+							vbox_my_realm_succession_body_top = {
+								datacontext = "[MyRealmWindow.GetKurultaiSuccession]"
+								visible = "[And( GetVariableSystem.Exists( 'bookmark_succession' ), Not( KurultaiSuccession.IsValid ) )]"
+							}
+						}
+
+						### MY_REALM MAIN CONTENTS / BODY
+						scrollbox = {
+							name = "my_realm_body"
+							datacontext = "[MyRealmWindow.GetCharacter]"
+
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+
+							background = {
+								visible = "[IsLandlessAdventurer( GetPlayer )]"
+								texture = "gfx/interface/skinned/illustrations/camp_bg.dds"
+								fittype = end
+								alpha = 0.5
+								framesize = { 1500 848 }
+
+								using = Mask_Rough_Edges
+
+								modify_texture = {
+									texture = "gfx/interface/component_masks/mask_fade_corner.dds"
+									blend_mode = alphamultiply
+								}
+							}
+
+							background = {
+								visible = "[IsNomad( GetPlayer )]"
+								texture = "gfx/interface/illustrations/event_scenes/mpo_camp_steppe.dds"
+								fittype = end
+								alpha = 0.5
+
+								using = Mask_Rough_Edges
+
+								modify_texture = {
+									texture = "gfx/interface/component_masks/mask_fade_corner.dds"
+									blend_mode = alphamultiply
+								}
+							}
+
+							blockoverride "scrollbox_margins" {
+								margin = { 0 5 }
+								margin_left = 10
+								margin_right = 10
+							}
+
+							blockoverride "scrollbox_content"
+							{
+								vbox_my_realm_domain_body = {
+									visible = "[GetVariableSystem.Exists( 'bookmark_domain' )]"
+								}
+
+								vbox_my_realm_subjects_body = {
+									visible = "[GetVariableSystem.Exists( 'bookmark_subjects' )]"
+								}
+
+								vbox_my_realm_succession_body = {
+									visible = "[GetVariableSystem.Exists( 'bookmark_succession' )]"
+								}
+
+								vbox_my_realm_laws_body = {
+									visible = "[GetVariableSystem.Exists( 'bookmark_laws' )]"
+								}
+							}
+						}
+
+						### MY_REALM FOOTER STATS
+						hbox_my_realm_footer_stats = {
+							visible = "[Or( GetVariableSystem.Exists( 'bookmark_domain' ), GetVariableSystem.Exists( 'bookmark_subjects' ) )]"
+						}
+					}
+				}
+			}
+	}
+}

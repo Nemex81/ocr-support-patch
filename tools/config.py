@@ -11,6 +11,7 @@ WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
 # Repository 1 — Patch attiva (questo repo)
 PATCH_ROOT = Path(__file__).resolve().parent.parent
 PATCH_GUI = PATCH_ROOT / "ocr_support_compatibility_pach" / "gui"
+VANILLA_TYPES_GUI = PATCH_GUI / "vanilla"  # file type .gui separati (pattern v1.1)
 
 # Repository 2 — OCR upstream (Agamidae)
 OCR_ROOT = WORKSPACE_ROOT / "CK3-OCR"
@@ -32,6 +33,7 @@ RESOURCES_PATH = PATCH_ROOT / ".github" / "resources"
 if __name__ == "__main__":
     paths = {
         "PATCH_GUI": PATCH_GUI,
+        "VANILLA_TYPES_GUI": VANILLA_TYPES_GUI,
         "OCR_GUI": OCR_GUI,
         "VANILLA_GUI": VANILLA_GUI,
         "CK3_INSTALL_GUI": CK3_INSTALL_GUI,

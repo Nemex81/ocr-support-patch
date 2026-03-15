@@ -1,17 +1,17 @@
-######################################################
-#################### TITLE VIEW ######################
-######################################################
+# interaction_interfere_in_war_notification.gui — OCR Support Patch — Wrapper (Pattern v1.1)
+# Il branch vanilla è nel type separato: gui/vanilla/interaction_interfere_in_war_notification_patch_vanilla.gui
+# Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1
+# Generato da: tools/assemble_dualmode.py --window interaction_interfere_in_war_notification --mode simple --separate-vanilla
 
 window = {
 	gfxtype = windowgfx
 	name = "interfere_in_war_interaction_notification_window"
 	parentanchor = center
-	position = { 0 40 }
-	size = { 650 700 }
+	size = { 700 100% }
 	layer = middle
+	using = TooltipFocus
 
-	using = Window_Background
-	using = Window_Decoration_Warfare
+	using = Window_Background_Subwindow
 
 	state = {
 		name = _show
@@ -25,96 +25,18 @@ window = {
 		using = Sound_WindowHide_Standard
 	}
 
-	# Datacontext condiviso: evita di duplicare scope tra i due rami
-	datacontext = "[GetVariableSystem]"
 
-	vbox = {
-		using = Window_Margins
-		set_parent_size_to_minimum = yes
-
-		######################################################
-		# MODALITÀ NON VEDENTI (OCR) - DEFAULT
-		# Attiva quando la variabile 'ocr' NON esiste
-		######################################################
-		widget = {
-			name = "interfere_in_war_notification_ocr"
-			visible = "[Not(GetVariableSystem.Exists('ocr'))]"
-			size = { 100% 100% }
-
-			vbox = {
-				using = fullscreen_window
-				using = ocr_margins
-				using = ocr
-				using = Window_Background_No_Edge
-
-				# Header in stile OCR: titolo + close
-				header_pattern = {
-					layoutpolicy_horizontal = expanding
-
-					blockoverride "header_text"
-					{
-						text = "[CharacterInteractionNotificationWindow.GetContextName]"
-					}
-
-					blockoverride "button_close"
-					{
-						onclick = "[CharacterInteractionNotificationWindow.Close]"
-					}
-				}
-
-				# Corpo: messaggio/effects (se previsti) + bottoni
-				vbox = {
-					name = "window_content_ocr"
-					layoutpolicy_horizontal = expanding
-					layoutpolicy_vertical = expanding
-					spacing = 5
-
-					vbox_character_interaction_effects = {
-						visible = "[CharacterInteractionNotificationWindow.GetCharacterInteraction.ShowEffectsInNotification]"
-						datacontext = "[CharacterInteractionNotificationWindow.GetEffectsDescription]"
-					}
-
-					# Area risposte: stesso comportamento dell'originale
-					hbox = {
-						name = "answer_area_ocr"
-						margin_top = 5
-						spacing = 20
-
-						button_text = {
-							name = "reject_button"
-							blockoverride "text" {
-								text = "[CharacterInteractionNotificationWindow.GetAnswerRejectText]"
-							}
-							onclick = "[CharacterInteractionNotificationWindow.Reject]"
-							enabled = "[CharacterInteractionNotificationWindow.CanReject]"
-						}
-
-						button_text = {
-							name = "accept_button"
-							blockoverride "text" {
-								text = "[CharacterInteractionNotificationWindow.GetAnswerAcceptText]"
-							}
-							onclick = "[CharacterInteractionNotificationWindow.Accept]"
-							enabled = "[CharacterInteractionNotificationWindow.CanAccept]"
-						}
-					}
-				}
-			}
-		}
-
-		######################################################
-		# MODALITÀ NORMO VEDENTI (VANILLA)
-		# Attiva quando la variabile 'ocr' ESISTE
-		# Contenuto fedele al tuo file appena pushato
-		######################################################
-		widget = {
-			name = "interfere_in_war_notification_vanilla"
-			visible = "[GetVariableSystem.Exists('ocr')]"
-			size = { 100% 100% }
+	# ============================================================
+	# BLOCCO OCR — testo, screen reader ready
+	# variabile ocr ASSENTE = modalita' non vedente
+	# ============================================================
+	widget = {
+		name = "ocr_interaction_interfere_in_war_notification_container"
+		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		size = { 100% 100% }
 
 			vbox = {
 				using = Window_Margins
-				set_parent_size_to_minimum = yes
 
 				header_pattern_interaction = {
 					layoutpolicy_horizontal = expanding
@@ -166,14 +88,23 @@ window = {
 						button_standard = {
 							name = "reject_button"
 							text = "[CharacterInteractionNotificationWindow.GetAnswerRejectText]"
+							tooltip = "[CharacterInteractionNotificationWindow.GetAnswerRejectText]"
 							align = center|nobaseline
 							onclick = "[CharacterInteractionNotificationWindow.Reject]"
 							enabled = "[CharacterInteractionNotificationWindow.CanReject]"
 						}
 
-						button_primary = {
+						button_primary_text = {
 							name = "accept_button"
-							text = "[CharacterInteractionNotificationWindow.GetAnswerAcceptText]"
+							blockoverride "text" {
+								text = "[CharacterInteractionNotificationWindow.GetAnswerAcceptText]"
+							}
+							blockoverride "disabled" {
+								visible = "[Not(CharacterInteractionNotificationWindow.CanAccept)]"
+							}
+							blockoverride "hotkey" {
+								visible = "[CharacterInteractionNotificationWindow.CanAccept]"
+							}
 							align = center|nobaseline
 							onclick = "[CharacterInteractionNotificationWindow.Accept]"
 							enabled = "[CharacterInteractionNotificationWindow.CanAccept]"
@@ -181,6 +112,11 @@ window = {
 					}
 				}
 			}
-		}
 	}
+
+	# ============================================================
+	# BLOCCO VANILLA — type separato (Pattern v1.1)
+	# visible gestita dentro il type — non aggiungere visible qui
+	# ============================================================
+	interaction_interfere_in_war_notification_patch_vanilla = {}
 }

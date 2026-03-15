@@ -8,7 +8,7 @@ Principio fondamentale: il sistema non inventa nulla.
 - Container vanilla: copia fedele del file CK3 originale
 
 Uso:
-    python tools/assemble_dualmode.py --window <nome_finestra> --mode simple|tabs|complex [--dry-run]
+    python tools/assemble_dualmode.py --window <nome_finestra> --mode simple|tabs|complex [--dry-run] [--separate-vanilla]
 
 Modalità:
     simple  — Pattern A: una sola window, struttura semplice
@@ -16,7 +16,9 @@ Modalità:
     complex — Pattern C/D: window + types + templates separati
 
 Opzioni:
-    --dry-run   Stampa l'output su stdout senza scrivere il file nella patch
+    --dry-run           Stampa l'output su stdout senza scrivere il file nella patch
+    --separate-vanilla  Pattern v1.1: vanilla in type separato in gui/vanilla/
+                        Produce DUE file: wrapper + {nome}_patch_vanilla.gui
 """
 
 import sys
@@ -25,7 +27,7 @@ import argparse
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import OCR_GUI, VANILLA_GUI, PATCH_GUI
+from config import OCR_GUI, VANILLA_GUI, PATCH_GUI, VANILLA_TYPES_GUI
 
 TOGGLE_OCR_OFF = "[Not(GetVariableSystem.Exists('ocr'))]"
 TOGGLE_OCR_ON  = "[GetVariableSystem.Exists('ocr')]"
@@ -36,7 +38,9 @@ TOGGLE_OCR_ON  = "[GetVariableSystem.Exists('ocr')]"
 # ---------------------------------------------------------------------------
 
 def read_file(path: Path) -> list[str]:
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig rimuove automaticamente eventuale BOM iniziale (fbbbf)
+    # presente in alcuni file vanilla/OCR e che romperebbe il parsing di "window = {".
+    with open(path, encoding="utf-8-sig") as f:
         return f.readlines()
 
 
@@ -256,6 +260,83 @@ def build_vanilla_container(container_prefix: str, vanilla_inner: list[str],
 
 # ---------------------------------------------------------------------------
 # Builder — sub-window dual-mode generica
+
+# ---------------------------------------------------------------------------
+# Builder — file type vanilla separato (Pattern v1.1)
+# ---------------------------------------------------------------------------
+
+def build_vanilla_type_file(type_name: str, vanilla_inner: list[str],
+                             window_name: str, mode: str) -> list[str]:
+    """
+    Genera il contenuto del file type separato (Pattern v1.1).
+    Il tipo ha nome '{prefix}_patch_vanilla' dentro il blocco types OCR_PATCH_VANILLA.
+    La guard visible è esplicita dentro il type.
+    """
+    output = [
+        f"# {type_name}.gui — OCR Support Patch — Vanilla type separato (Pattern v1.1)\n",
+        f"# Generato da: tools/assemble_dualmode.py --window {window_name} --mode {mode} --separate-vanilla\n",
+        f"# ATTENZIONE: contenuto vanilla identico al file CK3 originale — non modificare.\n",
+        f"# La guard visible vive QUI — il wrapper istanzia questo type senza visible esplicita.\n",
+        "\n",
+        "types OCR_PATCH_VANILLA {\n",
+        f"\ttype {type_name} = widget {{\n",
+        f"\t\tname = \"vanilla_{type_name}_container\"\n",
+        f"\t\tvisible = \"{TOGGLE_OCR_ON}\"\n",
+        "\n",
+    ]
+    output += indent_lines(vanilla_inner, extra_tabs=2)
+    output += [
+        "\t}\n",
+        "}\n",
+    ]
+    return output
+
+
+def build_wrapper_with_type_ref(window_name: str, type_name: str,
+                                 ocr_lines: list[str], ocr_win: tuple[int, int],
+                                 vanilla_win: tuple[int, int],
+                                 vanilla_header_lines: list[str]) -> list[str]:
+    """
+    Costruisce il wrapper per il pattern v1.1:
+    - header window-level (state, layer, name, size, movable…) dalla finestra vanilla
+    - container OCR inline
+    - istanziazione del type vanilla separato senza visible esplicita
+    """
+    os_idx, oe_idx = ocr_win
+    vs_idx, ve_idx = vanilla_win
+
+    ocr_inner = ocr_lines[os_idx + 1 : oe_idx]
+    prefix = _derive_prefix(window_name)
+
+    # Separa header da body OCR
+    body_start = len(ocr_inner)
+    for i, line in enumerate(ocr_inner):
+        stripped = line.strip()
+        if (stripped.startswith("vbox = {") or stripped.startswith("vbox={")) and \
+                not any(kw in line for kw in ("state", "attachto", "using", "layer")):
+            body_start = i
+            break
+        if stripped.startswith("hbox = {") and i > 5:
+            body_start = i
+            break
+
+    header_lines = ocr_inner[:body_start]
+    body_lines   = ocr_inner[body_start:]
+
+    result = ["window = {\n"]
+    result += header_lines
+    result += build_ocr_container(prefix, body_lines, extra_indent=1)
+    result += [
+        "\n",
+        "\t# ============================================================\n",
+        "\t# BLOCCO VANILLA — type separato (Pattern v1.1)\n",
+        "\t# visible gestita dentro il type — non aggiungere visible qui\n",
+        "\t# ============================================================\n",
+        f"\t{type_name} = {{}}\n",
+        "}\n",
+    ]
+    return result
+
 # ---------------------------------------------------------------------------
 
 def build_sub_window_dual(ocr_lines: list[str],
@@ -545,12 +626,21 @@ def main() -> None:
         "--dry-run", action="store_true",
         help="Stampa l'output su stdout senza scrivere il file nella patch",
     )
+    parser.add_argument(
+        "--separate-vanilla", action="store_true",
+        help="Pattern v1.1: vanilla in type separato in gui/vanilla/. Produce DUE file.",
+    )
     args = parser.parse_args()
 
     window_name  = args.window
     ocr_file     = OCR_GUI / f"{window_name}.gui"
     vanilla_file = VANILLA_GUI / f"{window_name}.gui"
     patch_file   = PATCH_GUI / f"{window_name}.gui"
+
+    # Costanti per il pattern v1.1
+    prefix    = _derive_prefix(window_name)
+    type_name = f"{prefix}_patch_vanilla"
+    type_file = VANILLA_TYPES_GUI / f"{type_name}.gui"
 
     print(f"=== Assemblaggio {window_name}.gui — Dual Mode ({args.mode}) ===\n")
 
@@ -562,6 +652,12 @@ def main() -> None:
         print(f"[ERRORE] File vanilla non trovato:\n  {vanilla_file}")
         sys.exit(1)
 
+    # Crea gui/vanilla/ se necessaria (solo in modalità scrittura)
+    if args.separate_vanilla and not args.dry_run:
+        if not VANILLA_TYPES_GUI.exists():
+            print(f"[INFO] Creazione cartella gui/vanilla/: {VANILLA_TYPES_GUI}")
+            VANILLA_TYPES_GUI.mkdir(parents=True, exist_ok=True)
+
     print(f"Lettura OCR upstream:  {ocr_file}")
     ocr_lines = read_file(ocr_file)
     print(f"  {len(ocr_lines)} righe lette")
@@ -570,7 +666,64 @@ def main() -> None:
     vanilla_lines = read_file(vanilla_file)
     print(f"  {len(vanilla_lines)} righe lette\n")
 
-    # Header commento patch
+    # -----------------------------------------------------------------------
+    # Pattern v1.1 — vanilla type separato
+    # -----------------------------------------------------------------------
+    if args.separate_vanilla:
+        print(f"Assemblaggio ({args.mode}) — Pattern v1.1 (vanilla separato)...")
+        van_wins = find_top_level_windows(vanilla_lines)
+        ocr_wins = find_top_level_windows(ocr_lines)
+        if not van_wins or not ocr_wins:
+            print("[ERRORE] Nessuna window trovata nel file OCR o vanilla.")
+            sys.exit(1)
+
+        # Header wrapper
+        wrapper_output = [
+            f"# {window_name}.gui — OCR Support Patch — Wrapper (Pattern v1.1)\n",
+            f"# Il branch vanilla è nel type separato: gui/vanilla/{type_name}.gui\n",
+            f"# Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1\n",
+            f"# Generato da: tools/assemble_dualmode.py --window {window_name}"
+            f" --mode {args.mode} --separate-vanilla\n",
+            "\n",
+        ]
+        wrapper_output += build_wrapper_with_type_ref(
+            window_name, type_name,
+            ocr_lines, (ocr_wins[0][0], ocr_wins[0][1]),
+            (van_wins[0][0], van_wins[0][1]),
+            [],
+        )
+
+        # File type vanilla
+        vanilla_inner = vanilla_lines[van_wins[0][0] + 1 : van_wins[0][1]]
+        type_output = build_vanilla_type_file(type_name, vanilla_inner, window_name, args.mode)
+
+        print(f"\nRighe wrapper:    {len(wrapper_output)}")
+        print(f"Righe type file:  {len(type_output)}")
+
+        if args.dry_run:
+            print("\n[DRY-RUN] Nessun file scritto.\n")
+            print("=== PREVIEW WRAPPER ===")
+            print("".join(wrapper_output[:60]))
+            print("\n=== PREVIEW TYPE FILE VANILLA ===")
+            print("".join(type_output[:60]))
+            return
+
+        print(f"\nScrittura wrapper: {patch_file}")
+        patch_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(patch_file, "w", encoding="utf-8") as f:
+            f.writelines(wrapper_output)
+        print(f"  SCRITTO — {patch_file.stat().st_size // 1024} KB")
+
+        print(f"Scrittura type:    {type_file}")
+        with open(type_file, "w", encoding="utf-8") as f:
+            f.writelines(type_output)
+        print(f"  SCRITTO — {type_file.stat().st_size // 1024} KB")
+        print(f"\n=== Completato (v1.1). Eseguire audit.py --window {window_name} per la verifica. ===")
+        return
+
+    # -----------------------------------------------------------------------
+    # Pattern v1.0 — inline (comportamento originale)
+    # -----------------------------------------------------------------------
     output = [
         f"# {window_name}.gui — OCR Support Patch\n",
         f"# Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1\n",

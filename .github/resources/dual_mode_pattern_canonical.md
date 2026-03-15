@@ -108,3 +108,98 @@ types example_action_button_vanilla = button {
 - [ ] Ogni bottone OCR ha tooltip
 - [ ] Nessun nome widget duplicato a stesso livello
 - [ ] Nessun scope non verificato nella whitelist
+
+---
+
+## Pattern v1.1 — Type-Separated Vanilla
+
+Architettura alternativa supportata. Il branch vanilla viene spostato in un type `.gui` separato
+nella sottocartella `gui/vanilla/`, alleggerendo il wrapper principale.
+
+**Quando usare il pattern separato:**
+- File wrapper > 2000 righe E branch vanilla occupa > 40% del totale → **separato consigliato**
+- File < 500 righe o beneficio minimo → **inline preferibile**
+
+**Naming convention ufficiale** (non derogare, rischio collisione con Agamidae):
+
+| Elemento | Convenzione | Esempio |
+|----------|-------------|---------|
+| Folder type file | `ocr_support_compatibility_pach/gui/vanilla/` | — |
+| Nome type | `{finestra_senza_window}_patch_vanilla` | `character_patch_vanilla` |
+| Nome file type | `{finestra_senza_window}_patch_vanilla.gui` | `character_patch_vanilla.gui` |
+| Blocco types | `types OCR_PATCH_VANILLA { }` | — |
+| Guard visibilità | `visible = "[GetVariableSystem.Exists('ocr')]"` esplicita | — |
+
+> ⚠️ Non usare mai: suffisso `_old`, namespace `VANILLA` puro, suffisso `_vanilla` senza `_patch_`.
+> Questi nomi collidono con pattern Agamidae (`types VANILLA {}`, type `character_old = window {}`).
+
+### Template wrapper (file principale)
+
+```jomini
+# File: ocr_support_compatibility_pach/gui/window_esempio.gui
+# Pattern v1.1 — il branch vanilla è in gui/vanilla/esempio_patch_vanilla.gui
+
+window = {
+    name = "window_esempio"
+    # window-level: states, layer, movable, widgetid, datacontext — restano qui
+    state = { name = _show ... }
+    state = { name = _hide ... }
+
+    # =============================================
+    # BLOCCO OCR — inline nel wrapper come sempre
+    # =============================================
+    widget = {
+        name = "ocr_esempio_container"
+        visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+        size = { 100% 100% }
+
+        vbox = {
+            # ... contenuto OCR ...
+        }
+    }
+
+    # =============================================
+    # BLOCCO VANILLA — istanziazione del type separato
+    # visible è gestita DENTRO il type, non qui
+    # =============================================
+    esempio_patch_vanilla = {}
+}
+```
+
+### Template file type separato
+
+```jomini
+# File: ocr_support_compatibility_pach/gui/vanilla/esempio_patch_vanilla.gui
+# Solo il branch vanilla — nessun contenuto OCR in questo file
+
+types OCR_PATCH_VANILLA {
+    type esempio_patch_vanilla = widget {
+        name = "vanilla_esempio_container"
+        visible = "[GetVariableSystem.Exists('ocr')]"
+
+        # Incollare qui il contenuto vanilla originale dal file CK3
+        # senza nessuna modifica — identico al vanilla
+    }
+}
+```
+
+### Regole strutturali del type separato
+
+- Il type separato contiene **solo** il layout vanilla — nessun contenuto OCR
+- La guard `visible = "[GetVariableSystem.Exists('ocr')]"` è **obbligatoria** dentro il type
+- Il type **non deve** contenere: `state`, `widgetid`, `layer`, `attachto`, `movable`
+  (queste proprietà appartengono al wrapper)
+- Il wrapper non aggiunge una `visible` sull'istanziazione `esempio_patch_vanilla = {}` —
+  la visibilità è gestita esclusivamente dentro il type
+- Usare `widget` come tipo base di default; usare `window` solo se documentazione tecnica
+  specifica lo richiede e dopo verifica esplicita
+
+### Checklist pre-commit aggiuntiva (pattern v1.1)
+
+- [ ] File type presente in `gui/vanilla/{nome}_patch_vanilla.gui`
+- [ ] Blocco `types OCR_PATCH_VANILLA { }` nel file type
+- [ ] Guard `visible = "[GetVariableSystem.Exists('ocr')]"` presente nel type
+- [ ] Nessuna proprietà window-level (`state`, `layer`, `widgetid`) nel type separato
+- [ ] Istanziazione nel wrapper: `{nome}_patch_vanilla = {}` senza `visible` esplicita
+- [ ] Contenuto vanilla nel type identico al file CK3 originale — nessuna modifica
+- [ ] `audit.py` riconosce la coppia wrapper + type e produce report unificato

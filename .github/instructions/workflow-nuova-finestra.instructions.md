@@ -38,19 +38,29 @@ Sequenza operativa standard. Seguire nell'ordine indicato senza saltare passi.
      (path effettivo letto da `tools/config.py` — VANILLA_GUI)
    - Se uno dei due manca: segnalare al modder, STOP
 2. **DRY-RUN obbligatorio** — genera bozza senza scrivere:
-   `python tools/assemble_dualmode.py --window nome_file --mode X --dry-run`
+   - Pattern v1.0 (inline):
+     `python tools/assemble_dualmode.py --window nome_file --mode X --dry-run`
+   - Pattern v1.1 (type-separated — se file > 2000 righe E vanilla > 40%):
+     `python tools/assemble_dualmode.py --window nome_file --mode X --separate-vanilla --dry-run`
    Mostrare l'output completo al modder e attendere approvazione (CP1)
-3. **Solo dopo CP1** — scrivi il file nella patch:
-   `python tools/assemble_dualmode.py --window nome_file --mode X`
+   > ⚠️ CP1 con pattern v1.1: il modder approva **due** file — wrapper e file type vanilla
+3. **Solo dopo CP1** — scrivi il/i file nella patch:
+   - Pattern v1.0: `python tools/assemble_dualmode.py --window nome_file --mode X`
+   - Pattern v1.1: `python tools/assemble_dualmode.py --window nome_file --mode X --separate-vanilla`
 4. Verifica che le due `visible` siano mutuamente esclusive nel file scritto
+   - Pattern v1.1: verificare che la `visible` sia dentro il type separato, **non** sul wrapper
 5. `python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/nome_file.gui`
    → aggiungi alla whitelist `.github/resources/jomini_scope_whitelist.md` tutti i binding ASSENTI
 6. `python tools/audit.py --window nome_file`
    → gate completo: validator (CRITICO/ATTENZIONE) + scope whitelist + fedelta' vanilla (advisory)
+   → con pattern v1.1: audit.py verifica la coppia wrapper + type; il verdetto è cumulativo
    → risolvi tutti i CRITICO prima di passare ai revisori
    → avvertenze CON AVVERTENZE richiedono sign-off esplicito dei revisori o fix
+   → se file type atteso ma assente: ATTENZIONE (non critico) ma da risolvere prima del commit
    → mostrare verdetto completo al modder (CP2)
+   > ⚠️ CP2 con pattern v1.1: il modder vede il verdetto unificato coppia wrapper+type
 7. Esegui la checklist pre-commit in `gui-jomini.instructions.md`
+   - Se pattern v1.1: eseguire anche la checklist aggiuntiva "pattern v1.1" dello stesso file
 8. Aggiorna `gui-conversion-progress.instructions.md` spostando la voce nella sezione corretta:
     - **Convertite — Validate**: se audit.py = OK
     - **Convertite — Revisione Necessaria**: se audit.py = CON AVVERTENZE
