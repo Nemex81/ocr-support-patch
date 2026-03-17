@@ -316,7 +316,6 @@ window = {
 		name = "vanilla_decisions_view_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "decisions_view"
 			parentanchor = top|right
 			layer = windows_layer
 			movable = no
@@ -612,7 +611,7 @@ types Decisions
 				parentanchor = right|top
 				size = { 45% 100% }
 				mirror = horizontal
-				
+
 				enabled = no
 
 				alpha = 0.6
@@ -632,7 +631,7 @@ types Decisions
 		margin_widget = {
 			parentanchor = center
 			size = { 100% 100% }
-			
+
 			margin = { 2 2 }
 
 			icon = {

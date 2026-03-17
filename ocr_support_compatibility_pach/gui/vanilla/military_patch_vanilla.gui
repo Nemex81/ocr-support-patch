@@ -8,7 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_military_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "military_view"
 			datacontext = "[GetVariableSystem]"
 			datacontext = "[GetPlayer]"
 

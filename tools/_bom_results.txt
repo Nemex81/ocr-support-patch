@@ -1,0 +1,10 @@
+STRIPPED: window_culture.gui (65432 -> 65429)
+STRIPPED: window_military.gui (97863 -> 97860)
+STRIPPED: window_faith.gui (53453 -> 53450)
+STRIPPED: window_inventory.gui (88881 -> 88878)
+
+--- VERIFICA ---
+window_culture.gui : OK senza BOM (65429 bytes)
+window_military.gui : OK senza BOM (97860 bytes)
+window_faith.gui : OK senza BOM (53450 bytes)
+window_inventory.gui : OK senza BOM (88878 bytes)

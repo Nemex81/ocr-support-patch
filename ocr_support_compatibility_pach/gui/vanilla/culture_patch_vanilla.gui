@@ -8,7 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_culture_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "culture_window"
 			datacontext = "[CultureWindow.GetCulture]"
 			datacontext = "[Culture.GetReformation]"
 

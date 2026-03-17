@@ -648,11 +648,7 @@ window = {
 		name = "vanilla_intrigue_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "intrigue_window"
-			widgetid = "intrigue_window"
 			parentanchor = top|right
-			layer = windows_layer
-			movable = no
 
 			using = Window_Size_MainTab
 

@@ -260,12 +260,8 @@ window = {
 		name = "vanilla_character_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "character_window"
-			widgetid = "character_window"
 			datacontext = "[GetVariableSystem]"
 			datacontext = "[CharacterWindow.GetCharacter]"
-			movable = no
-			layer = middle
 			allow_outside = yes
 
 			using = Window_Size_Sidebar
@@ -335,7 +331,7 @@ window = {
 
 						using = Animation_Character_Window_Refresh_Short
 
-						blockoverride "portrait_button" 
+						blockoverride "portrait_button"
 						{
 							using = tooltip_es
 							tooltip_offset = { -50 0 }
@@ -6768,6 +6764,11 @@ types CharOCRTypes {
 		tooltip = CHARACTER_WINDOW_MILITARY_STRENGTH_TOOLTIP
 		visible = "[Character.HasLandedTitles]"
 	}
+}
+
+template "expanded_view" {
+	onclick = "[GetScriptedGui('expanded_view').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+	onclick = "[GetScriptedGui('holdings_list').Execute( GuiScope.SetRoot( Character.MakeScope ).AddScope('player', GetPlayer.MakeScope).End )]"
 }
 
 template Background_Area_Titles

@@ -3,6 +3,77 @@
 # Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1
 # Generato da: tools/assemble_dualmode.py --window window_court --mode complex --separate-vanilla
 
+types PrisonTypes
+{
+
+	type prison_interactions_hbox = hbox {
+		spacing = 1
+
+		button_round  = {
+			name = "ransom"
+			enabled = "[CharacterListItem.GetBool('can_ransom')]"
+
+			button_prison_ransom = {
+				parentanchor = center
+				onclick = "[CharacterListItem.OnClick('ransom')]"
+				enabled = "[CharacterListItem.GetBool('can_ransom')]"
+				tooltip = "[CharacterListItem.GetText('ransom_tooltip')]"
+				using = tooltip_se
+			}
+		}
+
+		button_round  = {
+			name = "release"
+			enabled = "[CharacterListItem.GetBool('can_release')]"
+
+			button_prison_release = {
+				parentanchor = center
+				onclick = "[CharacterListItem.OnClick('release')]"
+				enabled = "[CharacterListItem.GetBool('can_release')]"
+				tooltip = "[CharacterListItem.GetText('release_tooltip')]"
+				using = tooltip_se
+			}
+		}
+
+		button_round  = {
+			name = "execute"
+			enabled = "[CharacterListItem.GetBool('can_execute')]"
+
+			button_prison_execute = {
+				parentanchor = center
+				onclick = "[CharacterListItem.OnClick('execute')]"
+				enabled = "[CharacterListItem.GetBool('can_execute')]"
+				tooltip = "[CharacterListItem.GetText('execute_tooltip')]"
+				using = tooltip_se
+			}
+		}
+
+		divider_light = {
+			layoutpolicy_vertical = expanding
+		}
+
+		button_round = {
+
+			datacontext = "[CharacterListItem.GetCharacter]"
+
+			tooltip = "PRISON_INTERACTIONS_BUTTON_TOOLTIP"
+			tooltip_visible = "[Not(IsInteractionMenuOpenForCharacterWithFilter(Character.Self, 'interaction_category_prison'))]"
+			using = tooltip_se
+
+			onclick = "[ToggleFilteredCharacterInteractionMenu(Character.Self, 'interaction_category_prison')]"
+
+			button_icon = {
+				alwaystransparent = yes
+				parentanchor = center
+				size = { 30 30 }
+				texture = "gfx/interface/icons/flat_icons/character_interactions.dds"
+			}
+		}
+	}
+
+
+}
+
 window = {
 	name = "court_window"
 	movable = no

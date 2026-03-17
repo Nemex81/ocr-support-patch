@@ -8,8 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_interaction_interfere_in_war_notification_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "interfere_in_war_interaction_notification_window"
-
 			using = Window_Background
 			using = Window_Decoration_Warfare
 

@@ -8,7 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_army_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "army_window"
 			datacontext = "[ArmyWindow.GetArmy]"
 
 			filter_mouse = left|right
@@ -175,7 +174,7 @@ types OCR_PATCH_VANILLA {
 							text_single = {
 								visible = "[GreaterThan_int32(GetDataModelSize(ArmyWindow.GetSelectedUnitItems), '(int32)8')]"
 								parentanchor = center
-						
+
 								text = "[GetNumberAbove_int32( GetDataModelSize(ArmyWindow.GetSelectedUnitItems), '(int32)8' )|=]"
 								align = center|nobaseline
 								default_format = "#Clickable"
@@ -1446,4 +1445,3 @@ types OCR_PATCH_VANILLA {
 				}
 			}
 	}
-}

@@ -8,7 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_my_realm_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "my_realm_window"
 			datacontext = "[GetVariableSystem]"
 			datacontext = "[GetPlayer]"
 

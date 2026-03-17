@@ -3,6 +3,1196 @@
 # Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1
 # Generato da: tools/assemble_dualmode.py --window window_army --mode complex --separate-vanilla
 
+types FortTypes {
+
+	type raid_target_item = button_text {
+		layoutpolicy_horizontal = expanding
+		datacontext = "[Scope.GetProvince.GetTitle]"
+		datacontext = "[Scope.GetProvince]"
+		using = send_army_click
+		using = title_pan_right
+
+		blockoverride "text" {
+		}
+
+		blockoverride "extra" {
+			flowcontainer = {
+				ignoreinvisible = yes
+
+				text_single = {
+					raw_text = "Can't siege"
+					block "garrison" {
+						visible = no
+					}
+				}
+				text_single = {
+					raw_text = "[Scope.GetProvince.GetRaidLoot|0] loot,"
+				}
+
+				text_single = {
+					block "name" {
+						raw_text = "[Scope.GetProvince.GetName],"
+					}
+				}
+
+				spacing = 3
+
+				text_single = {
+					datacontext = "[Scope.GetProvince]"
+					visible = "[Not(ObjectsEqual(Army.GetLocation.GetID, Province.GetID))]"
+					raw_text = "ArmyProvinceDistance"
+				}
+
+				text_single = {
+					datacontext = "[Scope.GetProvince]"
+					visible = "[ObjectsEqual(Army.GetLocation.GetID, Province.GetID)]"
+					raw_text = "Here."
+				}
+
+				text_single = {
+					raw_text = "need more than"
+					block "garrison" {
+						visible = no
+					}
+				}
+
+				text_single = {
+					visible = "[GreaterThan_int32(Scope.GetProvince.GetHolding.GetCurrentGarrisonSize, Army.GetComposition.GetCurrentNumberOfSoldiers)]"
+					raw_text = "[Scope.GetProvince.GetHolding.GetCurrentGarrisonSize] garrison."
+				}
+
+				text_single = {
+					visible = "[Scope.GetProvince.IsRecentlyLooted]"
+					raw_text = "Unavailable until [Scope.GetProvince.GetEndOfRecentlyLooted.GetString],"
+				}
+
+				flowcontainer = {
+					ignoreinvisible = yes
+					spacing = 3
+					visible = "[Title.GetHolder.IsIndependentRuler]"
+
+
+					button_text = {
+						datacontext = "[Title.GetHolder]"
+						using = char_click
+						blockoverride "margins" {}
+					    blockoverride "text" {
+					        raw_text = "in [Character.GetPrimaryTitle.GetNameNoTierNoTooltip]."
+					    }
+					}
+
+					text_single = {
+						visible = "[GreaterThan_int32( FixedPointToInt(Title.GetHolder.MakeScope.ScriptValue('current_military_strength_sval')), Army.GetComposition.GetCurrentNumberOfSoldiers)]"
+						# raw_text = "Owner has [Title.GetHolder.GetMilitaryStrengthText] soldiers,"
+						raw_text = "Owner has [Title.GetHolder.MakeScope.ScriptValue('current_military_strength_sval')|0] men"
+					}
+				}
+
+				flowcontainer = {
+					visible = "[Not(Title.GetHolder.IsIndependentRuler)]"
+
+					text_single = {
+						visible = "[GreaterThan_int32( FixedPointToInt(Title.GetHolder.GetTopLiege.MakeScope.ScriptValue('current_military_strength_sval')), Army.GetComposition.GetCurrentNumberOfSoldiers)]"
+						raw_text = "Liege has [Title.GetHolder.GetTopLiege.GetMilitaryStrengthText] soldiers,"
+					}
+
+					button_text = {
+						datacontext = "[Title.GetHolder.GetTopLiege]"
+						using = char_click
+						blockoverride "margins" {}
+					    blockoverride "text" {
+					        raw_text = "[Character.GetPrimaryTitle.GetNameNoTierNoTooltip]"
+					    }
+					}
+				}
+				dot = {
+					margin_left = -3
+				}
+			}
+		}
+	}
+
+	type hostile_fort_item = button {
+		size = { 500 22 }
+		layoutpolicy_horizontal = expanding
+		datacontext = "[Scope.GetProvince]"
+
+		button_ignore = none
+		# onclick = "[OpenGameViewData('holding_view', IntToUnsigned(Scope.GetProvince.GetID))]"
+		using = send_army_click
+
+		hbox = {
+			# background = { using = Background_Area_Light }
+			layoutpolicy_horizontal = expanding
+			spacing = 3
+
+			# button_text = {
+			#     blockoverride "text" {
+			#         raw_text = "Teleport"
+			#     }
+			# 	onclick = "[GetScriptedGui('teleport_army').Execute( GuiScope.SetRoot( Army.MakeScope ).AddScope('target', Province.MakeScope).End )]"
+			# }
+
+			block "controller" {
+				# text_single = {
+				# 	raw_text = "You control"
+				# 	visible = "[GetScriptedGui('you_control').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target', Province.MakeScope).End )]"
+				# }
+				#
+				# text_single = {
+				# 	raw_text = "Enemy controls"
+				# 	visible = "[Not(GetScriptedGui('you_control').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target', Province.MakeScope).End )]"
+				# }
+				#
+				# text_single = {
+				# 	raw_text = ""
+				# }
+			}
+
+			# text_single = {
+			# 	raw_text = "War target "
+			# 	visible = "[GetScriptedGui('is_war_target').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope('target', Province.MakeScope).End )]"
+			# }
+			hbox = {
+				visible = "[Not(ObjectsEqual(Army.GetLocation.GetID, Province.GetID))]"
+				spacing = 3
+
+				text_single = {
+					raw_text = "ArmyProvinceDistance"
+				}
+			}
+
+			text_single = {
+				raw_text = "[Province.GetCounty.GetTitle.GetNameNoTierNoTooltip], "
+			}
+
+			text_single = {
+				raw_text = "[Province.GetTerrain.GetName]"
+			}
+			# comma = {
+			# 	visible = "[EqualTo_CFixedPoint( Province.GetCounty.GetTitle.MakeScope.ScriptValue('num_of_forts_in_county'), '(CFixedPoint)1')]"
+			# }
+
+			text_single = {
+				# visible = "[GreaterThan_CFixedPoint( Province.GetCounty.GetTitle.MakeScope.ScriptValue('num_of_forts_in_county'), '(CFixedPoint)1')]"
+				raw_text = "of [Province.GetTitle.GetNameNoTierNoTooltip]."
+			}
+
+			# text_single = {
+			# 	raw_text = "[Province.GetController.GetTopLiege.GetPrimaryTitle.GetNameNoTierNoTooltip]."
+			# }
+
+			hbox = {
+				visible = "[Province.IsOccupied]"
+				text_single = {
+					raw_text = "Occupied by [Province.GetController.GetPrimaryTitle.GetNameNoTierNoTooltip],"
+					visible = "[And(Province.IsOccupied, Not(Province.GetController.IsLocalPlayer))]"
+				}
+				text_single = {
+					visible = "[And(Province.IsOccupied, Province.GetController.IsLocalPlayer)]"
+					raw_text = "Occupied by you."
+				}
+			}
+
+			text_single = {
+				visible = "[Province.HasSiege]"
+				raw_text = "Siege, [Province.GetSiege.GetProgress|0]%."
+			}
+		}
+	}
+
+	type raid_goto_template = button_text {
+		using = send_army_click
+		blockoverride "text" {
+			raw_text = "Open raid target"
+		}
+	}
+}
+
+types ArmyWindow
+{
+	type army_location = flowcontainer {
+		ignoreinvisible = yes
+		flowcontainer = {
+			visible = "[Not(Army.IsEmbarked)]"
+			spacing = 3
+			text_single = {
+				raw_text = "[Army.GetLocation.GetCounty.GetTitle.GetNameNoTierNoTooltip]."
+			}
+			text_single = {
+				raw_text = "[Army.GetLocation.GetTerrain.GetName] of"
+			}
+			text_single = {
+				raw_text = "[Army.GetLocation.GetTitle.GetNameNoTierNoTooltip],"
+			}
+		}
+
+		text_single = {
+			visible = "[Army.IsEmbarked]"
+			raw_text = "[Army.GetLocation.GetNameNoTooltip]."
+		}
+	}
+	type button_holding_army = button_text {
+		layoutpolicy_horizontal = expanding
+		datacontext = "[Scope.GetProvince]"
+		datacontext = "[Province.GetHolding]"
+		using = send_army_click
+		blockoverride "extra" {
+			text_single = {
+				visible = "[And(And(Army.IsRaidArmy, Not(Holding.IsEmpty)), Not(ObjectsEqual(Character.Self, GetPlayer.GetTopLiege)))]" #TODO add immunity
+				datacontext = "[Province.GetCounty.GetTitle.GetHolder.GetTopLiege]"
+				raw_text = "[Province.GetRaidLoot|0] loot,"
+			}
+
+			text_single = {
+				visible = "[GreaterThan_CFixedPoint(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('potential_enemies_in_the_province'), '(CFixedPoint)0')]"
+				raw_text = "[GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('potential_enemies_in_the_province')] owner's men."
+			}
+
+			text_single = {
+				visible = "[GreaterThan_CFixedPoint(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('enemies_in_the_province'), '(CFixedPoint)0')]"
+				raw_text = "[GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('enemies_in_the_province')] enemies."
+			}
+
+
+			text_single = {
+				raw_text = "[Select_CString(Holding.IsEmpty, Province.GetTerrain.GetName, Holding.GetPrimaryBuildingType.GetTypeName)] of [Holding.GetNameNoTooltip],"
+			}
+			text_single = {
+				visible = "[Not(Holding.IsEmpty)]"
+				raw_text = "[Province.GetTerrain.GetName],"
+			}
+			text_single = {
+				raw_text = "[GuiScope.SetRoot(Army.GetLocation.MakeScope).AddScope('second', Scope.GetProvince.MakeScope).Custom('province_direction')],"
+			}
+			text_single = {
+				datacontext = "[Province.GetCounty.GetTitle.GetHolder.GetTopLiege]"
+				visible = "[Not(ObjectsEqual(Character.Self, GetPlayer.GetTopLiege))]"
+				raw_text = "in [Character.GetPrimaryTitle.GetNameNoTierNoTooltip]."
+			}
+			text_single = {
+				datacontext = "[Province.GetCounty.GetTitle.GetHolder.GetTopLiege]"
+				visible = "[ObjectsEqual(Character.Self, GetPlayer.GetTopLiege))]"
+				raw_text = "in your realm."
+			}
+			container = {
+				ignoreinvisible = yes
+				visible = "[And(Army.IsRaidArmy, Not(Holding.IsEmpty))]"
+				text_single = {
+					datacontext = "[Province.GetCounty.GetTitle.GetHolder.GetTopLiege]"
+					visible = "[Not(ObjectsEqual(Character.Self, GetPlayer.GetTopLiege))]"
+					raw_text = "Owner has [Round( Character.MakeScope.ScriptValue('current_military_strength_sval'))] men."
+				}
+			}
+		}
+	}
+
+	type button_province_army = button_text {
+		layoutpolicy_horizontal = expanding
+		datacontext = "[Scope.GetProvince]"
+		datacontext = "[Province.GetHolding]"
+		using = send_army_click
+		blockoverride "extra" {
+			text_single = {
+				visible = "[And(And(Army.IsRaidArmy, Not(Holding.IsEmpty)), Not(ObjectsEqual(Character.Self, GetPlayer.GetTopLiege)))]" #TODO add immunity
+				datacontext = "[Province.GetCounty.GetTitle.GetHolder.GetTopLiege]"
+				raw_text = "[Province.GetRaidLoot|0] loot,"
+			}
+
+			flowcontainer = {
+			    ignoreinvisible = yes
+				direction = vertical
+				visible = "[ShowRoot('is_land', Province)]"
+
+				text_single = {
+					visible = "[GreaterThan_CFixedPoint(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('potential_enemies_in_the_province'), '(CFixedPoint)0')]"
+					raw_text = "[GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('potential_enemies_in_the_province')] owner's men."
+				}
+
+				text_single = {
+					visible = "[GreaterThan_CFixedPoint(GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('enemies_in_the_province'), '(CFixedPoint)0')]"
+					raw_text = "[GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('enemies_in_the_province')] enemies."
+				}
+			}
+
+			text_single = {
+				visible = "[ShowRoot('is_river', Province)]"
+				raw_text = "River [Province.GetNameNoTooltip],"
+			}
+
+			text_single = {
+				visible = "[ShowRoot('is_sea', Province)]"
+				raw_text = "[Province.GetNameNoTooltip],"
+			}
+
+			flowcontainer = {
+			    ignoreinvisible = yes
+				visible = "[ShowRoot('is_land', Province)]"
+				spacing = 3
+
+				text_single = {
+					raw_text = "[Select_CString(Holding.IsEmpty, Province.GetTerrain.GetNameNoTooltip, Holding.GetPrimaryBuildingType.GetTypeName)] of [Holding.GetNameNoTooltip],"
+				}
+				text_single = {
+					visible = "[Not(Holding.IsEmpty)]"
+					raw_text = "[Province.GetTerrain.GetNameNoTooltip],"
+				}
+			}
+
+			text_single = {
+				visible = "[Not(ObjectsEqual(Army.GetLocation.GetID, Province.GetID))]"
+				raw_text = "[DistanceTo(Army.GetLocation, Province)|0] [DaysTo(Army.GetLocation, Province)] [Direction(Army.GetLocation, Province)],"
+			}
+			flowcontainer = {
+			    ignoreinvisible = yes
+			    direction = vertical
+				visible = "[ShowRoot('is_land', Province)]"
+
+				text_single = {
+					datacontext = "[Province.GetCounty.GetTitle.GetHolder.GetTopLiege]"
+					visible = "[Not(ObjectsEqual(Character.Self, GetPlayer.GetTopLiege))]"
+					raw_text = "in [Character.GetPrimaryTitle.GetNameNoTierNoTooltip]."
+				}
+				text_single = {
+					datacontext = "[Province.GetCounty.GetTitle.GetHolder.GetTopLiege]"
+					visible = "[ObjectsEqual(Character.Self, GetPlayer.GetTopLiege))]"
+					raw_text = "in your realm."
+				}
+			}
+			container = {
+				ignoreinvisible = yes
+				visible = "[And(Army.IsRaidArmy, Not(Holding.IsEmpty))]"
+				text_single = {
+					datacontext = "[Province.GetCounty.GetTitle.GetHolder.GetTopLiege]"
+					visible = "[Not(ObjectsEqual(Character.Self, GetPlayer.GetTopLiege))]"
+					raw_text = "Owner has [Round( Character.MakeScope.ScriptValue('current_military_strength_sval'))] men."
+				}
+			}
+		}
+	}
+
+	type multi_unit_button = button {
+		gfxtype = updownframedbuttongfx
+		framesize = { 50 50 }
+		onclick = "[SelectedUnitItem.OnClick]"
+		onrightclick = "[SelectedUnitItem.OnRightClick]"
+		button_ignore = none
+		down = "[SelectedUnitItem.IsShown]"
+		effectname = "NoHighlight"
+
+		upframe = 1
+		overframe = 2
+		downframe = 3
+	}
+
+	type army_quality_icon = icon {
+		name = "quality_icon"
+		texture = "gfx/interface/icons/army_quality_icon.dds"
+		framesize = { 32 32 }
+		size = { 22 22 }
+		frame = "[ArmyComposition.CalcQualityLevel]"
+		tooltip = "[ArmyComposition.GetArmyQualityName|T]"
+	}
+
+	type unraised_army_quality_icon = icon {
+		name = "quality_icon"
+		texture = "gfx/interface/icons/army_quality_icon.dds"
+		framesize = { 32 32 }
+		size = { 22 22 }
+		frame = "[ArmyComposition.CalcUnraisedQualityLevel]"
+		tooltip = "[ArmyComposition.GetUnraisedArmyQualityName|T]"
+	}
+
+	type soldiers_and_quality_big = hbox {
+		margin = { 0 2 }
+		#TODO check
+		# margin_right = 20
+		spacing = 5
+
+		vbox = {
+			spacing = 2
+			layoutpolicy_vertical = expanding
+
+			hbox = {
+				text_single = {
+					name = "quality_label"
+					raw_text = "[ArmyComposition.GetArmyQualityName]."
+					tooltip = "[ArmyComposition.GetArmyCompositionTooltip]"
+				}
+				text_single = {
+					raw_text = " [Subtract_int32(ArmyComposition.GetMaxNumberOfSoldiers, ArmyComposition.GetCurrentNumberOfSoldiers)] men missing."
+					visible = "[GreaterThan_int32(ArmyComposition.GetMaxNumberOfSoldiers, ArmyComposition.GetCurrentNumberOfSoldiers)]"
+				}
+			}
+		}
+	}
+
+	type hbox_soldiers_and_quality_small_core = hbox
+	{
+		tooltip = "[ArmyComposition.GetArmyCompositionTooltip]"
+
+		icon = {
+			name = "icon_soldier"
+			texture = "gfx/interface/icons/icon_soldier.dds"
+			size = { 30 30 }
+		}
+
+		vbox = {
+
+			text_single = {
+				name = "strength"
+				text = "[ArmyComposition.GetSoldierCountString]"
+				default_format = "#high"
+				align = left|nobaseline
+				using = Font_Size_Medium
+			}
+
+			progressbar_standard = {
+				name = "soldiers_max"
+				visible = "[And( NotEqualTo_int32(ArmyComposition.GetCurrentNumberOfSoldiers, ArmyComposition.GetMaxNumberOfSoldiers), NotEqualTo_int32(ArmyComposition.GetMaxNumberOfSoldiers, '(int32)0' ) )]"
+
+				block "spacing"
+				{
+					size = { 50 8 }
+				}
+
+				min = 0
+				max = "[IntToFloat(ArmyComposition.GetMaxNumberOfSoldiers)]"
+				value = "[IntToFloat(ArmyComposition.GetCurrentNumberOfSoldiers)]"
+			}
+		}
+
+		army_quality_icon = {
+			tooltip_visible = no
+		}
+	}
+
+	type hbox_soldiers_and_quality_small = hbox
+	{
+		margin = {5 5}
+		spacing = 5
+
+		tooltip = "[ArmyComposition.GetArmyCompositionTooltip]"
+
+		expand = {
+			layoutpolicy_horizontal = expanding
+		}
+
+		hbox_soldiers_and_quality_small_core = {
+			tooltip = ""
+		}
+
+		expand = {
+			layoutpolicy_horizontal = expanding
+		}
+	}
+
+	type hbox_reorg_regiment_entry_core_ocr = flowcontainer {
+	    ignoreinvisible = yes
+		spacing = 4
+
+		text_single = {
+			name = "soldiers"
+			raw_text = "[RegimentReorgEntry.GetSoldierCount]"
+			visible = "[Not( Character.IsValid )]"
+		}
+
+		text_single = {
+			name = "prowess"
+			visible = "[Character.IsValid]"
+			raw_text = "[Character.GetSkill( 'prowess' )] prowess,"
+		}
+
+		text_single = {
+			name = "name"
+			raw_text = "[RegimentReorgEntry.GetName],"
+		}
+
+		text_single = {
+			raw_text = "from [ArmyRegiment.GetFromVassal.GetNameNoTooltip]."
+			visible = "[ArmyRegiment.GetFromVassal.IsValid]"
+		}
+
+		text_single = {
+			raw_text = "Hired."
+			visible = "[RegimentReorgEntry.ShowCoA]"
+		}
+
+		text_single = {
+			raw_text = "Event troops."
+			visible = "[ArmyRegiment.IsEventTroops]"
+			tooltip = "TT_REORG_EVENT_TROOPS"
+		}
+
+		flowcontainer = {
+		    ignoreinvisible = yes
+			visible = "[Not( Character.IsValid )]"
+
+			text_single = {
+				raw_text = "[Subtract_int32(RegimentReorgEntry.GetMaxSoldierCount, RegimentReorgEntry.GetSoldierCount)] missing."
+				visible = "[GreaterThan_int32(RegimentReorgEntry.GetMaxSoldierCount, RegimentReorgEntry.GetSoldierCount)]"
+			}
+		}
+	}
+
+	type move_regiment = button_text {
+		datacontext = "[RegimentReorgEntry.GetKnight]"
+		datacontext = "[RegimentReorgEntry.GetRegiment]"
+		layoutpolicy_horizontal = expanding
+
+		blockoverride "text" {
+			raw_text = ""
+		}
+
+		blockoverride "extra" {
+			hbox_reorg_regiment_entry_core_ocr = { }
+		}
+		block "onclick" {
+			onclick = "[RegimentReorgEntry.MoveRegiment]"
+		}
+	}
+
+	type hbox_reorg_regiment_entry_core = hbox
+	{
+		datacontext = "[RegimentReorgEntry.GetKnight]"
+		datacontext = "[RegimentReorgEntry.GetRegiment]"
+
+		layoutpolicy_vertical = expanding
+		layoutpolicy_horizontal = expanding
+		margin = { 5 0 }
+		spacing = 5
+
+		hbox = {
+			name = "icon"
+
+			highlight_icon = {
+				name = "men_at_arms_icon"
+				datacontext = "[RegimentReorgEntry.GetMaAType]"
+				visible = "[RegimentReorgEntry.IsMaA]"
+				size = { 35 35 }
+				texture = "[MenAtArmsType.GetIcon]"
+			}
+
+			highlight_icon = {
+				name = "levies_icon"
+				visible = "[Not( Or( RegimentReorgEntry.IsMaA, Character.IsValid ) )]"
+				size = { 35 35 }
+				texture = "gfx/interface/icons/icon_soldier.dds"
+			}
+
+			highlight_icon = {
+				name = "knight_icon"
+				visible = "[Character.IsValid]"
+				size = { 35 35 }
+				texture = "gfx/interface/icons/icon_knight_small.dds"
+			}
+		}
+
+		text_single = {
+			name = "name"
+			layoutpolicy_horizontal = expanding
+			text = "[RegimentReorgEntry.GetName]"
+		}
+
+		coa_realm_tiny = {
+			name = "hired_coa"
+			visible = "[RegimentReorgEntry.ShowCoA]"
+			datacontext = "[RegimentReorgEntry.GetCoATitle.GetHolder]"
+		}
+
+		icon = {
+			name = "event_troops"
+			visible = "[ArmyRegiment.IsEventTroops]"
+			texture = "gfx/interface/icons/icon_special_troops.dds"
+			size = { 36 36 }
+			tooltip = "TT_REORG_EVENT_TROOPS"
+		}
+
+		text_single = {
+			name = "prowess"
+			visible = "[Character.IsValid]"
+			text = "[prowess_i][Character.GetSkill( 'prowess' )]"
+			default_format = "#high"
+		}
+
+		vbox = {
+			name = "soldiers"
+			visible = "[Not( Character.IsValid )]"
+			tooltip = "TT_REORG_SOLDIERS"
+
+			text_single = {
+				name = "soldiers"
+				text = "[RegimentReorgEntry.GetSoldierCount]"
+				default_format = "#high"
+			}
+
+			progressbar_standard = {
+				name = "soldiers_max"
+				# visible = "[NotEqualTo_int32(RegimentReorgEntry.GetMaxSoldierCount, RegimentReorgEntry.GetSoldierCount)]"
+				size = { 50 10 }
+				min = 0
+				max = "[IntToFloat(RegimentReorgEntry.GetMaxSoldierCount)]"
+				value = "[IntToFloat(RegimentReorgEntry.GetSoldierCount)]"
+			}
+		}
+	}
+
+	type forts_list = vbox {
+		layoutpolicy_horizontal = expanding
+
+		state = {
+			name = "hide_fort_group"
+			block "hide_all" {
+				on_start = "[GetVariableSystem.Set('adjacent_hostile_forts', 'yes')]"
+			}
+		}
+
+		button_text = {
+			layoutpolicy_horizontal = expanding
+			blockoverride "text" {
+				block "title" {
+					raw_text = "[GetDataModelSize(GetPlayer.MakeScope.GetList('adjacent_hostile_forts'))] forts bordering you or ally,"
+				}
+			}
+			blockoverride "extra" {
+				text_single = {
+					block "shortcut" {
+						raw_text = " Click"
+					}
+				}
+				text_single = {
+					raw_text = " to hide."
+					block "shown" {
+						visible = "[Not(GetVariableSystem.Exists('adjacent_hostile_forts'))]"
+					}
+				}
+				text_single = {
+					raw_text = " to show."
+					block "hidden" {
+						visible = "[GetVariableSystem.Exists('adjacent_hostile_forts')]"
+					}
+				}
+
+			}
+			block "hide" {
+				shortcut = speed_3
+				onclick = "[GetVariableSystem.Toggle('adjacent_hostile_forts')]"
+			}
+		}
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			block "shown" {
+				visible = "[Not(GetVariableSystem.Exists('adjacent_hostile_forts'))]"
+			}
+
+			button_text = {
+				block "expanded" {
+					visible = "[GetVariableSystem.Exists('expand_adjacent_hostile_forts')]"
+				}
+				block "expand" {
+					onclick = "[GetVariableSystem.Toggle('expand_adjacent_hostile_forts')]"
+				}
+				layoutpolicy_horizontal = expanding
+				blockoverride "text" {
+					raw_text = "Showing all. Click to limit to 3."
+				}
+			}
+
+			fixedgridbox = {
+				block "collapsed" {
+					visible = "[Not(GetVariableSystem.Exists('expand_adjacent_hostile_forts'))]"
+				}
+				layoutpolicy_horizontal = expanding
+				block "datamodel" {
+					datamodel = "[GetPlayer.MakeScope.GetList('adjacent_hostile_forts')]"
+				}
+				addrow = 23
+				addcolumn = 500
+				maxverticalslots = 3
+
+				item = {
+					hostile_fort_item = {
+						blockoverride "border" {
+						}
+					}
+				}
+			}
+
+			fixedgridbox = {
+				layoutpolicy_horizontal = expanding
+				block "expanded" {
+					visible = "[GetVariableSystem.Exists('expand_adjacent_hostile_forts')]"
+				}
+				block "datamodel" {
+					datamodel = "[GetPlayer.MakeScope.GetList('adjacent_hostile_forts')]"
+				}
+				addrow = 23
+				addcolumn = 500
+
+				item = {
+					hostile_fort_item = {
+						blockoverride "border" {
+						}
+					}
+				}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				block "more" {
+					visible = "[GreaterThan_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('adjacent_hostile_forts')), '(int32)3')]"
+				}
+				button_text = {
+					block "expand" {
+						onclick = "[GetVariableSystem.Toggle('expand_adjacent_hostile_forts')]"
+					}
+					block "collapsed" {
+						visible = "[Not(GetVariableSystem.Exists('expand_adjacent_hostile_forts'))]"
+					}
+					layoutpolicy_horizontal = expanding
+					blockoverride "text" {
+						raw_text = "Show more."
+					}
+				}
+			}
+		}
+	}
+
+	type resupply_item = button_text {
+		datacontext = "[Scope.GetProvince]"
+		using = send_army_click
+		blockoverride "extra" {
+			spacing = 3
+
+			text_single = {
+				visible = "[Not(ObjectsEqual(Army.GetLocation.GetID, Province.GetID))]"
+				raw_text = "ArmyProvinceDistance"
+			}
+
+			text_single = {
+				visible = "[ObjectsEqual(Army.GetLocation.GetID, Province.GetID)]"
+				raw_text = "Here."
+			}
+
+			text_single = {
+				raw_text = "[Province.GetNameNoTooltip],"
+			}
+
+
+			text_single = {
+				raw_tooltip = "[Province.GetSupplyLimitDescFor( GetPlayer )]"
+				raw_text = "[Province.GetSupplyLimitFor( GetPlayer )] supply."
+			}
+
+			text_single = {
+				visible = "[GreaterThan_CFixedPoint(Province.MakeScope.ScriptValue('armies_present_here'), '(CFixedPoint)0')]"
+				raw_text = "[Province.MakeScope.ScriptValue('armies_present_here')] armies present."
+			}
+
+			container = {
+				ignoreinvisible = yes
+				text_single = {
+					raw_text = " Mild winter."
+					visible = "[Province.HasWinterLevel( '(int32)1' )]"
+				}
+
+				text_single = {
+					raw_text = " Winter."
+					visible = "[Province.HasWinterLevel( '(int32)2' )]"
+				}
+
+				text_single = {
+					raw_text = " Harsh winter."
+					visible = "[Province.HasWinterLevel( '(int32)3' )]"
+				}
+				tooltip = "PROVINCE_VIEW_TOOLTIP_WINTER"
+			}
+
+			text_single = {
+				raw_text = "[Province.GetTerrain.GetName]"
+			}
+
+			text_single = {
+				visible = "[Not(Province.GetHolding.IsEmpty)]"
+				raw_text = "[Province.GetHolding.GetType.GetName],"
+			}
+
+			text_single = {
+				visible = "[Province.HasFort]"
+				raw_text = "fort level [Province.GetFortLevel]."
+			}
+		}
+	}
+
+	type battle_button = vbox {
+		layoutpolicy_horizontal = expanding
+		button_text = {
+			layoutpolicy_horizontal = expanding
+			block "click" {
+				using = send_army_click
+			}
+			datacontext = "[Scope.Province]"
+			blockoverride "pre" {
+				spacing = 3
+				text_single = {
+					raw_text = "[GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('allies_in_the_province')]"
+				}
+				text_single = {
+					raw_text = "against"
+				}
+				text_single = {
+					raw_text = "[GuiScope.SetRoot(GetPlayer.MakeScope).AddScope('province', Province.MakeScope).ScriptValue('enemies_in_the_province')] enemies."
+				}
+			}
+		}
+		button_text = {
+			layoutpolicy_horizontal = expanding
+			block "click" {
+				using = send_army_click
+			}
+			datacontext = "[Scope.Province]"
+			blockoverride "pre" {
+				spacing = 3
+
+				text_single = {
+					block "distance" {
+						datacontext = "[ArmyWindow.GetArmy]"
+						raw_text = "ArmyProvinceDistance"
+					}
+				}
+
+				text_single = {
+					raw_text = "[Province.GetTerrain.GetName] of"
+				}
+
+				text_single = {
+					raw_text = "[Province.GetNameNoTooltip]."
+				}
+			}
+		}
+	}
+
+	type battles_categories = vbox {
+		layoutpolicy_horizontal = expanding
+
+		# battles
+		button_outliner_header = {
+			layoutpolicy_horizontal = expanding
+			visible = "[And(GetPlayer.IsValid, Not(IsDataModelEmpty(GetPlayer.MakeScope.GetList('battles'))))]"
+
+
+			blockoverride "button_expand_frame"
+			{
+				frame = "[BoolTo2And1(GetVariableSystem.Exists('battles'))]"
+			}
+
+			blockoverride "oh_button"
+			{
+				onclick = "[GetVariableSystem.Toggle('battles')]"
+				oversound = "event:/SFX/UI/Generic/sfx_ui_generic_icon_pointer_over"
+				clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_icon_select"
+			}
+
+			state = {
+				name = close_outliner_categories
+				on_finish = "[GetVariableSystem.Set('battles', 'yes')]"
+			}
+
+			blockoverride "oh_toggle_frame"
+			{
+				frame = "[BoolTo2And1(GetVariableSystem.Exists('battles'))]"
+			}
+
+			blockoverride "oh_name"
+			{
+				raw_text = "battle[AddTextIf(GreaterThan_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('battles')), '(int32)1'), 's')]"
+
+			}
+
+			blockoverride "extra" {
+				text_single = {
+					raw_text = ", click to [Select_CString(GetVariableSystem.Exists('battles'), 'show', 'hide')]"
+					# visible = "[GreaterThan_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('battles')), '(int32)1')]"
+				}
+			}
+
+			blockoverride "oh_count"
+			{
+				raw_text = "Your [GetDataModelSize(GetPlayer.MakeScope.GetList('battles'))]"
+			}
+			blockoverride "expanded"
+			{
+				frame = "[BoolTo2And1(GetVariableSystem.Exists('battles'))]"
+			}
+		}
+
+		# battles
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			margin = { 8 0 }
+			visible = "[And(And(GetPlayer.IsValid, Not(IsDataModelEmpty(GetPlayer.MakeScope.GetList('battles')))), Not(GetVariableSystem.Exists('battles')))]"
+
+			vbox = {
+				datamodel = "[GetPlayer.MakeScope.GetList('battles')]"
+				layoutpolicy_horizontal = expanding
+				spacing = -2
+
+				item = {
+					battle_button = { }
+				}
+			}
+		}
+
+		# allied battles
+		button_outliner_header = {
+			layoutpolicy_horizontal = expanding
+			visible = "[And(GetPlayer.IsValid, Not(IsDataModelEmpty(GetPlayer.MakeScope.GetList('battles_allies'))))]"
+
+
+			blockoverride "button_expand_frame"
+			{
+				frame = "[BoolTo2And1(GetVariableSystem.Exists('battles_allies'))]"
+			}
+
+			blockoverride "oh_button"
+			{
+				onclick = "[GetVariableSystem.Toggle('battles_allies')]"
+				oversound = "event:/SFX/UI/Generic/sfx_ui_generic_icon_pointer_over"
+				clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_icon_select"
+			}
+
+			state = {
+				name = close_outliner_categories
+				on_finish = "[GetVariableSystem.Set('battles_allies', 'yes')]"
+			}
+
+			blockoverride "oh_toggle_frame"
+			{
+				frame = "[BoolTo2And1(GetVariableSystem.Exists('battles_allies'))]"
+			}
+
+			blockoverride "oh_name"
+			{
+				raw_text = "[GetDataModelSize(GetPlayer.MakeScope.GetList('battles_allies'))] allied battle[AddTextIf(GreaterThan_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('battles_allies')), '(int32)1'), 's')]"
+
+			}
+
+			blockoverride "extra" {
+				text_single = {
+					raw_text = ", click to [Select_CString(GetVariableSystem.Exists('battles_allies'), 'show', 'hide')]"
+					# visible = "[GreaterThan_int32(GetDataModelSize(GetPlayer.MakeScope.GetList('battles')), '(int32)1')]"
+				}
+			}
+
+			blockoverride "oh_count"
+			{
+				raw_text = ""
+			}
+			blockoverride "expanded"
+			{
+				frame = "[BoolTo2And1(GetVariableSystem.Exists('battles_allies'))]"
+			}
+		}
+
+		# allied battles
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			margin = { 8 0 }
+			visible = "[And(And(GetPlayer.IsValid, Not(IsDataModelEmpty(GetPlayer.MakeScope.GetList('battles_allies')))), Not(GetVariableSystem.Exists('battles_allies')))]"
+
+			vbox = {
+				datamodel = "[GetPlayer.MakeScope.GetList('battles_allies')]"
+				layoutpolicy_horizontal = expanding
+				spacing = -2
+
+				item = {
+					battle_button = { }
+				}
+			}
+		}
+	}
+
+	type button_army_adjacency = button_text {
+		layoutpolicy_horizontal = expanding
+		blockoverride "extra" {
+			text_single = {
+				visible = "[Isnt('army_adjacencies')]"
+				block "key_name" {
+					raw_text = "hotkey 1."
+				}
+			}
+			text_single = {
+				visible = "[Is('army_adjacencies')]"
+				raw_text = "return, Escape"
+			}
+		}
+		button = {
+			visible = "[Isnt('army_adjacencies')]"
+			size = { 100% 100% }
+			block "key" {
+				shortcut = speed_1
+			}
+			block "set" {
+				onclick = "[Set('army_adjacencies', 'seas')]"
+			}
+		}
+		button = {
+			visible = "[Is('army_adjacencies')]"
+			size = { 100% 100% }
+			using = close_window_ocr
+			onclick = "[Clear('army_adjacencies')]"
+		}
+	}
+
+	type button_raid_lists = button_text {
+		layoutpolicy_horizontal = expanding
+		blockoverride "extra" {
+			text_single = {
+				visible = "[Isnt('raid_list')]"
+				block "key_name" {
+					raw_text = "hotkey 1."
+				}
+			}
+			text_single = {
+				visible = "[Is('raid_list')]"
+				raw_text = "return, Escape"
+			}
+		}
+		button = {
+			visible = "[Isnt('raid_list')]"
+			size = { 100% 100% }
+			block "key" {
+				shortcut = speed_1
+			}
+			block "set" {
+				onclick = "[Set('raid_list', 'closest')]"
+			}
+		}
+		button = {
+			visible = "[Is('raid_list')]"
+			size = { 100% 100% }
+			using = close_window_ocr
+			onclick = "[Clear('raid_list')]"
+		}
+	}
+
+	type button_raid_county = adjacent_county_button {
+		datacontext = "[Army.GetLocation]"
+		layoutpolicy_horizontal = expanding
+		onrightclick = "[Set('last_army_view', 'targets')]"
+		blockoverride "distance" {
+			text_single = {
+				visible = "[Not(ObjectsEqual(Province.GetID, Title.GetProvince.GetID))]"
+				raw_text = "[DistanceTo(Province, Title.GetProvince)|0] [DaysTo(Province, Title.GetProvince)],"
+			}
+		}
+		blockoverride "pre" {
+			text_single = {
+				raw_text = "[Title.MakeScope.ScriptValue('loot_in_county')|0] loot,"
+			}
+		}
+		blockoverride "click" {
+			using = send_army_click_county
+			onrightclick = "[GetScriptedGui('army_holdings').Execute( GuiScope.SetRoot( Army.MakeScope ).AddScope( 'province', Title.GetProvince.MakeScope ).End )]"
+			onrightclick = "[GetVariableSystem.Set('army_county', Title.GetNameNoTierNoTooltip )]"
+			onrightclick = "[GetVariableSystem.Set('army_tabs', 'holdings')]"
+		}
+		blockoverride "county_extra" {
+			text_single = {
+				raw_text = "Owner has [Round(Title.GetHolder.MakeScope.ScriptValue('strongest_liege'))] men."
+			}
+		}
+	}
+}
+
+template reorg_regiment_tooltips {
+	hbox = {
+		datacontext = "[RegimentReorgEntry.GetKnight]"
+		visible = "[Character.IsValid]"
+
+		block "knight_placement" {
+			using = tooltip_ws
+		}
+
+		tooltipwidget = {
+			container_character_tooltip = {
+				blockoverride "interaction_info" {
+					text = "REORG_INSTRUCTION"
+				}
+			}
+		}
+	}
+
+	hbox = {
+		datacontext = "[RegimentReorgEntry.GetRegiment.GetRegiment]"
+		visible = "[RegimentReorgEntry.IsMaA]"
+
+		block "maa_placement" {
+			using = tooltip_ws
+		}
+
+		tooltipwidget = {
+			using = regiment_container_tooltip
+
+			blockoverride "extra_info" {
+				divider_light = {
+					layoutpolicy_horizontal = expanding
+				}
+
+				text_single = {
+					layoutpolicy_horizontal = expanding
+					text = "REORG_INSTRUCTION"
+					margin = { 10 0 }
+				}
+			}
+		}
+	}
+
+	hbox = {
+		datacontext = "[RegimentReorgEntry.GetRegiment.GetRegiment]"
+		visible = "[And( Not( Or( RegimentReorgEntry.IsMaA, RegimentReorgEntry.GetKnight.IsValid ) ), RegimentReorgEntry.GetRegiment.GetFromVassal.IsValid )]"
+
+		block "vassal_placement" {
+			using = tooltip_ws
+		}
+		tooltip = TT_REORG_VASSAL_LEVIES
+	}
+
+	hbox = {
+		datacontext = "[RegimentReorgEntry.GetRegiment.GetRegiment]"
+		visible = "[And( Not( Or( RegimentReorgEntry.IsMaA, RegimentReorgEntry.GetKnight.IsValid ) ), Not( RegimentReorgEntry.GetRegiment.GetFromVassal.IsValid ) )]"
+
+		block "levies_placement" {
+			using = tooltip_ws
+		}
+		tooltip = TT_REORG_LEVIES
+	}
+}
+
+template send_army_click_province {
+	onclick = "[Province.PanCameraTo]"
+	onrightclick = "[Province.PanCameraTo]"
+	onclick = "[GetVariableSystem.Set('sending_army', Province.GetNameNoTooltip)]"
+	onclick = "[PdxGuiTriggerAllAnimations('hide_army_window')]"
+}
+
+template send_army_click {
+	onclick = "[Province.PanCameraTo]"
+	onrightclick = "[Province.PanCameraTo]"
+	onclick = "[GetVariableSystem.Set('sending_army', Province.GetNameNoTooltip)]"
+	onclick = "[GetVariableSystem.Set('sending_army_county', Province.GetCounty.GetTitle.GetNameNoTierNoTooltip)]"
+	onclick = "[PdxGuiTriggerAllAnimations('hide_army_window')]"
+}
+
+template send_army_click_county {
+	onclick = "[DefaultOnCoatOfArmsRightClick(Title.GetID)]"
+	onrightclick = "[DefaultOnCoatOfArmsRightClick(Title.GetID)]"
+	onclick = "[GetVariableSystem.Set('sending_army', Title.GetProvince.GetNameNoTooltip)]"
+	onclick = "[GetVariableSystem.Set('sending_army_county', Title.GetNameNoTierNoTooltip)]"
+	onclick = "[PdxGuiTriggerAllAnimations('hide_army_window')]"
+}
+
 window = {
 	name = "army_window"
 	datacontext = "[ArmyWindow.GetArmy]"

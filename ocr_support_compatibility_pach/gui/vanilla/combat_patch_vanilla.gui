@@ -1,4 +1,4 @@
-# combat_patch_vanilla.gui — OCR Support Patch — Vanilla type separato (Pattern v1.1)
+﻿# combat_patch_vanilla.gui — OCR Support Patch — Vanilla type separato (Pattern v1.1)
 # Generato da: tools/assemble_dualmode.py --window window_combat --mode complex --separate-vanilla
 # ATTENZIONE: contenuto vanilla identico al file CK3 originale — non modificare.
 # La guard visible vive QUI — il wrapper istanzia questo type senza visible esplicita.
@@ -7,8 +7,6 @@ types OCR_PATCH_VANILLA {
 	type combat_patch_vanilla = widget {
 		name = "vanilla_combat_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
-
-			name = "combat_window"
 
 
 

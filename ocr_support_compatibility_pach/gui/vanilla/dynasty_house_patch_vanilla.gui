@@ -8,7 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_dynasty_house_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "dynasty_house_view"
 			datacontext = "[DynastyHouseView.GetDynastyHouse]"
 			datacontext = "[DynastyHouse.GetDynasty]"
 
@@ -897,7 +896,7 @@ types OCR_PATCH_VANILLA {
 
 									hbox = {
 										margin = { 15 0 }
-								
+
 										tooltip = "DYNASTY_HOUSE_VIEW_PROGRESS_TOOLTIP"
 
 										expand = {}

@@ -2736,7 +2736,7 @@ window = {
 					on_finish = "[Clear('act_event')]"
 				}
 
-		
+
 			}
 
 			widget = {
@@ -2838,7 +2838,6 @@ window = {
 		name = "vanilla_activity_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "activity_window"
 			size = { 1390 750 }
 			layer = middle
 			parentanchor = center
@@ -3682,7 +3681,7 @@ window = {
 				parentanchor = top|right
 				size = { 750 124 }
 				position = { -30 70 }
-		
+
 				activity_pulse_action_popup_right = {
 					datacontext = "[ActivityWindow.GetLastWeeklyPulseEffectData]"
 					visible = "[And( ActivityPulseEffect.IsValid, Not( ActivityWindow.HasActiveEvent ) )]"

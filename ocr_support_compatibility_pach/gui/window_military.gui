@@ -3,6 +3,1467 @@
 # Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1
 # Generato da: tools/assemble_dualmode.py --window window_military --mode complex --separate-vanilla
 
+types OCR {
+	type widget_event_troop_item_ocr = widget {
+		# size set by the fixedgridbox
+		vbox = {
+			layoutpolicy_horizontal = expanding
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 3
+
+				button_text = {
+					blockoverride "text" {
+						raw_text = "MILITARY_VIEW_EVENT_TROOPS_RAISE"
+					}
+					block "troops_click" {}
+					onclick = "[OnRaiseEventTroops(MilitaryViewEventTroop.Self)]"
+					visible = "[MilitaryViewEventTroop.CanBeRaised]"
+					blockoverride "disabled" {
+						visible = "[MilitaryView.IsAutomatingArmies]"
+					}
+					enabled = "[Not(MilitaryView.IsAutomatingArmies)]"
+					tooltip = "[MilitaryView.GetCanRaiseEventTroopTooltip]"
+				}
+
+				soldiers_and_quality_small_text = {
+					margin_top = 1
+					datacontext = "[MilitaryViewEventTroop.GetComposition]"
+					blockoverride "background" {
+						background = {
+							using = Background_Area
+							margin = { 3 0 }
+						}
+					}
+				}
+
+				text_single = {
+					raw_text = "Levies."
+					visible = "[IsDataModelEmpty(MilitaryViewEventTroop.GetRegiments)]"
+				}
+
+				text_single = {
+					raw_text = "[MilitaryViewEventTroop.GetName]."
+				}
+
+				expand = { }
+			}
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 3
+
+				hbox = {
+					name = "menatarms"
+					layoutpolicy_horizontal = expanding
+					hbox = {
+						name = "regiment_types"
+						datamodel = "[MilitaryViewEventTroop.GetRegiments]"
+						layoutpolicy_vertical = expanding
+						margin_left = 5
+						spacing = 3
+						item = {
+							text_single = {
+								raw_text = "[Regiment.GetMAAType.GetName], "
+							}
+						}
+					}
+
+					expand = { }
+				}
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					text_single = {
+						visible = "[Not(MilitaryViewEventTroop.IsInheritable)]"
+
+						text = "MILITARY_VIEW_EVENT_TROOPS_NOT_INHERITABLE"
+					}
+
+					hbox = {
+						visible = "[MilitaryViewEventTroop.IsInheritable]"
+						text_single = {
+							visible = "[Not(War.IsValid)]"
+							text = "MILITARY_VIEW_EVENT_TROOPS_INHERITABLE"
+						}
+
+						text_single = {
+							datacontext = "[MilitaryViewEventTroop.GetAssociatedWar]"
+							visible = "[War.IsValid]"
+							text = "MILITARY_VIEW_EVENT_TROOPS_ASSOCIATED_WAR"
+							max_width = 450
+						}
+					}
+
+					expand = {}
+				}
+			}
+
+			expand = {}
+		}
+	}
+
+	type button_mercenary_list_item_ocr = button {
+		size = { 430 110 }
+
+		down = "[IsMercenaryCompanyDetailViewShown(MercenaryCompany.Self)]"
+
+		button = {
+			visible = "[Or( IsMercenaryCompanyDetailViewShown(MercenaryCompany.Self), Not(GetVariableSystem.Exists( 'hired_troop_detail_view_open' )))]"
+			size = { 100% 100% }
+			enabled = "[Or(Not(MercenaryCompany.IsHired), MercenaryCompany.IsHiredByLocalPlayer)]"
+			onclick = "[ToggleMercenaryCompanyDetailView(MercenaryCompany.Self)]"
+		}
+
+		button = {
+			visible = "[And( GetVariableSystem.Exists( 'hired_troop_detail_view_open' ), Not( IsMercenaryCompanyDetailViewShown(MercenaryCompany.Self) ) )]"
+			size = { 100% 100% }
+			onclick = "[PdxGuiTriggerAllAnimations('mercenary_details_refresh')]"
+
+			state = {
+				name = _mouse_click
+				delay = 0.2
+				on_finish = "[ToggleMercenaryCompanyDetailView(MercenaryCompany.Self)]"
+			}
+		}
+
+		vbox = {
+			set_parent_size_to_minimum = yes
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 5 2 }
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				allow_outside = yes
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					ignoreinvisible = yes
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[MercenaryCompany.IsHired]"
+						ignoreinvisible = no
+
+						text_single = {
+							name = "hired_by_label"
+							text = "[SelectLocalization( MercenaryCompany.IsHiredByLocalPlayer, 'HIRED_TROOPS_VIEW_HIRED_BY_ME_LEFT', 'HIRED_TROOPS_VIEW_NOT_AVAILABLE' )]"
+						}
+
+						text_single = {
+							name = "hired_info_time_left"
+							visible = "[MercenaryCompany.IsHiredByLocalPlayer]"
+							text = "HIRED_TROOPS_VIEW_MC_HIRED_TIME_LEFT"
+						}
+
+						expand = { }
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[And(MercenaryCompany.WillGoInBankruptcy(GetPlayer.Self),  Not(MercenaryCompany.IsHired))]"
+
+						block "widget_index" {}
+
+						text_single = {
+							layoutpolicy_horizontal = expanding
+							raw_text = "Can't hire! It will put you into too much debt."
+						}
+
+						expand = {}
+					}
+
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						hbox = {
+							visible = "[Not(MercenaryCompany.WillGoInBankruptcy(GetPlayer.Self))]"
+							block "widget_index" {}
+						}
+						block "your" {
+							text_single = {
+								# to avoid the tooltip
+								raw_text = "Hire"
+								visible = "[And(Or(Not(MercenaryCompany.IsHired), MercenaryCompany.IsHiredByLocalPlayer), Not(MercenaryCompany.WillGoInBankruptcy(GetPlayer.Self)))]"
+							}
+
+							text_single = {
+								visible = "[MercenaryCompany.IsHiredByLocalPlayer]"
+								raw_text = "View"
+							}
+
+							text_single = {
+								name = "cost_label"
+								raw_text = "[MercenaryCompany.GetCostDesc],"
+								alwaystransparent = yes
+							}
+						}
+
+						text_single = {
+							datacontext = "[HiredTroopItem.GetComposition]"
+							tooltip = "[ArmyComposition.GetArmyCompositionTooltip]"
+							name = "strength"
+							raw_text = "[ArmyComposition.GetSoldierCountString] men."
+						}
+
+						char_name = {
+							datacontext = "[MercenaryCompany.GetTitle.GetHolder]"
+							blockoverride "text2" {
+								margin_left = -3
+								raw_text = "[Character.GetSkill('martial')] Martial."
+							}
+						}
+
+						# bad for FPS, showing only for available bands
+						hbox = {
+							datamodel = "[GetTraits]"
+							datacontext = "[Character.GetFaith]"
+							datacontext = "[MercenaryCompany.GetTitle.GetHolder]"
+							visible = no#"[And(Or(Not(MercenaryCompany.IsHired), MercenaryCompany.IsHiredByLocalPlayer), Not(MercenaryCompany.WillGoInBankruptcy(GetPlayer.Self)))]"
+							spacing = 3
+							item = {
+								text_single = {
+									raw_text = "[Trait.GetName(Character.Self)],"
+									visible = "[And(EqualTo_string(Trait.GetTraitCategoryLabel, GetTrait('forder').GetTraitCategoryLabel), Character.HasTrait(Trait.Self))]"
+								}
+							}
+						}
+
+						expand = {}
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						visible = "[And(MercenaryCompany.WillGoInDebt(GetPlayer.Self), Not(MercenaryCompany.IsHired))]"
+						raw_text = "Hiring will put you into debt."
+					}
+
+					expand = { }
+				}
+
+				expand = { }
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 3
+
+				text_single = {
+					raw_text = "Has"
+				}
+
+				flowcontainer = {
+					name = "regiment_types"
+					layoutpolicy_horizontal = expanding
+
+					block "HiredTroopMenAtArmsTypesDataModel" { }
+
+					item = {
+						text_single = {
+							margin_right = 5
+							raw_text = "[Regiment.GetMAAType.GetName],"
+						}
+					}
+				}
+
+				expand = { }
+			}
+
+			expand = { }
+		}
+	}
+
+	type button_holyorder_list_item_ocr = button {
+		size = { 430 110 }
+
+		down = "[IsHolyOrderDetailViewShown(HolyOrder.Self)]"
+
+		button = {
+			visible = "[Not(GetVariableSystem.Exists( 'hired_troop_detail_view_open' ))]"
+			size = { 100% 100% }
+			enabled = "[Or(Not(HolyOrder.IsHired), Or(HolyOrder.IsHiredByLocalPlayer, HolyOrder.IsPlayerPatron))]"
+			onclick = "[OpenHolyOrderDetailView(HolyOrder.Self)]"
+		}
+
+		button = {
+			visible = "[GetVariableSystem.Exists( 'hired_troop_detail_view_open' )]"
+			size = { 100% 100% }
+			onclick = "[PdxGuiTriggerAllAnimations('mercenary_details_refresh')]"
+
+			state = {
+				name = _mouse_click
+				delay = 0.2
+				on_finish = "[OpenHolyOrderDetailView(HolyOrder.Self)]"
+			}
+		}
+
+		vbox = {
+			set_parent_size_to_minimum = yes
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 5 2 }
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				allow_outside = yes
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					ignoreinvisible = yes
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[HolyOrder.IsHired]"
+						ignoreinvisible = no
+
+						text_single = {
+							name = "hired_by_label"
+							text = "[SelectLocalization( HolyOrder.IsHiredByLocalPlayer, 'HIRED_TROOPS_VIEW_HIRED_BY_ME_LEFT', 'HIRED_TROOPS_VIEW_NOT_AVAILABLE' )]"
+						}
+
+						text_single = {
+							raw_text = "pledged to a holy war,"
+							visible = "[HolyOrder.IsPledgedToGreatHolyWar]"
+						}
+
+						expand = { }
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						block "your" {
+							text_single = {
+								# to avoid the tooltip
+								raw_text = "Hire"
+								visible = "[Or(Not(HolyOrder.IsHired), Or(HolyOrder.IsHiredByLocalPlayer, HolyOrder.IsPlayerPatron))]"
+							}
+
+							text_single = {
+								visible = "[HolyOrder.IsHiredByLocalPlayer]"
+								raw_text = "View"
+							}
+
+							text_single = {
+								name = "cost_label"
+								raw_text = "[HolyOrder.GetCostDescForPlayer],"
+								alwaystransparent = yes
+							}
+						}
+
+						text_single = {
+							name = "strength"
+							raw_text = "[HolyOrder.GetCurrentSoldiers] men,"
+						}
+
+						text_single = {
+							raw_text = "[HolyOrder.GetNumberOfKnights] knights."
+						}
+
+						char_name = {
+							datacontext = "[HolyOrder.GetTitle.GetHolder]"
+							blockoverride "text2" {
+								margin_left = -3
+								raw_text = "[Character.GetSkill('martial')] Martial."
+							}
+						}
+
+						# bad for FPS, showing only for available bands
+						hbox = {
+							datamodel = "[GetTraits]"
+							datacontext = "[Character.GetFaith]"
+							datacontext = "[HolyOrder.GetTitle.GetHolder]"
+							visible = no#"[Or(Not(HolyOrder.IsHired), Or(HolyOrder.IsHiredByLocalPlayer, HolyOrder.IsPlayerPatron))]"
+							spacing = 3
+							item = {
+								text_single = {
+									raw_text = "[Trait.GetName(Character.Self)],"
+									visible = "[And(EqualTo_string(Trait.GetTraitCategoryLabel, GetTrait('forder').GetTraitCategoryLabel), Character.HasTrait(Trait.Self))]"
+								}
+							}
+						}
+
+						expand = {}
+					}
+
+					expand = { }
+				}
+
+				expand = { }
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 3
+
+				text_single = {
+					raw_text = "Has"
+				}
+
+				flowcontainer = {
+					name = "regiment_types"
+					layoutpolicy_horizontal = expanding
+
+					block "HiredTroopMenAtArmsTypesDataModel" { }
+
+					item = {
+						text_single = {
+							margin_right = 5
+							raw_text = "[Regiment.GetMAAType.GetName],"
+						}
+					}
+				}
+
+				expand = { }
+			}
+
+			expand = { }
+		}
+	}
+
+	type button_hireable_ruler_item_ocr = button {
+		size = { 430 110 }
+		datacontext = "[HiredTroopItem.GetHireableRuler]"
+
+		onclick = "[OpenHireableRulerDetailView( Character.Self )]"
+		down = "[IsHireableRulerDetailViewShown( Character.Self )]"
+
+		vbox = {
+			set_parent_size_to_minimum = yes
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 5 2 }
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				allow_outside = yes
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					layoutpolicy_vertical = expanding
+					ignoreinvisible = yes
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						visible = "[Character.IsHireableRulerEmployedByLocalPlayer]"
+						ignoreinvisible = no
+
+						text_single = {
+							name = "hired_by_label"
+							text = "[SelectLocalization( Character.IsHireableRulerEmployedByLocalPlayer, 'HIRED_TROOPS_VIEW_HIRED_BY_ME_LEFT', 'HIRED_TROOPS_VIEW_NOT_AVAILABLE' )]"
+						}
+						expand = { }
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						visible = "[And(HiredTroopItem.WillHireableRulerCauseBankrupcy, Not(HiredTroopItem.IsHired))]"
+						raw_text = "Can't hire! It will put you into too much debt."
+					}
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 3
+						block "your" {
+							text_single = {
+								# to avoid the tooltip
+								raw_text = "Hire"
+								visible = "[And(And( Character.IsHireableRuler, Character.IsPlayerInteractionValid( 'hire_laamp_mercenaries_interaction' ) ), HiredTroopItem.WillHireableRulerCauseBankrupcy)]"
+							}
+
+							text_single = {
+								visible = "[Character.IsHireableRulerEmployedByLocalPlayer]"
+								raw_text = "View"
+							}
+
+							text_single = {
+								name = "cost_label"
+								raw_text = "[HiredTroopItem.GetHireableRulerCost],"
+								alwaystransparent = yes
+							}
+						}
+
+						text_single = {
+							datacontext = "[HiredTroopItem.GetComposition]"
+							tooltip = "[ArmyComposition.GetArmyCompositionTooltip]"
+							name = "strength"
+							raw_text = "[ArmyComposition.GetSoldierCountString] men."
+						}
+
+						char_name = {
+							blockoverride "pre" {
+								text_single = {
+									raw_text = "[Character.GetSkill('martial')] Martial,"
+								}
+							}
+						}
+
+						# bad for FPS, showing only for available bands
+						hbox = {
+							datamodel = "[GetTraits]"
+							datacontext = "[Character.GetFaith]"
+							visible = no#"[And(Or(Not(HiredTroopItem.IsHired), Character.IsHireableRulerEmployedByLocalPlayer), Not(HiredTroopItem.WillHireableRulerCauseBankrupcy))]"
+							spacing = 3
+							item = {
+								text_single = {
+									raw_text = "[Trait.GetName(Character.Self)],"
+									visible = "[And(EqualTo_string(Trait.GetTraitCategoryLabel, GetTrait('forder').GetTraitCategoryLabel), Character.HasTrait(Trait.Self))]"
+								}
+							}
+						}
+
+						expand = {}
+					}
+
+					text_single = {
+						layoutpolicy_horizontal = expanding
+						visible = "[And(HiredTroopItem.WillHireableRulerCauseBankrupcy, Not(HiredTroopItem.IsHired))]"
+						raw_text = "Hiring will put you into debt."
+					}
+
+					expand = { }
+				}
+
+				expand = { }
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 3
+
+				text_single = {
+					raw_text = "Has"
+				}
+
+				flowcontainer = {
+					name = "regiment_types"
+					layoutpolicy_horizontal = expanding
+
+					block "HiredTroopMenAtArmsTypesDataModel" {
+						datamodel = "[HiredTroopItem.GetRegiments]"
+					}
+
+					item = {
+						text_single = {
+							margin_right = 5
+							raw_text = "[Regiment.GetMAAType.GetName],"
+						}
+					}
+				}
+
+				expand = { }
+			}
+
+			expand = { }
+		}
+	}
+
+	type button_imperial_army_item_ocr = vbox
+	{
+		datacontext = "[HiredTroopItem.GetAdministrativeTitle]"
+		allow_outside = yes
+		layoutpolicy_horizontal = expanding
+
+		# widget = {
+		# 	visible = "[And( Not( HiredTroopItem.IsHired ), Not( HiredTroopItem.GetAdministrativeTitle.GetHolder.IsAtWar ) )]"
+		# 	name = "request_first_title"
+		# 	state = {
+		# 		name = "request_first_title"
+		# 		trigger_when = "[Is('request_first_title')]"
+		# 		on_finish = "[OpenAdministrativeArmyDetailView( Title.Self )]"
+		# 		on_finish = "[Clear('request_first_title')]"
+		# 	}
+		# }
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+
+			block "hire" {}
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+				onclick = "[OpenAdministrativeArmyDetailView( Title.Self )]"
+				down = "[IsAdministrativeArmyDetailViewShown( Title.Self )]"
+
+				button = {
+					visible = "[And(Isnt('insta_hire_title_troops'), IsIndexFirst)]"
+					onclick = "[OpenAdministrativeArmyDetailView( Title.Self )]"
+					shortcut = army_split_half
+				}
+
+				blockoverride "num" {
+					block "num_army" {}
+				}
+				blockoverride "pre" {
+					# text_single = {
+					# 	visible = "[And( Not( Title.IsAdministrativeArmyHiredByLocalPlayer ), Not( HiredTroopItem.GetAdministrativeTitle.GetHolder.IsAtWar ) )]"
+					# 	raw_text = "available"
+					# }
+					# text_single = {
+					# 	tooltip = "[Title.GetAdministrativeArmyStatus]"
+					# 	raw_text = "Hired by you,"
+					# 	visible = "[And( Title.IsAdministrativeArmyHiredByLocalPlayer, Not( HiredTroopItem.GetAdministrativeTitle.GetHolder.IsAtWar ) )]"
+					# }
+					block "num_adjusted" {}
+					text_single = {
+						tooltip = "[Title.GetAdministrativeArmyStatus]"
+						raw_text = "[Select_CString(HiredTroopItem.IsHired, 'Employed', 'owner is')] in a war,"
+						# hired by someone at war
+						# or not hired and the holder is at war
+						# and not hired by you and the holder isn't at war
+						visible = "[And( Or( And( HiredTroopItem.IsHired, HiredTroopItem.GetHiredBy.IsAtWar ), And( Not( HiredTroopItem.IsHired ), HiredTroopItem.GetAdministrativeTitle.GetHolder.IsAtWar ) ), Not( And( Title.IsAdministrativeArmyHiredByLocalPlayer, Not( HiredTroopItem.GetAdministrativeTitle.GetHolder.IsAtWar ) ) ) ) ]"
+					}
+				}
+				blockoverride "extra" {
+
+					soldiers_and_quality_small_text = {
+						margin_left = -5
+						margin_right = -2
+						blockoverride "missing_visible" {
+							# raw_text = "[ArmyComposition.GetMaxNumberOfSoldiers] total"
+							visible = no
+						}
+						blockoverride "army_dot" {
+							visible = no
+						}
+						# visible = "[GreaterThan_int32(GetDataModelSize(HiredTroopItem.GetRegiments), '(int32)1')]"
+						blockoverride "quality" {
+							visible = no
+						}
+						datacontext = "[HiredTroopItem.GetComposition]"
+					}
+
+					text_single = {
+						raw_text = "of"
+					}
+
+					text_single = {
+						raw_text = "MV_ADMIN_ARMY_NAME"
+					}
+
+					comma = {}
+
+					text_single = {
+						block "reassigned" {
+							visible = "[HiredTroopItem.IsHired]"
+							raw_text = "assigned to [HiredTroopItem.GetHiredBy.GetPrimaryTitle.GetNameNoTierNoTooltip],"
+						}
+					}
+
+					flowcontainer = {
+						margin_left = 0
+						ignoreinvisible = yes
+						visible = "[DataModelHasItems(HiredTroopItem.GetRegiments)]"
+
+						flowcontainer = {
+							name = "regiment_types"
+							datamodel = "[HiredTroopItem.GetRegiments]"
+							ignoreinvisible = yes
+							spacing = 3
+
+							item = {
+								flowcontainer = {
+									ignoreinvisible = yes
+									spacing = 3
+									text_single = {
+										raw_text = "[Regiment.CalcMenAliveCount]"
+									}
+									text_single = {
+										raw_text = "[Regiment.GetMAAType.GetName],"
+									}
+
+								}
+							}
+						}
+					}
+
+					text_single = {
+						visible = "[Character.IsValid]"
+						datacontext = "[HiredTroopItem.GetAdministrativeTitle.GetHolder]"
+						raw_text = "[Character.MakeScope.ScriptValue( 'governor_efficiency_presented')|0]% efficiency,"
+						tooltip = ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT
+					}
+
+					flowcontainer = {
+						ignoreinvisible = yes
+						spacing = 3
+						block "reassigned" {
+							visible = "[HiredTroopItem.IsHired]"
+						}
+
+						text_single = {
+							raw_text = "currently"
+						}
+
+						text_single = {
+							datacontext = "[HiredTroopItem.GetHiredBy.GetPrimaryTitle.GetPreferredCapital.GetProvince]"
+							visible = "[Not(ObjectsEqual(MyCapital, Province.Self))]"
+							raw_text = "[DistanceTo(MyCapital, Province)|0] [DaysTo(MyCapital, Province)] [Direction(MyCapital, Province)]"
+						}
+					}
+
+					container = {
+						visible = "[Not(HiredTroopItem.IsHired)]"
+						ignoreinvisible = yes
+
+						text_single = {
+							datacontext = "[HiredTroopItem.GetAdministrativeTitle.GetPreferredCapital.GetProvince]"
+							visible = "[Not(ObjectsEqual(MyCapital, Province.Self))]"
+							raw_text = "[DistanceTo(MyCapital, Province)|0] [DaysTo(MyCapital, Province)] [Direction(MyCapital, Province)]"
+						}
+					}
+
+					comma = {
+						block "reassigned" {}
+					}
+				}
+			}
+
+			expand = {}
+		}
+
+
+		button_standard = {
+			allow_outside = yes
+			visible = no
+
+			vbox = {
+				allow_outside = yes
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+
+				margin_left = 42
+
+				widget = {
+					allow_outside = yes
+					layoutpolicy_horizontal = expanding
+					size = { 0 34 }
+
+					# Status available
+					# highlight_icon = {
+					# 	visible = "[And( Not( Title.IsAdministrativeArmyHiredByLocalPlayer ), Not( HiredTroopItem.GetAdministrativeTitle.GetHolder.IsAtWar ) )]"
+					# 	position = { -2 2 }
+					# 	size = { 100% 100% }
+					# 	texture = "gfx/interface/window_military/military_banner_green.dds"
+					# }
+				}
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					margin_right = 10
+
+					overlappingitembox_regiment_types = {
+						datamodel = "[HiredTroopItem.GetRegiments]"
+
+						layoutpolicy_horizontal = expanding
+						size = { -1 30 }
+					}
+
+					expand = {}
+
+
+				}
+			}
+		}
+	}
+
+	type vbox_imperial_armies_ocr = vbox
+	{
+		button_text = {
+			shortcut = map_mode_1
+			layoutpolicy_horizontal = expanding
+			onclick = "[Toggle('personal_title_armies')]"
+			blockoverride "text" {
+				raw_text = "[GetDataModelSize(MilitaryView.GetHeldTitleItems)] personal armies, [Val('personal_title_maa')] men, [Collapse('personal_title_armies')] E."
+			}
+		}
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			datamodel = "[MilitaryView.GetHeldTitleItems]"
+			visible = "[Isnt('personal_title_armies')]"
+
+			item = {
+				vbox = {
+					datacontext = "[MilitaryItem.GetTitle]"
+					layoutpolicy_horizontal = expanding
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						spacing = 5
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+
+							margin_bottom = 5
+							spacing = 5
+
+							expand = {}
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+								spacing = 3
+
+								text_single = {
+									raw_text = "[Add_int32(PdxGuiWidget.GetIndexInDataModel, '(int32)1')],"
+								}
+
+								text_single = {
+									raw_text = "[Title.MakeScope.ScriptValue('title_maa_size_owned_ocr')] men of"
+								}
+
+								# soldiers_and_quality_small_text = {
+								# 	margin_left = -5
+								# 	margin_right = -2
+								# 	blockoverride "missing_visible" {
+								# 		# raw_text = "[ArmyComposition.GetMaxNumberOfSoldiers] total"
+								# 		visible = no
+								# 	}
+								# 	blockoverride "army_dot" {
+								# 		visible = no
+								# 	}
+								# 	# visible = "[GreaterThan_int32(GetDataModelSize(HiredTroopItem.GetRegiments), '(int32)1')]"
+								# 	blockoverride "quality" {
+								# 		visible = no
+								# 	}
+								# 	datacontext = "[MilitaryItem.GetComposition]"
+								# }
+
+								text_single = {
+									text = MV_ADMIN_ARMY_ARMIES_NAME
+								}
+
+								comma = {}
+
+								text_single = {
+									text = "[MilitaryItem.GetMAACountAndCapString]"
+									tooltip = "[MilitaryItem.GetMAACountAndCapTooltip]"
+									using = tooltip_ne
+								}
+								text_single = {
+									text = "BANNER_MEN_AT_ARMS_LABEL"
+								}
+
+								expand = {}
+							}
+						}
+					}
+
+					# text_single = {
+					# 	visible = "[IsDataModelEmpty( MilitaryItem.GetOwnedMaa )]"
+					# 	layoutpolicy_horizontal = expanding
+					#
+					# 	text = "MV_NO_MAA_FOR_TITLE"
+					# 	default_format = "#weak"
+					# 	align = center
+					# }
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						datamodel = "[MilitaryItem.GetOwnedMaa]"
+
+						item = {
+							maa_item_ocr = {
+								blockoverride "maa_num" {
+									visible = no
+								}
+								blockoverride "maa_stats" {
+									visible = no
+								}
+								blockoverride "maa_1st_line" {
+									button_text = {
+										visible = "[Not( ObjectsEqual( Regiment.GetOwningTitle, Regiment.GetControllingTitle ) )]"
+										blockoverride "pre" {
+											text_single = {
+												text = MV_ADMIN_ARMY_ARMIES_LOANED_LABEL
+											}
+										}
+										using = title_click
+										datacontext = "[Regiment.GetControllingTitle]"
+										blockoverride "text" {
+											raw_text = "[Title.GetNameNoTooltip]"
+										}
+									}
+								}
+								# hbox = {
+								# 	###Add Tooltip to show how long this maa will be loaned out.
+								# 	layoutpolicy_horizontal = expanding
+								#
+								#
+								# 	expand = {}
+								# }
+							}
+						}
+					}
+
+					# text_single = {
+					# 	visible = "[Not(MilitaryItem.MaACanBeCreated)]"
+					# 	raw_text = ""
+					# }
+
+					button_text = {
+						name = "add_maa"
+						layoutpolicy_horizontal = expanding
+
+						blockoverride "text" {
+							text = "ADD_MEN_AT_ARMS_LABEL"
+						}
+						blockoverride "extra" {
+							text_single = {
+								raw_text = "in [Title.GetNameNoTooltip]."
+							}
+						}
+						onclick = "[MilitaryItem.OnClickTitle( Title.Self )]"
+						visible = "[MilitaryItem.MaACanBeCreated]"
+						#
+						tooltip = "CREATE_MAA_TOOLTIP"
+					}
+
+					button_text = {
+						name = "take_back_button"
+						visible = "[Character.IsPlayerInteractionShown('request_title_troops_back_interaction')]"
+						datacontext = "[Title.GetHolder]"
+						layoutpolicy_horizontal = expanding
+
+						enabled = "[Character.IsPlayerInteractionValid('request_title_troops_back_interaction')]"
+						onclick = "[Character.OpenPlayerInteractionWithTargetTitle('request_title_troops_back_interaction', Title.Self)]"
+						blockoverride "disabled" {
+							visible = "[Not(Character.IsPlayerInteractionValid('request_title_troops_back_interaction'))]"
+						}
+
+						blockoverride "text" {
+							raw_text = "HIRED_TROOPS_VIEW_RECLAIM"
+						}
+						tooltip = "[Character.GetPlayerInteractionTooltip('request_title_troops_back_interaction')]"
+					}
+				}
+			}
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 3
+
+			hbox = {
+				name = "armies_you_command"
+				datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
+				item = {
+					container = {
+						datacontext = "[HiredTroopItem.GetAdministrativeTitle]"
+						visible = "[Title.IsAdministrativeArmyHiredByLocalPlayer]"
+					}
+				}
+			}
+
+			button_text = {
+				visible = "[MilitaryView.IsControllingOtherTitlesTroops]"
+				onclick = "[Toggle('armies_you_command')]"
+				shortcut = map_mode_11
+				blockoverride "text" {
+					raw_text = "[PdxGuiWidget.AccessParent.AccessParent.AccessParent.FindChild('armies_you_command').CountVisibleChildren]"
+				}
+				blockoverride "extra" {
+					text_single = {
+						raw_text = "MV_ADMIN_ARMY_ARMIES_YOU_COMMAND"
+					}
+					comma = {}
+					text_single = {
+						raw_text = "[Val('only_controlled_title_maa')] men,"
+					}
+					text_single = {
+						raw_text = "[CollapseIf(Isnt('armies_you_command'))] Shift E."
+					}
+				}
+			}
+
+			hbox = {
+				visible = "[Not(MilitaryView.IsControllingOtherTitlesTroops)]"
+
+				text_single = {
+					text = "MV_ADMIN_ARMY_NO_CONTROLLED_TITLES"
+					visible = "[GetPlayer.IsIndependentRuler]"
+				}
+
+				text_single = {
+					visible = "[Not(GetPlayer.IsIndependentRuler)]"
+
+					text = "MV_ADMIN_ARMY_ASK_EMPEROR"
+				}
+				dot_l = {}
+			}
+
+			expand = { }
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 3
+			visible = no
+
+			#TODO mass recruit
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Get cost of MAAs"
+				}
+				onclick = "[GetScriptedGui('reset_cost_title_maa').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+				onclick = "[Toggle('count_all_titles')]"
+			}
+
+			text_single = {
+				visible = "[Is('count_all_titles')]"
+				raw_text = "Counting"
+			}
+
+			text_single = {
+				visible = "[GetPlayer.MakeScope.Var('total_title_maa_cost').IsSet]"
+				raw_text = "[GetPlayer.MakeScope.Var('total_title_maa_cost').GetValue|0],"
+			}
+
+			text_single = {
+				visible = "[GetPlayer.MakeScope.Var('total_title_maas').IsSet]"
+				raw_text = "[GetPlayer.MakeScope.Var('total_title_maas').GetValue|0] total"
+			}
+
+			expand = {}
+		}
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
+			# name = "armies_you_command"
+			visible = "[Is('armies_you_command')]"
+			#TODO
+
+			item = {
+				button_imperial_army_item_ocr = {
+					visible = "[Title.IsAdministrativeArmyHiredByLocalPlayer]"
+					size = { 504 94 }
+					layoutpolicy_horizontal = expanding
+					blockoverride "num_army" { visible = no }
+					blockoverride "reassigned" {
+						visible = no
+						# raw_text = "assigned to you"
+					}
+					# blockoverride "num_adjusted" {
+					# 	text_single = {
+					# 		raw_text = "[Subtract_int32(PdxGuiWidget.GetIndexInDataModel, PdxGuiWidget.AccessParent.AccessParent.AccessParent.AccessParent.AccessParent.FindChild('available').CountVisibleChildren)],"
+					# 	}
+					# }
+				}
+			}
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 3
+			margin_top = 5
+
+			hbox = {
+				spacing = 3
+				visible = "[GetPlayer.IsIndependentRuler]"
+				text_single = {
+					raw_text = "[PdxGuiWidget.AccessParent.AccessParent.AccessParent.FindChild('other_imperial_armies').CountVisibleChildren]"
+				}
+
+				text_single = {
+					text = MV_ADMIN_ARMY_ARMIES_IN_OTHER_GOVERNORSHIPS
+				}
+
+				comma = {}
+
+				text_single = {
+					raw_text = "[Val('realm_available_title_maa')] men."
+				}
+			}
+
+			hbox = {
+				spacing = 3
+				visible = "[Not(GetPlayer.IsIndependentRuler)]"
+
+				text_single = {
+					raw_text = "[PdxGuiWidget.AccessParent.AccessParent.AccessParent.FindChild('fellow_vassal_armies').CountVisibleChildren]"
+				}
+
+				text_single = {
+					text = MV_ADMIN_ARMY_ARMIES_IN_OTHER_GOVERNORSHIPS
+				}
+
+				dot_l = {}
+			}
+
+
+			text_single = {
+				raw_text = "You have [GetPlayer.GetInfluence] influence"
+			}
+
+			# text_single = {
+			# 	text = MV_ADMIN_ARMY_ARMIES_REALM_STRENGTH
+			# }
+			#
+			# text_single = {
+			# 	text = "[MilitaryView.GetTotalAdminRealmStrengthString]"
+			# 	using = tooltip_ne
+			# }
+
+			dot_l = {}
+
+			expand = {}
+		}
+
+		button_checked_text = {
+			layoutpolicy_horizontal = expanding
+			visible = "[GetPlayer.IsIndependentRuler]"
+			shortcut = map_mode_15
+			onclick = "[Toggle('insta_hire_title_troops')]"
+			blockoverride "visible" {
+				visible = "[Isnt('insta_hire_title_troops')]"
+			}
+			blockoverride "text" {
+				raw_text = "Hire in one click, Control F. [Select_CString( Is('insta_hire_title_troops'), 'Hire', 'Select')] first army with F."
+			}
+		}
+
+		text_single = {
+			layoutpolicy_horizontal = expanding
+			visible = "[And(MilitaryView.CanRequestAnyTitleArmyPersonally, Not(GetPlayer.IsIndependentRuler))]"
+			text = "MV_ADMIN_ARMY_HIRE_DIRECTLY"
+		}
+
+		vbox = {
+			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
+			name = "other_imperial_armies" # for reference
+
+			item = {
+				vbox = {
+					datacontext = "[HiredTroopItem.GetAdministrativeTitle]"
+					visible = "[And(IsNotHiredByPlayer(Title), And(MilitaryView.CanRequestTitleArmyPersonally(Title.Self), MilitaryView.IsAdminTitleWithTroops(Title.Self)))]"
+
+					# widget = {
+					# 	visible = "[Title.CanTransferTitleMaaControlToLocalPlayer]"
+					# 	state = {
+					# 		name = "count_all_titles"
+					# 		on_finish = "[GetScriptedGui('add_cost_title_maa').Execute( GuiScope.SetRoot( Title.MakeScope ).AddScope('actor', GetPlayer.MakeScope).End )]"
+					# 		trigger_when = "[Is('count_all_titles')]"
+					# 	}
+					# 	state = {
+					# 		name = "hire_all_titles"
+					# 		on_finish = "[GetScriptedGui('add_cost_title_maa').Execute( GuiScope.SetRoot( Title.MakeScope ).AddScope('actor', GetPlayer.MakeScope).End )]"
+					# 	}
+					# }
+				}
+			}
+		}
+
+		button_text = {
+			layoutpolicy_horizontal = expanding
+			shortcut = map_mode_18
+			onclick = "[Toggle('reassigned_title_armies')]"
+			visible = "[GreaterThan_int32(PdxGuiWidget.AccessParent.AccessParent.AccessParent.FindChild('reassigned').CountVisibleChildren, '(int32)0')]"
+			blockoverride "text" {
+				raw_text = "[PdxGuiWidget.AccessParent.AccessParent.AccessParent.FindChild('reassigned').CountVisibleChildren] reassigned armies, [CollapseIf(Isnt('reassigned_title_armies'))] Control R."
+			}
+		}
+
+		vbox = {
+			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
+			name = "reassigned"
+
+			item = {
+				vbox = {
+					datacontext = "[HiredTroopItem.GetAdministrativeTitle]"
+					visible = "[And(And(HiredTroopItem.IsHired, IsNotHiredByPlayer(Title)), And(MilitaryView.CanRequestTitleArmyPersonally(Title.Self), MilitaryView.IsAdminTitleWithTroops(Title.Self)))]"
+				}
+			}
+		}
+
+		vbox = {
+			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
+			layoutpolicy_horizontal = expanding
+			visible = "[Is('reassigned_title_armies')]"
+			# name = "reassigned"
+
+			item = {
+				button_imperial_army_item_ocr = {
+					name = imperial_army_item
+					layoutpolicy_horizontal = expanding
+					visible = "[And(And(HiredTroopItem.IsHired, IsNotHiredByPlayer(Title)), And(MilitaryView.CanRequestTitleArmyPersonally(Title.Self), MilitaryView.IsAdminTitleWithTroops(Title.Self)))]"
+					blockoverride "num_army" { visible = no }
+					# blockoverride "num_adjusted" {
+					# 	text_single = {
+					# 		raw_text = "[Add_int32(Subtract_int32(PdxGuiWidget.GetIndexInDataModel, PdxGuiWidget.AccessParent.AccessParent.AccessParent.AccessParent.AccessParent.FindChild('available').CountVisibleChildren), '(int32)1')],"
+					# 	}
+					# }
+				}
+			}
+		}
+
+		button_text = {
+			layoutpolicy_horizontal = expanding
+			visible = "[GreaterThan_int32(PdxGuiWidget.AccessParent.AccessParent.AccessParent.FindChild('reassigned').CountVisibleChildren, '(int32)0')]"
+			blockoverride "text" {
+				raw_text = "[PdxGuiWidget.AccessParent.AccessParent.AccessParent.FindChild('available').CountVisibleChildren] available armies."
+			}
+		}
+
+		vbox = {
+			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
+			layoutpolicy_horizontal = expanding
+			name = "available"
+
+			item = {
+				button_imperial_army_item_ocr = {
+					name = imperial_army_item
+					visible = "[And(Not(HiredTroopItem.IsHired), And(MilitaryView.CanRequestTitleArmyPersonally(Title.Self), MilitaryView.IsAdminTitleWithTroops(Title.Self)))]"
+					layoutpolicy_horizontal = expanding
+					blockoverride "num_army" {
+						visible = "[Isnt('insta_hire_title_troops')]"
+					}
+
+					blockoverride "hire" {
+						blockoverride "num" {
+							visible = "[Is('insta_hire_title_troops')]"
+						}
+						button_text = {
+							enabled = "[And(Title.CanTransferTitleMaaOwnershipToLocalPlayer, GetScriptedGui('pay_to_transfer_title_maa').IsValid( GuiScope.SetRoot( Title.MakeScope ).AddScope('actor', GetPlayer.MakeScope).End ))]"
+							# onclick = "[Title.TransferMaaControlToLocalPlayer]"
+							onclick = "[GetScriptedGui('pay_to_transfer_title_maa').Execute( GuiScope.SetRoot( Title.MakeScope ).AddScope('actor', GetPlayer.MakeScope).End )]"
+							clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_confirm"
+
+							visible = "[Is('insta_hire_title_troops')]"
+							blockoverride "pre" {
+								text_single = {
+									visible = "[Not(Title.CanTransferTitleMaaOwnershipToLocalPlayer)]"
+									raw_text = "Disabled."
+								}
+							}
+							blockoverride "text" {
+								raw_text = "For [GuiScope.SetRoot(Title.MakeScope).AddScope('actor', GetPlayer.MakeScope).ScriptValue('admin_title_troop_command_cost_value')][AddTextIf(IsIndexFirst, ' influence')] get"
+							}
+
+							button = {
+								visible = "[And(Is('insta_hire_title_troops'), IsIndexFirst)]"
+
+								enabled = "[And(Title.CanTransferTitleMaaOwnershipToLocalPlayer, GetScriptedGui('pay_to_transfer_title_maa').IsValid( GuiScope.SetRoot( Title.MakeScope ).AddScope('actor', GetPlayer.MakeScope).End ))]"
+								# onclick = "[Title.TransferMaaControlToLocalPlayer]"
+								onclick = "[GetScriptedGui('pay_to_transfer_title_maa').Execute( GuiScope.SetRoot( Title.MakeScope ).AddScope('actor', GetPlayer.MakeScope).End )]"
+								clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_confirm"
+								shortcut = army_split_half
+							}
+						}
+					}
+				}
+			}
+		}
+
+		vbox = {
+			visible = "[Not(MilitaryView.DoesOtherUncontrolledTitlesExist)]"
+			layoutpolicy_horizontal = expanding
+
+			text_single = {
+				layoutpolicy_horizontal = expanding
+				text = "MV_ADMIN_ARMY_NO_UNCONTROLLED_TITLES"
+			}
+
+			text_single = {
+				layoutpolicy_horizontal = expanding
+				visible = "[Not(GetPlayer.IsIndependentRuler)]"
+
+				text = "MV_ADMIN_ARMY_ASK_EMPEROR"
+			}
+		}
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			datamodel = "[MilitaryView.GetAllAdministrativeArmies]"
+			name = "fellow_vassal_armies"
+
+			item = {
+				button_imperial_army_item_ocr = {
+					name = imperial_army_item_2
+					visible = "[And(IsNotHiredByPlayer(Title), And(Not(MilitaryView.CanRequestTitleArmyPersonally(Title.Self)), MilitaryView.IsAdminTitleWithTroops(Title.Self)))]"
+					layoutpolicy_horizontal = expanding
+					size = { 504 98 }
+				}
+			}
+		}
+	}
+
+	type maa_item_ocr = vbox {
+		layoutpolicy_horizontal = expanding
+		datacontext = "[Regiment.GetMAAType]"
+		datacontext = "[Regiment.GetOriginProvince]"
+		datacontext = "[GetNullLandedTitle]"
+		# datacontext = "[Regiment.GetControllingTitle]" #TODO?
+
+		button_text = {
+			layoutpolicy_horizontal = expanding
+			block "maa_click" {
+				onclick = "[Regiment.ToggleMaaView]"
+			}
+
+			blockoverride "num" {
+				block "maa_num" {
+					visible = "[Is('men_at_arms')]"
+				}
+			}
+			shortcuts_list = {
+				block "maa_num" {
+					visible = "[Is('men_at_arms')]"
+				}
+				blockoverride "click" {
+					onclick = "[Regiment.ToggleMaaView]"
+				}
+			}
+
+			blockoverride "text" {
+				text = "[Regiment.BuildCurrentRegimentCountString|V]"
+			}
+
+			blockoverride "extra" {
+				text_single = {
+					raw_text = "[Regiment.GetName],"
+				}
+
+				block "stationed" {
+					text_single = {
+						visible = "[And( Not( Regiment.GetOriginProvince.IsValid ), GetPlayer.HasDomainProvincesForMAAOrigin )]"
+						raw_text = "[Localize('MAA_UNSTATIONED')]!"
+					}
+
+					text_single = {
+						visible = "[And( Not(Regiment.IsRaised), GetPlayer.IsAtWar)]"
+						raw_text = "[Localize('MAA_UNRAISED')]."
+					}
+				}
+
+				text_single = {
+					visible = "[Not(And( Not(Regiment.IsRaised), GetPlayer.IsAtWar))]"
+					raw_text = "[Localize('MAA_CURRENT_SIZE')],"
+				}
+
+				text_single = {
+					text = "TOTAL_MAA_COST"
+					tooltip = "TOTAL_MAA_COST_TOOLTIP"
+				}
+
+				dot = { }
+
+				block "maa_1st_line" {}
+			}
+		}
+
+		siege_stat = {
+			block "maa_stats" {}
+		}
+
+		hbox_maa_stats = {
+			block "maa_stats" {}
+		}
+	}
+
+	type maa_one_line = button_text {
+		datacontext = "[Regiment.GetMAAType]"
+		datacontext = "[Regiment.GetOriginProvince]"
+		datacontext = "[GetNullLandedTitle]"
+		# datacontext = "[Regiment.GetControllingTitle]" #TODO?
+
+		block "maa_click" {
+			onclick = "[Regiment.ToggleMaaView]"
+		}
+
+		blockoverride "num" {
+			block "maa_num" {
+				visible = "[Is('men_at_arms')]"
+			}
+		}
+		shortcuts_list = {
+			block "maa_num" {
+				visible = "[Is('men_at_arms')]"
+			}
+			blockoverride "click" {
+				onclick = "[Regiment.ToggleMaaView]"
+			}
+		}
+
+		blockoverride "text" {
+			text = "[Regiment.BuildCurrentRegimentCountString|V]"
+		}
+
+		blockoverride "extra" {
+			text_single = {
+				raw_text = "[Regiment.GetName],"
+			}
+
+			block "stationed" {
+				text_single = {
+					visible = "[And( Not( Regiment.GetOriginProvince.IsValid ), GetPlayer.HasDomainProvincesForMAAOrigin )]"
+					raw_text = "[Localize('MAA_UNSTATIONED')]!"
+				}
+
+				text_single = {
+					visible = "[And( Not(Regiment.IsRaised), GetPlayer.IsAtWar)]"
+					raw_text = "[Localize('MAA_UNRAISED')]."
+				}
+			}
+
+			text_single = {
+				visible = "[Not(And( Not(Regiment.IsRaised), GetPlayer.IsAtWar))]"
+				raw_text = "[Localize('MAA_CURRENT_SIZE')],"
+			}
+
+			flow_siege_stat = {
+				block "maa_stats" {}
+			}
+
+			flow_maa_stats = {
+				margin_left = 0
+				block "maa_stats" {}
+			}
+
+			block "maa_1st_line" {}
+
+			text_single = {
+				margin_left = -4
+				text = "TOTAL_MAA_COST"
+				tooltip = "TOTAL_MAA_COST_TOOLTIP"
+			}
+			dot_l = {}
+		}
+	}
+
+	type button_toggle_companion_ai_ocr = container {
+		ignoreinvisible = yes
+
+		button_text = {
+			onclick = "[PostCommand( GetToggleCompanionAICommand )]"
+			visible = "[GetPlayer.HasCompanionAI]"
+			clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_checkbox"
+			shortcut = map_mode_10
+			blockoverride "text" {
+				raw_text = "Army automation is enabled, Shift W."
+			}
+		}
+
+		button_text = {
+			onclick = "[PostCommand( GetToggleCompanionAICommand )]"
+			visible = "[Not(GetPlayer.HasCompanionAI)]"
+			clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_confirm"
+			shortcut = map_mode_10
+			blockoverride "text" {
+				raw_text = "Enable army automation, Shift W."
+			}
+		}
+	}
+}
+
+
 window = {
 	name = "military_view"
 	widgetid = "military_view"

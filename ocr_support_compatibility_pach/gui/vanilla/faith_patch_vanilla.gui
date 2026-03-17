@@ -8,7 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_faith_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "faith_window"
 			datacontext = "[FaithWindow.GetFaith]"
 			datacontext = "[GetVariableSystem]"
 
@@ -989,13 +988,13 @@ types OCR_PATCH_VANILLA {
 													name = "name_notheld"
 													visible = "[Not( GuiHolySiteItem.IsHeldByFaith )]"
 													layoutpolicy_horizontal = expanding
-											
+
 													text = "[HolySite.GetName]"
 													align = nobaseline
 													autoresize = no
 													default_format = "#low"
 													using = Font_Size_Big
-											
+
 													margin_bottom = 5
 												}
 
@@ -1003,13 +1002,13 @@ types OCR_PATCH_VANILLA {
 													name = "name_held"
 													visible = "[GuiHolySiteItem.IsHeldByFaith]"
 													layoutpolicy_horizontal = expanding
-											
+
 													text = "[HolySite.GetName]"
 													align = nobaseline
 													autoresize = no
 													default_format = "#high"
 													using = Font_Size_Big
-											
+
 													margin_bottom = 5
 
 												}

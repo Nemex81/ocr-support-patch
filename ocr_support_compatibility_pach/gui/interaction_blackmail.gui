@@ -84,12 +84,11 @@ window = {
 				}
 
 				# Character name button (replaces portrait)
-				button_standard_text = {
+				button_standard = {
 					name = "target_character_button"
 					layoutpolicy_horizontal = expanding
 					text = "[Character.GetUINameNoTooltip]"
 					onclick = "[DefaultOnCharacterClick(Character.GetID)]"
-					tooltip = "[Character.GetTooltip]"
 					shortcut = "t"
 					visible = "[Character.IsValid]"
 					default_format = "#high"
@@ -156,7 +155,7 @@ window = {
 										margin = { 10 0 }
 										parentanchor = vcenter
 										align = left|vcenter
-										
+
 										# Concatenate secret name + hook type
 										text = "[Concatenate(BlackmailSecretItem.GetSecret.GetName, SelectLocalization(And(BlackmailInteractionWindow.IsBlackmail, BlackmailSecretItem.IsWeakHook), ' (Weak Hook)', SelectLocalization(And(BlackmailInteractionWindow.IsBlackmail, BlackmailSecretItem.IsStrongHook), ' (Strong Hook)', '')))]"
 									}
@@ -217,7 +216,7 @@ window = {
 				size = { 420 45 }
 				enabled = "[BlackmailInteractionWindow.CanSendOffer]"
 				onclick = "[BlackmailInteractionWindow.Send]"
-				
+
 				text = "[SelectLocalization( BlackmailInteractionWindow.IsBlackmail, CharacterInteractionConfirmationWindow.GetSendName, 'INTRIGUE_WINDOW_SECRET_EXPOSE' )]"
 				using = Font_Size_Medium
 
@@ -308,8 +307,6 @@ window = {
 					# CRITICAL: Mouse input parity - left + right click
 					blockoverride "portrait_button" {
 						onclick = "[DefaultOnCharacterClick(Character.GetID)]"
-						onrightclick = "[OpenCharacterInteractionMenu(Character.GetID)]"
-						tooltip = "[Character.GetTooltip]"
 					}
 
 					# Hover state for visual feedback
@@ -446,7 +443,7 @@ window = {
 					state = {
 						name = _mouse_enter
 						start_sound = {
-							soundeffect = "event:/SFX/UI/Generic/sfx_ui_generic_pointer_over_large"
+							soundeffect = "event:/SFX/UI/Generic/sfx_ui_generic_pointer_over"
 						}
 					}
 				}

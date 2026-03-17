@@ -8,8 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_court_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "court_window"
-
 			using = Window_Size_MainTab
 
 			datacontext = "[GetVariableSystem]"
@@ -348,7 +346,7 @@ types OCR_PATCH_VANILLA {
 															default_format = "#low"
 														}
 
-												
+
 													}
 
 													button_checkbox = {

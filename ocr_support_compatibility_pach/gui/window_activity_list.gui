@@ -1,3 +1,5 @@
+@txt_width = 700
+
 # window_activity_list.gui — OCR Support Patch
 # Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1
 # Generato da: tools/assemble_dualmode.py --window window_activity_list --mode tabs
@@ -825,7 +827,6 @@ window = {
 		name = "vanilla_activity_list_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "activity_list"
 			parentanchor = top|right
 			layer = windows_layer
 			movable = no
@@ -1219,7 +1220,6 @@ window = {
 		name = "vanilla_activity_list_detail_host_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "activity_list_detail_host"
 			parentanchor = top|right
 			position = { -650 110 }
 			size = { 630 935 }
@@ -1728,7 +1728,6 @@ window = {
 		name = "vanilla_activity_list_detail_invite_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "activity_list_detail_invite"
 			parentanchor = top|right
 			position = { -650 110 }
 			size = { 630 935 }

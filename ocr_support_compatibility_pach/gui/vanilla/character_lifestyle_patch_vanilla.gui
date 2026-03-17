@@ -8,7 +8,6 @@ types OCR_PATCH_VANILLA {
 		name = "vanilla_character_lifestyle_patch_vanilla_container"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 
-			name = "character_lifestyle_window"
 			#	position = { 80 20 }
 			filter_mouse = all
 
@@ -877,7 +876,7 @@ types OCR_PATCH_VANILLA {
 											texture = "gfx/interface/icons/lifestyles_perks/node_wanderer.dds"
 										}
 
-								
+
 									}
 
 									hbox = {
@@ -1163,7 +1162,7 @@ types OCR_PATCH_VANILLA {
 																		texture = "[Perk.GetIcon]"
 
 																		size = { 60 60 }
-																
+
 																		glow = {
 																			visible = "[And(CharacterLifestyleWindow.CanSelectPerk( Perk.Self ), Character.GetLifestyle.IsValid)]"
 																			using = Color_Orange

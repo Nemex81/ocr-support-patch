@@ -3,8 +3,92 @@
 # Dual Mode: OCR (screen reader) + Vanilla CK3 1.17.1
 # Generato da: tools/assemble_dualmode.py --window window_my_realm --mode complex --separate-vanilla
 
+types OCR
+{
+	# AGOT
+	type vassal_expected_legitimacy_text = text_single {
+		visible = "[And( Character.IsVassalOf( GetPlayer ), Not( Character.IsPlayer ) )]"
+
+		raw_text = "Legit [Character.GetLegitimacyExpectationsOfLiege]."
+
+		tooltip = "VASSAL_EXPECTED_LEGITIMACY_TT"
+	}
+
+	type button_tab_rulers = button_text {
+		visible = "[Not(GetVariableSystem.HasValue('realm_tabs', 'rulers'))]"
+		layoutpolicy_horizontal = expanding
+		onclick = "[GetVariableSystem.Set('realm_tabs', 'rulers')]"
+		onclick = "[GetScriptedGui('all_rulers').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+		blockoverride "pre" {
+			text_single = {
+				raw_text = "G,"
+			}
+			text_single = {
+				raw_text = " showing"
+				visible = "[GetVariableSystem.HasValue('realm_tabs', 'rulers')]"
+			}
+		}
+		blockoverride "text" {
+			raw_text = "Browse rulers by region"
+		}
+		blockoverride "dot" {
+
+		}
+		shortcut = army_merge
+	}
+
+	type hbox_vassal_stats = hbox {
+		spacing = 3
+		text_single = {
+			text = "MY_REALM_WINDOW_VASSAL_OPINION"
+			tooltip = "MY_REALM_WINDOW_VASSAL_OPINION_TT"
+		}
+
+		, = {}
+
+		text_single = {
+			raw_text = "average is [GetPlayer.MakeScope.ScriptValue('avg_vassal_opinion')|0]."
+			margin_right = 3
+		}
+
+		text_single = {
+			tooltip = "[GetPlayer.GetDreadBreakdown]"
+			name = "dread_name"
+			raw_text = "[dread|E]: [GetPlayer.GetDread|0],"
+		}
+
+		hbox = {
+			spacing = 3
+			tooltip = "[Character.GetVassalLimitTooltip]"
+
+			text_single = {
+				text = "MY_REALM_WINDOW_VASSAL_LIMIT"
+			}
+
+			text_single = {
+				text = "MY_REALM_WINDOW_VASSAL_LIMIT_VALUE"
+			}
+
+			text_single = {
+				raw_text = "counts or above."
+			}
+		}
+	}
+
+	type button_ruler_browser = button {
+		shortcut = army_merge
+		# onclick = "[ToggleGameView( 'my_realm' )]"
+		onclick = "[GetVariableSystem.Toggle('ruler_browser')]"
+		visible = "[And(Not(Or(Or(IsGameViewOpen('army'), IsGameViewOpen('my_realm')), IsGameViewOpen('men_at_arms'))), GetPlayer.IsValid)]"
+		using = close_character
+	}
+}
+
+template agot_show_law {
+	visible = "[And( And( Not( GuiLawGroup.GetLawGroup.HasFlag( 'realm_law' ) ), Not( GuiLawGroup.GetLawGroup.HasFlag( 'admin_law' ) ) ), GuiLawGroup.IsAvailable )]"
+}
+
 window = {
-	name = "my_realm_window"
 	widgetid = "my_realm_window"
 	datacontext = "[GetVariableSystem]"
 	datacontext = "[GetPlayer]"
@@ -1045,7 +1129,7 @@ window = {
 
 																flowcontainer = {
 																	datacontext = "[CountyGroup.AccessBreakdowns]"
-																	space = 3
+																	spacing = 3
 																	text_single = {
 																		raw_text = "game_concept_development"
 																	}
