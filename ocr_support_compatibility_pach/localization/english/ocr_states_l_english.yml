@@ -4,7 +4,7 @@
  ocr_tab_2_label:0 "Tab 2,"
  ocr_tab_3_label:0 "Tab 3,"
  ocr_tab_4_label:0 "Tab 4,"
- 
+
  # Keyboard Navigation
  ocr_page_up:0 "Page Up."
  ocr_page_down:0 "Page Down."
@@ -12,7 +12,7 @@
  ocr_hotkey_2:0 "Hotkey 2."
  ocr_hotkey_3:0 "Hotkey 3."
  ocr_control_f:0 "Control F."
- 
+
  # Action Status Messages
  ocr_cant_open:0 "Can't open"
  ocr_cant_change:0 "Can't change."
@@ -20,7 +20,7 @@
  ocr_more:0 "more."
  ocr_view_more_hotkey_3_2:0 "more. Hotkey 3, 2."
  ocr_view_more_hotkey_3_3:0 "more. Hotkey 3, 3."
- 
+
  # Relationship Labels
  ocr_vassal_in:0 "Vassal in"
  ocr_liege:0 "Liege,"
@@ -33,7 +33,7 @@
  ocr_view_previous_spouse:0 "View previous spouse or regent."
  ocr_view_next_spouse:0 "View next spouse or regent."
  ocr_tributary_of:0 "tributary of"
- 
+
  # Military and Realm Status
  ocr_at_war:0 "at war,"
  ocr_men:0 "men,"
@@ -42,7 +42,7 @@
  ocr_realm_size_count:0 "count"
  ocr_realm_size_counties:0 "counties"
  ocr_realm_size_county:0 "county"
- 
+
  # County Information
  ocr_capital:0 "capital,"
  ocr_tax:0 "Tax:"
@@ -50,7 +50,7 @@
  ocr_fort_level:0 "Fort level:"
  ocr_empty_holding:0 "Empty."
  ocr_in_county_of:0 "In county of"
- 
+
  # Personality and Traits
  ocr_personality_traits:0 "Personality and traits, hotkey 3."
  ocr_personality_label:0 "Personality:"
@@ -60,30 +60,30 @@
  ocr_modifiers:0 "Modifiers."
  ocr_virtue_suffix:0 "(virtue)"
  ocr_sin_suffix:0 "(sin)"
- 
+
  # Faith and Culture
  ocr_all:0 "All"
  ocr_share_faith:0 "counties share this faith."
  ocr_share_culture:0 "counties share this culture."
  ocr_of:0 "of"
- 
+
  # Gender and Sexuality
  ocr_female:0 "Female"
  ocr_male:0 "Male"
  ocr_female_lowercase:0 "female"
  ocr_male_lowercase:0 "male"
- 
+
  # Opinion
  ocr_opinion:0 "opinion"
  ocr_opinion_comma:0 "opinion,"
- 
+
  # Languages
  ocr_knows:0 "Knows"
  ocr_known:0 "Known"
  ocr_current:0 "Current"
  ocr_out_of:0 "out of"
  ocr_limit:0 "limit"
- 
+
  # Stress and Health
  ocr_stress_level:0 "Stress level:"
  ocr_stress:0 "Stress:"
@@ -92,16 +92,17 @@
  ocr_above:0 "above"
  ocr_below:0 "below"
  ocr_average:0 "average."
- 
+
  # Holding Types and Titles
  ocr_counties_label:0 "counties."
  ocr_holdings_label:0 "holdings."
  ocr_titles_label:0 "titles."
  ocr_claims_label:0 "claims."
- 
+
  # Close Buttons and Actions
  ocr_close_view:0 "Close"
- 
+ ocr_blackmail_select_secret:0 "Select secret."
+
  # County Tabs with Hotkeys
  ocr_counties_tab_1:0 "Tab 1,"
  ocr_counties_tab_2:0 "Tab 2,"
@@ -111,7 +112,7 @@
  # various
  OCR_ENABLED:0 "Enabled"
  OCR_DISABLED:0 "Disabled"
- 
+
  # Culture Window Specific Strings
  ocr_culture_tabs:0 "Tabs:"
  ocr_culture_overview:0 "Overview,"

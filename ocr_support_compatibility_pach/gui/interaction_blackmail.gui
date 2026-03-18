@@ -120,7 +120,7 @@ window = {
 				# Section header
 				text_single = {
 					name = "secrets_header"
-					text = "BLACKMAIL_SELECT_SECRET"
+					text = "ocr_blackmail_select_secret"
 					default_format = "#high"
 					visible = "[BlackmailInteractionWindow.HasSecrets]"
 				}

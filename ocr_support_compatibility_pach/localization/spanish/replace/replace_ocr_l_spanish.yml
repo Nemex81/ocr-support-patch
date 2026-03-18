@@ -91,6 +91,9 @@ LEGEND_SEEDS: "[Add_int32( GetDataModelSize( Character.GetLegendSeeds ), GetData
 ACTION_IS_VISIBLE_READ_UNREAD:1 "[Select_CString( ImportantActionItem.IsRead, '#same', '#medium')] [ImportantActionItem.GetLabel]#!,"
 ACTION_IS_VISIBLE_READ_UNREAD_COMBINED:1 "[Select_CString( ImportantActionItem.IsRead, '#same', '#medium;italic')] [ImportantActionItem.GetCombinedLabel]#!,"
 
+NON_FEUDAL_SUBJECT_CONTRACT_OBLIGATIONS_TITLE:0 "Livello tasse"
+NON_FEUDAL_SUBJECT_CONTRACT_OBLIGATIONS_TITLE_LEVIES:0 "Livello leve"
+
 action_powerful_vassal_not_on_council_combined_label:1 "[recipient.GetUINameNoTooltip], [recipient.GetMilitaryStrengthText] uomini, [recipient.GetOpinionOf( GetPlayer )|+] opinione"
 
 action_can_call_ally_label:2 "Puoi contare sul tuo alleato, [recipient.GetPrimaryTitle.GetNameNoTierNoTooltip]$ally_info$"

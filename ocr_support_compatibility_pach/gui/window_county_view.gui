@@ -640,7 +640,7 @@ types CountyViewTypes
 				vbox = {
 					layoutpolicy_horizontal = expanding
 
-					tooltip_paragraph = {
+					cooltip_paragraph = {
 						text = "[County.GetCountyControlEffectsDesc]"
 					}
 
@@ -648,7 +648,7 @@ types CountyViewTypes
 						size = { 0 15 }
 					}
 
-					tooltip_paragraph = {
+					cooltip_paragraph = {
 						datacontext = "[CountyDataBreakdowns.AccessControl( County.Self )]"
 
 						text = "VALUE_BREAKDOWN_TEXT_LINK"
@@ -691,12 +691,12 @@ types CountyViewTypes
 					datacontext = "[County.GetCount]"
 					datacontext = "[Character.GetGovernment]"
 
-					tooltip_paragraph = {
+					cooltip_paragraph = {
 						visible = "[Not( GovernmentType.IsAffectedByDevelopment )]"
 						text = "COUNTY_DEVELOPMENT_IGNORED_DESC"
 					}
 
-					tooltip_paragraph = {
+					cooltip_paragraph = {
 						text = "[County.GetCountyDevelopmentEffectsDesc]"
 					}
 
@@ -704,11 +704,11 @@ types CountyViewTypes
 						size = { 0 15 }
 					}
 
-					tooltip_paragraph = {
+					cooltip_paragraph = {
 						text = "[County.GetDevelopmentProgressOutOfMax]"
 					}
 
-					tooltip_paragraph = {
+					cooltip_paragraph = {
 						datacontext = "[CountyDataBreakdowns.AccessDevelopmentChange( County.Self )]"
 
 						text = "VALUE_BREAKDOWN_TEXT_LINK"
@@ -748,11 +748,11 @@ types CountyViewTypes
 				vbox = {
 					layoutpolicy_horizontal = expanding
 
-					tooltip_paragraph = {
+					cooltip_paragraph = {
 						text = "PROJECTED_COUNTY_FERTILITY_EQUILIBRIUM"
 					}
 
-					tooltip_paragraph = {
+					cooltip_paragraph = {
 						datacontext = "[CountyDataBreakdowns.AccessFertilityChange( County.Self )]"
 						datacontext = "[HoldingView.AccessCountyBreakdowns]"
 
