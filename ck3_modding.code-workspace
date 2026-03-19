@@ -16,6 +16,9 @@
 		},
 		{
 			"path": "../../Paradox Interactive/Crusader Kings III/crashes"
+		},
+		{
+			"path": "../../Paradox Interactive/Crusader Kings III/mod/ck3_italian_translate"
 		}
 	],
 	"settings": {

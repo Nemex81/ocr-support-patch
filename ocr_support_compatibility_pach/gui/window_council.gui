@@ -3021,3 +3021,54 @@ window = {
 	}
 }
 
+widget = {
+	name = "potential_task_location_window"
+	size = { 100% 100% }
+	using = TooltipFocus
+	alwaystransparent = yes
+
+	state = {
+		name = _show
+		on_start = "[GetVariableSystem.Set('council_task', 'yes')]"
+	}
+
+	button = {
+		parentanchor = center
+		widgetanchor = left|vcenter
+		onmousehierarchyenter = "[GetVariableSystem.Clear('council_task')]"
+		visible = "[GetVariableSystem.Exists('council_task')]"
+		position = { -50 0 }
+		# texture = "gfx/interface/colors/white.dds"
+
+		flowcontainer = {
+			ignoreinvisible = yes
+			resizeparent = yes
+			margin = { 50 50 }
+			direction = vertical
+
+			text_single = {
+				background = { using = Background_Area_Border_Solid }
+				raw_text = "Click here to select the last viewed county."
+				autoresize = yes
+			}
+
+			text_single = {
+				raw_text = "Or press Shift 1 if you use Autohotkey."
+			}
+
+			text_single = {
+				raw_text = "Task: [PotentialTaskLocationWindow.GetTaskType.GetName]."
+			}
+
+			text_single = {
+				raw_text = "Cancel with Escape."
+			}
+		}
+	}
+
+	button = {
+		onclick = "[PotentialTaskLocationWindow.Close]"
+		using = close_window_ocr
+	}
+}
+

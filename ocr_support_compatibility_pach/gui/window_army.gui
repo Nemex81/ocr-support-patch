@@ -5436,3 +5436,711 @@ window = {
 	# ============================================================
 	army_patch_vanilla = {}
 }
+
+window = {
+	name = "army_reorganization_window"
+	size = { 100% 100% }
+	layer = top
+
+	attachto = {
+		widgetid = "army_window"
+		stackmode = top
+		inherit_data_context = yes
+	}
+
+	state = {
+		name = _show
+		on_start = "[GetVariableSystem.Clear('moving_to_old')]"
+	}
+
+	using = Window_Background_No_Edge
+	background = { using = Background_Area_Border_Solid }
+
+	# using = Animation_ShowHide_Quick
+
+	vbox = {
+		margin = { 5 5 }
+		margin_bottom = 10
+		# button_text = {
+		# 	layoutpolicy_horizontal = expanding
+		# 	blockoverride "text" {
+		# 		raw_text = "Errors: [NumberOrErrors]"
+		# 	}
+		# 	onclick = "[ClearErrorLog]"
+		# 	#TODO
+		# }
+
+		spacing = 5
+
+		# header_pattern = {
+		# 	layoutpolicy_horizontal = expanding
+		#
+		# 	blockoverride "header_text"
+		# 	{
+		# 		raw_text = "[Localize('ARMY_REORGANIZATION')]."
+		# 	}
+		#
+		# 	blockoverride "button_close"
+		# 	{
+		# 		onclick = "[ArmyReorgWindow.Hide]"
+		#
+		# 	}
+		# }
+
+		hbox = {
+		    layoutpolicy_horizontal = expanding
+
+			text_single = {
+				raw_text = "[Localize('ARMY_REORGANIZATION')]."
+				visible = "[Not(Or(GetVariableSystem.Exists('move_to_new'), GetVariableSystem.Exists('move_to_old')))]"
+			}
+
+			button_text = {
+				datacontext = "[ArmyReorgWindow.GetRightArmyComposition]"
+			    blockoverride "text" {
+					raw_text = "Moving [GetVariableSystem.Get('move_to_new')] to [ArmyComposition.GetName]. Close with Escape."
+			    }
+				visible = "[GetVariableSystem.Exists('move_to_new')]"
+				onclick = "[GetVariableSystem.Clear('move_to_new')]"
+				using = close_window_ocr
+			}
+
+			button_text = {
+				datacontext = "[ArmyReorgWindow.GetLeftArmyComposition]"
+			    blockoverride "text" {
+					raw_text = "Moving [GetVariableSystem.Get('move_to_old')] to [ArmyComposition.GetName]. Close with Escape."
+			    }
+				visible = "[GetVariableSystem.Exists('move_to_old')]"
+				onclick = "[GetVariableSystem.Clear('move_to_old')]"
+				using = close_window_ocr
+			}
+
+		    expand = { }
+		}
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			visible = "[Not(Or(GetVariableSystem.Exists('move_to_new'), GetVariableSystem.Exists('move_to_old')))]"
+			spacing = 5
+			margin_left = 10
+
+			# armies
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 5
+
+				widget = {
+					size = { 0 70 }
+					layoutpolicy_horizontal = expanding
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						name = "right"
+						datacontext = "[ArmyReorgWindow.GetRightArmyComposition]"
+						visible = "[DataModelHasItems( ArmyReorgWindow.GetRightItems )]"
+
+						hbox = {
+						    layoutpolicy_horizontal = expanding
+
+							text_single = {
+								margin_top = 1
+								name = "army_name"
+								raw_text = "[ArmyComposition.GetName]."
+							}
+
+							button_text = {
+								visible = "[DataModelHasItems( ArmyReorgWindow.GetRightItems )]"
+								layoutpolicy_horizontal = expanding
+								blockoverride "text" {
+									raw_text = "Select and close, Enter."
+									align = left
+								}
+								shortcut = confirm
+								onclick = "[ArmyReorgWindow.SelectRight]"
+							}
+
+						    expand = { }
+						}
+
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							soldiers_and_quality_small_text = {
+							}
+
+							text_single = {
+								name = "army_maintenance"
+								text = "ARMY_REORG_RIGHT_MAINTENANCE"
+							}
+
+							dot = { }
+
+							expand = { }
+						}
+
+						vbox = {
+							name = "right_buttons"
+							layoutpolicy_horizontal = expanding
+							visible = "[DataModelHasItems( ArmyReorgWindow.GetRightItems )]"
+
+							button_text = {
+								layoutpolicy_horizontal = expanding
+								blockoverride "text" {
+									raw_text = "Disband this army."
+									align = left
+								}
+								blockoverride "disabled" {
+									visible = "[Not(ArmyReorgWindow.CanDisband)]"
+								}
+								enabled = "[ArmyReorgWindow.CanDisband]"
+								onclick = "[ArmyReorgWindow.DisbandRight]"
+							}
+						}
+
+						expand = { }
+					}
+				}
+
+				widget = {
+					size = { 0 70 }
+					layoutpolicy_horizontal = expanding
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						name = "left"
+						datacontext = "[ArmyReorgWindow.GetLeftArmyComposition]"
+						visible = "[DataModelHasItems( ArmyReorgWindow.GetLeftItems )]"
+
+						hbox = {
+						    layoutpolicy_horizontal = expanding
+							visible = "[DataModelHasItems( ArmyReorgWindow.GetLeftItems )]"
+
+							text_single = {
+								margin_top = 1
+								name = "army_name"
+								raw_text = "[ArmyComposition.GetName]."
+							}
+
+							button_text = {
+								layoutpolicy_horizontal = expanding
+								blockoverride "text" {
+									raw_text = "Select and close, Escape."
+									align = left
+								}
+								using = close_window_ocr
+								onclick = "[ArmyReorgWindow.SelectLeft]"
+							}
+
+						    expand = { }
+						}
+
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+
+							soldiers_and_quality_small_text = {
+							}
+
+							text_single = {
+								name = "army_maintenance"
+								text = "ARMY_REORG_LEFT_MAINTENANCE"
+							}
+
+							dot = { }
+
+							expand = { }
+						}
+
+						vbox = {
+							name = "left_buttons"
+							layoutpolicy_horizontal = expanding
+							visible = "[DataModelHasItems( ArmyReorgWindow.GetLeftItems )]"
+
+							button_text = {
+								layoutpolicy_horizontal = expanding
+								blockoverride "text" {
+									raw_text = "Disband this army."
+									align = left
+								}
+								blockoverride "disabled" {
+									visible = "[Not(ArmyReorgWindow.CanDisband)]"
+								}
+								enabled = "[ArmyReorgWindow.CanDisband]"
+								onclick = "[ArmyReorgWindow.DisbandLeft]"
+							}
+						}
+
+						expand = { }
+					}
+				}
+			}
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				visible = "[Not(GetVariableSystem.Exists('ungrouped_units'))]"
+
+				#types to new
+				vbox = {
+					visible = "[GetVariableSystem.Exists('moving_to_old')]"
+					layoutpolicy_horizontal = expanding
+					datacontext = "[ArmyReorgWindow.GetLeftArmy]"
+					datacontext = "[ArmyReorgWindow.GetLeftArmyComposition]"
+					datamodel = "[CalculateBreakdownItems(Army.Self)]"
+
+					text_single = {
+						datacontext = "[ArmyReorgWindow.GetLeftArmyComposition]"
+						raw_text = "Select units to move to [ArmyComposition.GetName]:"
+						layoutpolicy_horizontal = expanding
+					}
+
+					item = {
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							button_text = {
+								visible = "[TroopItem.IsMaa]"
+							    blockoverride "text" {
+									raw_text = "[TroopItem.GetRegiment.GetRegiment.GetMAAType.GetNameNoTooltip]."
+							    }
+								onclick = "[GetVariableSystem.Set('move_to_old', TroopItem.GetRegiment.GetRegiment.GetMAAType.GetNameNoTooltip)]"
+							}
+
+							button_text = {
+								visible = "[TroopItem.IsLevies]"
+							    blockoverride "text" {
+									raw_text = "Levies."
+							    }
+								onclick = "[GetVariableSystem.Set('move_to_old', 'levies')]"
+							}
+
+							button_text = {
+								visible = "[TroopItem.IsKnight]"
+							    blockoverride "text" {
+									raw_text = "Knights."
+							    }
+								onclick = "[GetVariableSystem.Set('move_to_old', 'knights')]"
+							}
+
+							expand = { }
+						}
+					}
+				}
+
+				# types to old
+				vbox = {
+					visible = "[Not(GetVariableSystem.Exists('moving_to_old'))]"
+					layoutpolicy_horizontal = expanding
+					datacontext = "[ArmyReorgWindow.GetLeftArmy]"
+					datacontext = "[ArmyReorgWindow.GetLeftArmyComposition]"
+					datamodel = "[CalculateBreakdownItems(Army.Self)]"
+
+					text_single = {
+						datacontext = "[ArmyReorgWindow.GetRightArmyComposition]"
+						raw_text = "Select units to move to [ArmyComposition.GetName]:"
+						layoutpolicy_horizontal = expanding
+					}
+
+					item = {
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							button_text = {
+								visible = "[TroopItem.IsMaa]"
+							    blockoverride "text" {
+									raw_text = "[TroopItem.GetRegiment.GetRegiment.GetMAAType.GetNameNoTooltip]."
+							    }
+								onclick = "[GetVariableSystem.Set('move_to_new', TroopItem.GetRegiment.GetRegiment.GetMAAType.GetNameNoTooltip)]"
+							}
+
+							button_text = {
+								visible = "[TroopItem.IsLevies]"
+							    blockoverride "text" {
+									raw_text = "Levies."
+							    }
+								onclick = "[GetVariableSystem.Set('move_to_new', 'levies')]"
+							}
+
+							button_text = {
+								visible = "[TroopItem.IsKnight]"
+							    blockoverride "text" {
+									raw_text = "Knights."
+							    }
+								onclick = "[GetVariableSystem.Set('move_to_new', 'knights')]"
+							}
+
+							expand = { }
+						}
+					}
+				}
+			}
+
+			# switch
+			hbox = {
+			    layoutpolicy_horizontal = expanding
+				visible = "[GetVariableSystem.Exists('moving_to_old')]"
+				datacontext = "[ArmyReorgWindow.GetRightArmyComposition]"
+
+				button_text = {
+					# visible = "[IsDataModelEmpty( ArmyReorgWindow.GetRightItems )]"
+					layoutpolicy_horizontal = expanding
+					blockoverride "text" {
+						raw_text = "Move units to [ArmyComposition.GetName], hotkey Tab."
+					}
+					onclick = "[GetVariableSystem.Clear('moving_to_old')]"
+					shortcut = action_list
+				}
+
+			    expand = { }
+			}
+
+			# switch
+			hbox = {
+			    layoutpolicy_horizontal = expanding
+				visible = "[Not(GetVariableSystem.Exists('moving_to_old'))]"
+
+				button_text = {
+					visible = "[DataModelHasItems( ArmyReorgWindow.GetRightItems )]"
+					layoutpolicy_horizontal = expanding
+					blockoverride "text" {
+						datacontext = "[ArmyReorgWindow.GetLeftArmyComposition]"
+						raw_text = "Move units to [ArmyComposition.GetName], hotkey Tab."
+						# raw_text = "Move units to , hotkey Tab."
+					}
+					onclick = "[GetVariableSystem.Set('moving_to_old', 'yes')]"
+					shortcut = action_list
+				}
+
+			    expand = { }
+			}
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+			    blockoverride "text" {
+			        raw_text = "Show groupped units, hotkey G."
+			    }
+				visible = "[GetVariableSystem.Exists('ungrouped_units')]"
+				onclick = "[GetVariableSystem.Toggle('ungrouped_units')]"
+				shortcut = army_merge
+			}
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+			    blockoverride "text" {
+			        raw_text = "Show all units ungrouped, hotkey G."
+			    }
+				visible = "[Not(GetVariableSystem.Exists('ungrouped_units'))]"
+				onclick = "[GetVariableSystem.Toggle('ungrouped_units')]"
+				shortcut = army_merge
+			}
+		}
+
+		# subunits
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			spacing = 20
+
+			visible = "[Not(GetVariableSystem.Exists('ungrouped_units'))]"
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				visible = "[GetVariableSystem.Exists('move_to_new')]"
+				blockoverride "scrollbox_margins" {
+					margin_top = 20
+				}
+
+				blockoverride "scrollbox_content"
+				{
+					vbox = {
+						datamodel = "[ArmyReorgWindow.GetLeftItems]"
+						layoutpolicy_horizontal = expanding
+
+						item = {
+							container = {
+								layoutpolicy_horizontal = expanding
+								ignoreinvisible = yes
+
+								move_regiment = {
+									visible = "[And(GetVariableSystem.HasValue('move_to_new', 'levies'), Not(Or(RegimentReorgEntry.IsMaA, Character.IsValid)))]"
+								}
+								move_regiment = {
+									visible = "[And(GetVariableSystem.HasValue('move_to_new', 'knights'),  Character.IsValid)]"
+								}
+
+								move_regiment = {
+									visible = "[EqualTo_string(GetVariableSystem.Get('move_to_new'), RegimentReorgEntry.GetMaAType.GetNameNoTooltip)]"
+								}
+							}
+						}
+					}
+				}
+			}
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				visible = "[GetVariableSystem.Exists('move_to_old')]"
+				blockoverride "scrollbox_margins" {
+					margin_top = 20
+				}
+
+				blockoverride "scrollbox_content"
+				{
+					vbox = {
+						datamodel = "[ArmyReorgWindow.GetRightItems]"
+						layoutpolicy_horizontal = expanding
+
+						item = {
+							container = {
+								layoutpolicy_horizontal = expanding
+								ignoreinvisible = yes
+
+								move_regiment = {
+									visible = "[And(GetVariableSystem.HasValue('move_to_old', 'levies'), Not(Or(RegimentReorgEntry.IsMaA, Character.IsValid)))]"
+								}
+								move_regiment = {
+									visible = "[And(GetVariableSystem.HasValue('move_to_old', 'knights'),  Character.IsValid)]"
+								}
+
+								move_regiment = {
+									visible = "[EqualTo_string(GetVariableSystem.Get('move_to_old'), RegimentReorgEntry.GetMaAType.GetNameNoTooltip)]"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			visible = "[GetVariableSystem.Exists('ungrouped_units')]"
+
+			text_single = {
+				visible = "[Not(GetVariableSystem.Exists('moving_to_old'))]"
+				datacontext = "[ArmyReorgWindow.GetRightArmyComposition]"
+				raw_text = "Select units to move to [ArmyComposition.GetName]:"
+				layoutpolicy_horizontal = expanding
+			}
+
+			text_single = {
+				visible = "[GetVariableSystem.Exists('moving_to_old')]"
+				datacontext = "[ArmyReorgWindow.GetLeftArmyComposition]"
+				raw_text = "Select units to move to [ArmyComposition.GetName]:"
+				layoutpolicy_horizontal = expanding
+			}
+
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			spacing = 20
+
+			visible = "[GetVariableSystem.Exists('ungrouped_units')]"
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				visible = "[Not(GetVariableSystem.Exists('moving_to_old'))]"
+				blockoverride "scrollbox_margins" {
+					margin_top = 20
+				}
+
+				blockoverride "scrollbox_content"
+				{
+					vbox = {
+						datamodel = "[ArmyReorgWindow.GetLeftItems]"
+						layoutpolicy_horizontal = expanding
+
+						item = {
+							container = {
+								layoutpolicy_horizontal = expanding
+								ignoreinvisible = yes
+
+								move_regiment = {
+								}
+							}
+						}
+					}
+				}
+			}
+
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				visible = "[GetVariableSystem.Exists('moving_to_old')]"
+				blockoverride "scrollbox_margins" {
+					margin_top = 20
+				}
+
+				blockoverride "scrollbox_content"
+				{
+					vbox = {
+						datamodel = "[ArmyReorgWindow.GetRightItems]"
+						layoutpolicy_horizontal = expanding
+
+						item = {
+							container = {
+								layoutpolicy_horizontal = expanding
+								ignoreinvisible = yes
+
+								move_regiment = {
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+window = {
+	name = "attach_to_army_window"
+	size = { 700 100% }
+	layer = top
+
+	attachto = {
+		widgetid = "army_window"
+		stackmode = top
+		inherit_data_context = yes
+	}
+
+	using = Window_Background_No_Edge
+
+	using = Animation_ShowHide_Quick
+
+	vbox = {
+		using = Window_Margins
+
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+			size = { 0 0 }
+
+			blockoverride "header_text"
+			{
+				# text = "ATTACH_TO_ARMY_WINDOW_HEADER"
+			}
+
+			blockoverride "button_close"
+			{
+				onclick = "[AttachToArmyWindow.Hide]"
+			}
+		}
+
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			spacing = 5
+			visible = "[AttachToArmyWindow.HasSelectedUnit]"
+			margin = { 10 0 }
+
+			hbox = {
+			    layoutpolicy_horizontal = expanding
+
+				text_single = {
+					datacontext = "[AttachToArmyWindow.GetSelectedArmy.GetComposition]"
+					raw_text = "Selected [ArmyComposition.GetSoldierCountString] men,"
+				}
+
+				text_single = {
+					raw_text = " [AttachToArmyWindow.GetSelectedArmy.GetName]."
+				}
+
+
+			    expand = { }
+			}
+
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+
+				button_primary_text = {
+					layoutpolicy_horizontal = expanding
+					name = "select_button"
+					blockoverride "text" {
+						text = "ATTACH"
+					}
+					blockoverride "disabled" {
+						visible = "[Not(AttachToArmyWindow.HasSelectedUnit)]"
+					}
+					blockoverride "hotkey" {
+						visible = "[AttachToArmyWindow.HasSelectedUnit]"
+					}
+					enabled = "[AttachToArmyWindow.HasSelectedUnit]"
+					onclick = "[AttachToArmyWindow.AttachToSelected]"
+					onclick = "[AttachToArmyWindow.Hide]"
+					clicksound = "event:/SFX/UI/Unit/Army/sfx_ui_unit_army_attach"
+				}
+
+				button_text = {
+					layoutpolicy_horizontal = expanding
+					name = "close_button"
+					blockoverride "text" {
+						raw_text = "[Localize('CANCEL')]."
+
+					}
+					onclick = "[AttachToArmyWindow.Hide]"
+				}
+
+				text_single = {
+					layoutpolicy_horizontal = expanding
+					raw_text = "Select another."
+				}
+			}
+		}
+
+		text_multi = {
+			text = "ATTACH_TO_ARMY_WINDOW_TEXT"
+			layoutpolicy_horizontal = expanding
+			margin_left = 10
+			visible = "[Not(AttachToArmyWindow.HasSelectedUnit)]"
+		}
+
+		scrollbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = growing
+
+			blockoverride "scrollbox_content"
+			{
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					ignoreinvisible = yes
+					spacing = 3
+
+					datamodel = "[AttachToArmyWindow.AccessLocalUnits]"
+
+					item = {
+						button_text = {
+							layoutpolicy_horizontal = expanding
+							onclick = "[AttachToArmyWindow.SelectUnit( UnitItem.Self )]"
+							visible = "[Not(AttachToArmyWindow.IsSelectedUnit( UnitItem.Self ))]"
+						    blockoverride "pre" {
+								spacing = 3
+								text_single = {
+									datacontext = "[UnitItem.GetArmy.GetComposition]"
+									raw_text = "[ArmyComposition.GetSoldierCountString] men,"
+								}
+
+								text_single = {
+									datacontext = "[UnitItem.GetOwner]"
+									raw_text = "[Character.GetPrimaryTitle.GetNameNoTierNoTooltip]."
+								}
+
+								text_single = {
+									raw_text = "[UnitItem.GetArmy.GetNameNoTooltip]."
+								}
+						    }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
