@@ -8,6 +8,8 @@ I file in questa cartella non contengono logica eseguibile: sono documenti consu
 
 Questa cartella è l'unico punto del framework in cui Copilot può scrivere senza checkpoint esplicito, ma solo per aggiornare `jomini_scope_whitelist.md` con nuovi binding verificati nel vanilla. Tutti gli altri file in questa cartella sono in sola lettura tranne autorizzazione esplicita del modder.
 
+Nel workspace multi-root, le sorgenti esterne (`CK3 vanilla`, `CK3-OCR`, `logs`) sono solo in lettura e vengono usate esclusivamente per consultazione, analisi e confronti.
+
 La separazione tra "risorse" e "istruzioni" è intenzionale: le risorse sono dati stabili, le istruzioni sono procedura. Le risorse cambiano raramente (quando cambia CK3 o si aggiungono pattern nuovi), le istruzioni cambiano più spesso (quando il workflow evolve).
 
 ## File presenti

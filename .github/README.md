@@ -8,7 +8,17 @@ La cartella `.github/` è il cuore del framework. Ospita le istruzioni operative
 
 Il framework è pensato per assistere un modder non vedente: ogni componente è progettato in modo che l'AI possa operare con autonomia controllata, rispettando checkpoint manuali obbligatori prima di scrivere file nella patch.
 
-L'unico file scritto direttamente da Copilot fuori da questa cartella è `ocr_support_compatibility_pach/gui/` — e solo dopo approvazione esplicita del modder ai checkpoint CP1 e CP2 definiti nel workflow.
+## Confini di accesso (policy globale)
+
+Nel workspace multi-root corrente:
+
+- Scrittura consentita solo nella root patch `C:/Users/nemex/OneDrive/Documenti/GitHub/ocr-support-patch/`
+- Sola lettura obbligatoria su:
+	- `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/`
+	- `C:/Users/nemex/OneDrive/Documenti/GitHub/CK3-OCR/`
+	- `C:/Users/nemex/OneDrive/Documenti/Paradox Interactive/Crusader Kings III/logs/`
+
+All'interno della root patch, i percorsi effettivamente scrivibili restano quelli definiti in `patch-boundaries.instructions.md`.
 
 ## File presenti
 
@@ -41,4 +51,4 @@ Per modificare le istruzioni, aprire il file corrispondente e editarlo. Le modif
 - VS Code con estensione GitHub Copilot abilitata
 - Account GitHub con Copilot attivo (piano Individual, Business o Enterprise)
 - Python 3.11+ installato (richiesto per gli script in `tools/` invocati dagli agenti)
-- `tools/config.py` configurato correttamente con i path ai tre repository
+- `tools/config.py` configurato correttamente con i path ai repository usati in consultazione (patch, CK3 vanilla, CK3-OCR)

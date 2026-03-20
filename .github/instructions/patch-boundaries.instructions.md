@@ -6,6 +6,20 @@ applyTo: "**"
 
 Attive automaticamente per qualunque file nel workspace.
 
+## Regola Globale Multi-Workspace (prioritaria)
+
+Nel workspace multi-root corrente, l'accesso in scrittura e' consentito solo
+nel repository della patch:
+
+- `C:/Users/nemex/OneDrive/Documenti/GitHub/ocr-support-patch/` (con i limiti
+	aggiuntivi definiti nella sezione "Percorsi Scrivibili")
+
+Tutte le altre root del workspace sono in sola lettura obbligatoria:
+
+- `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/`
+- `C:/Users/nemex/OneDrive/Documenti/GitHub/CK3-OCR/`
+- `C:/Users/nemex/OneDrive/Documenti/Paradox Interactive/Crusader Kings III/logs/`
+
 ## Percorsi Scrivibili
 
 Copilot può modificare file **esclusivamente** nei seguenti percorsi:

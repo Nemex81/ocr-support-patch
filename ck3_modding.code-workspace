@@ -10,6 +10,9 @@
 		},
 		{
 			"path": "../CK3-OCR"
+		},
+		{
+			"path": "../../Paradox Interactive/Crusader Kings III/logs"
 		}
 	],
 	"settings": {

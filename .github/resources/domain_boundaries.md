@@ -14,6 +14,17 @@ mod:
     - "ocr_support_compatibility_pach/gui/"
     - "ocr_support_compatibility_pach/descriptor.mod"
 
+workspace_roots:
+  - path: "C:/Users/nemex/OneDrive/Documenti/GitHub/ocr-support-patch/"
+    access: "read-write"
+    note: "Scrittura consentita solo nei sottopercorsi autorizzati da patch-boundaries.instructions.md"
+  - path: "C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/"
+    access: "read-only"
+  - path: "C:/Users/nemex/OneDrive/Documenti/GitHub/CK3-OCR/"
+    access: "read-only"
+  - path: "C:/Users/nemex/OneDrive/Documenti/Paradox Interactive/Crusader Kings III/logs/"
+    access: "read-only"
+
 operational_rules:
   - id: rule_not_touch_mod
     short: "non toccare la mod"
@@ -24,6 +35,9 @@ operational_rules:
   - id: rule_patch_boundaries
     short: "patch-boundaries"
     description: "I percorsi scrivibili e vietati sono definiti in 'patch-boundaries.instructions.md'. Seguire sempre quelle regole."
+  - id: rule_workspace_roots_access
+    short: "workspace-roots-access"
+    description: "Nel workspace multi-root, solo 'C:/Users/nemex/OneDrive/Documenti/GitHub/ocr-support-patch/' e' scrivibile; CK3 vanilla, CK3-OCR e logs sono sola lettura."
 
 # Version
 version: 1

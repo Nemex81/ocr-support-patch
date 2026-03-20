@@ -12,7 +12,7 @@ I file `.instructions.md` non si modificano durante una conversione attiva: le m
 
 ## File presenti
 
-**patch-boundaries.instructions.md** (applyTo: `**`) — Definisce i percorsi scrivibili e vietati per Copilot. Percorso scrivibile principale: `ocr_support_compatibility_pach/gui/`. Qualsiasi modifica fuori da questo percorso richiede conferma esplicita del modder. Include riferimento al file machine-readable `domain_boundaries.md`.
+**patch-boundaries.instructions.md** (applyTo: `**`) — Definisce i percorsi scrivibili e vietati per Copilot, inclusa la regola multi-root: solo la root patch è scrivibile; CK3 vanilla, CK3-OCR e logs sono sola lettura. Dentro la root patch, i percorsi scrivibili sono `ocr_support_compatibility_pach/gui/` e `.github/resources/jomini_scope_whitelist.md`. Qualsiasi modifica fuori da questi percorsi richiede conferma esplicita del modder. Include riferimento al file machine-readable `domain_boundaries.md`.
 
 **workflow-nuova-finestra.instructions.md** (applyTo: `**`) — Sequenza operativa completa per la conversione di una finestra al sistema dual-mode. Include la tabella dei passi con i checkpoint CP1 e CP2, i comandi da eseguire, e le condizioni di STOP. Obbligatorio da seguire nell'ordine indicato.
 

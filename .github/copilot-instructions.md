@@ -22,6 +22,21 @@ Toggle: **Shift+F11** in-game (imposta/rimuove variabile `ocr`).
 
 > ⚠️ Per aggiornare il path vanilla usato dagli script, modificare `tools/config.py`.
 
+### Matrice Accessi Workspace (globale)
+
+Nel workspace multi-root, la scrittura e' consentita solo nella root della patch:
+
+- `C:/Users/nemex/OneDrive/Documenti/GitHub/ocr-support-patch/`
+
+Le altre root sono strettamente in sola lettura (consultazione, analisi, confronti):
+
+- `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/`
+- `C:/Users/nemex/OneDrive/Documenti/GitHub/CK3-OCR/`
+- `C:/Users/nemex/OneDrive/Documenti/Paradox Interactive/Crusader Kings III/logs/`
+
+Per i limiti di scrittura interni alla root patch (sottopercorsi consentiti/vietati),
+fa fede `patch-boundaries.instructions.md`.
+
 ---
 
 ## Struttura Repository
