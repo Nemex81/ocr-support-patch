@@ -1,6 +1,6 @@
-***
+---
 applyTo: "**"
-***
+---
 
 # Workflow — Onboarding Nuova Finestra nel Tracker
 
