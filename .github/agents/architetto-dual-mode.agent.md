@@ -6,7 +6,7 @@ tools: [read, search, terminal]
 handoffs:
   - label: "→ Implementa"
     agent: implementatore-patch
-    prompt: "Implementa il progetto architetturale appena definito."
+    prompt: "Nota: in pipeline orchestrata il controllo torna all'Orchestratore dopo questa fase. Questo handoff è disponibile solo per uso manuale dal picker."
     send: false
 ---
 
@@ -56,3 +56,13 @@ Non lasciare scope verificati fuori dalla whitelist.
 ## Passo successivo
 
 Dopo il progetto, suggerisci di invocare **Implementatore Patch**.
+
+## Nota operativa — Pipeline vs uso manuale
+
+In pipeline orchestrata (task avviato dall'Orchestratore):
+dopo aver prodotto il documento di progetto, restituisci l'output e termina.
+L'Orchestratore gestisce il passaggio all'Implementatore e i checkpoint CP1.
+Non invocare autonomamente altri agenti.
+
+In uso manuale dal picker (sessione diretta senza Orchestratore):
+suggerisci di invocare Implementatore Patch con il documento di progetto come contesto.

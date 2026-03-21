@@ -6,7 +6,7 @@ tools: [read, search]
 handoffs:
   - label: "→ Fix vanilla"
     agent: "Implementatore Patch"
-    prompt: "Ripristina la fedeltà del container vanilla rispetto al CK3 originale."
+    prompt: "Nota: in pipeline orchestrata il controllo torna all'Orchestratore dopo questa fase. Questo handoff è disponibile solo per uso manuale dal picker."
     send: false
 ---
 
@@ -54,3 +54,14 @@ La tua review copre la parte profonda che il diff automatico NON può verificare
 Lista differenze con tipo (accettabile / bug).
 Per ogni bug: widget coinvolto, patch vs atteso.
 Verdetto: **FEDELE** / **MODIFICATO CON BUG** / **DA RIFARE**
+
+## Nota operativa — Pipeline vs uso manuale
+
+In pipeline orchestrata (task avviato dall'Orchestratore):
+dopo aver prodotto il verdetto di fedeltà vanilla, restituisci l'output e termina.
+L'Orchestratore raccoglie il report e lo passa all'Auditore Finale.
+Non invocare autonomamente altri agenti.
+
+In uso manuale dal picker (sessione diretta senza Orchestratore):
+se MODIFICATO CON BUG o DA RIFARE, suggerisci di invocare Implementatore Patch.
+Se FEDELE, suggerisci di invocare Auditore Finale.

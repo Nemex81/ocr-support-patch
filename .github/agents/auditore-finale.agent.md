@@ -6,7 +6,7 @@ tools: [read, search, terminal]
 handoffs:
   - label: "→ Fix implementatore"
     agent: "Implementatore Patch"
-    prompt: "Risolvi i problemi critici identificati nell'audit prima del commit."
+    prompt: "Nota: in pipeline orchestrata il controllo torna all'Orchestratore dopo questa fase. Questo handoff è disponibile solo per uso manuale dal picker."
     send: false
 ---
 
@@ -82,3 +82,14 @@ oppure
 - `[ATTENZIONE]` raccomandazione non bloccante
 
 Non emettere APPROVED con problemi CRITICI aperti.
+
+## Nota operativa — Pipeline vs uso manuale
+
+In pipeline orchestrata (task avviato dall'Orchestratore):
+dopo aver emesso il verdetto APPROVED o BLOCKED, restituisci l'output e termina.
+Se BLOCKED, l'Orchestratore presenta i critici al modder e gestisce il loop-back
+verso l'Implementatore. Non invocare autonomamente altri agenti.
+
+In uso manuale dal picker (sessione diretta senza Orchestratore):
+se BLOCKED, suggerisci di invocare Implementatore Patch con la lista critici.
+Se APPROVED, informa il modder che il file è pronto per il commit.

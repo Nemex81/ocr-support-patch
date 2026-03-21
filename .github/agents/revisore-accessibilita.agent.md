@@ -6,11 +6,11 @@ tools: [read, search, terminal]
 handoffs:
   - label: "→ Fix implementatore"
     agent: "Implementatore Patch"
-    prompt: "Applica i fix di accessibilità identificati nel report di revisione."
+    prompt: "Nota: in pipeline orchestrata il controllo torna all'Orchestratore dopo questa fase. Questo handoff è disponibile solo per uso manuale dal picker."
     send: false
   - label: "→ Audit Finale"
     agent: "Auditore Finale"
-    prompt: "Esegui l'audit finale su questo file."
+    prompt: "Nota: in pipeline orchestrata il controllo torna all'Orchestratore dopo questa fase. Questo handoff è disponibile solo per uso manuale dal picker."
     send: false
 ---
 
@@ -69,3 +69,14 @@ separata e non sostituibile dal report automatico.
 Una riga per voce: ✅ OK / ⚠️ Attenzione / ❌ Critico
 Per ogni problema: widget, riga stimata, fix raccomandato.
 Verdetto finale: **PASS** / **PASS CON RISERVE** / **FAIL**
+
+## Nota operativa — Pipeline vs uso manuale
+
+In pipeline orchestrata (task avviato dall'Orchestratore):
+dopo aver prodotto il report NVDA, restituisci l'output e termina.
+L'Orchestratore raccoglie il report e lo passa all'Auditore Finale insieme
+al report del Revisore Vanilla. Non invocare autonomamente altri agenti.
+
+In uso manuale dal picker (sessione diretta senza Orchestratore):
+se FAIL o PASS CON RISERVE, suggerisci di invocare Implementatore Patch.
+Se PASS, suggerisci di invocare Auditore Finale.
