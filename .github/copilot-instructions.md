@@ -135,6 +135,14 @@ Si attivano automaticamente in base al file aperto:
 | `gui-conversion-progress.instructions.md` | `**` | Stato conversioni: file già convertiti e da convertire |
 | `localization-ocr.instructions.md` | `**/localization/**/*.yml` | Convenzioni localizzazione OCR |
 
+**Risorse di orchestrazione** (da consultare on-demand):
+
+| Risorsa | Contenuto |
+|---------|-----------|
+| `orchestration_protocol.md` | Protocollo completo: prompt template, context passing, loop-back |
+| `dependency_map.md` | Dipendenze cross-file type/template nella patch |
+| `requirement-enforcement-matrix.md` | Matrice requisito → enforcement + tassonomia esiti |
+
 ---
 
 ## Agenti Disponibili
@@ -173,6 +181,39 @@ In `.github/copilot-skills/` — invocabili dagli agenti con `#nome-skill`.
 - Il modder vede **SEMPRE** il verdetto di audit prima dei revisori (CHECKPOINT 2)
 - Il sistema **NON** avvia mai la conversione di una finestra successiva automaticamente
 - **Una finestra alla volta. Sempre.**
+
+---
+
+## Orchestrazione Autonoma — Ciclo Completo
+
+Quando l'utente chiede di convertire una finestra (es. "converti window_title"), il main agent
+orchestra l'intero ciclo invocando i subagent specializzati in sequenza. Il protocollo completo
+con prompt template e context passing è in `.github/resources/orchestration_protocol.md`.
+**Leggere quel file PRIMA di iniziare qualsiasi conversione.**
+
+### Sequenza sintetica
+
+| Fase | Chi | Azione | Output |
+|------|-----|--------|--------|
+| 0 | Main | Pre-check: esclusioni, tracker, sorgenti | Go/Stop |
+| 1 | Analista Tri-Repo | Analisi tri-repo (pre-run: `tri_diff.py`) | Report A/B/C/D |
+| 2 | Architetto Dual-Mode | Progettazione (pre-run: `scope_extractor.py` + `assemble --dry-run`) | Design doc 7 sezioni |
+| **CP1** | **Modder** | **Approva design** | Conferma |
+| 3 | Implementatore Patch | Implementazione (pre-run: `assemble_dualmode.py`) | File .gui convertito |
+| 4 | Main | `audit.py --window` | Verdetto |
+| **CP2** | **Modder** | **Vede verdetto audit** | Conferma |
+| 5a | Revisore Accessibilità | Checklist NVDA (pre-run: `gui_validator.py`) | PASS/FAIL |
+| 5b | Revisore Vanilla | Fedeltà container vanilla | FEDELE/BUG |
+| 6 | Auditore Finale | Audit pre-commit con report revisori | APPROVED/BLOCKED |
+| 7 | Main | Aggiorna tracker | Chiusura |
+
+### Regole chiave per il main agent
+
+1. **Pre-run compensatorio**: se un subagent non ha `terminal` (Architetto, Revisori), il main agent esegue gli script necessari e passa l'output nel prompt del subagent
+2. **Contesto nel prompt**: ogni subagent è stateless — passare l'output integrale dei passi precedenti rilevanti
+3. **Checkpoint = STOP**: a CP1 e CP2 il main agent presenta i risultati e **attende risposta esplicita** del modder
+4. **Loop-back**: se Auditore dice BLOCKED → presentare critici al modder → se approvato, loop a Fase 3 con lista fix
+5. **Tracker**: dopo APPROVED, spostare la finestra nella sezione corretta di `gui-conversion-progress.instructions.md`
 
 ---
 

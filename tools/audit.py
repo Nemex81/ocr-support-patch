@@ -17,7 +17,7 @@ from pathlib import Path
 
 # Aggiunge la directory radice al path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.config import PATCH_GUI, PATCH_ROOT
+from tools.config import PATCH_GUI, PATCH_ROOT, VANILLA_GUI, OCR_GUI
 from tools.gui_validator import analizza_file as _valida
 from tools.scope_extractor import (
     estrai_binding, carica_whitelist, classifica_tutti
@@ -82,6 +82,21 @@ def _analizza_singolo(percorso: Path) -> dict:
     Esegue validator e scope_extractor su un file.
     Restituisce un dict riepilogativo.
     """
+    window_name = percorso.stem
+
+    # Pre-flight: verifica esistenza file sorgente (vanilla e OCR upstream)
+    vanilla_path = VANILLA_GUI / f"{window_name}.gui"
+    ocr_path = OCR_GUI / f"{window_name}.gui"
+    sorgenti_mancanti = []
+    if not vanilla_path.exists():
+        sorgenti_mancanti.append(f"vanilla: {vanilla_path}")
+    if not ocr_path.exists():
+        sorgenti_mancanti.append(f"OCR upstream: {ocr_path}")
+    if sorgenti_mancanti:
+        print(f"\n  [PRE-FLIGHT] File sorgente mancanti per {window_name}:")
+        for s in sorgenti_mancanti:
+            print(f"    - {s}")
+
     # Validazione pattern
     risultato_val = _valida(percorso)
 
@@ -92,13 +107,18 @@ def _analizza_singolo(percorso: Path) -> dict:
     assenti = [r for r in risultati_scope if r["stato"] == "ASSENTE"]
     da_verificare = [r for r in risultati_scope if r["stato"] == "DA VERIFICARE"]
 
-    # Analisi fedelta' tri-repo (advisory — non modifica il gate nella v1)
+    # Analisi fedelta' tri-repo (v2: integrata nel gate)
     risultato_fedelta = _analizza_fedelta(percorso)
 
-    # Stato complessivo (la fedelta' vanilla e' advisory nella v1)
+    # Stato complessivo — include fedeltà vanilla come gate
+    # Solo DISCREPANZE gravi impattano il verdetto; DISCREPANZE_MINORI resta advisory
+    # perché ogni file patch ha per design differenze minori (il container OCR è diverso)
     if risultato_val["verdict"] == "BLOCCANTE" or da_verificare:
         stato = "BLOCCANTE"
     elif risultato_val["verdict"] == "CON AVVERTENZE" or assenti:
+        stato = "CON AVVERTENZE"
+    elif risultato_fedelta["verdetto"] == "DISCREPANZE":
+        # Fedeltà vanilla con discrepanze gravi → segnala come avvertenza
         stato = "CON AVVERTENZE"
     else:
         stato = "OK"

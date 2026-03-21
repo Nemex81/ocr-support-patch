@@ -108,3 +108,31 @@ types example_action_button_vanilla = button {
 - [ ] Ogni bottone OCR ha tooltip
 - [ ] Nessun nome widget duplicato a stesso livello
 - [ ] Nessun scope non verificato nella whitelist
+
+---
+
+## Limitazioni Note
+
+### Pattern B — Tab Sync Non Sincronizzato
+
+**Stato**: limitazione architetturale nota, non un bug.
+
+Nelle finestre Pattern B (tab navigation), i container OCR e vanilla usano
+sistemi di tab **completamente indipendenti**:
+
+- **OCR**: `GetVariableSystem.HasValue('nome_tabs', 'valore')` — variabili GUI gestite
+  dal mod, settate tramite bottoni OCR con `onclick = "[GetVariableSystem.Set(...)]"`.
+- **Vanilla**: API C++ native del controller CK3 (es. `CourtWindow.IsShowPositions`,
+  `CouncilWindow.IsPlayerCouncilShown`) — non accessibili da Jomini per lettura/scrittura.
+
+**Conseguenza**: quando il giocatore cambia modalità con Shift+F11, il tab attivo
+potrebbe non corrispondere tra OCR e vanilla. CK3 1.17.1 non espone API per
+sincronizzare lo stato tab C++ con le variabili GUI.
+
+**Mitigazione applicata**: nessun workaround automatico possibile. Il comportamento
+è accettabile perché il cambio OCR↔vanilla è raro durante il gameplay normale.
+
+**File coinvolti**: `window_court.gui`, `window_council.gui`, e tutte le finestre
+Pattern B con tab navigation.
+
+**Rilevato**: 2026-03-13 (diagnosi rapporto tecnico)

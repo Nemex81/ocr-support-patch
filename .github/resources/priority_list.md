@@ -1,6 +1,14 @@
-# Priority List — Finestre da Convertire
+# Priority List — DEPRECATO
 
-Stato aggiornato al: 2026-03-10
+> ⚠️ **QUESTO FILE È DEPRECATO dal 2026-03-20.**
+> La fonte di verità unica per lo stato delle conversioni è:
+> **`.github/instructions/gui-conversion-progress.instructions.md`**
+>
+> Non aggiornare questo file. Consultare solo il tracker ufficiale.
+
+---
+
+_Contenuto storico mantenuto per riferimento — non utilizzare per decisioni operative._
 
 ## Già Convertite
 

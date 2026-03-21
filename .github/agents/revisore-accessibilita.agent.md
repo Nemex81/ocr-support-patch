@@ -2,7 +2,7 @@
 name: Revisore Accessibilità
 description: Verifica qualità OCR e accessibilità NVDA dei file convertiti. Solo lettura e report.
 model: ['Claude Opus 4.6', 'GPT-5.4']
-tools: [read, search]
+tools: [read, search, terminal]
 handoffs:
   - label: "→ Fix implementatore"
     agent: "Implementatore Patch"

@@ -35,5 +35,6 @@
     "files.trimTrailingWhitespace": true,
     "github.copilot.nextEditSuggestions.enabled": true,
     "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
-    "github.copilot.chat.reviewSelection.enabled": true
+    "github.copilot.chat.reviewSelection.enabled": true,
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

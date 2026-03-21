@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+"""
+Pre-commit hook — blocca il commit se audit.py rileva BLOCCANTE
+su qualsiasi file .gui staged.
+
+Installazione:
+    git config core.hooksPath .githooks
+
+Uso: viene eseguito automaticamente da git commit.
+Per bypassare (solo emergenza): git commit --no-verify
+"""
+
+import subprocess
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+AUDIT_SCRIPT = REPO_ROOT / "tools" / "audit.py"
+GUI_DIR = "ocr_support_compatibility_pach/gui/"
+
+
+def get_staged_gui_files() -> list[str]:
+    """Restituisce i nomi dei file .gui staged (senza path)."""
+    result = subprocess.run(
+        ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
+        capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=10,
+    )
+    files = []
+    for line in result.stdout.splitlines():
+        if line.startswith(GUI_DIR) and line.endswith(".gui"):
+            name = Path(line).stem
+            files.append(name)
+    return files
+
+
+def run_audit(window_name: str) -> str:
+    """Esegue audit.py su una singola finestra e restituisce lo stato."""
+    result = subprocess.run(
+        [sys.executable, str(AUDIT_SCRIPT), "--window", window_name],
+        capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=120,
+    )
+    output = result.stdout + result.stderr
+    if "[BLOCCANTE]" in output:
+        return "BLOCCANTE"
+    return "OK"
+
+
+def main() -> int:
+    staged = get_staged_gui_files()
+    if not staged:
+        return 0  # Nessun file .gui staged, commit OK
+
+    print(f"[pre-commit] Audit su {len(staged)} file .gui staged...")
+    bloccanti = []
+    for name in staged:
+        stato = run_audit(name)
+        if stato == "BLOCCANTE":
+            bloccanti.append(name)
+            print(f"  BLOCCANTE: {name}.gui")
+        else:
+            print(f"  OK: {name}.gui")
+
+    if bloccanti:
+        print(
+            f"\n[pre-commit] COMMIT BLOCCATO — {len(bloccanti)} file con critici:\n"
+            + "\n".join(f"  - {b}.gui" for b in bloccanti)
+            + "\n\nCorreggi i CRITICO e ripeti. Bypass emergenza: git commit --no-verify"
+        )
+        return 1
+
+    print("[pre-commit] Audit superato — commit consentito.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

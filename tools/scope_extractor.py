@@ -205,6 +205,31 @@ def formatta_json(nome_file: str, risultati: list[dict]) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Auto-update whitelist
+# ---------------------------------------------------------------------------
+
+def _aggiorna_whitelist(assenti: list[dict], contesto: str) -> None:
+    """Appende i binding ASSENTI alla whitelist con tracciabilità."""
+    from datetime import date
+    oggi = date.today().isoformat()
+
+    righe_nuove = [
+        "",
+        f"### Binding auto-aggiunti da {contesto} ({oggi})",
+        "",
+        "| Scope / Binding | Contesto | Note |",
+        "|---|---|---|",
+    ]
+    for r in assenti:
+        righe_nuove.append(r["riga_whitelist"])
+
+    with open(WHITELIST_PATH, "a", encoding="utf-8") as f:
+        f.write("\n".join(righe_nuove) + "\n")
+
+    print(f"\n[auto-update] Aggiunti {len(assenti)} binding alla whitelist ({WHITELIST_PATH.name})")
+
+
+# ---------------------------------------------------------------------------
 # Entry point CLI
 # ---------------------------------------------------------------------------
 
@@ -219,6 +244,10 @@ def main() -> None:
     parser.add_argument(
         "--format", choices=["json", "markdown"], default="markdown",
         help="Formato di output: markdown (default) o json."
+    )
+    parser.add_argument(
+        "--update-whitelist", action="store_true",
+        help="Aggiunge automaticamente i binding ASSENTI alla whitelist (solo se verificati nel vanilla)."
     )
     args = parser.parse_args()
 
@@ -235,6 +264,14 @@ def main() -> None:
         print(formatta_json(percorso.name, risultati))
     else:
         print(formatta_markdown(percorso.name, risultati, contesto))
+
+    # Auto-update whitelist se richiesto
+    if args.update_whitelist:
+        assenti = [r for r in risultati if r["stato"] == "ASSENTE"]
+        if assenti:
+            _aggiorna_whitelist(assenti, contesto)
+        else:
+            print("\nNessun binding ASSENTE da aggiungere.")
 
     # Codice di uscita 1 se ci sono binding DA VERIFICARE
     if any(r["stato"] == "DA VERIFICARE" for r in risultati):

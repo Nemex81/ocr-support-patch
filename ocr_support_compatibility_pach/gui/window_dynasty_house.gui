@@ -43,7 +43,6 @@ window_ocr = {
 				using = close_window_ocr
 				shortcut = "close_window"
 				onclick = "[Clear('dynasty_view_expand')]"
-				tooltip = "CLOSE_TAB"
 				visible = "[Is('dynasty_view_expand')]"
 			}
 
@@ -53,7 +52,6 @@ window_ocr = {
 				visible = "[Isnt('dynasty_view_expand')]"
 				onclick = "[DynastyHouseView.Close]"
 				onclick = "[DynastyHouseView.CloseMembersWindow]"
-				tooltip = "CLOSE"
 			}
 
 			hbox = {
@@ -2015,7 +2013,7 @@ window_ocr = {
 
 								hbox = {
 									margin = { 15 0 }
-
+									
 									tooltip = "DYNASTY_HOUSE_VIEW_PROGRESS_TOOLTIP"
 
 									expand = {}

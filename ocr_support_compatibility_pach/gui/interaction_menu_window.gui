@@ -26,7 +26,7 @@ window = {
 	state = {
 		name = _show
 		using = Animation_FadeIn_Quick
-		on_start = "[CloseGameView(AddTextIf(And(Not(GetVariableSystem.Exists('ocr')), GetScriptedGui('close_interactions').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )), 'character'))]"
+		on_start = "[CloseGameView(AddTextIf(And(GetVariableSystem.Exists('ocr'), GetScriptedGui('close_interactions').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )), 'character'))]"
 	}
 
 	state = {
@@ -44,7 +44,7 @@ window = {
 		shortcut = "close_window"
 	}
 
-	# ================================================================
+# ================================================================
 	# BLOCCO OCR — modalità NON VEDENTE (variabile ocr assente)
 	# ================================================================
 	container = {
@@ -142,6 +142,7 @@ window = {
 			# ---- LISTA CATEGORIE ----
 			flowcontainer = {
 				name = "ocr_category_interaction_list"
+				# datamodel verificato: CharacterInteractionCategoryItem
 				datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
 				direction = vertical
 				ignoreinvisible = yes
@@ -169,6 +170,7 @@ window = {
 					}
 
 					dynamicgridbox_interaction_list_ocr = {
+						# datamodel verificato: CharacterInteractionOption
 						datamodel = "[CharacterInteractionMenuWindow.GetMoreInteractions]"
 					}
 				}
@@ -335,6 +337,7 @@ window = {
 						# name used in code
 						name = "category_interaction_list"
 
+						# datamodel verificato: CharacterInteractionCategoryItem
 						datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
 						direction = vertical
 						ignoreinvisible = yes
@@ -375,6 +378,7 @@ window = {
 				}
 
 				dynamicgridbox_interaction_list = {
+					# datamodel verificato: CharacterInteractionOption
 					datamodel = "[CharacterInteractionMenuWindow.GetMoreInteractions]"
 				}
 			}

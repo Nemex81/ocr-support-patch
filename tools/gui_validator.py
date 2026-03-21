@@ -374,19 +374,24 @@ def _scansione_copertura_multiwindow(righe: list) -> list:
         return problemi  # file con una sola window radice: gia' gestito da _scansione_completezza_dual_mode
 
     for inizio, fine in finestre_root:
-        finestra = righe[inizio - 1:min(inizio + 14, fine)]
+        # Cerca dual-mode nell'intero blocco window (non solo le prime righe)
+        # ma limita a max 200 righe per efficienza su file enormi
+        limite = min(fine, inizio - 1 + 200)
+        finestra = righe[inizio - 1:limite]
         ha_ocr = any(_is_ocr_visibility(r) for r in finestra)
         ha_vanilla = any(_is_vanilla_visibility(r) for r in finestra)
-        ha_visible_no = any("visible = no" in r for r in finestra)
-        ha_size_zero = any("size = { 0 0 }" in r for r in finestra[:10])
+        # Per visible=no e size 0 0 basta le prime righe (helper nascosti sono piccoli)
+        finestra_header = righe[inizio - 1:min(inizio + 14, fine)]
+        ha_visible_no = any("visible = no" in r for r in finestra_header)
+        ha_size_zero = any("size = { 0 0 }" in r for r in finestra_header[:10])
 
         if not ha_ocr and not ha_vanilla and not ha_visible_no and not ha_size_zero:
             problemi.append({
                 "line": inizio,
                 "pattern": "Blocco window radice senza dual-mode esplicito",
                 "category": "STRUTTURALE",
-                "severity": "ATTENZIONE",
-                "fix": "Verificare se questo blocco window richiede dual-mode OCR/vanilla o e' un helper nascosto",
+                "severity": "CRITICO",
+                "fix": "Ogni blocco window radice deve avere dual-mode OCR/vanilla o essere un helper nascosto (visible = no + size = { 0 0 })",
             })
 
     return problemi
@@ -433,7 +438,7 @@ def _scansione_header_ocr(righe: list) -> list:
                 "line": num_riga,
                 "pattern": "Header OCR (fontsize=20) senza colore canonico { 255 221 136 255 }",
                 "category": "COMPLETEZZA",
-                "severity": "ATTENZIONE",
+                "severity": "CRITICO",
                 "fix": "Aggiungere color = { 255 221 136 255 } al widget testo header nel blocco OCR",
             })
     return problemi
@@ -459,7 +464,7 @@ def _scansione_fallback_datamodel_ocr(righe: list) -> list:
                 "line": inizio_ocr,
                 "pattern": "Blocco OCR con datamodel senza testo di fallback statico rilevato",
                 "category": "COMPLETEZZA",
-                "severity": "ATTENZIONE",
+                "severity": "CRITICO",
                 "fix": (
                     "Aggiungere un widget con raw_text statico come messaggio di lista vuota "
                     "(es: raw_text = \"NESSUN_ELEMENTO\"). "

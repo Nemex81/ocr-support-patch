@@ -3,6 +3,16 @@
 Scope e binding verificati nei file vanilla di CK3 1.17.1.
 Copilot NON deve usare scope non presenti qui senza verifica esplicita nel vanilla.
 
+## Policy di tracciabilità (dal 2026-03-20)
+
+Ogni nuova sezione di binding DEVE indicare:
+- **Fonte vanilla**: percorso completo del file CK3 originale dove il binding è stato verificato
+- **Data di verifica**: data dell'ultimo controllo
+- **Aggiunto da**: chi ha aggiunto la sezione (Implementatore Patch / scope_extractor.py)
+
+Le sezioni precedenti al 2026-03-20 mantengono il formato originale.
+Le sezioni dal 2026-03-20 in poi seguono il nuovo formato con tracciabilità.
+
 ## Scope GUI principali verificati
 
 | Scope | Contesto | Note |
@@ -83,7 +93,14 @@ text = "[GetDate]"
 - Se un scope non è in questa lista: aggiungerlo solo dopo verifica manuale nel vanilla
 
 **Aggiornare questo file ogni volta che si verifica un nuovo scope nel vanilla.**
-Ultimo aggiornamento: 2026-03-11
+Ultimo aggiornamento: 2026-03-20
+
+> **Formato nuove sezioni (dal 2026-03-20)**:
+> ```
+> ## Scope e binding — nome_file.gui
+> Fonte vanilla: `C:/.../game/gui/nome_file.gui`
+> Data verifica: YYYY-MM-DD | Aggiunto da: Implementatore Patch / scope_extractor.py
+> ```
 
 ---
 
@@ -426,3 +443,20 @@ in `../CK3-OCR/OCR-Support/gui/window_army.gui`.
 | `Scope.GetProvince.GetHolding.GetCurrentGarrisonSize` | window_army.gui OCR -- dimensione guarnigione holding | NON in vanilla window_army.gui; binding OCR upstream |
 | `Scope.GetProvince.IsRecentlyLooted` | window_army.gui OCR -- provincia recentemente saccheggiata | NON in vanilla window_army.gui; binding OCR upstream |
 | `Scope.Province` | window_army.gui OCR -- scope provincia in item block datamodel | pattern OCR scope accessor; analogo a `Scope.GetProvince` gia whitelistato |
+
+### Binding pre-popolati per finestre prossime (B6 — 2026-03-20)
+
+> Pre-popolamento automatico via `scope_extractor.py` su file vanilla.
+> Fonte: installazione CK3 1.17.1 locale. Aggiunto da: framework (Fase B6).
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetIllustration` | window_title.gui -- illustrazione titolo | verificato in vanilla CK3 1.17.1 |
+| `IsAdminVassalDetailViewShown` | window_government_administration.gui -- vista dettaglio vassallo admin | verificato in vanilla CK3 1.17.1 |
+| `IsAdministrativeRuler` | window_government_administration.gui -- sovrano amministrativo | verificato in vanilla CK3 1.17.1 |
+
+### Binding auto-aggiunti da window_activity.gui (2026-03-20)
+
+| Scope / Binding | Contesto | Note |
+|---|---|---|
+| `GetTicksSinceLastProgress` | window_activity.gui | verificato in vanilla CK3 1.17.1 |

@@ -91,7 +91,7 @@ window = {
                         layoutpolicy_horizontal = expanding
                         visible = "[Not(GetVariableSystem.Exists('council_focus'))]"
                         spacing = 3
-
+                        
                         text_single = {
                             raw_text = "Current skills:"
                         }
@@ -391,7 +391,6 @@ window = {
                     visible = "[GetVariableSystem.Exists('council_focus')]"
                     onclick = "[GetVariableSystem.Clear('council_focus')]"
                     using = close_window_ocr
-                    tooltip = "CLOSE_TAB"
                 }
 
                 expand = { }

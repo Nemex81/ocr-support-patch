@@ -72,8 +72,8 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
 
 ## Cosa NON fare
 
-- Non modificare file fuori da `ocr_support_compatibility_pach/gui/`
-- Non toccare `.github/` (salvo `.github/resources/jomini_scope_whitelist.md` per aggiornamento scope), `.vscode/`, `ck3_modding.code-workspace`
+- Non modificare file fuori da `ocr_support_compatibility_pach/gui/` e `.github/resources/jomini_scope_whitelist.md`
+- Non toccare `.github/` (salvo la whitelist scope per aggiornamento binding), `.vscode/`, `ck3_modding.code-workspace`
 - Non inventare scope o binding non nella whitelist
 - Non "migliorare" il container vanilla
 

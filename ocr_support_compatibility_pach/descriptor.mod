@@ -6,5 +6,5 @@ tags={
 	"Compatibility"
 }
 name="ocr support compatibility pach"
-supported_version="1.17.*"
+supported_version="1.17.1"
 dependencies = { "OCR Support" }

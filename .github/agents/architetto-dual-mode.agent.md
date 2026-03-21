@@ -2,7 +2,7 @@
 name: Architetto Dual-Mode
 description: Progetta la struttura OCR/vanilla per una finestra CK3. Solo progettazione, nessuna modifica.
 model: ['Claude Opus 4.6', 'GPT-5.4']
-tools: [read, search]
+tools: [read, search, terminal]
 handoffs:
   - label: "→ Implementa"
     agent: implementatore-patch
