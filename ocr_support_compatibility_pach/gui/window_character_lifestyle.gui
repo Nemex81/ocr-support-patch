@@ -9,28 +9,28 @@
 
 ### TYPES OCR CUSTOM (Per non vedenti)
 types LifestyleOCRTypes {
-
+	
 	### PERK TESTUALE (Lista testuale perks)
 	type perk_text_item = button_text {
 		datacontext = "[PerkGuiItem.GetPerk]"
 		layoutpolicy_horizontal = expanding
-
+		
 		blockoverride "text" {
 			raw_text = "[Perk.GetNameNoTooltip( Character.Self )]"
 		}
-
+		
 		blockoverride "pre" {
 			flowcontainer = {
 				spacing = 3
 				ignoreinvisible = yes
-
+				
 				# Stato unlock
 				text_single = {
 					visible = "[Character.HasPerk( Perk.Self )]"
 					raw_text = "✓"
 					default_format = "#high"
 				}
-
+				
 				text_single = {
 					visible = "[Not(Character.HasPerk( Perk.Self ))]"
 					raw_text = "○"
@@ -38,25 +38,25 @@ types LifestyleOCRTypes {
 				}
 			}
 		}
-
+		
 		blockoverride "extra" {
 			flowcontainer = {
 				spacing = 3
 				ignoreinvisible = yes
-
+				
 				# Costo
 				text_single = {
 					visible = "[And(Not(Character.HasPerk( Perk.Self )), Character.IsLocalPlayer)]"
 					raw_text = "Cost: 1 perk point."
 				}
-
+				
 				# Può sbloccare
 				text_single = {
 					visible = "[And(CharacterLifestyleWindow.CanSelectPerk( Perk.Self ), Character.GetLifestyle.IsValid)]"
 					raw_text = "Can unlock now (Enter)."
 					default_format = "#high"
 				}
-
+				
 				# Requisiti mancanti
 				text_single = {
 					visible = "[Not(CharacterLifestyleWindow.CanSelectPerkIgnoreCost( Perk.Self ))]"
@@ -65,22 +65,22 @@ types LifestyleOCRTypes {
 				}
 			}
 		}
-
+		
 		onclick = "[CharacterLifestyleWindow.SelectPerk( Perk.Self )]"
 		enabled = "[And(CharacterLifestyleWindow.CanSelectPerk( Perk.Self ), Character.GetLifestyle.IsValid)]"
-
+		
 		tooltip = "[Perk.GetDescription]"
 	}
-
+	
 	### FOCUS TESTUALE
 	type focus_text_item = button_text {
 		datacontext = "[FocusItem.GetFocus]"
 		layoutpolicy_horizontal = expanding
-
+		
 		blockoverride "text" {
 			raw_text = "[FocusType.GetNameNoTooltip]"
 		}
-
+		
 		blockoverride "pre" {
 			text_single = {
 				visible = "[EqualTo_string( FocusType.GetKey, Character.GetFocus.GetKey )]"
@@ -88,27 +88,27 @@ types LifestyleOCRTypes {
 				default_format = "#high"
 			}
 		}
-
+		
 		blockoverride "extra" {
 			text_single = {
 				text = "LONG_FOCUS_TEXT"
 				max_width = 500
 			}
 		}
-
+		
 		onclick = "[CharacterLifestyleWindow.SelectFocus( FocusType.Self )]"
 		enabled = "[CharacterLifestyleWindow.CanSelectFocus( FocusType.Self )]"
 		down = "[EqualTo_string( FocusType.GetKey, Character.GetFocus.GetKey )]"
-
+		
 		tooltip = "[FocusType.GetDescription]"
 	}
-
+	
 	### ALBERO PERK TESTUALE (Vista lista)
 	type perk_tree_text_list = vbox {
 		layoutpolicy_horizontal = expanding
 		spacing = 5
 		datacontext = "[PerkTreeItem.GetPerkTree]"
-
+		
 		# Header albero
 		text_label_center = {
 			layoutpolicy_horizontal = expanding
@@ -116,49 +116,49 @@ types LifestyleOCRTypes {
 			default_format = "#high"
 			using = Font_Size_Medium
 		}
-
+		
 		divider_light = {
 			layoutpolicy_horizontal = expanding
 		}
-
+		
 		# Lista perks
 		vbox = {
 			layoutpolicy_horizontal = expanding
 			spacing = 3
 			datamodel = "[PerkGuiTree.GetItems]"
-
+			
 			item = {
 				perk_text_item = {}
 			}
 		}
 	}
-
+	
 	### LIFESTYLE TAB TESTUALE (Per shortcuts)
 	type lifestyle_tab_text = button_text {
 		layoutpolicy_horizontal = expanding
-
+		
 		blockoverride "text" {
 			raw_text = "Tab [GetIndexString(PdxGuiWidget.GetIndexInDataModel)], [Lifestyle.GetNameNoTooltip]"
 		}
-
+		
 		blockoverride "extra" {
 			flowcontainer = {
 				spacing = 3
 				ignoreinvisible = yes
-
+				
 				# Lifestyle corrente
 				text_single = {
 					visible = "[EqualTo_string( Lifestyle.GetKey, Character.GetLifestyle.GetKey )]"
 					raw_text = "★ Current lifestyle."
 					default_format = "#high"
 				}
-
+				
 				# Punti spesi
 				text_single = {
 					visible = "[GreaterThan_int32( Character.GetPerkPointsUsed( Lifestyle.Self ), '(int32)0' )]"
 					raw_text = "[Character.GetPerkPointsUsed( Lifestyle.Self )] perk points already spent."
 				}
-
+				
 				# Punti disponibili
 				text_single = {
 					visible = "[GreaterThan_int32( Character.GetPerkPoints( Lifestyle.Self ), '(int32)0' )]"
@@ -167,33 +167,33 @@ types LifestyleOCRTypes {
 				}
 			}
 		}
-
+		
 		onclick = "[CharacterLifestyleWindow.OpenLifestyle( Lifestyle.Self )]"
 		onclick = "[PdxGuiTriggerAllAnimations('lifestyle_tabs_refresh')]"
-
+		
 		tooltip = "[Lifestyle.GetDescription]"
 	}
-
+	
 	### PROGRESS BAR TESTUALE
 	type progress_text_lifestyle = flowcontainer {
 		spacing = 3
 		ignoreinvisible = yes
-
+		
 		text_single = {
 			raw_text = "Experience:"
 		}
-
+		
 		text_single = {
 			raw_text = "[Character.GetLifestyleExperience( Lifestyle.Self )|0]/[Character.GetLifestyleExperienceForLevel( Lifestyle.Self )|0]"
 			default_format = "#high"
 		}
-
+		
 		text_single = {
 			visible = "[GreaterThan_int32( Character.GetPerkPoints( Lifestyle.Self ), '(int32)0' )]"
 			raw_text = "- [Character.GetPerkPoints( Lifestyle.Self )] perk point[Pluralize_int32(Character.GetPerkPoints( Lifestyle.Self ), 's')] available."
 			default_format = "#high"
 		}
-
+		
 		text_single = {
 			visible = "[Character.IsLocalPlayer]"
 			raw_text = "Total perks unlocked in this lifestyle: [Character.GetPerkPointsUsed( Lifestyle.Self )]."
@@ -240,21 +240,21 @@ window = {
 	######################################################
 	### MODALITÀ OCR (NON VEDENTI) - ORIGINALE 100%
 	######################################################
-
+	
 	######################################################
 	### MODALITÀ OCR (NON VEDENTI) - ORIGINALE 100%
 	######################################################
-
+	
 	window_ocr = {
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
-
+		
 		button = {
 			using = close_window_ocr
 			onclick = "[CharacterLifestyleWindow.Close]"
-			tooltip = "CLOSE"
 			visible = "[Isnt('focused_perk_tree')]"
+			tooltip = "CLOSE"
 		}
-
+		
 		blockoverride "ocr_header" {
 			header_standard = {
 				visible = "[Or(Not( Lifestyle.IsValid ), Is('change_lifestyle'))]"
@@ -417,9 +417,9 @@ window = {
 										onclick = "[PlaySfxEvent( Concatenate( 'event:/SFX/UI/Character/Lifestyle/sfx_ui_character_lifestyle_', Lifestyle.GetKey ) )]"
 									}
 								}
-
+								
 								shortcut = "[Select_CString(EqualTo_int32(IndexNumber, '(int32)1'), 'speed_1', Select_CString(EqualTo_int32(IndexNumber, '(int32)2'), 'speed_2', Select_CString(EqualTo_int32(IndexNumber, '(int32)3'), 'speed_3', Select_CString(EqualTo_int32(IndexNumber, '(int32)4'), 'speed_4', 'speed_5'))))]"
-
+								
 								blockoverride "pre" {
 									text_single = {
 										raw_text = "[IndexNumber],"
@@ -548,8 +548,8 @@ window = {
 											enabled = "[Or(CharacterLifestyleWindow.CanSelectFocus( FocusType.Self ), EqualTo_string( FocusType.GetKey, Character.GetFocus.GetKey ))]"
 											down = "[EqualTo_string( FocusType.GetKey, Character.GetFocus.GetKey )]"
 											onclick = "[CharacterLifestyleWindow.SelectFocus( FocusType.Self )]"
-											alwaystransparent = "[EqualTo_string( FocusType.GetKey, Character.GetFocus.GetKey )]"
 											tooltip = "[FocusType.GetDescription]"
+											alwaystransparent = "[EqualTo_string( FocusType.GetKey, Character.GetFocus.GetKey )]"
 
 											blockoverride "disabled" {}
 
@@ -659,6 +659,7 @@ window = {
 								button = {
 									using = close_window_ocr
 									onclick = "[Clear('focused_perk_tree')]"
+									visible = "[Is('focused_perk_tree')]"
 									tooltip = "CLOSE_TAB"
 								}
 
@@ -1105,12 +1106,12 @@ window = {
 	######################################################
 	### MODALITÀ VANILLA (NORMOVEDENTI)
 	######################################################
-
+	
 	widget = {
 		name = "lifestyle_vanilla_mode"
 		visible = "[GetVariableSystem.Exists('ocr')]"
 		size = { 100% 100% }
-
+		
 		### Background originale
 		background = {
 			texture = "gfx/interface/component_masks/mask_fade_corner.dds"
@@ -2214,7 +2215,7 @@ window = {
 																	position = { 0 -10 }
 																	texture = "[Perk.GetIcon]"
 																	size = { 60 60 }
-
+																	
 																	glow = {
 																		visible = "[And(CharacterLifestyleWindow.CanSelectPerk( Perk.Self ), Character.GetLifestyle.IsValid)]"
 																		using = Color_Orange
@@ -2497,7 +2498,7 @@ window = {
 ######################################################
 
 types Lifestyle {
-
+	
 	### Helper function per index to string
 	type GetIndexString = text_single {
 		raw_text = "[Select_CString(EqualTo_int32(PdxGuiWidget.GetIndexInDataModel, '(int32)0'), '1', Select_CString(EqualTo_int32(PdxGuiWidget.GetIndexInDataModel, '(int32)1'), '2', Select_CString(EqualTo_int32(PdxGuiWidget.GetIndexInDataModel, '(int32)2'), '3', Select_CString(EqualTo_int32(PdxGuiWidget.GetIndexInDataModel, '(int32)3'), '4', '5'))))]"
@@ -2531,7 +2532,7 @@ types LifestyleTypes
 
 		position = { 1 -6 }
 		parentanchor = right
-		size = { 40 40 }
+		size = { 40 40 }		
 		framesize = { 60 60 }
 		frame = 2
 

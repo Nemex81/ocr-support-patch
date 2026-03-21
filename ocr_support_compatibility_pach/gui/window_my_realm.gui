@@ -137,7 +137,6 @@ window = {
 					onclick = "[MyRealmWindow.Close]"
 					using = close_window_ocr
 					onclick = "[Clear('toasted')]"
-					tooltip = "CLOSE"
 					# shortcut = character_window
 				}
 
@@ -1784,7 +1783,7 @@ window = {
 												onclick = "[MyRealmWindow.Close]"
 												button_ignore = none
 												layoutpolicy_horizontal = expanding
-												tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
+													tooltip = "[TitleItem.GetTitle.GetNameNoTooltip]"
 
 												text_single = {
 													layoutpolicy_horizontal = expanding
@@ -2739,7 +2738,6 @@ window = {
 					onclick = "[GetVariableSystem.Clear('sp_sorting')]"
 					using = close_window_ocr
 					shortcut = map_mode_2
-					tooltip = "CLOSE_TAB"
 				}
 
 				vbox = {

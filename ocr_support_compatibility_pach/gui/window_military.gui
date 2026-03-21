@@ -23,8 +23,7 @@ window = {
 		using = Animation_FadeIn_Quick
 		using = Sound_WindowShow_Standard
 		using = Window_Position_MainTab
-		#on_start = "[GetVariableSystem.Set( 'military_view_mercenaries', 'mercenaries' )]"
-		on_start = "[GetVariableSystem.Set( 'military_view_tabs', 'armies' )]"
+		on_start = "[GetVariableSystem.Set( 'military_view_mercenaries', 'mercenaries' )]"
 
 		# start_sound = {
 		# 	soundeffect = "event:/SFX/UI/Character/Lifestyle/sfx_ui_character_lifestyle_martial_lifestyle"
@@ -49,9 +48,8 @@ window = {
 	}
 
 	widget = {
-		using = ocr_window
 		using = Window_Size_CharacterList
-		#background = { using = Background_Area_Border_Solid }
+		background = { using = Background_Area_Border_Solid }
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 
 		vbox = {
@@ -1550,7 +1548,6 @@ window = {
 				onclick = "[GetVariableSystem.Clear('war_sorting')]"
 				using = close_window_ocr
 				shortcut = map_mode_2
-				tooltip = "CLOSE_TAB"
 			}
 
 			vbox = {
@@ -1621,7 +1618,6 @@ window = {
 				onclick = "[GetVariableSystem.Clear('war_filters')]"
 				using = close_window_ocr
 				shortcut = army_split_half
-				tooltip = "CLOSE_TAB"
 			}
 
 			vbox = {

@@ -589,7 +589,6 @@ window = {
 										raw_text = "Occupied by [Character.GetPrimaryTitle.GetNameNoTierNoTooltip]."
 									}
 									using = char_click
-									tooltip = "PROVINCE_CONTROLLER_TOOLTIP"
 								}
 
 								expand = { }
@@ -848,7 +847,6 @@ window = {
 									using = prov_click
 									visible = "[And(And(Not(Or(ObjectsEqual( Character.Self, GetPlayer ),Character.IsOtherLiegeOrAbove( GetPlayer ))), Not(GetPlayer.IsLandlessRuler)), HoldingView.GetProvince.MakeScope.Var('closest_county').IsSet)]"
 									shortcut = go_to_capital
-									tooltip = "[Title.GetNameNoTierNoTooltip]"
 								}
 
 								button_text = {
@@ -1067,7 +1065,6 @@ window = {
 										}
 										shortcut = army_merge
 										onclick = "[HoldingView.ToggleFindVassalListWindow]"
-										tooltip = "GRANT_TITLE_TOOLTIP"
 										visible = "[And( And( ObjectsEqual( Title.GetHolder, Character.Self ), Title.CanUseFindVassal( Character.Self ) ), Not( Title.IsLeasedOut ) )]"
 									}
 
@@ -3032,6 +3029,10 @@ window = {
 									visible = "[Is('adjacent_counties_ring')]"
 									onclick = "[Clear('adjacent_counties_ring')]"
 									tooltip = "CLOSE_TAB"
+								}
+
+								button = {
+									shortcut = speed_1
 									onclick = "[Set('adjacent_counties_ring', '1')]"
 								}
 
@@ -5600,6 +5601,7 @@ window = {
 		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
 		size = { 100% 100% }
 
+		datamodel = "[HoldingView.GetPotentialBuildings]"
 		datacontext = "[HoldingView.GetHolder]"
 		datacontext = "[HoldingView.GetProvince]"
 		datacontext = "[HoldingView.GetHolding]"
