@@ -379,3 +379,172 @@ Quando l'utente chiede "converti {nome_finestra}" o "inizia la conversione di {n
 10. Se APPROVED → Fase 7 → "Conversione completata."
 11. Se BLOCKED → presento critici → propongo fix
 ```
+
+***
+
+## Pipeline aggiornamento-upstream
+
+Scopo: risincronizzare una finestra già convertita nella patch con le modifiche
+recenti dell'upstream OCR (Agamidae), preservando il container vanilla invariato.
+
+### Fase 0 — Pre-Check
+
+1. Verificare che la finestra sia nella sezione "Convertite" del tracker.
+    Se non è già convertita: STOP — usare la pipeline converti-finestra.
+2. Leggere domain_boundaries.md — se indica "non toccare": STOP.
+3. Verificare esistenza file sorgente (upstream e vanilla). Se mancanti: STOP.
+
+### Fase 1 — Analisi delta upstream
+
+Pre-run main agent:
+python3.14 tools/tri_diff.py --window {nome_finestra}
+
+runSubagent(
+   agentName: "Analista Tri-Repo",
+   prompt: """
+      Analizza le differenze tra l'upstream OCR attuale e la versione nella patch
+      per la finestra '{nome_finestra}'.
+
+      Output tri_diff.py:
+      {output_tri_diff}
+
+      Produci:
+      A) Modifiche upstream non ancora nella patch (feature nuove, fix, refactor)
+      B) Container vanilla nella patch: allineato o divergente dal CK3 originale?
+      C) Rischio regressione per ogni modifica upstream
+      D) Raccomandazione: applicare / valutare / ignorare — con motivazione
+   """
+)
+
+Output da conservare: Report delta Analista
+
+### Fase 2 — Valutazione impatto (subagent: Architetto Dual-Mode)
+
+Pre-run main agent:
+python3.14 tools/assemble_dualmode.py --window {nome} --mode {pattern} --dry-run
+
+runSubagent(
+   agentName: "Architetto Dual-Mode",
+   prompt: """
+      Valuta l'impatto delle modifiche upstream per '{nome_finestra}'.
+
+      === REPORT ANALISTA ===
+      {report_analista}
+
+      === BOZZA DRY-RUN ===
+      {output_dry_run}
+
+      Determina per ogni modifica raccomandata:
+      - Riscrittura completa del container OCR
+      - Aggiornamento parziale (widget specifici)
+      - Nessun intervento necessario
+
+      Produci piano di aggiornamento con sequenza e rischi.
+   """
+)
+
+### CHECKPOINT 1 — Approvazione Modder
+
+Presentare al modder:
+- Report delta Analista
+- Piano di aggiornamento Architetto
+Chiedere: "Approvi il piano? Procedo con l'aggiornamento?"
+ATTENDERE risposta esplicita.
+
+### Fase 3 — Aggiornamento (subagent: Implementatore Patch)
+
+Pre-run main agent (solo se il piano prevede riscrittura):
+python3.14 tools/assemble_dualmode.py --window {nome} --mode {pattern}
+python3.14 tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
+
+runSubagent(
+   agentName: "Implementatore Patch",
+   prompt: """
+      Applica il piano di aggiornamento approvato per '{nome_finestra}'.
+
+      === PIANO APPROVATO ===
+      {piano_aggiornamento}
+
+      === OUTPUT VALIDATOR ===
+      {output_validator}
+
+      Applica solo le modifiche nel piano. Non toccare il container vanilla.
+      Riporta: modifiche effettuate, widget aggiornati, critici risolti.
+   """
+)
+
+Post-run:
+python3.14 tools/audit.py --window {nome_finestra}
+
+### CHECKPOINT 2 — Verdetto Audit al Modder
+
+Presentare verdetto audit completo.
+Chiedere conferma prima di procedere ai revisori.
+
+### Fase 4 — Revisione e chiusura
+
+Eseguire Fasi 5-7 della pipeline converti-finestra (stessa sequenza).
+Aggiornare il tracker con il nuovo stato della finestra.
+
+***
+
+## Pipeline fix-bloccante
+
+Scopo: risolvere i CRITICO aperti su una finestra già nella sezione
+"Convertite — Bloccanti" del tracker.
+
+### Fase 0 — Pre-Check
+
+1. Verificare che la finestra sia nella sezione "Bloccanti" del tracker.
+    Se non è bloccante: usare la pipeline corretta.
+2. Leggere domain_boundaries.md — se indica "non toccare": STOP.
+
+### Fase 1 — Audit iniziale (main agent)
+
+python3.14 tools/audit.py --window {nome_finestra}
+
+Catturare lista completa dei CRITICO con riga, descrizione e causa.
+
+### CHECKPOINT 1 — Presentazione critici al Modder
+
+Presentare al modder la lista CRITICO con descrizione chiara di ogni problema.
+Chiedere: "Procedo con la risoluzione automatica?"
+ATTENDERE risposta esplicita.
+
+### Fase 2 — Fix (subagent: Implementatore Patch)
+
+Pre-run main agent:
+python3.14 tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
+
+runSubagent(
+   agentName: "Implementatore Patch",
+   prompt: """
+      Risolvi i CRITICO aperti in '{nome_finestra}'.
+      File: ocr_support_compatibility_pach/gui/{nome}.gui
+
+      === LISTA CRITICO DA RISOLVERE ===
+      {lista_critico}
+
+      === OUTPUT VALIDATOR ===
+      {output_validator}
+
+      Risolvi esclusivamente i problemi elencati. Non introdurre modifiche non richieste.
+      Non toccare il container vanilla salvo che il CRITICO riguardi il vanilla.
+      Riporta: fix applicati per ciascun critico, codice modificato, righe cambiate.
+   """
+)
+
+Post-run:
+python3.14 tools/audit.py --window {nome_finestra}
+
+### CHECKPOINT 2 — Verdetto Post-Fix al Modder
+
+Presentare il verdetto audit post-fix completo.
+Se ancora BLOCCANTE: ripresentare critici residui e chiedere istruzioni.
+Se OK o CON AVVERTENZE: procedere.
+
+### Fase 3 — Revisione e chiusura
+
+Eseguire Fasi 5-7 della pipeline converti-finestra.
+Aggiornare il tracker spostando la finestra dalla sezione "Bloccanti"
+alla sezione corretta (Validate o Revisione Necessaria).

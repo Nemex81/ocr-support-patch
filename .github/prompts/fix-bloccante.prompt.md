@@ -1,7 +1,6 @@
 ---
 agent: orchestratore
 description: Risolve i CRITICO aperti in una finestra nella sezione Bloccanti. Esegui con l'Implementatore Patch. Una finestra alla volta.
-tools: [edit, read, search, terminal]
 ---
 
 # Fix Bloccante — Risoluzione Critici

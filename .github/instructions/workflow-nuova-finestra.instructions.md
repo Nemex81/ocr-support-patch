@@ -10,21 +10,21 @@ Sequenza operativa standard. Seguire nell'ordine indicato senza saltare passi.
 
 ## Sequenza Operativa (approccio completo)
 
-> L'agente esegue ogni passo tramite tool `terminal`. Il modder interviene SOLO ai due checkpoint.
+> L'**Orchestratore** (`orchestratore.agent.md`) esegue ogni passo via tool `terminal` e coordina i subagent specializzati. Il modder interviene ONLY ai due checkpoint.
 
 | Passo | Chi | Azione |
 |-------|-----|--------|
-| **0** | **Agente** | **Verifica la tabella "Gestione Alternativa OCR" in `copilot-instructions.md` e il file machine-readable `.github/resources/domain_boundaries.md`. Se uno dei due indica copertura OCR alternativa o "non toccare la mod": STOP immediato — informare il modder e non procedere.** |
-| 1 | Agente | `python tools/tri_diff.py --window nome` — report strutturale nei 3 repo |
-| 2 | Agente | Verifica esistenza file OCR upstream e vanilla. Se mancanti: STOP |
-| 3 | Agente | `python tools/assemble_dualmode.py --window nome --mode X --dry-run` |
+| **0** | **Orchestratore** | **Verifica la tabella "Gestione Alternativa OCR" in `copilot-instructions.md` e il file machine-readable `.github/resources/domain_boundaries.md`. Se uno dei due indica copertura OCR alternativa o "non toccare la mod": STOP immediato — informare il modder e non procedere.** |
+| 1 | **Orchestratore** | `python tools/tri_diff.py --window nome` — report strutturale nei 3 repo |
+| 2 | **Orchestratore** | Verifica esistenza file OCR upstream e vanilla. Se mancanti: STOP |
+| 3 | **Orchestratore** | `python tools/assemble_dualmode.py --window nome --mode X --dry-run` |
 | **CP1** | **MODDER** | **Approva la bozza o chiede modifiche. Nessuno scrive senza conferma** |
-| 4 | Agente | `python tools/assemble_dualmode.py --window nome --mode X` |
-| 5 | Agente | `python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/nome.gui` |
-| 6 | Agente | `python tools/audit.py --window nome` |
+| 4 | **Orchestratore** | `python tools/assemble_dualmode.py --window nome --mode X` |
+| 5 | **Orchestratore** | `python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/nome.gui` |
+| 6 | **Orchestratore** | `python tools/audit.py --window nome` |
 | **CP2** | **MODDER** | **Riceve il verdetto audit completo prima dei revisori** |
-| 7 | Agente | **Revisore Accessibilità** → **Revisore Vanilla** → **Auditore Finale** |
-| 8 | Agente | Aggiorna `gui-conversion-progress.instructions.md` |
+| 7 | **Orchestratore** | **Revisore Accessibilità** → **Revisore Vanilla** → **Auditore Finale** |
+| 8 | **Orchestratore** | Aggiorna `gui-conversion-progress.instructions.md` |
 
 ---
 
