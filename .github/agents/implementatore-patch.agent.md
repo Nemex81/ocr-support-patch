@@ -6,11 +6,11 @@ tools: [edit, read, search, terminal]
 handoffs:
   - label: "→ Verifica Accessibilità"
     agent: "Revisore Accessibilità"
-    prompt: "Verifica qualità OCR e accessibilità NVDA del file appena modificato."
+    prompt: "Nota: in pipeline orchestrata il controllo torna all'Orchestratore dopo l'implementazione. Questo handoff è disponibile solo per uso manuale dal picker."
     send: false
   - label: "→ Verifica Vanilla"
     agent: "Revisore Vanilla"
-    prompt: "Verifica che il container vanilla sia fedele al CK3 originale."
+    prompt: "Nota: in pipeline orchestrata il controllo torna all'Orchestratore dopo l'implementazione. Questo handoff è disponibile solo per uso manuale dal picker."
     send: false
 ---
 
@@ -24,7 +24,7 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
 
 0. Esegui via tool **terminal**:
    ```
-   python tools/gui_validator.py --file <percorso_file>
+   python3.14 tools/gui_validator.py --file <percorso_file>
    ```
    Se verdetto = BLOCCANTE: correggere tutti i CRITICO prima di procedere.
    Se verdetto = CON AVVERTENZE o PULITO: procedere, poi invoca #deprecated-pattern-scanner
@@ -37,7 +37,7 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
 4. Container OCR = segue il progetto dell'Architetto o il pattern canonical.
    Opzione alternativa per generare lo scheletro (via tool **terminal**):
    ```
-   python tools/assemble_dualmode.py --window <nome> --mode simple|tabs|complex --dry-run
+   python3.14 tools/assemble_dualmode.py --window <nome> --mode simple|tabs|complex --dry-run
    ```
    Il `--dry-run` stampa solo l'anteprima senza scrivere il file.
    Usa il risultato come base e applicare le personalizzazioni OCR dall'upstream Agamidae.
@@ -46,14 +46,14 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
 6. Dopo ogni edit: verifica assenza di `name` duplicati allo stesso livello
 7. Esegui via tool **terminal**:
    ```
-   python tools/scope_extractor.py --file <percorso_file>
+   python3.14 tools/scope_extractor.py --file <percorso_file>
    ```
    Aggiungi alla whitelist `.github/resources/jomini_scope_whitelist.md`
    tutte le righe prodotte per i binding ASSENTI.
    Poi invoca #scope-whitelist-check per i binding DA VERIFICARE (⚠️) se presenti.
 8. Esegui via tool **terminal**:
    ```
-   python tools/gui_validator.py --file <percorso_file>
+   python3.14 tools/gui_validator.py --file <percorso_file>
    ```
    Se verdetto != PULITO, correggere prima di passare ai revisori.
    Invoca #deprecated-pattern-scanner solo se restano flag ATTENZIONE da interpretare.
@@ -80,3 +80,13 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
 ## Passo successivo
 
 Dopo l'implementazione, suggerisci di invocare **Revisore Accessibilità** e **Revisore Vanilla**.
+
+## Nota operativa — Pipeline vs uso manuale
+
+In pipeline orchestrata (task avviato dall'Orchestratore):
+dopo aver prodotto il report di implementazione, restituisci l'output e termina.
+L'Orchestratore gestisce il passaggio ai Revisori e all'Auditore Finale.
+Non invocare autonomamente altri agenti.
+
+In uso manuale dal picker (sessione diretta senza Orchestratore):
+suggerisci di invocare Revisore Accessibilità e Revisore Vanilla con il report come contesto.

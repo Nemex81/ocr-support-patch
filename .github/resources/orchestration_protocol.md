@@ -486,6 +486,23 @@ Chiedere conferma prima di procedere ai revisori.
 Eseguire Fasi 5-7 della pipeline converti-finestra (stessa sequenza).
 Aggiornare il tracker con il nuovo stato della finestra.
 
+### Template Compatto Avvio — aggiornamento-upstream
+
+Quando l'utente chiede "aggiorna {nome_finestra}" o "risincronizza {nome}":
+
+1. Verifico tracker: la finestra è in "Convertite"? Se no → STOP.
+2. Verifico domain_boundaries.md e sorgenti.
+3. Se OK → "Avvio aggiornamento upstream per {nome}. Inizio con l'analisi delta."
+4. Eseguo Fasi 1-2 in sequenza.
+5. Presento al modder report delta + piano Architetto (CP1).
+6. Attendo approvazione.
+7. Eseguo Fase 3 (implementazione + audit).
+8. Presento verdetto audit (CP2).
+9. Attendo conferma.
+10. Eseguo Fase 4 (revisori + auditore + chiusura).
+11. Se APPROVED → aggiorno tracker → "Aggiornamento completato."
+12. Se BLOCKED → presento critici → propongo fix.
+
 ***
 
 ## Pipeline fix-bloccante
@@ -548,3 +565,19 @@ Se OK o CON AVVERTENZE: procedere.
 Eseguire Fasi 5-7 della pipeline converti-finestra.
 Aggiornare il tracker spostando la finestra dalla sezione "Bloccanti"
 alla sezione corretta (Validate o Revisione Necessaria).
+
+### Template Compatto Avvio — fix-bloccante
+
+Quando l'utente chiede "risolvi critici {nome}" o "fix bloccante {nome}":
+
+1. Verifico tracker: la finestra è in "Bloccanti"? Se no → STOP.
+2. Verifico domain_boundaries.md.
+3. Se OK → Eseguo audit.py iniziale.
+4. Presento al modder lista CRITICO (CP1).
+5. Attendo approvazione.
+6. Eseguo Fase 2 (fix Implementatore + re-audit).
+7. Presento verdetto post-fix (CP2).
+8. Attendo conferma.
+9. Eseguo Fase 3 (revisori + auditore + chiusura).
+10. Se APPROVED → sposto finestra da "Bloccanti" alla sezione corretta nel tracker.
+11. Se ancora BLOCKED → ripresento critici residui → chiedo istruzioni modder.

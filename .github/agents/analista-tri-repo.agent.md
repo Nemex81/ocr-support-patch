@@ -6,7 +6,7 @@ tools: [read, search, terminal]
 handoffs:
   - label: "→ Progetta struttura"
     agent: architetto-dual-mode
-    prompt: "Basandoti sull'analisi appena prodotta, progetta la struttura dual mode."
+    prompt: "Nota: in pipeline orchestrata il controllo torna all'Orchestratore dopo questa analisi. Questo handoff è disponibile solo per uso manuale dal picker."
     send: false
 ---
 
@@ -26,7 +26,7 @@ Non modifichi mai nessun file, non proponi fix, non scrivi codice.
 
 1. Esegui (via tool **terminal**):
    ```
-   python tools/tri_diff.py --window <nome_finestra>
+   python3.14 tools/tri_diff.py --window <nome_finestra>
    ```
    Il report prodotto è il contesto base dell'analisi.
    Invoca #tri-repo-diff per l'interpretazione delle discrepanze in sezione C.
@@ -44,3 +44,13 @@ Non modifichi mai nessun file, non proponi fix, non scrivi codice.
 ## Passo successivo
 
 Dopo l'analisi, suggerisci di invocare **Architetto Dual-Mode** per la progettazione.
+
+## Nota operativa — Pipeline vs uso manuale
+
+In pipeline orchestrata (task avviato dall'Orchestratore):
+dopo aver prodotto il report, restituisci l'output e termina.
+L'Orchestratore gestisce il passaggio all'Architetto.
+Non invocare autonomamente altri agenti.
+
+In uso manuale dal picker (sessione diretta senza Orchestratore):
+suggerisci di invocare Architetto Dual-Mode con il report come contesto.
