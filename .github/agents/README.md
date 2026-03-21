@@ -12,6 +12,8 @@ Gli agenti si passano il controllo tramite handoff espliciti dichiarati nel fron
 
 ## File presenti
 
+**orchestratore.agent.md** — Entry point della pipeline: coordina l'intero ciclo di conversione dual-mode, esegue i pre-run script con terminal e governa i checkpoint CP1/CP2 prima degli handoff agli agenti specializzati.
+
 **analista-tri-repo.agent.md** — Confronta i tre repository (patch, OCR upstream Agamidae, vanilla CK3) per una finestra specifica. Usa `tri_diff.py`. Solo lettura, nessuna modifica. Passa il controllo all'Architetto.
 
 **architetto-dual-mode.agent.md** — Progetta la struttura dual-mode per una finestra: decide il pattern di conversione (A/B/C/D), identifica i container OCR e vanilla, produce la bozza da approvare al CP1. Solo progettazione, nessuna modifica a file.

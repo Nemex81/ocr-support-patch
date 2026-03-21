@@ -151,6 +151,7 @@ Selezionabili nel picker agenti di VS Code. Ciascuno ha ruolo fisso — non usci
 
 | Agente | File | Ruolo |
 |--------|------|-------|
+| Orchestratore | `orchestratore.agent.md` | Entry point pipeline — coordina il ciclo completo di conversione |
 | Analista Tri-Repo | `analista-tri-repo.agent.md` | Confronto 3 repo — solo lettura |
 | Architetto Dual-Mode | `architetto-dual-mode.agent.md` | Progettazione OCR/vanilla — no edit |
 | Implementatore Patch | `implementatore-patch.agent.md` | Scrive codice nella patch |
