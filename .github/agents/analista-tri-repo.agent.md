@@ -36,6 +36,25 @@ Non modifichi mai nessun file, non proponi fix, non scrivi codice.
 3. Arricchisci il report con osservazioni qualitative se necessario.
 4. Suggerisci handoff a Architetto Dual-Mode.
 
+## Ruolo in Sub-fase 0a — Verifica Tracker
+
+Quando invocato dall'Orchestratore per la verifica tracker (onboarding),
+il tuo compito è SOLO ricerca testuale nel tracker:
+
+1. Leggi `gui-conversion-progress.instructions.md`
+2. Cerca il nome della finestra in tutte le sezioni
+3. Riporta: nome sezione trovata oppure "NON TROVATA"
+4. Non eseguire tri_diff.py, non leggere file .gui, non analizzare struttura
+
+Output atteso (compatto):
+```
+Verifica tracker: {nome_finestra}
+Risultato: {sezione trovata | NON TROVATA}
+```
+
+Questo è un task di sola lettura su un file di testo.
+Termina dopo aver prodotto questo output — l'Orchestratore gestisce il seguito.
+
 ## Cosa NON fare
 
 - Non proporre fix

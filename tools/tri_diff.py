@@ -456,6 +456,75 @@ def analizza_fedelta(percorso: Path) -> dict:
     }
 
 
+def onboarding_check(window_name: str) -> str:
+    """
+    Verifica rapida per l'onboarding di una nuova finestra nel tracker.
+    Produce: esistenza sorgenti nei tre repo, dimensione vanilla,
+    Pattern consigliato (A/B/C/D) con motivazione sintetica.
+    Non esegue il report tri-diff completo.
+    """
+    path_patch = PATCH_GUI / f"{window_name}.gui"
+    path_ocr = OCR_GUI / f"{window_name}.gui"
+    path_vanilla = VANILLA_GUI / f"{window_name}.gui"
+
+    esiste_patch, righe_patch = _leggi_file(path_patch)
+    esiste_ocr, righe_ocr = _leggi_file(path_ocr)
+    esiste_vanilla, righe_vanilla = _leggi_file(path_vanilla)
+
+    dim_vanilla = len(righe_vanilla)
+    dim_patch = len(righe_patch)
+
+    # Pattern consigliato basato su dimensione vanilla e blocchi top-level
+    blocchi = _estrai_blocchi_toplevel(righe_vanilla) if esiste_vanilla else []
+    n_blocchi = len(blocchi)
+
+    if dim_vanilla < 200 and n_blocchi <= 2:
+        pattern = "A"
+        motivazione = "file piccolo, struttura semplice, 1-2 blocchi top-level"
+    elif dim_vanilla < 500 or n_blocchi <= 4:
+        pattern = "B"
+        motivazione = "dimensione media o tab navigation rilevata"
+    elif dim_vanilla < 1500:
+        pattern = "C"
+        motivazione = "file grande, layout complesso o multi-colonna"
+    else:
+        pattern = "D"
+        motivazione = "file molto grande, multi-window interconnesse"
+
+    righe_out: list[str] = [
+        f"# Onboarding Check: {window_name}.gui",
+        "",
+        "## Esistenza Sorgenti",
+        f"- Patch attiva  : {'✅ PRESENTE' if esiste_patch else '❌ ASSENTE'}"
+        + (f" ({dim_patch} righe)" if esiste_patch else ""),
+        f"- OCR upstream  : {'✅ PRESENTE' if esiste_ocr else '❌ ASSENTE'}"
+        + (f" ({len(righe_ocr)} righe)" if esiste_ocr else ""),
+        f"- Vanilla CK3   : {'✅ PRESENTE' if esiste_vanilla else '❌ ASSENTE'}"
+        + (f" ({dim_vanilla} righe)" if esiste_vanilla else ""),
+        "",
+        "## Pattern Consigliato",
+        f"**Pattern {pattern}** — {motivazione}",
+        f"Blocchi top-level vanilla rilevati: {n_blocchi}",
+        "",
+        "## Stato per Onboarding",
+    ]
+
+    if not esiste_vanilla:
+        righe_out.append("❌ STOP — file vanilla NON TROVATO. Verificare VANILLA_GUI in config.py.")
+    elif not esiste_ocr:
+        righe_out.append("⚠️  OCR upstream assente — conversione possibile ma senza riferimento OCR.")
+    else:
+        righe_out.append("✅ Sorgenti completi. Pronto per inserimento nel tracker.")
+
+    if esiste_patch:
+        righe_out.append(
+            f"⚠️  File PRESENTE nella patch ({dim_patch} righe) — "
+            "potrebbe essere parzialmente convertito. Verificare con il modder."
+        )
+
+    return "\n".join(righe_out)
+
+
 # ---------------------------------------------------------------------------
 # Entry point CLI
 # ---------------------------------------------------------------------------
@@ -475,7 +544,24 @@ def main() -> None:
         "--output-file", default=None,
         help="Se fornito, salva il report su file invece che su stdout."
     )
+    parser.add_argument(
+        "--onboarding", action="store_true",
+        help="Modalità onboarding: verifica rapida esistenza sorgenti e Pattern "
+             "consigliato. Non produce il report tri-diff completo."
+    )
     args = parser.parse_args()
+
+    if args.onboarding:
+        report = onboarding_check(args.window)
+        if args.output_file:
+            out_path = Path(args.output_file)
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write(report)
+            print(f"Report onboarding salvato in: {out_path}")
+        else:
+            print(report)
+        return
 
     report = genera_report(args.window)
 

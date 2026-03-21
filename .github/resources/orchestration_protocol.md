@@ -53,7 +53,36 @@ Fase 7  CHIUSURA (main agent aggiorna tracker)
 
 ---
 
-## Fase 0 — Pre-Check (main agent, nessun subagent)
+## Fase 0 — Pre-Check e Onboarding (main agent + subagent Analista)
+
+### Sub-fase 0a — Verifica tracker (subagent: Analista Tri-Repo)
+
+**Invocazione subagent:**
+```
+runSubagent(
+  agentName: "Analista Tri-Repo",
+  description: "Verifica tracker {nome_finestra}",
+  prompt: """
+    Verifica se '{nome_finestra}' è presente nel tracker.
+    Leggi: .github/instructions/gui-conversion-progress.instructions.md
+    Cerca il nome in tutte le sezioni.
+    Riporta solo: nome sezione trovata oppure "NON TROVATA".
+    Nessuna altra analisi.
+  """
+)
+```
+
+**Routing in base al risultato:**
+
+| Risultato | Azione |
+|-----------|--------|
+| "Da Convertire" | Procedi a Sub-fase 0b (check sorgenti) |
+| "Convertite — *" | STOP — "La finestra è già convertita. Usa: aggiorna {nome}" |
+| "Convertite — Bloccanti" | STOP — "La finestra ha critici aperti. Usa: risolvi critici {nome}" |
+| "Gestione Alternativa OCR" | STOP DEFINITIVO — "Questa finestra non va convertita al dual-mode." |
+| "NON TROVATA" | Procedi a Sub-fase 0c (onboarding) |
+
+### Sub-fase 0b — Verifica sorgenti (main agent, se in "Da Convertire")
 
 **Azioni del main agent:**
 
@@ -61,13 +90,35 @@ Fase 7  CHIUSURA (main agent aggiorna tracker)
    - Se la finestra è presente → **STOP**, informare il modder
 2. Leggere `.github/resources/domain_boundaries.md`
    - Se indica "non toccare" → **STOP**
-3. Verificare che la finestra sia nella sezione "Da Convertire" di `gui-conversion-progress.instructions.md`
-   - Annotare il **Pattern** (A/B/C/D) dalla colonna corrispondente
+3. Annotare il **Pattern** (A/B/C/D) dalla colonna "Da Convertire" del tracker
    - **Mapping pattern → mode CLI**: A=`simple` | B=`tabs` | C/D=`complex`
 4. Verificare esistenza file sorgente:
-   - Vanilla: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/{nome}.gui`
-   - OCR upstream: `../CK3-OCR/OCR-Support/gui/{nome}.gui`
+   - Vanilla: `{VANILLA_GUI}/{nome}.gui`
+   - OCR upstream: `{OCR_GUI}/{nome}.gui`
    - Se uno manca → **STOP**, informare il modder
+
+### Sub-fase 0c — Onboarding (main agent, se "NON TROVATA")
+
+**Pre-run:**
+```
+python tools/tri_diff.py --window {nome_finestra} --onboarding
+```
+Catturare output completo.
+
+**Verifica:**
+- File vanilla assente → STOP, informare il modder
+- File OCR assente → avvertire il modder, chiedere conferma
+- File presente in patch → segnalare al modder (parziale)
+
+**CHECKPOINT 0:**
+Presentare output onboarding al modder.
+Chiedere conferma inserimento tracker e scelta pipeline (se parziale).
+ATTENDERE risposta esplicita.
+
+**Scrittura tracker (solo dopo conferma):**
+- Ricomincia → aggiunge riga in "Da Convertire", poi procede a Sub-fase 0b
+- Aggiorna → aggiunge riga in "Convertite — Revisione Necessaria",
+  informa il modder di usare pipeline aggiornamento-upstream, STOP
 
 ---
 
@@ -371,7 +422,7 @@ runSubagent(
 Quando l'utente chiede "converti {nome_finestra}" o "inizia la conversione di {nome}", il main agent:
 
 ```
-1. Leggo esclusioni e tracker (Fase 0)
+1. Eseguo Fase 0 completa: verifica tracker (Sub-fase 0a) + verifica sorgenti (Sub-fase 0b). Se finestra NON TROVATA → onboarding automatico (Sub-fase 0c) prima di procedere.
 2. Se OK → "Avvio il ciclo completo per {nome}. Inizio con l'analisi tri-repo."
 3. Eseguo Fasi 1-2 in sequenza
 4. Presento al modder sintesi + design doc (CP1)
@@ -494,7 +545,7 @@ Aggiornare il tracker con il nuovo stato della finestra.
 
 Quando l'utente chiede "aggiorna {nome_finestra}" o "risincronizza {nome}":
 
-1. Verifico tracker: la finestra è in "Convertite"? Se no → STOP.
+1. Eseguo Sub-fase 0a (verifica tracker). Se in "Convertite": procedo. Se "NON TROVATA": onboarding automatico (Sub-fase 0c) → poi informo il modder di usare pipeline converti-finestra. Se altra sezione: STOP con indicazione pipeline corretta.
 2. Verifico domain_boundaries.md e sorgenti.
 3. Se OK → "Avvio aggiornamento upstream per {nome}. Inizio con l'analisi delta."
 4. Eseguo Fasi 1-2 in sequenza.
@@ -574,7 +625,7 @@ alla sezione corretta (Validate o Revisione Necessaria).
 
 Quando l'utente chiede "risolvi critici {nome}" o "fix bloccante {nome}":
 
-1. Verifico tracker: la finestra è in "Bloccanti"? Se no → STOP.
+1. Eseguo Sub-fase 0a (verifica tracker). Se in "Bloccanti": procedo. Se "NON TROVATA": onboarding automatico (Sub-fase 0c) → poi informo il modder di usare pipeline converti-finestra. Se altra sezione: STOP con indicazione pipeline corretta.
 2. Verifico domain_boundaries.md.
 3. Se OK → Eseguo audit.py iniziale.
 4. Presento al modder lista CRITICO (CP1).
@@ -585,3 +636,25 @@ Quando l'utente chiede "risolvi critici {nome}" o "fix bloccante {nome}":
 9. Eseguo Fase 3 (revisori + auditore + chiusura).
 10. Se APPROVED → sposto finestra da "Bloccanti" alla sezione corretta nel tracker.
 11. Se ancora BLOCKED → ripresento critici residui → chiedo istruzioni modder.
+
+***
+
+## Procedura Onboarding — Inserimento finestra nel tracker
+
+Questa procedura è parte integrante della Fase 0 di ogni pipeline.
+Non è una pipeline autonoma — si attiva automaticamente quando
+la finestra non è trovata nel tracker durante il Pre-Check.
+
+Riferimento completo: `.github/instructions/workflow-onboarding-finestra.instructions.md`
+
+### Template Compatto — onboarding
+
+Quando in Fase 0 la finestra risulta "NON TROVATA" nel tracker:
+
+1. Eseguo tri_diff.py --onboarding per verificare sorgenti e Pattern.
+2. Presento al modder output onboarding + scelta pipeline (CP0).
+3. Attendo conferma esplicita.
+4. Se ricomincia → scrivo riga in "Da Convertire" → procedo a Sub-fase 0b.
+5. Se aggiorna → scrivo riga in "Convertite — Revisione Necessaria"
+   → informo il modder di usare "aggiorna {nome}" → STOP.
+6. Se modder rifiuta → STOP, nessuna modifica al tracker.
