@@ -1,0 +1,616 @@
+
+widget = {
+	name = "mainmenu_load"
+	size = { 100% 100% }
+
+	state = {
+		name = _show
+		using = Animation_FadeIn_Standard
+	}
+
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Standard
+	}
+
+	background = {
+		texture = "gfx/interface/illustrations/frontend/frontend_bg.dds"
+		fittype = centercrop
+	}
+
+	window = {
+		gfxtype = windowgfx
+		alwaystransparent = no
+		movable = no
+		resizable = no
+		size = { 1030 100% }
+
+		position = { 50 0 }
+		parentanchor = left|vcenter
+
+		layer = windows_layer
+
+		widget_load_game = {
+			size = { 100% 100% }
+		}
+	}
+}
+
+types LoadGameTypes
+{
+	type widget_load_game = widget {
+		size = { 100% 100% }
+		using = TooltipFocus
+
+		hbox = {
+			widget = {
+				size = { 560 0 }
+				layoutpolicy_vertical = expanding
+				alwaystransparent = no
+
+				using = Window_Background_Subwindow
+
+				vbox = {
+					margin = { 5 5 }
+
+					header_pattern = {
+						layoutpolicy_horizontal = expanding
+						datacontext = "[FrontEndLoadView.GetSelectedSavegame]"
+						size = { 0 35 }
+
+						blockoverride "header_text"
+						{
+							# raw_text = "Select a save to load."
+							raw_text = "[Select_CString(FrontEndLoadView.HasSelectedSavegame, 'Selected save:', 'Select a save to laod.')]"
+						}
+
+						blockoverride "button_close" {
+							visible = no
+						}
+					}
+
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						# layoutpolicy_vertical = expanding
+						minimumsize = { 560 0 }
+						alwaystransparent = no
+						block "selected_save"
+						{
+							visible = "[FrontEndLoadView.HasSelectedSavegame]"
+							datacontext = "[FrontEndLoadView.GetSelectedSavegame]"
+						}
+						# margin = { 0 15 }
+
+						vbox_save_preview = {
+							layoutpolicy_horizontal = expanding
+							# layoutpolicy_vertical = expanding
+							# margin = { 15 0 }
+							# margin_top = 10
+							minimumsize = { 560 0 }
+						}
+					}
+
+					hbox = {
+						spacing = 5
+						layoutpolicy_horizontal = expanding
+
+						button_checked_text = {
+							block "invalid_saves_click" {
+								onclick = "[FrontEndLoadView.OnShowInvalidSavegames]"
+							}
+							blockoverride "text" {
+								text = "LOAD_SHOW_INVALID_SAVEGAMES"
+							}
+							blockoverride "visible" {
+								block "invalid_saves_checked" {
+									visible = "[Not(FrontEndLoadView.ShouldShowInvalidSavegames)]"
+								}
+							}
+							blockoverride "dot" { }
+						}
+						button_text = {
+							blockoverride "text" {
+								# raw_text = "Go back button."
+							}
+							using = close_window_ocr
+							shortcut = "go_back"
+							block "button_back" {
+								onclick = "[FrontEndLoadView.OnBack]"
+							}
+						}
+						expand = { }
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						onclick = "[GetVariableSystem.Toggle('save_names')]"
+						shortcut = map_mode_10
+						blockoverride "text" {
+							margin_left = 5
+							raw_text = "[Select_CString( GetVariableSystem.Exists('save_names'), 'Checked', 'Unchecked' )], compact view, Shift W."
+						}
+					}
+
+					scrollbox = {
+						layoutpolicy_horizontal = growing
+						layoutpolicy_vertical = expanding
+
+						blockoverride "scrollbox_content"
+						{
+							vbox = {
+								visible = "[Not(GetVariableSystem.Exists('save_names'))]"
+								block "datamodel_savegames"
+								{
+									datamodel = "[FrontEndLoadView.GetSaveGames]"
+								}
+								# spacing = 3
+
+								item = {
+									button_saved_games = {
+										size = { 550 70 }
+									}
+								}
+							}
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								visible = "[GetVariableSystem.Exists('save_names')]"
+								block "datamodel_savegames"
+								{
+									datamodel = "[FrontEndLoadView.GetSaveGames]"
+								}
+								# spacing = 3
+
+								item = {
+									button_text = {
+										layoutpolicy_horizontal = expanding
+										onclick = "[SaveGameItem.Select]"
+										onclick = "[PdxGuiTriggerAllAnimations('loadsave_refresh')]"
+										blockoverride "pre" {
+											spacing = 3
+											text_single = {
+												raw_text = "[SaveGameItem.GetName],"
+											}
+											text_single = {
+												raw_text = "[SaveGameItem.GetDate.GetYear]."
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			expand = { }
+		}
+	}
+
+	type button_saved_games = button_standard_hover {
+		onclick = "[SaveGameItem.Select]"
+		onclick = "[PdxGuiTriggerAllAnimations('loadsave_refresh')]"
+		down = "[SaveGameItem.IsSelected]"
+
+		tooltip_visible = "[Or( Or( SaveGameItem.HasMissingDLCs, SaveGameItem.HasMissingMods ), SaveGameItem.IsDifferentVersion )]"
+		tooltip = "LOAD_MISSING_ITEMS_TT"
+
+		hbox = {
+			margin = { 5 5 }
+			# spacing = 5
+
+			# coa_savegame = {}
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					spacing = 3
+					text_single = {
+						block "save_list" { }
+						raw_text = "[IndexNumber],"
+					}
+					text_single = {
+						name = "filename"
+						raw_text = "[SaveGameItem.GetName],"
+						layoutpolicy_horizontal = expanding
+						# autoresize = yes
+
+						block "max_width_savegame" {
+							max_width = 525
+						}
+					}
+					expand = { }
+				}
+
+				# expand = {}
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					spacing = 5
+					size = { 330 -1 }
+
+					shortcuts_list = {
+						block "save_list" { }
+						blockoverride "click" {
+							onclick = "[SaveGameItem.Select]"
+							onclick = "[PdxGuiTriggerAllAnimations('loadsave_refresh')]"
+						}
+					}
+
+					text_single = {
+						name = "name"
+						raw_text = "[SaveGameItem.GetPlayerName]."
+						# layoutpolicy_horizontal = expanding
+						max_width = 250
+						align = left
+						alwaystransparent = yes
+					}
+
+					text_single = {
+						raw_text = "Cloud save."
+						visible = "[SaveGameItem.IsCloudSave]"
+					}
+
+					# cloud_save_icon = {
+					# 	size = { 30 30 }
+					# }
+
+					text_single = {
+						raw_text = "Ironman."
+						visible = "[SaveGameItem.IsIronmanSave]"
+						tooltip = "LOAD_IRONMAN_TOOLTIP"
+					}
+
+					text_single = {
+						raw_text = "Multiplayer."
+						visible = "[SaveGameItem.IsMultiplayer]"
+					}
+
+					text_single = {
+						raw_text = "Invalid."
+						visible = "[Not(SaveGameItem.IsValid)]"
+						tooltip = "LOAD_INVALID_TOOLTIP"
+					}
+
+					text_single = {
+						visible = "[SaveGameItem.HasMissingMods]"
+						raw_text = "Missing mods."
+					}
+
+					text_single = {
+						visible = "[SaveGameItem.HasMissingDLCs]"
+						raw_text = "Missing DLCs."
+					}
+
+					# text_single = {
+					# 	visible = "[SaveGameItem.HasMissingDLCs]"
+					# 	raw_text = "Warning, tooltip."
+					# 	tooltip = "[SaveGameItem.GetMissingDLCInfo]"
+					# }
+
+					text_single = {
+						raw_text = "No achievements."
+						visible = "[SaveGameItem.HasAchievementBlockingGameRules]"
+						tooltip = "[SaveGameItem.GetAchievementBlockingGameRulesInfo]"
+					}
+
+					text_single = {
+						raw_text = "Different checksum."
+						visible = "[And( SaveGameItem.CanGetAchievements, Not( IsGameChecksumOk ) )]"
+						tooltip = "GAME_CHECKSUM_CHANGED_FROM_SAVE_FILE"
+					}
+
+
+					expand = { }
+				}
+
+
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					text_single = {
+						raw_text = "[SaveGameItem.GetDate.GetString], saved [SaveGameItem.GetLastPlayed]."
+					}
+					space = { }
+
+					text_single = {
+						raw_text = "LOAD_GAME_VERSION"
+					}
+					dot = { }
+					expand = { }
+
+				}
+
+				expand = { }
+			}
+		}
+	}
+
+	type vbox_save_preview = vbox {
+		name = "load_info"
+
+		state = {
+			name = "loadsave_refresh"
+			using = Animation_Refresh_FadeOut
+		}
+
+		state = {
+			using = Animation_Refresh_FadeIn
+		}
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			margin = { 10 0 }
+
+			text_single = {
+				raw_text = "Name: [SaveGameItem.GetName]."
+				max_width = 560
+				layoutpolicy_horizontal = expanding
+			}
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				# margin = { 5 0 }
+
+				button_primary_text = {
+					layoutpolicy_horizontal = expanding
+					name = "load_button"
+					shortcut = confirm
+					blockoverride "text" {
+						raw_text = "Load game"
+					}
+					blockoverride "disabled" {
+						visible = "[SaveGameItem.HasMissingDLCs]"
+					}
+					clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_start_game"
+
+					enabled = "[Not( SaveGameItem.HasMissingDLCs )]"
+					tooltip = "[SaveGameItem.GetMissingDLCInfo]"
+
+					block "button_load_save"
+					{
+						onclick = "[FrontEndLoadView.OnLoad]"
+					}
+				}
+
+				button_text = {
+					layoutpolicy_horizontal = expanding
+					name = "delete_button"
+					shortcut = mapmode_house_secondary
+					blockoverride "text" {
+						raw_text = "[Localize('DELETE_GAME')],"
+					}
+					blockoverride "extra" {
+						text_single = {
+							raw_text = "Shift D"
+						}
+					}
+					blockoverride "dot" { }
+
+					block "button_delete_save"
+					{
+						onclick = "[FrontEndLoadView.OnDelete]"
+					}
+					size = { 180 33 }
+				}
+
+				expand = { }
+				block "controls" { }
+			}
+
+			text_single = {
+				name = "name"
+				raw_text = "[SaveGameItem.GetPlayerName], [SaveGameItem.GetTitleName]."
+				layoutpolicy_horizontal = expanding
+				max_width = 560
+				align = left
+				alwaystransparent = yes
+			}
+
+			text_single = {
+				raw_text = "[SaveGameItem.GetDate.GetString], saved [SaveGameItem.GetLastPlayed]."
+				layoutpolicy_horizontal = expanding
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+
+				text_single = {
+					text = "LOAD_GAME_VERSION"
+					default_format = "#weak"
+				}
+				dot = { }
+				expand = { }
+			}
+
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+
+				vbox = {
+					text_single = {
+						visible = "[SaveGameItem.HasMissingDLCs]"
+						text = "MISSING_DLC"
+						layoutpolicy_horizontal = expanding
+						align = left
+						default_format = "#low"
+						tooltip = "[SaveGameItem.GetMissingDLCInfo]"
+					}
+
+					text_single = {
+						visible = "[SaveGameItem.HasMissingMods]"
+						text = "MISSING_MODS"
+						layoutpolicy_horizontal = expanding
+						align = left
+						default_format = "#low"
+						tooltip = "[SaveGameItem.GetMissingMods]"
+					}
+
+					text_single = {
+						visible = "[SaveGameItem.IsDifferentVersion]"
+						text = "LOAD_GAME_DIFFERENT_VERSION"
+						layoutpolicy_horizontal = expanding
+						align = left
+						default_format = "#low"
+						tooltip = "LOAD_GAME_DIFFERENT_VERSION_TT"
+					}
+
+					spacer = {
+						size = { 10 10 }
+					}
+
+					### ADDITIONAL SAVE INFO ##
+
+					hbox = {
+						layoutpolicy_horizontal = expanding
+						margin = { 10 5 }
+
+						hbox = {
+							layoutpolicy_horizontal = expanding
+
+							background = {
+								using = Background_Area_Dark
+								margin = { 10 5 }
+
+							}
+
+							vbox = {
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[SaveGameItem.IsCloudSave]"
+									spacing = 5
+
+									text_single = {
+										text = "LOAD_CLOUDSAVE_TOOLTIP"
+										default_format = "#low"
+										align = left
+									}
+
+									expand = {}
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[SaveGameItem.IsIronmanSave]"
+									spacing = 5
+
+
+									text_single = {
+										text = "LOAD_IRONMAN_TOOLTIP"
+										default_format = "#low"
+										align = left
+									}
+
+									expand = {}
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[SaveGameItem.CanGetAchievements]"
+
+									text_single = {
+										text = "LOAD_ACHIEVEMENTS_ENABLED_TOOLTIP"
+									}
+
+									expand = {}
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[Not(SaveGameItem.CanGetAchievements)]"
+
+									text_single = {
+										text = "LOAD_ACHIEVEMENTS_DISABLED_TOOLTIP"
+									}
+
+									expand = {}
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[SaveGameItem.IsMultiplayer]"
+									spacing = 5
+
+
+									text_single = {
+										text = "LOAD_MULTIPLAYER_TOOLTIP"
+										default_format = "#low"
+										align = left
+									}
+
+									expand = {}
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[Not(SaveGameItem.IsValid)]"
+									spacing = 5
+
+
+									text_single = {
+										text = "LOAD_INVALID_TOOLTIP"
+										default_format = "#low"
+										align = left
+									}
+
+									expand = {}
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[SaveGameItem.HasMissingDLCs]"
+									spacing = 5
+
+									text_multi = {
+										text = "[SaveGameItem.GetMissingDLCInfo]"
+										autoresize = yes
+										max_width = 500
+									}
+
+									expand = {}
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[SaveGameItem.HasAchievementBlockingGameRules]"
+									spacing = 5
+
+
+									text_multi = {
+										text = "[SaveGameItem.GetAchievementBlockingGameRulesInfo]"
+										default_format = "#low"
+										autoresize = yes
+										max_width = 250
+									}
+
+									expand = {}
+								}
+
+								hbox = {
+									layoutpolicy_horizontal = expanding
+									visible = "[And( SaveGameItem.CanGetAchievements, Not( IsGameChecksumOk ) )]"
+									spacing = 5
+
+									text_multi = {
+										text = "GAME_CHECKSUM_CHANGED_FROM_SAVE_FILE"
+										default_format = "#low"
+										autoresize = yes
+										max_width = 250
+									}
+
+									expand = {}
+								}
+							}
+
+							expand = {}
+						}
+
+						expand = {}
+					}
+				}
+
+				expand = {}
+			}
+
+			expand = {}
+		}
+	}
+}

@@ -1,0 +1,825 @@
+window = {
+	name = "ingame_pausemenu"
+	# parentanchor = center
+	movable = no
+	size = { 800 100% }
+	layer = frontend
+	filter_mouse = all
+
+	background = {
+		using = Background_Area_Border_Solid
+		margin = { 20 20 }
+		# alpha = 0.7
+	}
+
+	state = {
+		name = _show
+		using = Animation_FadeIn_Quick
+
+		position = { 0 0 }
+
+		start_sound = {
+			soundeffect = "snapshot:/States/MainMenu"
+		}
+
+		start_sound = {
+			soundeffect = "event:/SFX/UI/Generic/sfx_ui_generic_tab"
+		}
+	}
+
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Quick
+		start_sound = { soundeffect = "event:/SFX/UI/Generic/sfx_ui_generic_tab"}
+		position_y = 10
+	}
+
+	@button_height = 58
+
+	flowcontainer = {
+		ignoreinvisible = yes
+		visible = "[GetVariableSystem.Exists('escape_menu')]"
+		direction = vertical
+
+
+		button_text = {
+			using = close_window_ocr
+			onclick = "[GetVariableSystem.Clear('escape_menu')]"
+			blockoverride "text" {
+				raw_text = "Showing [GetVariableSystem.Get('escape_menu')]. Close with Escape."
+			}
+		}
+
+		flowcontainer = {
+			visible = "[And(GetVariableSystem.HasValue('escape_menu', 'mod settings'), GetPlayer.IsValid)]"
+			margin = { 10 0 }
+			direction = vertical
+			background = { using = Background_Area_Dark }
+
+			spacing = 10
+
+			spacer = {
+			}
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Daily tick sound:"
+				}
+				blockoverride "extra" {
+					text_single = {
+						raw_text = "[Select_CString(GetScriptedGui('daily_sound').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'enabled', 'disabled')]."
+					}
+					text_single = {
+						raw_text = "3 options:"
+					}
+				}
+				onclick = "[GetScriptedGui('daily_sound').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Quiet tick sound."
+				}
+				blockoverride "selected" {
+					visible = "[And(Not(GetPlayer.MakeScope.Var('daily_sound_loud').IsSet), Not(GetPlayer.MakeScope.Var('daily_sound_medium').IsSet))]"
+				}
+				onclick = "[GetScriptedGui('daily_sound_quiet').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+				# clicksound = "event:/daily_tick_ocr"
+				clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_pointer_over"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Medium tick sound."
+				}
+				blockoverride "selected" {
+					visible = "[GetPlayer.MakeScope.Var('daily_sound_medium').IsSet]"
+				}
+				onclick = "[GetScriptedGui('daily_sound_medium').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+				clicksound = "event:/daily_tick_ocr"
+				# clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_pointer_over"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Loud tick sound."
+				}
+				blockoverride "selected" {
+					visible = "[GetPlayer.MakeScope.Var('daily_sound_loud').IsSet]"
+				}
+				onclick = "[GetScriptedGui('daily_sound_loud').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+				clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_decrement"
+			}
+
+			###
+
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Monthly tick sound:"
+				}
+				blockoverride "extra" {
+					text_single = {
+						raw_text = "[Select_CString(GetScriptedGui('monthly_sound').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'enabled', 'disabled')]."
+					}
+					text_single = {
+						raw_text = "2 options:"
+					}
+				}
+				onclick = "[GetScriptedGui('monthly_sound').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Gold sound, based on your income."
+				}
+				blockoverride "selected" {
+					visible = "[Not(GetPlayer.MakeScope.Var('monthly_sound_confirm').IsSet)]"
+				}
+				onclick = "[GetScriptedGui('monthly_sound_gold').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+				clicksound = "event:/money_in_ocr"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Confirm sound."
+				}
+				blockoverride "selected" {
+					visible = "[GetPlayer.MakeScope.Var('monthly_sound_confirm').IsSet]"
+				}
+				onclick = "[GetScriptedGui('monthly_sound_confirm').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+				clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_confirm"
+			}
+
+
+			button_text = {
+				onclick = "[Click('hide_map')]"
+				shortcut = army_create_new
+				visible = "[GetPlayer.IsValid]"
+
+				blockoverride "text" {
+					raw_text = "Hide the map completely, H,"
+				}
+				blockoverride "extra" {
+					text_single = {
+						raw_text = "[Select_CString(GetScriptedGui('hide_map').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ), 'Enabled', 'Disabled')]."
+					}
+				}
+			}
+
+			text_single = {
+				raw_text = "This might help with OCR auto-refresh."
+			}
+
+			button_text = {
+				visible = "[GetPlayer.IsValid]"
+
+				blockoverride "text" {
+					raw_text = "Interactions close character,"
+				}
+				blockoverride "extra" {
+					text_single = {
+						raw_text = " Enabled."
+						visible = "[GetScriptedGui('close_interactions').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+						align = left
+					}
+					text_single = {
+						raw_text = " Disabled."
+						visible = "[Not(GetScriptedGui('close_interactions').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End ))]"
+						align = left
+					}
+				}
+
+				onclick = "[GetScriptedGui('close_interactions').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Tooltips cover the screen, [AddTextIf(GetVariableSystem.Exists('tooltip_focus'), 'Disabled.')][AddTextIf(Not(GetVariableSystem.Exists('tooltip_focus')), 'Enabled.')]"
+				}
+				down = "[Not(GetVariableSystem.Exists('tooltip_focus'))]"
+
+				onclick = "[GetVariableSystem.Toggle('tooltip_focus')]"
+			}
+
+			button_text = {
+				shortcut = undo
+				blockoverride "text" {
+					raw_text = "Map tooltips, [Select_CString(Not(GetVariableSystem.Exists('hide_tooltips')), 'Hidden', 'Visible')], Control Z."
+				}
+				down = "[GetVariableSystem.Exists('hide_tooltips')]"
+
+				onclick = "[GetVariableSystem.Toggle('hide_tooltips')]"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Numbered character lists[Select_CString(Not(GetVariableSystem.Exists('index')), ', Disabled.', ', Enabled.')]"
+				}
+				down = "[GetVariableSystem.Exists('index')]"
+
+				onclick = "[GetVariableSystem.Toggle('index')]"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Text view [AddTextIf(GetVariableSystem.Exists('ocr'), 'Disabled')][AddTextIf(Not(GetVariableSystem.Exists('ocr')), 'Enabled')], hotkey Shift F 11."
+				}
+				visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+				onclick = "[GetVariableSystem.Set('ocr', 'yes')]"
+				onclick = "[GetVariableSystem.Set('tooltip_focus', 'yes')]"
+				onclick = "[GetVariableSystem.Set('hide_tooltips', 'yes')]"
+				onclick = "[SetMapMode('realms_text')]"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Text view [AddTextIf(GetVariableSystem.Exists('ocr'), 'Disabled')][AddTextIf(Not(GetVariableSystem.Exists('ocr')), 'Enabled')], hotkey Shift F 11."
+				}
+				visible = "[GetVariableSystem.Exists('ocr')]"
+				onclick = "[GetVariableSystem.Clear('ocr')]"
+				onclick = "[GetVariableSystem.Clear('tooltip_focus')]"
+				onclick = "[GetVariableSystem.Clear('hide_tooltips')]"
+				onclick = "[SetMapMode('realms')]"
+			}
+
+			button_text = {
+				blockoverride "text" {
+					raw_text = "Zoom far away when switching text view, [Select_CString(GetPlayer.MakeScope.Var('ocr_zoom').IsSet, 'Disabled', 'Enabled')]."
+				}
+				visible = "[GetPlayer.IsValid]"
+				onclick = "[Click('ocr_zoom')]"
+			}
+
+			text_single = {
+				raw_text = "This is intended to show the whole map when streaming."
+			}
+
+			flowcontainer = {
+		    ignoreinvisible = yes
+				visible = "[InDebugMode]"
+		    direction = vertical
+
+
+				button_text = {
+					onclick = "[Toggle('darken_map')]"
+					blockoverride "text" {
+						raw_text = "Darken the map,"
+					}
+					blockoverride "extra" {
+						text_single = {
+							raw_text = "[Select_CString(Is('darken_map'), 'Disabled', 'Enabled')]."
+						}
+					}
+				}
+			}
+		}
+	}
+
+	vbox = {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+		margin_top = 30
+
+		scrollbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			visible = "[GetVariableSystem.HasValue('escape_menu', 'hotkeys')]"
+
+			blockoverride "scrollbox_margins" {
+				margin_top = 20
+			}
+
+			blockoverride "scrollbox_content" {
+				hotkeys_window = {
+					layoutpolicy_horizontal = expanding
+				}
+			}
+		}
+	}
+
+
+	vbox = {
+		visible = "[Not(GetVariableSystem.Exists('escape_menu'))]"
+		margin_left = 10
+
+		hbox = {
+		    layoutpolicy_horizontal = expanding
+			spacing = 3
+
+			text_single = {
+				raw_text = "Escape menu."
+			}
+
+			error_button = {}
+
+			text_single = {
+				visible = "[InDebugMode]"
+				raw_text = "Debug mode on."
+			}
+
+		    expand = { }
+		}
+
+
+		button_text = {
+			layoutpolicy_horizontal = expanding
+			shortcut = action_list
+			visible = no
+			blockoverride "text" {
+				raw_text = "[Select_CString( GetVariableSystem.Exists('console'), 'Close', 'Open' )] console, Tab."
+			}
+			onclick = "[GetVariableSystem.Toggle('console')]"
+		}
+
+		vbox = {
+			layoutpolicy_horizontal = expanding
+
+			text_single = {
+				background = { using = Background_Area_Border_Solid }
+				margin_left = 5
+				layoutpolicy_horizontal = expanding
+				name = "player_observer_indication"
+				visible = "[And(GetPlayer.IsValid, IsObserver)]"
+				raw_text = "Observing as [GetPlayer.GetShortUINameNotMeNoTooltip]."
+			}
+
+			spacer = {
+				size = { 30 15 }
+			}
+
+			flowcontainer = {
+				direction = vertical
+				layoutpolicy_horizontal = expanding
+
+				ignoreinvisible = yes
+
+				button_text = {
+					blockoverride "text" {
+						raw_text = "Observe as [Character.GetFirstNameNoTooltip]. Click this with Control slash."
+					}
+					onclick = "[DefaultOnCharacterClick( Character.GetID)]"
+					visible = "[And(And(GetGlobalVariable('player').IsSet, IsObserver), Not(GetPlayer.IsValid))]"
+					datacontext = "[GetGlobalVariable('player').GetCharacter]"
+				}
+
+				button_text = {
+					visible = "[And(IsObserver, GetPlayer.IsValid)]"
+					blockoverride "text" {
+						raw_text = "Exit observer mode."
+					}
+
+					onclick = "[ExecuteConsoleCommand('ob')]"
+				}
+			}
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+				blockoverride "text" {
+					text = "RESUME"
+				}
+				blockoverride "extra" {
+					text_single = {
+						raw_text = ", hotkey Escape."
+						align = left
+					}
+				}
+
+				using = close_window_ocr
+				onclick = "[PauseMenu.Resume]"
+			}
+			state = {
+				name = "resume"
+				on_finish = "[PauseMenu.Resume]"
+				on_finish = "[Click('quicksave')]"
+			}
+
+			vbox = {
+				visible = "[GameHasMultiplePlayers]"
+				spacing = 5
+
+				background = {
+					using = Background_Area_With_Header
+					margin_bottom = 5
+				}
+
+				text_single = {
+					margin = { 10 10 }
+					layoutpolicy_horizontal = expanding
+					text = "MULTI_PLAYER"
+				}
+
+				text_single = {
+					visible = "[Not(IsGamePaused)]"
+					text = "FRONTEND_NOT_PAUSED"
+				}
+
+				text_single = {
+					visible = "[IsGamePaused]"
+					text = "FRONTEND_IS_PAUSED"
+				}
+
+				text_single = {
+					layoutpolicy_horizontal = expanding
+					margin_left = 10
+					text = "FRONTEND_PLAYERS_COUNT"
+				}
+
+				button_text = {
+					blockoverride "text" {
+						text = "FRONTEND_GOTO_LOBBY"
+					}
+					blockoverride "dot" {
+					}
+					onclick = "[PauseMenu.OpenLobby]"
+				}
+
+				spacer = {
+					size = { 10 10 }
+				}
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					maximumsize = { 275 -1 }
+
+					text_multi = {
+						layoutpolicy_horizontal = expanding
+						max_width = 275
+						min_width = 275
+						margin = { 0 5 }
+						autoresize = yes
+						text = "FRONTEND_INVITE"
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						blockoverride "text" {
+							raw_text = "Copy server ID."
+						}
+						onclick = "[CopyServerID]"
+					}
+				}
+			}
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+
+				hbox = {
+					visible = "[IsIronmanEnabled]"
+
+					ironman_save_icon = { }
+
+					vbox = {
+						spacing = 5
+						text_label_center = {
+							text = IRONMAN_ENABLED
+							default_format = "#low"
+							using = Font_Size_Medium
+						}
+						text_multi = {
+							max_width = 290
+							min_width = 290
+							autoresize = yes
+							text = "IRONMAN_PAUSE_MENU_EXPLANATION"
+							using = Font_Size_Small
+						}
+					}
+				}
+
+				vbox = {
+					layoutpolicy_horizontal = expanding
+
+					state = {
+						name = quick_save
+						on_finish = "[PauseMenu.Save]"
+						on_finish = "[PdxGuiTriggerAllAnimations('confirm_save')]"
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						blockoverride "text" {
+							text = "SAVE_GAME"
+						}
+						blockoverride "extra" {
+							text_single = {
+								raw_text = ", 1"
+								align = left
+							}
+						}
+						shortcut = speed_1
+						blockoverride "dot" { }
+						visible = "[Not( IsIronmanEnabled )]"
+						onclick = "[PauseMenu.Save]"
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						blockoverride "text" {
+							text = "LOAD_GAME"
+						}
+						blockoverride "disabled" {
+							visible = "[Not(PauseMenu.CanLoadIngame)]"
+						}
+						blockoverride "extra" {
+							text_single = {
+								raw_text = ", 2"
+								align = left
+							}
+						}
+						shortcut = speed_2
+						blockoverride "dot" { }
+						visible = "[Not( GameHasMultiplePlayers )]"
+						enabled = "[PauseMenu.CanLoadIngame]"
+						onclick = "[PauseMenu.LoadIngame]"
+						tooltip = "[PauseMenu.LoadIngameTooltip]"
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						onclick = "[PauseMenu.OpenSettings]"
+						blockoverride "text" {
+							text = "SETTINGS"
+						}
+						blockoverride "extra" {
+							text_single = {
+								raw_text = ", 3."
+							}
+						}
+						shortcut = speed_3
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						shortcut = speed_4
+						onclick = "[ToggleMessageSettings]"
+						onclick = "[PauseMenu.Resume]"
+						blockoverride "text" {
+							raw_text = "MESSAGE_SETTINGS_WINDOW_NAME"
+						}
+						blockoverride "extra" {
+							comma = {}
+							text_single = {
+								raw_text = "4"
+							}
+						}
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						shortcut = speed_5
+						onclick = "[ToggleMusicPlayer]"
+						onclick = "[PauseMenu.Resume]"
+						blockoverride "text" {
+							raw_text = "MUSIC_PLAYER_NAME"
+						}
+						blockoverride "extra" {
+							comma = {}
+							text_single = {
+								raw_text = "5"
+							}
+						}
+					}
+
+					button_text = {
+						layoutpolicy_horizontal = expanding
+						blockoverride "text" {
+							raw_text = "[PauseMenu.GetExitName], Alt F4."
+						}
+						onclick = "[PauseMenu.ExitGame( '(bool)yes' )]"
+					}
+				}
+			}
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+				blockoverride "text" {
+					raw_text = "Mod settings, T."
+				}
+				shortcut = map_mode_2
+				onclick = "[GetVariableSystem.Set('escape_menu', 'mod settings')]"
+			}
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+				blockoverride "text" {
+					raw_text = "View hotkeys, H."
+				}
+				shortcut = army_create_new
+				onclick = "[GetVariableSystem.Set('escape_menu', 'hotkeys')]"
+			}
+
+
+			widget = {
+				size = { 0 15 }
+			}
+
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+				blockoverride "text" {
+					text = "OPEN_LOBBY"
+				}
+				blockoverride "dot" { }
+				onclick = "[PauseMenu.OpenLobby]"
+				visible = "[Not( Or( Or( Or( PauseMenu.IsLobbyOpen, IsIronmanEnabled ), GameIsMultiplayer ), Not( CanOpenLobby ) ) )]"
+			}
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+				blockoverride "text" {
+					text = "OPEN_LOBBY"
+				}
+				blockoverride "extra" {
+					text_single = {
+						align = left
+						raw_text = ", you need to log in."
+					}
+				}
+				onclick = "[OnToggleLoginWindow]"
+				visible = "[Not( Or( Or( Or( PauseMenu.IsLobbyOpen, IsIronmanEnabled ), GameIsMultiplayer ), CanOpenLobby ) )]"
+			}
+
+			button_text = {
+				layoutpolicy_horizontal = expanding
+				blockoverride "text" {
+					text = "FRONTEND_SWITCH_CHARACTER"
+				}
+				blockoverride "dot" { }
+				onclick = "[PauseMenu.SwitchCharacter]"
+				visible = "[Not( Or( Or( PauseMenu.IsLobbyOpen, IsIronmanEnabled ), GameHasMultiplePlayers ) )]"
+			}
+
+			button_text = {
+
+				layoutpolicy_horizontal = expanding
+				visible = "[Not(IsObserver)]"
+				blockoverride "text" {
+					margin_left = 10
+					raw_text = "Switch to observer mode."
+				}
+				# onclick = "[GetVariableSystem.Set('player', GetPlayer.GetID)]"
+				onclick = "[ExecuteConsoleCommand('effect set_global_variable = { name = player value = root }')]"
+				onclick = "[PdxGuiWidget.TriggerAnimation('next')]"
+
+				state = {
+					name = next
+					duration = 0.1
+					next = b
+					alpha = 1
+				}
+				state = {
+					alpha = 1
+					name = b
+					on_finish = "[ExecuteConsoleCommand('ob')]"
+				}
+			}
+
+			button_text = {
+				shortcut = map_mode_1
+				layoutpolicy_horizontal = expanding
+				onclick = "[Clear('hide_event')]"
+				onclick = "[Clear('event_active')]"
+				blockoverride "text" {
+					raw_text = "Show any hidden events, E"
+				}
+			}
+
+			flowcontainer = {
+				margin_top = 15
+				margin = { 10 0 }
+				spacing = 2
+				layoutpolicy_horizontal = expanding
+
+				direction = vertical
+				# spacing = 50
+
+				button_text = {
+					blockoverride "dot" { }
+					onclick = "[OnToggleLoginWindow]"
+					blockoverride "text" {
+						text = "ACCOUNT"
+					}
+				}
+
+				button_text = {
+					onclick = "[OpenAchievements]"
+					visible = "[AreAchievementsAvailable]"
+					blockoverride "text" {
+						text = "ACHIEVEMENTS_LABEL"
+					}
+					blockoverride "extra" {
+						text_single = {
+							margin_left = -3
+							raw_text = ", Control A"
+						}
+					}
+					shortcut = map_mode_6
+					blockoverride "dot" { }
+				}
+
+				button_text = {
+					blockoverride "dot" { }
+					onclick = "[OpenGameRules]"
+					blockoverride "text" {
+						text = "GAME_RULES"
+					}
+				}
+
+				button_text = {
+				    blockoverride "text" {
+				        raw_text = "[Select_CString( GetVariableSystem.Exists('ocr'), 'Enable', 'Disable' )] text mode, Shift F11."
+				    }
+					onclick = "[GetVariableSystem.Toggle('ocr')]"
+				}
+
+
+				button_text = {
+					visible = "[Not(GameIsMultiplayer)]"
+				    blockoverride "text" {
+				        raw_text = "[Select_CString( InDebugMode, 'Disable', 'Enable' )] debug mode, F11"
+				    }
+					onclick = "[ExecuteConsoleCommand('debug_mode')]"
+				}
+
+				clickable_version_number = {
+					blockoverride "version_text" {
+						raw_text = "Game version: [Localize('VERSION_SHORT')]."
+					}
+				}
+			}
+		}
+
+		expand = { }
+	}
+}
+
+window = {
+	name = "ingame_load_ingame"
+	movable = no
+	layer = confirmation
+	size = { 100% 100% }
+
+	using = Animation_ShowHide_Quick
+	using = Background_Full_Dim
+
+	button_normal = {
+		size = { 100% 100% }
+		onclick = "[LoadIngameWindow.OnBack]"
+	}
+
+	widget_load_game = {
+		parentanchor = center
+		size = { 1030 100% }
+
+		blockoverride "datamodel_savegames"
+		{
+			datamodel = "[LoadIngameWindow.GetSaveGames]"
+		}
+
+		blockoverride "invalid_saves_click"
+		{
+			onclick = "[LoadIngameWindow.OnShowInvalidSavegames]"
+		}
+
+		blockoverride "invalid_saves_checked"
+		{
+			visible = "[Not(LoadIngameWindow.ShouldShowInvalidSavegames)]"
+		}
+
+		blockoverride "button_back"
+		{
+			onclick = "[LoadIngameWindow.OnBack]"
+		}
+
+		blockoverride "selected_save"
+		{
+			datacontext = "[LoadIngameWindow.GetSelectedSavegame]"
+			visible = "[LoadIngameWindow.HasSelectedSavegame]"
+		}
+
+		blockoverride "button_delete_save"
+		{
+			onclick = "[LoadIngameWindow.OnDelete]"
+		}
+
+		blockoverride "button_load_save"
+		{
+			onclick = "[LoadIngameWindow.OnLoad]"
+		}
+		blockoverride "layout_widget"
+		{
+			visible = "[Not(LoadIngameWindow.HasSelectedSavegame)]"
+		}
+	}
+}
+
+Types SaveGameTypes
+{
+	type cloud_save_checkbutton = button_checkbox
+	{
+		name = "cloud_save" # Name referenced from code
+		checked = "[CloudSaveData.ShouldSaveToCloud]"
+		tooltip = "[CloudSaveData.GetCloudSaveTooltip]"
+		onclick = "[CloudSaveData.OnCloudSaveClick]"
+		enabled = "[CloudSaveData.AreCloudSavesAvailable]"
+	}
+}

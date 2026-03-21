@@ -7,7 +7,7 @@ window = {
 	widgetid = "intrigue_window"
 	movable = no
 	allow_outside = yes
-	
+
 	size = { 100% 100% }
 	layer = windows_layer
 
@@ -182,7 +182,7 @@ window = {
 									item = {
 										vbox = {
 											layoutpolicy_horizontal = expanding
-											datacontext = "[SchemeItem.GetScheme]" 
+											datacontext = "[SchemeItem.GetScheme]"
 
 											text_single = {
 												layoutpolicy_horizontal = expanding
@@ -651,7 +651,7 @@ window = {
 									widgetid = "my_own_schemes"
 									layoutpolicy_horizontal = expanding
 									spacing = 10
-									
+
 									# --- CONTRACT SCHEMES (VISUAL) ---
 									vbox = {
 										name = "my_contract_schemes"
@@ -667,7 +667,7 @@ window = {
 											visible = "[SkillSchemeGroup.HasSchemes]"
 											datamodel = "[SkillSchemeGroup.GetSchemes]"
 											layoutpolicy_horizontal = expanding
-											item = { 
+											item = {
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													datacontext = "[SchemeItem.GetScheme]"
@@ -678,7 +678,7 @@ window = {
 														default_format = "#medium"
 														margin_left = 10
 													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
+													widget_own_scheme_item = { layoutpolicy_horizontal = expanding }
 												}
 											}
 										}
@@ -698,7 +698,7 @@ window = {
 											visible = "[SkillSchemeGroup.HasSchemes]"
 											datamodel = "[SkillSchemeGroup.GetSchemes]"
 											layoutpolicy_horizontal = expanding
-											item = { 
+											item = {
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													datacontext = "[SchemeItem.GetScheme]"
@@ -709,7 +709,7 @@ window = {
 														default_format = "#medium"
 														margin_left = 10
 													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
+													widget_own_scheme_item = { layoutpolicy_horizontal = expanding }
 												}
 											}
 										}
@@ -739,7 +739,7 @@ window = {
 											visible = "[SkillSchemeGroup.HasSchemes]"
 											datamodel = "[SkillSchemeGroup.GetSchemes]"
 											layoutpolicy_horizontal = expanding
-											item = { 
+											item = {
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													datacontext = "[SchemeItem.GetScheme]"
@@ -750,7 +750,7 @@ window = {
 														default_format = "#medium"
 														margin_left = 10
 													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
+													widget_own_scheme_item = { layoutpolicy_horizontal = expanding }
 												}
 											}
 										}
@@ -781,7 +781,7 @@ window = {
 											visible = "[SkillSchemeGroup.HasSchemes]"
 											datamodel = "[SkillSchemeGroup.GetSchemes]"
 											layoutpolicy_horizontal = expanding
-											item = { 
+											item = {
 												vbox = {
 													layoutpolicy_horizontal = expanding
 													datacontext = "[SchemeItem.GetScheme]"
@@ -791,7 +791,7 @@ window = {
 														default_format = "#medium"
 														margin_left = 10
 													}
-													widget_own_scheme_item = { layoutpolicy_horizontal = expanding } 
+													widget_own_scheme_item = { layoutpolicy_horizontal = expanding }
 												}
 											}
 										}
@@ -1226,7 +1226,7 @@ window = {
 			}
 		}
 	}
-	
+
 	old_intrigue = {}
 }
 

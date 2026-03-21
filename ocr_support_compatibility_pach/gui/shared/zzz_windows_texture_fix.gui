@@ -1,0 +1,12 @@
+template Window_Decoration_Thin_Bottom
+{
+	icon = {
+		name = "frame_bottom"
+		texture = "gfx/interface/component_decoration/decoration_frame_bottom_clean.dds"
+		spriteType = Corneredtiled
+		spriteborder = { 100 0 }
+		texture_density = 2
+		size = { 100% 22 }
+		parentanchor = bottom
+	}
+}
