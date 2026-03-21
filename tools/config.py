@@ -4,6 +4,8 @@ Tutti gli script in tools/ importano da qui. Non hardcodare path altrove.
 """
 
 from pathlib import Path
+import sys
+import shutil
 
 # Root del workspace (directory padre che contiene tutti e tre i repo)
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -29,6 +31,17 @@ WHITELIST_PATH = PATCH_ROOT / ".github" / "resources" / "jomini_scope_whitelist.
 RESOURCES_PATH = PATCH_ROOT / ".github" / "resources"
 
 
+def _get_python_cmd() -> str:
+    for cmd in [sys.executable, "python3", "python"]:
+        if cmd == sys.executable or shutil.which(cmd):
+            return cmd
+    return "python"
+
+# Comando Python portabile — usare questo in tutti gli script
+# che invocano sottoprocessi Python. Non hardcodare mai la versione.
+PYTHON_CMD = _get_python_cmd()
+
+
 if __name__ == "__main__":
     paths = {
         "PATCH_GUI": PATCH_GUI,
@@ -40,3 +53,4 @@ if __name__ == "__main__":
     for nome, path in paths.items():
         stato = "EXISTS" if path.exists() else "MISSING"
         print(f"{nome}: {path} [{stato}]")
+    print(f"PYTHON_CMD: {PYTHON_CMD} [rilevato automaticamente]")

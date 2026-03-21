@@ -26,8 +26,10 @@ Non modifichi mai nessun file, non proponi fix, non scrivi codice.
 
 1. Esegui (via tool **terminal**):
    ```
-   python3.14 tools/tri_diff.py --window <nome_finestra>
+   python tools/tri_diff.py --window <nome_finestra>
    ```
+   > Il comando `python` deve puntare alla versione corretta sul PATH.
+   > Riferimento: `PYTHON_CMD` in `tools/config.py`.
    Il report prodotto è il contesto base dell'analisi.
    Invoca #tri-repo-diff per l'interpretazione delle discrepanze in sezione C.
 2. Il report prodotto dalla skill è l'output di questa analisi.

@@ -56,6 +56,12 @@ Sequenza operativa standard. Seguire nell'ordine indicato senza saltare passi.
     - **Convertite — Revisione Necessaria**: se audit.py = CON AVVERTENZE
     - **Convertite — Bloccanti**: se audit.py = BLOCCANTE (non committare)
 
+> **Nota Python**: il comando `python` nei passi sopra deve puntare
+> alla versione corretta sul PATH della macchina corrente.
+> Il comando portabile è definito in `tools/config.py` come `PYTHON_CMD`.
+> Su macchine con più versioni installate, verificare con `python --version`
+> prima di avviare la pipeline.
+
 > **Nota sulla scelta del mode**: usare la colonna Pattern nella sezione
 > "Da Convertire" di `gui-conversion-progress.instructions.md` per scegliere
 > il valore corretto di `--mode` (simple=A, tabs=B, complex=C/D).

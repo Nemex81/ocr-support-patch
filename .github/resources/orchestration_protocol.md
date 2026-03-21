@@ -18,7 +18,11 @@ rispettando i checkpoint e gestendo i loop-back.
 - **Nessun subagent ha accesso a `terminal`** quando invocato via `runSubagent`
   - Il main agent DEVE eseguire TUTTI gli script necessari (pre-run e post-run)
   - Il main agent passa gli output degli script nel prompt del subagent
-- Python è invocabile come `python3.14` (non bare `python`)
+- Il comando Python corretto per la macchina corrente è definito in
+  `tools/config.py` come `PYTHON_CMD`. Nei comandi di questo protocollo
+  si usa `python` come riferimento generico — assicurarsi che `python`
+  nel PATH punti alla versione corretta, oppure usare `sys.executable`
+  nei sottoprocessi.
 - Impostare `$env:PYTHONIOENCODING = "utf-8"` prima dei comandi Python che producono output con emoji
 
 ---
@@ -71,7 +75,7 @@ Fase 7  CHIUSURA (main agent aggiorna tracker)
 
 **Pre-run main agent:**
 ```
-python3.14 tools/tri_diff.py --window {nome_finestra}
+python tools/tri_diff.py --window {nome_finestra}
 ```
 Catturare l'output completo.
 
@@ -105,12 +109,12 @@ runSubagent(
 
 **Pre-run main agent:**
 ```
-python3.14 tools/scope_extractor.py --file "C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/{nome}.gui"
+python tools/scope_extractor.py --file "C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/{nome}.gui"
 ```
 Catturare output binding.
 
 ```
-python3.14 tools/assemble_dualmode.py --window {nome} --mode {pattern} --dry-run
+python tools/assemble_dualmode.py --window {nome} --mode {pattern} --dry-run
 ```
 Catturare bozza dry-run.
 
@@ -169,12 +173,12 @@ runSubagent(
 
 **Pre-run main agent:**
 ```
-python3.14 tools/assemble_dualmode.py --window {nome} --mode {pattern}
+python tools/assemble_dualmode.py --window {nome} --mode {pattern}
 ```
 Questo scrive il file nella patch.
 
 ```
-python3.14 tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
+python tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
 ```
 Catturare output validazione pre-revisione.
 
@@ -208,8 +212,8 @@ runSubagent(
 
 **Post-run main agent (dopo che l'Implementatore ha finito):**
 ```
-python3.14 tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/{nome}.gui --update-whitelist
-python3.14 tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
+python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/{nome}.gui --update-whitelist
+python tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
 ```
 Catturare output post-check per Fase 4.
 
@@ -221,7 +225,7 @@ Catturare output post-check per Fase 4.
 
 **Azioni del main agent:**
 ```
-python3.14 tools/audit.py --window {nome_finestra}
+python tools/audit.py --window {nome_finestra}
 ```
 
 Catturare:
@@ -251,7 +255,7 @@ Catturare:
 
 **Pre-run main agent:**
 ```
-python3.14 tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
+python tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
 ```
 Catturare output validator fresco (necessario per Revisore Accessibilità che non ha terminal).
 
@@ -397,7 +401,7 @@ recenti dell'upstream OCR (Agamidae), preservando il container vanilla invariato
 ### Fase 1 — Analisi delta upstream
 
 Pre-run main agent:
-python3.14 tools/tri_diff.py --window {nome_finestra}
+python tools/tri_diff.py --window {nome_finestra}
 
 runSubagent(
    agentName: "Analista Tri-Repo",
@@ -421,7 +425,7 @@ Output da conservare: Report delta Analista
 ### Fase 2 — Valutazione impatto (subagent: Architetto Dual-Mode)
 
 Pre-run main agent:
-python3.14 tools/assemble_dualmode.py --window {nome} --mode {pattern} --dry-run
+python tools/assemble_dualmode.py --window {nome} --mode {pattern} --dry-run
 
 runSubagent(
    agentName: "Architetto Dual-Mode",
@@ -454,8 +458,8 @@ ATTENDERE risposta esplicita.
 ### Fase 3 — Aggiornamento (subagent: Implementatore Patch)
 
 Pre-run main agent (solo se il piano prevede riscrittura):
-python3.14 tools/assemble_dualmode.py --window {nome} --mode {pattern}
-python3.14 tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
+python tools/assemble_dualmode.py --window {nome} --mode {pattern}
+python tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
 
 runSubagent(
    agentName: "Implementatore Patch",
@@ -474,7 +478,7 @@ runSubagent(
 )
 
 Post-run:
-python3.14 tools/audit.py --window {nome_finestra}
+python tools/audit.py --window {nome_finestra}
 
 ### CHECKPOINT 2 — Verdetto Audit al Modder
 
@@ -518,7 +522,7 @@ Scopo: risolvere i CRITICO aperti su una finestra già nella sezione
 
 ### Fase 1 — Audit iniziale (main agent)
 
-python3.14 tools/audit.py --window {nome_finestra}
+python tools/audit.py --window {nome_finestra}
 
 Catturare lista completa dei CRITICO con riga, descrizione e causa.
 
@@ -531,7 +535,7 @@ ATTENDERE risposta esplicita.
 ### Fase 2 — Fix (subagent: Implementatore Patch)
 
 Pre-run main agent:
-python3.14 tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
+python tools/gui_validator.py --file ocr_support_compatibility_pach/gui/{nome}.gui
 
 runSubagent(
    agentName: "Implementatore Patch",
@@ -552,7 +556,7 @@ runSubagent(
 )
 
 Post-run:
-python3.14 tools/audit.py --window {nome_finestra}
+python tools/audit.py --window {nome_finestra}
 
 ### CHECKPOINT 2 — Verdetto Post-Fix al Modder
 

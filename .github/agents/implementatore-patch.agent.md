@@ -24,8 +24,10 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
 
 0. Esegui via tool **terminal**:
    ```
-   python3.14 tools/gui_validator.py --file <percorso_file>
+   python tools/gui_validator.py --file <percorso_file>
    ```
+   > Il comando `python` deve puntare alla versione corretta sul PATH.
+   > Riferimento: `PYTHON_CMD` in `tools/config.py`.
    Se verdetto = BLOCCANTE: correggere tutti i CRITICO prima di procedere.
    Se verdetto = CON AVVERTENZE o PULITO: procedere, poi invoca #deprecated-pattern-scanner
    per analisi contestuale dei problemi residui.
@@ -37,7 +39,7 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
 4. Container OCR = segue il progetto dell'Architetto o il pattern canonical.
    Opzione alternativa per generare lo scheletro (via tool **terminal**):
    ```
-   python3.14 tools/assemble_dualmode.py --window <nome> --mode simple|tabs|complex --dry-run
+   python tools/assemble_dualmode.py --window <nome> --mode simple|tabs|complex --dry-run
    ```
    Il `--dry-run` stampa solo l'anteprima senza scrivere il file.
    Usa il risultato come base e applicare le personalizzazioni OCR dall'upstream Agamidae.
@@ -46,14 +48,14 @@ Non tocchi mai `../CK3-OCR/` o l'installazione locale CK3 (`C:/Program Files (x8
 6. Dopo ogni edit: verifica assenza di `name` duplicati allo stesso livello
 7. Esegui via tool **terminal**:
    ```
-   python3.14 tools/scope_extractor.py --file <percorso_file>
+   python tools/scope_extractor.py --file <percorso_file>
    ```
    Aggiungi alla whitelist `.github/resources/jomini_scope_whitelist.md`
    tutte le righe prodotte per i binding ASSENTI.
    Poi invoca #scope-whitelist-check per i binding DA VERIFICARE (⚠️) se presenti.
 8. Esegui via tool **terminal**:
    ```
-   python3.14 tools/gui_validator.py --file <percorso_file>
+   python tools/gui_validator.py --file <percorso_file>
    ```
    Se verdetto != PULITO, correggere prima di passare ai revisori.
    Invoca #deprecated-pattern-scanner solo se restano flag ATTENZIONE da interpretare.
