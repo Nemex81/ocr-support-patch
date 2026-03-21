@@ -1,5 +1,5 @@
 ---
-agent: agent
+agent: orchestratore
 description: Confronta la patch con upstream OCR e vanilla per rilevare aggiornamenti
 tools: [read, search]
 model: ['Claude Opus 4.6', 'GPT-5.4']
@@ -7,29 +7,19 @@ model: ['Claude Opus 4.6', 'GPT-5.4']
 
 # Task: Aggiornamento da Upstream
 
-Leggi: `${file:.github/copilot-instructions.md}`
+Leggi prima:
+- ${file:.github/copilot-instructions.md}
+- ${file:.github/resources/orchestration_protocol.md}
 
-## File da confrontare
-- Patch attuale: `ocr_support_compatibility_pach/gui/${input:nomeFile}.gui`
-- OCR upstream: `../CK3-OCR/OCR-Support/gui/${input:nomeFile}.gui`
-- Vanilla baseline: `C:/Program Files (x86)/Steam/steamapps/common/Crusader Kings III/game/gui/${input:nomeFile}.gui`
-  (path letto da `tools/config.py` — VANILLA_GUI)
+Task operativo:
+- Esegui il task aggiornamento-upstream gia' definito per Orchestratore.
+- Applica il protocollo come riferimento normativo unico, senza duplicarne la logica in output.
 
-## Cosa rilevare
+Input richiesto:
+- Nome file: ${input:nomeFile}
 
-1. **Differenze upstream → patch**: cosa ha aggiornato Agamidae non ancora nella patch?
-2. **Differenze vanilla → container vanilla patch**: il container vanilla è ancora fedele?
-3. **Regressioni**: la patch introduce comportamenti assenti nell'originale OCR?
-4. **Conflitti**: ci sono modifiche incompatibili tra upstream e vanilla baseline?
-
-## Output
-
-Report in italiano con:
-- Lista diff rilevanti (non cosmetici) upstream vs patch
-- Lista diff vanilla baseline vs container vanilla nella patch
-- Raccomandazioni prioritizzate: applicare subito / valutare / ignorare
+Output atteso:
+- Report in italiano con diff rilevanti upstream vs patch
+- Verifica fedelta' vanilla del container vanilla nella patch
+- Raccomandazioni prioritarie (applicare subito / valutare / ignorare)
 - Rischi di regressione per ogni aggiornamento proposto
-
-## Passo successivo suggerito
-
-Se ci sono aggiornamenti da applicare: invoca **Implementatore Patch** dalla chat.

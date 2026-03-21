@@ -1,108 +1,24 @@
 ---
-mode: agent
+agent: orchestratore
 description: Risolve i CRITICO aperti in una finestra nella sezione Bloccanti. Esegui con l'Implementatore Patch. Una finestra alla volta.
 tools: [edit, read, search, terminal]
 ---
 
 # Fix Bloccante — Risoluzione Critici
 
-Finestra target: **${nomeFinestra}**
-(es: `window_activity_list`, senza estensione `.gui`)
+Finestra target: ${input:nomeFinestra}
 
----
+Leggi prima:
+- ${file:.github/copilot-instructions.md}
+- ${file:.github/resources/orchestration_protocol.md}
 
-## PASSO 1 — Audit iniziale
+Task operativo:
+- Esegui il task fix-bloccante gia' definito per Orchestratore.
+- Applica il protocollo come riferimento normativo unico, senza duplicarne la logica nel prompt.
+- Opera su una sola finestra alla volta e rispetta i checkpoint obbligatori previsti dal protocollo.
 
-Esegui e mostrami l'output completo senza modificare nulla:
-
-```
-python tools/audit.py --window ${nomeFinestra}
-```
-
-Per ogni CRITICO trovato riporta:
-- Numero di riga esatto
-- Tipo di problema (strutturale / binding assente / pattern deprecato / tooltip mancante)
-- Messaggio completo
-
----
-
-## PASSO 2 — Contesto righe critiche
-
-Per ciascun CRITICO identificato nel passo precedente:
-- Mostrami le righe da `[riga - 10]` a `[riga + 15]` del file
-  `ocr_support_compatibility_pach/gui/${nomeFinestra}.gui`
-- Descrivi in italiano cosa fa il widget in quel punto
-
-Non proporre fix. Non aprire altri file. Aspetta il CHECKPOINT.
-
----
-
-## ⛔ CHECKPOINT — Approvazione modder
-
-Presentami il riepilogo:
-- Numero di CRITICO trovati
-- Per ciascuno: riga, tipo, contesto breve
-- La tua proposta di fix per ciascuno (una riga di spiegazione)
-
-**Attendi conferma esplicita prima di procedere al Passo 3.**
-
----
-
-## PASSO 3 — Applicazione fix
-
-Solo dopo approvazione esplicita del modder:
-
-- Applica i fix approvati sul file `ocr_support_compatibility_pach/gui/${nomeFinestra}.gui`
-- Ogni modifica deve essere minima — tocca solo le righe del CRITICO
-
-> ⚠️ ATTENZIONE — Tooltip fuori dal blocco (pattern noto):
-> Se il CRITICO è un tooltip mal indentato (inserito fuori dal widget),
-> prima di scrivere leggi le righe `[riga-5]` a `[riga+5]` del file
-> e verifica che:
-> 1. Il tooltip sia DENTRO il blocco widget (stesso livello di using/onclick)
-> 2. La graffa di chiusura `}` del widget sia presente dopo il tooltip
-> 3. Il widget successivo sia FUORI dal blocco
-> Se la struttura è ambigua mostrami il contesto e aspetta conferma.
-
-- Non correggere avvertenze, non riorganizzare codice, non migliorare nulla fuori scope
-
----
-
-## PASSO 4 — Verifica post-fix
-
-Esegui di nuovo:
-
-```
-python tools/audit.py --window ${nomeFinestra}
-```
-
-Riporta il nuovo verdetto completo.
-
-- Se 0 CRITICO → procedi al Passo 5
-- Se ancora CRITICO aperti → torna al Passo 2 con i critici residui
-
----
-
-## PASSO 5 — Aggiornamento registro
-
-Aggiorna `.github/instructions/gui-conversion-progress.instructions.md`:
-
-- Se nuovo verdetto = `OK` (0 critici, 0 avvertenze):
-  sposta la voce in **Convertite — Validate**
-
-- Se nuovo verdetto = `CON AVVERTENZE` (0 critici, avvertenze aperte):
-  sposta la voce in **Convertite — Revisione Necessaria**
-
-- Aggiorna i valori nelle colonne: `Ultimo audit`, `Critici`, `Avv.`
-- Aggiorna la data "Ultimo aggiornamento" in cima al file con la descrizione del fix applicato
-
----
-
-## Note operative
-
-- Le avvertenze (`ATTENZIONE`) **non sono oggetto di questo prompt** — ignorale
-- Se il CRITICO è un binding assente dalla whitelist scope:
-  esegui `python tools/scope_extractor.py --file ocr_support_compatibility_pach/gui/${nomeFinestra}.gui`
-  e aggiungi i binding mancanti a `.github/resources/jomini_scope_whitelist.md`
-- Se il CRITICO è strutturale (visible non mutuamente esclusivi):
-  coinvolgi l'Architetto Dual-Mode prima di modificare
+Output atteso:
+- Verdetto audit iniziale con elenco CRITICO
+- Piano di fix minimo per ciascun critico
+- Verdetto audit post-fix
+- Stato finale finestra (Validate / Revisione Necessaria / Bloccanti)

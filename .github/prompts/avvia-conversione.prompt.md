@@ -4,7 +4,7 @@ description: Avvio manuale del ciclo di conversione dual-mode per una singola fi
 tools: [read, search, terminal]
 ---
 
-Avvio conversione dual-mode
+# Avvia conversione dual-mode
 
 Leggi prima:
 - ${file:.github/copilot-instructions.md}

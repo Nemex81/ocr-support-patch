@@ -8,7 +8,7 @@ Gli agenti qui definiti sono specializzazioni del sistema Copilot per ruoli fiss
 
 Il principio fondamentale è la separazione delle responsabilità: l'agente che analizza non modifica, l'agente che scrive non decide l'architettura, l'agente che approva non è lo stesso che implementa. Questo schema riduce il rischio di errori silenziosi e mantiene il controllo nelle mani del modder ai checkpoint CP1 e CP2.
 
-Gli agenti si passano il controllo tramite handoff espliciti dichiarati nel frontmatter YAML di ogni file. Il flusso standard è: Analista → Architetto → Implementatore → Revisore Accessibilità → Revisore Vanilla → Auditore Finale.
+Gli agenti si passano il controllo tramite handoff espliciti dichiarati nel frontmatter YAML di ogni file. Il flusso standard è: Orchestratore → Analista → Architetto → Implementatore → Revisore Accessibilità → Revisore Vanilla → Auditore Finale.
 
 ## File presenti
 
