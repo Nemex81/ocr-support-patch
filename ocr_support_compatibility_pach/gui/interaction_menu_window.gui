@@ -47,142 +47,162 @@ window = {
 # ================================================================
 	# BLOCCO OCR — modalità NON VEDENTE (variabile ocr assente)
 	# ================================================================
-	container = {
+	widget = {
 		name = "ocr_interaction_menu_container"
-		visible = "[Not(GetVariableSystem.Exists('ocr'))]"
+		using = ocr_window
+		position = { -420 -70 }
+		size = { 800 100% }
 
-		flowcontainer = {
-			direction = vertical
-			ignoreinvisible = yes
+		vbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			using = ocr_margins
+			using = ocr
 
-			datacontext = "[CharacterInteractionMenuWindow.GetCharacter]"
+			scrollbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
 
-			# ---- HEADER ----
-			text_single = {
-				name = "ocr_title_other"
-				visible = "[Not(Character.IsLocalPlayer)]"
-				raw_text = "Interazioni con [Character.GetUINameNoTooltip]."
-				fontsize = 20
-				autoresize = yes
-				color = { 255 221 136 255 }
-			}
+				blockoverride "scrollbox_content" {
+					flowcontainer = {
+						direction = vertical
+						ignoreinvisible = yes
 
-			text_single = {
-				name = "ocr_title_self"
-				visible = "[Character.IsLocalPlayer]"
-				raw_text = "Interazioni con te stesso."
-				fontsize = 20
-				autoresize = yes
-				color = { 255 221 136 255 }
-			}
+						datacontext = "[CharacterInteractionMenuWindow.GetCharacter]"
 
-			# ---- AZIONI RAPIDE ----
-			button_text = {
-				name = "ocr_button_pin"
-				onclick = "[Character.ToggleCharacterPinned]"
-				tooltip = "PIN_TT"
-				using = tooltip_se
-				blockoverride "text" {
-					raw_text = "[Select_CString(Character.IsPinned, 'Rimuovi dall outliner.', 'Aggiungi all outliner.')]"
-				}
-			}
+						# ---- HEADER ----
+						text_single = {
+							name = "ocr_title_other"
+							visible = "[Not(Character.IsLocalPlayer)]"
+							raw_text = "Interazioni con [Character.GetUINameNoTooltip]."
+							fontsize = 20
+							autoresize = yes
+							color = { 255 221 136 255 }
+						}
 
-			button_text = {
-				name = "ocr_customize_portrait"
-				visible = "[Character.CanCustomizePortrait]"
-				onclick = "[Character.OnCustomizePortrait]"
-				onclick = "[CharacterInteractionMenuWindow.Close]"
-				tooltip = "CV_CUSTOMIZE_PORTRAIT"
-				using = tooltip_ne
-				blockoverride "text" {
-					raw_text = "Apri barbiere."
-				}
-			}
+						text_single = {
+							name = "ocr_title_self"
+							visible = "[Character.IsLocalPlayer]"
+							raw_text = "Interazioni con te stesso."
+							fontsize = 20
+							autoresize = yes
+							color = { 255 221 136 255 }
+						}
 
-			button_text = {
-				name = "ocr_button_rename"
-				datacontext = "[GetScriptedGui( 'rename_character_after_birth' )]"
-				visible = "[Character.CanCharacterBeRenamed]"
-				onclick = "[ScriptedGui.Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'child', Character.MakeScope ).End )]"
-				tooltip = "RENAME_CHARACTER"
-				using = tooltip_ne
-				blockoverride "text" {
-					raw_text = "Rinomina personaggio."
-				}
-			}
+						# ---- AZIONI RAPIDE ----
+						button_text = {
+							name = "ocr_button_pin"
+							onclick = "[Character.ToggleCharacterPinned]"
+							tooltip = "PIN_TT"
+							using = tooltip_se
+							blockoverride "text" {
+								raw_text = "[Select_CString(Character.IsPinned, 'Rimuovi dall outliner.', 'Aggiungi all outliner.')]"
+							}
+						}
 
-			button_text = {
-				name = "ocr_button_go_to_location"
-				onclick = "[Character.PanCameraTo]"
-				tooltip = "GOTO_CHARACTER"
-				using = tooltip_ne
-				blockoverride "text" {
-					raw_text = "Vai al personaggio."
-				}
-			}
+						button_text = {
+							name = "ocr_customize_portrait"
+							visible = "[Character.CanCustomizePortrait]"
+							onclick = "[Character.OnCustomizePortrait]"
+							onclick = "[CharacterInteractionMenuWindow.Close]"
+							tooltip = "CV_CUSTOMIZE_PORTRAIT"
+							using = tooltip_ne
+							blockoverride "text" {
+								raw_text = "Apri barbiere."
+							}
+						}
 
-			# ---- STATO TARGET ----
-			text_single = {
-				name = "ocr_out_of_range_label"
-				visible = "[CharacterInteractionMenuWindow.OutsideDiplomaticRange]"
-				raw_text = "Fuori portata diplomatica."
-				fontsize = 18
-				autoresize = yes
-				tooltip = OUT_OF_DIPLOMACY_RANGE_TOOLTIP
-			}
+						button_text = {
+							name = "ocr_button_rename"
+							datacontext = "[GetScriptedGui( 'rename_character_after_birth' )]"
+							visible = "[Character.CanCharacterBeRenamed]"
+							onclick = "[ScriptedGui.Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'child', Character.MakeScope ).End )]"
+							tooltip = "RENAME_CHARACTER"
+							using = tooltip_ne
+							blockoverride "text" {
+								raw_text = "Rinomina personaggio."
+							}
+						}
 
-			text_single = {
-				name = "ocr_filter_description_label"
-				visible = "[CharacterInteractionMenuWindow.IsFiltered]"
-				raw_text = "Filtro attivo: [CharacterInteractionMenuWindow.GetFilterDescription]."
-				fontsize = 18
-				autoresize = yes
-			}
+						button_text = {
+							name = "ocr_button_go_to_location"
+							onclick = "[Character.PanCameraTo]"
+							tooltip = "GOTO_CHARACTER"
+							using = tooltip_ne
+							blockoverride "text" {
+								raw_text = "Vai al personaggio."
+							}
+						}
 
-			# ---- LISTA CATEGORIE ----
-			flowcontainer = {
-				name = "ocr_category_interaction_list"
-				# datamodel verificato: CharacterInteractionCategoryItem
-				datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
-				direction = vertical
-				ignoreinvisible = yes
+						# ---- STATO TARGET ----
+						text_single = {
+							name = "ocr_out_of_range_label"
+							visible = "[CharacterInteractionMenuWindow.OutsideDiplomaticRange]"
+							raw_text = "Fuori portata diplomatica."
+							fontsize = 18
+							autoresize = yes
+							tooltip = OUT_OF_DIPLOMACY_RANGE_TOOLTIP
+						}
 
-				item = {
-					flowcontainer_category_group_ocr = {}
-				}
-			}
+						text_single = {
+							name = "ocr_filter_description_label"
+							visible = "[CharacterInteractionMenuWindow.IsFiltered]"
+							raw_text = "Filtro attivo: [CharacterInteractionMenuWindow.GetFilterDescription]."
+							fontsize = 18
+							autoresize = yes
+						}
 
-			# ---- ALTRE INTERAZIONI ----
-			container = {
-				name = "ocr_more_interactions_container"
-				visible = "[CharacterInteractionMenuWindow.AreMoreInteractionsVisisble]"
+						# ---- LISTA CATEGORIE ----
+						flowcontainer = {
+							name = "category_interaction_list_blind"
+							# datamodel verificato: CharacterInteractionCategoryItem
+							datamodel = "[CharacterInteractionMenuWindow.GetCategoryItems]"
+							direction = vertical
+							ignoreinvisible = yes
 
-				flowcontainer = {
-					direction = vertical
-					ignoreinvisible = yes
+							item = {
+								flowcontainer_category_group_ocr = {}
+							}
+						}
 
-					text_single = {
-						name = "ocr_more_interactions_header"
-						raw_text = "Altre interazioni:"
-						fontsize = 20
-						autoresize = yes
-						color = { 255 221 136 255 }
+						# ---- ALTRE INTERAZIONI ----
+						container = {
+							name = "ocr_more_interactions_container"
+							visible = "[CharacterInteractionMenuWindow.AreMoreInteractionsVisisble]"
+
+							flowcontainer = {
+								direction = vertical
+								ignoreinvisible = yes
+
+								text_single = {
+									name = "ocr_more_interactions_header"
+									raw_text = "Altre interazioni:"
+									fontsize = 20
+									autoresize = yes
+									color = { 255 221 136 255 }
+								}
+
+								dynamicgridbox_interaction_list_ocr = {
+									# datamodel verificato: CharacterInteractionOption
+									datamodel = "[CharacterInteractionMenuWindow.GetMoreInteractions]"
+									text_single = {
+										visible = no
+										raw_text = "Nessuna altra interazione disponibile."
+									}
+								}
+							}
+						}
+
+						# ---- PULSANTE CHIUDI ----
+						button_text = {
+							name = "ocr_close_button"
+							onclick = "[CharacterInteractionMenuWindow.Close]"
+							tooltip = "Chiudi il menu delle interazioni."
+							blockoverride "text" {
+								raw_text = "Chiudi menu interazioni."
+							}
+						}
 					}
-
-					dynamicgridbox_interaction_list_ocr = {
-						# datamodel verificato: CharacterInteractionOption
-						datamodel = "[CharacterInteractionMenuWindow.GetMoreInteractions]"
-					}
-				}
-			}
-
-			# ---- PULSANTE CHIUDI ----
-			button_text = {
-				name = "ocr_close_button"
-				onclick = "[CharacterInteractionMenuWindow.Close]"
-				tooltip = "Chiudi il menu delle interazioni."
-				blockoverride "text" {
-					raw_text = "Chiudi menu interazioni."
 				}
 			}
 		}
